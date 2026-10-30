@@ -9,7 +9,8 @@
 #
 # Post-#93 re-run (600-char caps, evidence demoted out of matching):
 # fixture-dump 0/32 and minimal-dump 0/32 — both defeated by hardening. The
-# keyword-soup still passes 32/32: the longest rubric soup is 199 chars, far
+# keyword-soup still passes every task (32/32 as of that re-run): the longest
+# rubric soup is 199 chars, far
 # under the 600 cap, so the length cap cannot beat it. Shrinking this list to
 # empty is the rubric audits' job (#96-#99).
 #
@@ -27,6 +28,10 @@ aks-identity-009
 aks-identity-010
 aks-identity-011
 aks-identity-034
+aks-identity-039
+# aks-identity-039 (issue #108): keyword-soup only — its rubric alternatives
+# union to ~150 chars, far under the 600 cap; remove when the aks-identity
+# rubric audit (#96) makes the soup fail.
 aks-networking-001
 aks-networking-002
 aks-networking-003

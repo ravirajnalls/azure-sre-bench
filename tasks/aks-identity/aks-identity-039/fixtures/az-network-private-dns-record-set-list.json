@@ -1,0 +1,50 @@
+[
+  {
+    "etag": "00000000-0000-0000-0000-00000000000a",
+    "id": "/subscriptions/00000000-0000-0000-0000-000000000002/resourceGroups/rg-network-prod/providers/Microsoft.Network/privateDnsZones/privatelink.azurecr.io/SOA/@",
+    "fqdn": "privatelink.azurecr.io",
+    "name": "@",
+    "isAutoRegistered": true,
+    "ttl": 3600,
+    "type": "Microsoft.Network/privateDnsZones/SOA",
+    "soaRecords": [
+      {
+        "host": "azureprivatedns.net",
+        "email": "azureprivatedns-hostmaster.microsoft.com",
+        "serialNumber": 1,
+        "refreshTime": 3600,
+        "retryTime": 300,
+        "expireTime": 2419200,
+        "minimumTtl": 300
+      }
+    ]
+  },
+  {
+    "etag": "00000000-0000-0000-0000-00000000000b",
+    "id": "/subscriptions/00000000-0000-0000-0000-000000000002/resourceGroups/rg-network-prod/providers/Microsoft.Network/privateDnsZones/privatelink.azurecr.io/A/acrcontosoprod",
+    "fqdn": "acrcontosoprod.privatelink.azurecr.io",
+    "name": "acrcontosoprod",
+    "isAutoRegistered": false,
+    "ttl": 300,
+    "type": "Microsoft.Network/privateDnsZones/A",
+    "aRecords": [
+      {
+        "ipv4Address": "10.224.0.10"
+      }
+    ]
+  },
+  {
+    "etag": "00000000-0000-0000-0000-00000000000c",
+    "id": "/subscriptions/00000000-0000-0000-0000-000000000002/resourceGroups/rg-network-prod/providers/Microsoft.Network/privateDnsZones/privatelink.azurecr.io/A/kraneacrmaster",
+    "fqdn": "kraneacrmaster.privatelink.azurecr.io",
+    "name": "kraneacrmaster",
+    "isAutoRegistered": false,
+    "ttl": 300,
+    "type": "Microsoft.Network/privateDnsZones/A",
+    "aRecords": [
+      {
+        "ipv4Address": "10.224.0.11"
+      }
+    ]
+  }
+]

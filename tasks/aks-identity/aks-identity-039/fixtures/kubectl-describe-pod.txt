@@ -1,0 +1,40 @@
+Name:                checkout-api-7d9f4b6c8c-x2k
+Namespace:           shop
+Priority:            2000001000
+Priority Class Name: system-cluster-critical
+Node:                aks-nodepool1-24187903-vmss0000cz/10.224.0.35
+Start Time:          Fri, 30 Oct 2026 08:14:02 +0000
+Labels:              app=checkout-api
+                     pod-template-hash=7d9f4b6c8c
+Annotations:         <none>
+Status:              Pending
+IP:
+Containers:
+  checkout-api:
+    Container ID:
+    Image:         acrcontosoprod.azurecr.io/shop/checkout-api:v1.8.2
+    Image ID:
+    Port:          8080/TCP
+    Host Port:     0/TCP
+    State:          Waiting
+      Reason:       ImagePullBackOff
+    Ready:          False
+    Restart Count:  0
+    Environment:
+      CACHE_URL:  redis-master.shop.svc.cluster.local:6379
+Mounts:
+  /var/run/secrets/tokens from azure-identity-token (ro)
+Conditions:
+  Type        Status
+  Initialized  True
+  Ready        False
+  ContainersReady  False
+  PodScheduled     True
+Events:
+  Type     Reason          Age                    From               Message
+  ----     ------          ----                   ----               -------
+  Normal   Scheduled       4m11s                  default-scheduler  Successfully assigned shop/checkout-api-7d9f4b6c8c-x2k to aks-nodepool1-24187903-vmss0000cz
+  Normal   Pulling         3m41s (x4 over 4m10s)  kubelet            Pulling image "acrcontosoprod.azurecr.io/shop/checkout-api:v1.8.2"
+  Warning  Failed          3m39s (x4 over 4m9s)   kubelet            Failed to pull image "acrcontosoprod.azurecr.io/shop/checkout-api:v1.8.2": failed to resolve reference "acrcontosoprod.azurecr.io/shop/checkout-api:v1.8.2": failed to authorize: failed to fetch oauth token: unexpected status: 401 Unauthorized
+  Warning  Failed          2m57s (x3 over 3m20s)  kubelet            Error response from daemon: Get "https://acrcontosoprod.eastus.data.azurecr.io/v2/shop/checkout-api/blobs/sha256:9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08": unexpected status code 403 Forbidden: Client Disconnected: denied by registry policy, public network access is disabled for registry acrcontosoprod
+  Normal   BackOff         47s (x6 over 3m)       kubelet            Back-off pulling image "acrcontosoprod.azurecr.io/shop/checkout-api:v1.8.2"

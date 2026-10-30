@@ -1,0 +1,50 @@
+{
+  "adminUserEnabled": false,
+  "creationDate": "2026-02-11T09:12:44.1177650Z",
+  "dataEndpointEnabled": true,
+  "encryption": {
+    "keyVaultProperties": {
+      "identity": "/subscriptions/00000000-0000-0000-0000-000000000002/resourcegroups/rg-aks-prod/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-acr-cmk",
+      "keyIdentifier": "https://kv-contoso-cmk.vault.azure.net/keys/acr-cmk/00000000000000000000000000000000"
+    },
+    "status": "enabled"
+  },
+  "id": "/subscriptions/00000000-0000-0000-0000-000000000002/resourceGroups/rg-aks-prod/providers/Microsoft.ContainerRegistry/registries/acrcontosoprod",
+  "location": "eastus",
+  "loginServer": "acrcontosoprod.azurecr.io",
+  "name": "acrcontosoprod",
+  "networkRuleBypassOptionsForLoginServer": "AzureServices",
+  "networkRuleSet": {
+    "defaultAction": "Allow",
+    "ipRules": [],
+    "virtualNetworkRules": []
+  },
+  "privateEndpointConnections": [
+    {
+      "id": "/subscriptions/00000000-0000-0000-0000-000000000002/resourceGroups/rg-aks-prod/providers/Microsoft.ContainerRegistry/registries/acrcontosoprod/privateEndpointConnections/pe-acr-aks-prod",
+      "name": "pe-acr-aks-prod",
+      "privateLinkServiceConnectionState": {
+        "actionsRequired": "None",
+        "description": "Auto-approved",
+        "status": "Approved"
+      },
+      "provisioningState": "Succeeded"
+    }
+  ],
+  "provisioningState": "Succeeded",
+  "publicNetworkAccess": "Disabled",
+  "resourceGroup": "rg-aks-prod",
+  "sku": {
+    "name": "Premium",
+    "tier": "Premium"
+  },
+  "systemData": {
+    "createdAt": "2026-02-11T09:12:44.1177650Z",
+    "createdByType": "Application",
+    "lastModifiedAt": "2026-10-30T06:42:11.4382210Z",
+    "lastModifiedByType": "User"
+  },
+  "tags": {},
+  "type": "Microsoft.ContainerRegistry/registries",
+  "zoneRedundancy": "Disabled"
+}
