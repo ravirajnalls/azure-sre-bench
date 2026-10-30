@@ -25,6 +25,9 @@ python -m bench list
 # Validate the task corpus (folder contract, rubrics, fixtures)
 python -m bench validate
 
+# Regenerate docs/TASKS.md, the auto-generated task catalog (issue #42)
+python -m bench catalog
+
 # Run an agent on a task and grade the result
 python -m bench run --agent agents/naive.py --task tasks/aks-networking/aks-networking-001
 ```
