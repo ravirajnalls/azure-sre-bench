@@ -15,7 +15,7 @@ from pathlib import Path
 
 from bench import __version__
 from bench.grader import grade
-from bench.tasks import load_tasks
+from bench.tasks import difficulty_distribution, load_tasks
 
 SUBCOMMANDS = (
     "validate", "list", "grade", "run", "submit", "prompt", "site", "leaderboard", "catalog"
@@ -131,21 +131,44 @@ def build_parser() -> argparse.ArgumentParser:
                 default="site/index.html",
                 help="output HTML path (default: site/index.html)",
             )
-        else:
-            subparser = sub.add_parser(name)
-            if name in ("validate", "list", "catalog"):
-                subparser.add_argument(
-                    "root",
-                    nargs="?",
-                    default="tasks",
-                    help="tasks root directory (default: tasks)",
-                )
-            if name == "catalog":
-                subparser.add_argument(
-                    "--output",
-                    default="docs/TASKS.md",
-                    help="catalog output path (default: docs/TASKS.md)",
-                )
+        elif name == "validate":
+            validate_parser = sub.add_parser(
+                name, help="validate every task directory under the root"
+            )
+            validate_parser.add_argument(
+                "root",
+                nargs="?",
+                default="tasks",
+                help="tasks root directory (default: tasks)",
+            )
+        elif name == "list":
+            list_parser = sub.add_parser(name, help="list tasks with difficulty and title")
+            list_parser.add_argument(
+                "root",
+                nargs="?",
+                default="tasks",
+                help="tasks root directory (default: tasks)",
+            )
+            list_parser.add_argument(
+                "--stats",
+                action="store_true",
+                help="print the difficulty distribution after the task list",
+            )
+        elif name == "catalog":
+            catalog_parser = sub.add_parser(
+                name, help="render the task catalog to a Markdown file"
+            )
+            catalog_parser.add_argument(
+                "root",
+                nargs="?",
+                default="tasks",
+                help="tasks root directory (default: tasks)",
+            )
+            catalog_parser.add_argument(
+                "--output",
+                default="docs/TASKS.md",
+                help="catalog output path (default: docs/TASKS.md)",
+            )
     return parser
 
 
@@ -202,21 +225,35 @@ def cmd_validate(root: Path) -> int:
             print(f"FAIL {result.path}")
             for reason in result.errors:
                 print(f"  - {reason}")
+    for result in results:
+        if not result.errors and result.warnings:
+            print(f"WARN {result.path}")
+            for reason in result.warnings:
+                print(f"  - {reason}")
     valid = sum(1 for result in results if not result.errors)
-    print(f"{valid}/{len(results)} tasks valid")
+    warning_count = sum(len(result.warnings) for result in results)
+    suffix = f", {warning_count} warning{'s' if warning_count != 1 else ''}"
+    print(f"{valid}/{len(results)} tasks valid{suffix}")
     if not results:
         print(f"no tasks found under {root}", file=sys.stderr)
         return 1
     return 0 if valid == len(results) else 1
 
 
-def cmd_list(root: Path) -> int:
+def cmd_list(root: Path, stats: bool = False) -> int:
     results = load_tasks(root)
     for result in sorted(results, key=lambda item: (item.id, str(item.path))):
         config: dict = result.config or {}
         difficulty = config.get("difficulty") or "-"
         title = config.get("title") or "-"
         print(f"{result.id}  {difficulty}  {title}")
+    if stats:
+        distribution = difficulty_distribution(results)
+        total = sum(distribution.values())
+        counts = ", ".join(
+            f"{count} {level}" for level, count in distribution.items()
+        )
+        print(f"\n{total} tasks: {counts}")
     return 0
 
 
@@ -265,7 +302,7 @@ def main(argv: list[str] | None = None) -> int:
             return cmd_catalog(root, Path(args.output))
         if args.command == "leaderboard":
             return cmd_leaderboard(args)
-        return cmd_list(root)
+        return cmd_list(root, stats=bool(getattr(args, "stats", False)))
     print(
         f"'bench {args.command}' is not implemented yet; "
         "all subcommands are implemented; this should be unreachable.",

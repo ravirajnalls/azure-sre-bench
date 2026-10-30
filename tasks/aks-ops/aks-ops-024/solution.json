@@ -7,5 +7,9 @@
     "az-aks-show.json: the omsagent addon is enabled and points at law-prod-01, so the workspace link itself is not the problem",
     "kubectl-get-pods-ama-logs.txt: every ama-logs agent pod is Running, ruling out an agent failure"
   ],
-  "fix": "Re-create the missing data collection rule association that links the dcr-container-insights rule to the rebuilt cluster resource, e.g. az monitor data-collection rule association create --dcr-name dcr-container-insights --resource /subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-prod-01/providers/Microsoft.ContainerService/managedClusters/aks-prod-eus-02. The association was lost when the cluster was rebuilt and must be re-created for logs to flow again."
+  "fix": "Re-create the missing data collection rule association that links the dcr-container-insights rule to the rebuilt cluster resource, e.g. az monitor data-collection rule association create --dcr-name dcr-container-insights --resource /subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-prod-01/providers/Microsoft.ContainerService/managedClusters/aks-prod-eus-02. The association was lost when the cluster was rebuilt and must be re-created for logs to flow again.",
+  "evidence_files": [
+    "az-monitor-dcr-association-list.json",
+    "az-monitor-dcr-show.json"
+  ]
 }

@@ -7,5 +7,8 @@
     "kubectl-get-pods-pending.txt: 15 pods Pending 20-25 minutes across checkout, payments, catalogue, and shop-web",
     "az-vm-quota.json: Standard DADv5 Family vCPUs at 88 of 640 and Total Regional vCPUs at 88 of 625, so quota is not the blocker"
   ],
-  "fix": "Raise the autoscaler ceiling for the pool — e.g. az aks nodepool update --resource-group rg-prod-01 --cluster-name aks-prod-eus-01 --name userpool1 --max-count 15 — so the autoscaler can scale out again; the subscription's vCPU quota already covers the larger size. Alternatively reduce load or spread work onto a new pool."
+  "fix": "Raise the autoscaler ceiling for the pool — e.g. az aks nodepool update --resource-group rg-prod-01 --cluster-name aks-prod-eus-01 --name userpool1 --max-count 15 — so the autoscaler can scale out again; the subscription's vCPU quota already covers the larger size. Alternatively reduce load or spread work onto a new pool.",
+  "evidence_files": [
+    "az-aks-nodepool-list.json"
+  ]
 }

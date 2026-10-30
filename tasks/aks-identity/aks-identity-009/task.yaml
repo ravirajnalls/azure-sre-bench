@@ -2,7 +2,7 @@ id: aks-identity-009
 canary: 00000000-0000-0000-0000-000000000114  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
 title: Image pulls from acrcontosoprod fail with 401 after cluster recreation
 category: aks-identity
-difficulty: easy
+difficulty: medium
 tags:
   - aks-identity
   - kubelet-identity

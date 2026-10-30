@@ -7,5 +7,9 @@
     "az-network-private-dns-link-list.json: zone privatelink.eastus.azmk8s.io has a single virtual network link, vnet-aks-spoke-link, pointing only at vnet-aks-spoke",
     "az-network-vnet-peering-list.json: peering to vnet-hub is Connected (red herring — routing is not the problem)"
   ],
-  "fix": "Create a virtual network link for the privatelink.eastus.azmk8s.io zone to vnet-hub so the jumpbox resolver can resolve the private API FQDN."
+  "fix": "Create a virtual network link for the privatelink.eastus.azmk8s.io zone to vnet-hub so the jumpbox resolver can resolve the private API FQDN.",
+  "evidence_files": [
+    "az-aks-show.json",
+    "az-network-private-dns-link-list.json"
+  ]
 }

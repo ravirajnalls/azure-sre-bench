@@ -7,5 +7,9 @@
     "az-account-show.json: the signed-in tenant is 00000000-0000-0000-0000-000000000001, matching the vault and not the SecretProviderClass",
     "az-role-assignment-list.json: Key Vault Secrets User is correctly assigned to the workload identity on kv-reports-prod, ruling out RBAC"
   ],
-  "fix": "Correct the tenantId in SecretProviderClass azure-reports-kv to the Key Vault's tenant 00000000-0000-0000-0000-000000000001 and restart the stuck pods so the CSI driver picks up the corrected SecretProviderClass."
+  "fix": "Correct the tenantId in SecretProviderClass azure-reports-kv to the Key Vault's tenant 00000000-0000-0000-0000-000000000001 and restart the stuck pods so the CSI driver picks up the corrected SecretProviderClass.",
+  "evidence_files": [
+    "secretproviderclass.yaml",
+    "az-keyvault-show.json"
+  ]
 }

@@ -8,5 +8,8 @@
     "kubectl-get-svc-postgres.yaml: postgres Service selector and port 5432 are correct (red herring)",
     "postgres.log: postgres healthy with no connection attempts logged (red herring)"
   ],
-  "fix": "Add a NetworkPolicy in the billing namespace that allows ingress from pods labeled app=billing-api to postgres pods on TCP port 5432."
+  "fix": "Add a NetworkPolicy in the billing namespace that allows ingress from pods labeled app=billing-api to postgres pods on TCP port 5432.",
+  "evidence_files": [
+    "kubectl-get-networkpolicy.yaml"
+  ]
 }

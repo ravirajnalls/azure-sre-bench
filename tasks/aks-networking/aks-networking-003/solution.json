@@ -7,5 +7,9 @@
     "kubectl-get-nodes.txt: three Ready nodes (10.224.0.4-.6) all drawing pod addresses from the same /24 subnet",
     "kubectl-get-svc.txt: the checkout LoadBalancer shows EXTERNAL-IP <pending> while the existing partner-api LoadBalancer keeps its address (red herring — no LB or controller problem)"
   ],
-  "fix": "Relieve the address space: recreate the node pool on a larger subnet (e.g. a /22) or a new node pool subnet, switch the cluster to Azure CNI overlay, or reduce maxPods so per-node pod-IP allocation fits the existing subnet."
+  "fix": "Relieve the address space: recreate the node pool on a larger subnet (e.g. a /22) or a new node pool subnet, switch the cluster to Azure CNI overlay, or reduce maxPods so per-node pod-IP allocation fits the existing subnet.",
+  "evidence_files": [
+    "az-network-vnet-subnet-show.json",
+    "az-aks-show.json"
+  ]
 }

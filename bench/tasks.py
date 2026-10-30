@@ -5,6 +5,10 @@ A task is a directory `tasks/<category>/<task-id>/` containing `task.yaml`, a
 `solution.json` (reference answer). `inspect_task` collects every violation for
 one task so a single run reports all problems, and `load_tasks` additionally
 detects duplicate ids across the repo.
+
+`TaskResult` separates `errors` (structural, fail validation) from `warnings`
+(corpus-quality judgment calls, reported but not fatal) — currently the
+difficulty/`evidence_files` consistency checks from issue #101.
 """
 
 from __future__ import annotations
@@ -55,6 +59,24 @@ GUID_RE = re.compile(
 PLACEHOLDER_GUID_RE = re.compile(r"0{8}-0{4}-0{4}-0{4}-0{11}[0-9a-fA-F]")
 
 
+# Difficulty rubric (issue #101 / AGENTS.md "Difficulty rubric"): the declared
+# difficulty must agree with how many fixture files the reference answer needs
+# to prove its cause. easy = 1 fixture; medium = 2 fixtures connected; hard =
+# 3+ fixtures — or exactly 2 when a misleading signal or two interacting
+# faults justify it (the validator cannot check that part; reviewers must).
+DIFFICULTY_EVIDENCE_COUNTS = {"easy": 1, "medium": 2}
+
+
+def difficulty_distribution(results: list[TaskResult]) -> dict[str, int]:
+    """Count tasks per difficulty level in fixed easy/medium/hard order (issue #101)."""
+    counts = {level: 0 for level in ("easy", "medium", "hard")}
+    for result in results:
+        difficulty = (result.config or {}).get("difficulty")
+        if difficulty in counts:
+            counts[difficulty] += 1
+    return counts
+
+
 @dataclass
 class TaskResult:
     """Outcome of inspecting one task directory."""
@@ -62,6 +84,7 @@ class TaskResult:
     path: Path
     config: dict | None = None
     errors: list[str] = field(default_factory=list)
+    warnings: list[str] = field(default_factory=list)
 
     @property
     def id(self) -> str:
@@ -190,17 +213,69 @@ def _validate_expected(task_dir: Path) -> list[str]:
     return errors
 
 
-def _validate_solution(task_dir: Path) -> list[str]:
+def _load_solution(task_dir: Path) -> tuple[dict | None, list[str]]:
     path = task_dir / "solution.json"
     if not path.is_file():
-        return ["missing solution.json"]
+        return None, ["missing solution.json"]
     try:
         data = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as exc:
-        return [f"solution.json does not parse: {exc}"]
+        return None, [f"solution.json does not parse: {exc}"]
     if not isinstance(data, dict):
-        return ["solution.json must contain a JSON object"]
-    return []
+        return None, ["solution.json must contain a JSON object"]
+    return data, []
+
+
+def _solution_warnings(
+    solution: dict, config: dict | None, task_dir: Path
+) -> list[str]:
+    """Warnings for solution.json corpus quality (issue #101).
+
+    All difficulty/`evidence_files` disagreement is warned, never errored:
+    the counts are per-task judgment, so a stale declaration must surface in
+    `bench validate` output without blocking unrelated work.
+    """
+    warnings: list[str] = []
+
+    evidence_files = solution.get("evidence_files")
+    if not isinstance(evidence_files, list) or not evidence_files:
+        warnings.append(
+            "solution.json: 'evidence_files' must be a non-empty list of "
+            "fixture filenames needed to prove the cause"
+        )
+        evidence_files = None
+    elif not all(isinstance(name, str) and name.strip() for name in evidence_files):
+        warnings.append(
+            "solution.json: 'evidence_files' must contain only non-empty strings"
+        )
+        evidence_files = None
+    else:
+        fixture_names = {
+            path.name
+            for path in (task_dir / "fixtures").iterdir()
+            if path.is_file()
+        } if (task_dir / "fixtures").is_dir() else set()
+        missing = [name for name in evidence_files if name not in fixture_names]
+        if missing:
+            warnings.append(
+                f"solution.json: evidence_files not found in fixtures/: {', '.join(missing)}"
+            )
+
+    difficulty = (config or {}).get("difficulty")
+    if evidence_files is not None and difficulty in DIFFICULTIES:
+        count = len(evidence_files)
+        expected = DIFFICULTY_EVIDENCE_COUNTS.get(difficulty)
+        if expected is not None and count != expected:
+            warnings.append(
+                f"difficulty '{difficulty}' expects {expected} evidence_files, "
+                f"found {count} (AGENTS.md 'Difficulty rubric')"
+            )
+        elif difficulty == "hard" and count < 2:
+            warnings.append(
+                f"difficulty 'hard' expects 3+ evidence_files, or 2 with a "
+                f"misleading signal / two interacting faults; found {count}"
+            )
+    return warnings
 
 
 def inspect_task(task_dir: Path) -> TaskResult:
@@ -224,9 +299,13 @@ def inspect_task(task_dir: Path) -> TaskResult:
 
     result.errors.extend(_validate_fixtures(task_dir))
     result.errors.extend(_validate_expected(task_dir))
-    result.errors.extend(_validate_solution(task_dir))
+    solution, solution_errors = _load_solution(task_dir)
+    result.errors.extend(solution_errors)
+    if solution is not None:
+        result.warnings.extend(_solution_warnings(solution, result.config, task_dir))
     # Repeated violations (e.g. the same GUID twice in one fixture) report once.
     result.errors = list(dict.fromkeys(result.errors))
+    result.warnings = list(dict.fromkeys(result.warnings))
     return result
 
 

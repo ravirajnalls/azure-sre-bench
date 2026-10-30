@@ -7,5 +7,8 @@
     "kubectl-api-versions.txt: the upgraded API server serves only policy/v1 and autoscaling/v2 — the beta versions are gone",
     "az-aks-show.json: kubernetesVersion 1.29.7 on both node pools, provisioningState Succeeded — the cluster itself is healthy"
   ],
-  "fix": "Update the edge-gateway manifests to the API versions the cluster still serves: migrate the PodDisruptionBudget in pdb.yaml from policy/v1beta1 to policy/v1 (minAvailable carries over unchanged) and the HorizontalPodAutoscaler in hpa.yaml from autoscaling/v2beta2 to autoscaling/v2, then commit to the GitOps repo so Flux can reconcile the edge namespace again."
+  "fix": "Update the edge-gateway manifests to the API versions the cluster still serves: migrate the PodDisruptionBudget in pdb.yaml from policy/v1beta1 to policy/v1 (minAvailable carries over unchanged) and the HorizontalPodAutoscaler in hpa.yaml from autoscaling/v2beta2 to autoscaling/v2, then commit to the GitOps repo so Flux can reconcile the edge namespace again.",
+  "evidence_files": [
+    "flux-kustomization-status.txt"
+  ]
 }

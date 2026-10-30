@@ -2,7 +2,7 @@ id: aks-workloads-016
 canary: 00000000-0000-0000-0000-000000000114  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
 title: Pods never become Ready after a base image bump
 category: aks-workloads
-difficulty: easy
+difficulty: medium
 tags:
   - aks-workloads
   - aks

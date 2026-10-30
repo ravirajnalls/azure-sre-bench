@@ -8,5 +8,9 @@
     "kubectl-get-nodes.txt: aks-npuser-31214664-vmss000000 is Ready but SchedulingDisabled (cordoned), all other nodes Ready — nodes are healthy, eviction is what is blocked",
     "az-aks-show.json: cluster provisioningState Upgrading with the npuser agent pool still on 1.30.6"
   ],
-  "fix": "Make one ledger-writer pod evictable: increase the ledger-writer Deployment to at least 3 replicas, or relax the PDB to minAvailable: 1 / maxUnavailable: 1 so the budget allows one disruption. Then let the upgrade resume (or cordon and drain aks-npuser-31214664-vmss000000 again) and the 1.31.1 upgrade will proceed through the remaining nodes."
+  "fix": "Make one ledger-writer pod evictable: increase the ledger-writer Deployment to at least 3 replicas, or relax the PDB to minAvailable: 1 / maxUnavailable: 1 so the budget allows one disruption. Then let the upgrade resume (or cordon and drain aks-npuser-31214664-vmss000000 again) and the 1.31.1 upgrade will proceed through the remaining nodes.",
+  "evidence_files": [
+    "pdb.yaml",
+    "deployment.yaml"
+  ]
 }

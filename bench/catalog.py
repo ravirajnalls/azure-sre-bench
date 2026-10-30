@@ -12,7 +12,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from bench.tasks import TaskResult, load_tasks
+from bench.tasks import TaskResult, difficulty_distribution, load_tasks
 
 CATALOG_HEADER = """\
 # Task Catalog
@@ -55,10 +55,15 @@ def render_catalog(results: list[TaskResult]) -> str:
     for result in sorted(results, key=lambda item: (result_category(item), item.id)):
         by_category.setdefault(result_category(result), []).append(result)
 
+    distribution = difficulty_distribution(results)
+    distribution_text = ", ".join(
+        f"{count} {level}" for level, count in distribution.items()
+    )
     lines = [
         CATALOG_HEADER,
         "",
-        f"{_plural(len(results), 'task')} in {_plural(len(by_category), 'category')}.",
+        f"{_plural(len(results), 'task')} in {_plural(len(by_category), 'category')}: "
+        f"{distribution_text} (difficulty rubric: AGENTS.md).",
     ]
 
     for category in sorted(by_category):

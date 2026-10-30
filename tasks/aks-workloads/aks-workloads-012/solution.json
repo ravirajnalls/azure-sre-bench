@@ -6,5 +6,9 @@
     "kubectl-describe-pod.txt: Liveness probe failed: HTTP probe failed with statuscode: 500, followed by Killing — container failed liveness probe, will be restarted",
     "catalog-api.log: warm-up aborts at ~35-40% on every restart, so /healthz never turns healthy"
   ],
-  "fix": "Add a startupProbe to the catalog-api container (e.g. httpGet /healthz with failureThreshold 30 and periodSeconds 5) so the kubelet waits up to the warm-up window before liveness checks apply; alternatively raise the liveness probe's initialDelaySeconds above the ~90s warm-up duration. Once startup completes, the existing liveness probe takes over and pods stop restarting."
+  "fix": "Add a startupProbe to the catalog-api container (e.g. httpGet /healthz with failureThreshold 30 and periodSeconds 5) so the kubelet waits up to the warm-up window before liveness checks apply; alternatively raise the liveness probe's initialDelaySeconds above the ~90s warm-up duration. Once startup completes, the existing liveness probe takes over and pods stop restarting.",
+  "evidence_files": [
+    "deployment.yaml",
+    "catalog-api.log"
+  ]
 }

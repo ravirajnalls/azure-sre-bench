@@ -7,5 +7,9 @@
     "kubectl-top-nodes.txt: all 8 systempool nodes idle at roughly 7-9% CPU and 6% memory — paid capacity that the autoscaler never releases",
     "log-analytics-ingestion.csv: ingestion grew only about 6% month over month, too small to account for a doubled bill"
   ],
-  "fix": "Lower the systempool autoscaler minCount back to the original floor of 3 (and/or resize the system pool to a smaller VM such as Standard_D4s_v5) so the autoscaler can scale the system pool down outside peak hours; the eight underutilized Standard_D16s_v5 nodes are what doubled the bill."
+  "fix": "Lower the systempool autoscaler minCount back to the original floor of 3 (and/or resize the system pool to a smaller VM such as Standard_D4s_v5) so the autoscaler can scale the system pool down outside peak hours; the eight underutilized Standard_D16s_v5 nodes are what doubled the bill.",
+  "evidence_files": [
+    "cost-by-meter.csv",
+    "az-aks-nodepool-list.json"
+  ]
 }

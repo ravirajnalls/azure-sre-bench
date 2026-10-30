@@ -6,5 +6,9 @@
     "kubectl-describe-hpa.txt: FailedComputeMetricsReplicas — missing request for cpu",
     "kubectl-top-pod.txt: metrics-server does report usage (roughly 900m per pod), so metrics flow and only the request is absent"
   ],
-  "fix": "Set a cpu request on the checkout-api container in the deployment — add a resources.requests block (requests.cpu sized against observed usage, e.g. 500m, with a matching memory request) — so the HPA can compute utilization percentages and scale between minReplicas and maxReplicas."
+  "fix": "Set a cpu request on the checkout-api container in the deployment — add a resources.requests block (requests.cpu sized against observed usage, e.g. 500m, with a matching memory request) — so the HPA can compute utilization percentages and scale between minReplicas and maxReplicas.",
+  "evidence_files": [
+    "deployment.yaml",
+    "kubectl-describe-hpa.txt"
+  ]
 }

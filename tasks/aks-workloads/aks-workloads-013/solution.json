@@ -7,5 +7,8 @@
     "search-indexer.log: healthy INFO batches with no errors, ending abruptly at 09:40:56 — matching the OOMKilled Finished time in kubectl-describe-pod.txt",
     "node-cpu-kql.csv: node CPU peaks around 68% average during the same window — nodes are busy but not the failure source"
   ],
-  "fix": "Make the container memory limit larger than the JVM heap: raise the deployment's memory limit (e.g. to 1Gi, leaving headroom above -Xmx768m for metaspace, threads, and off-heap), or lower the JVM's -Xmx (e.g. -Xmx384m) to fit inside the existing 512Mi limit, then redeploy the search-indexer deployment."
+  "fix": "Make the container memory limit larger than the JVM heap: raise the deployment's memory limit (e.g. to 1Gi, leaving headroom above -Xmx768m for metaspace, threads, and off-heap), or lower the JVM's -Xmx (e.g. -Xmx384m) to fit inside the existing 512Mi limit, then redeploy the search-indexer deployment.",
+  "evidence_files": [
+    "deployment.yaml"
+  ]
 }
