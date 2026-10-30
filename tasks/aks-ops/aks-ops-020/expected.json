@@ -1,8 +1,12 @@
 {
   "root_cause": [
-    ["maxcount", "max count", "max size", "maximum"]
+    ["maxcount", "max count", "max-count"],
+    ["autoscaler", "scale out", "no new node", "10 nodes"]
   ],
   "fix": [
-    ["maxcount", "max count", "max-count"]
+    ["max-count", "maxcount", "max count", "nodepool update", "raise"]
+  ],
+  "distractors": [
+    ["standard dadv5 family vcpus", "quota exhausted", "quota limit reached"]
   ]
 }

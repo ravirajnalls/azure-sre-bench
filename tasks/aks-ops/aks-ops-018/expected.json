@@ -1,9 +1,13 @@
 {
   "root_cause": [
     ["pdb", "poddisruptionbudget", "disruption budget"],
-    ["minavailable", "allowed disruptions", "0"]
+    ["minavailable: 2", "replicas: 2", "allowed disruptions", "zero", "cannot evict"]
   ],
   "fix": [
-    ["maxunavailable", "minavailable: 1", "increase replicas", "scale"]
+    ["minavailable: 1", "maxunavailable: 1", "increase replicas", "3 replicas"]
+  ],
+  "distractors": [
+    ["maxunavailable: 0", "rolling update strategy"],
+    ["calico", "network policy"]
   ]
 }

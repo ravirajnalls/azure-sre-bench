@@ -1,10 +1,10 @@
 {
   "root_cause": [
-    ["zone", "topology", "node affinity", "node-affinity"],
+    ["node affinity", "zone affinity", "affinity conflict", "topology"],
     ["immediate", "volumebindingmode", "volume binding mode", "eastus-3"]
   ],
   "fix": [
-    ["waitforfirstconsumer", "wait for first consumer"]
+    ["waitforfirstconsumer", "wait for first consumer", "delete the bound pvc", "add zone 3"]
   ],
   "distractors": [
     ["insufficient resources", "memory pressure", "memory"]

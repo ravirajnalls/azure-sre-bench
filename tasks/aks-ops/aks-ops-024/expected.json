@@ -1,8 +1,13 @@
 {
   "root_cause": [
-    ["association", "dcra"]
+    ["dcra", "data collection rule association", "association"],
+    ["missing", "was lost", "not associated", "never re-created"]
   ],
   "fix": [
-    ["association", "dcra", "associate"]
+    ["dcra", "data collection rule association", "association create", "associate"]
+  ],
+  "distractors": [
+    ["ama-logs", "crashloopbackoff"],
+    ["law-prod-01", "wrong workspace"]
   ]
 }
