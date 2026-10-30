@@ -1,14 +1,47 @@
 {
   "root_cause": [
-    ["cluster autoscaler", "autoscaler", "scale-down", "scale down", "node scale-down", "eviction", "evicting"],
-    ["poddisruptionbudget", "pdb", "disruption budget", "no poddisruptionbudget", "unprotected"],
-    ["safe-to-evict", "cluster-autoscaler.kubernetes.io/safe-to-evict", "two replicas at once", "co-located replicas"]
+    [
+      "cluster autoscaler",
+      "autoscaler",
+      "scale-down",
+      "scale down",
+      "node scale-down",
+      "eviction",
+      "evicting"
+    ],
+    [
+      "poddisruptionbudget",
+      "pdb",
+      "disruption budget",
+      "no poddisruptionbudget",
+      "unprotected"
+    ],
+    [
+      "safe-to-evict",
+      "cluster-autoscaler.kubernetes.io/safe-to-evict",
+      "two replicas at once",
+      "co-located replicas"
+    ]
   ],
   "fix": [
-    ["poddisruptionbudget", "pdb", "add a poddisruptionbudget", "minavailable", "minAvailable: 2"],
-    ["safe-to-evict", "cluster-autoscaler.kubernetes.io/safe-to-evict", "anti-affinity"]
+    [
+      "poddisruptionbudget",
+      "pdb",
+      "add a poddisruptionbudget",
+      "minavailable",
+      "minAvailable: 2",
+      "safe-to-evict",
+      "cluster-autoscaler.kubernetes.io/safe-to-evict",
+      "anti-affinity"
+    ]
   ],
   "distractors": [
-    ["disk latency", "high disk latency", "slow disk", "disk io", "storage slowness"]
+    [
+      "disk latency",
+      "high disk latency",
+      "slow disk",
+      "disk io",
+      "storage slowness"
+    ]
   ]
 }
