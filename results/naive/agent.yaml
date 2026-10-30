@@ -1,0 +1,11 @@
+# Agent descriptor for the naive baseline run (issue #118 schema).
+# Naive is the deliberate-fail baseline from issue #4: it reads nothing.
+name: naive
+version: "1.0.0"
+model: none
+provider: none
+framework: none
+open-source: yes
+command: python agents/naive.py
+date: 2026-10-30
+contact: raviraj19966@gmail.com
