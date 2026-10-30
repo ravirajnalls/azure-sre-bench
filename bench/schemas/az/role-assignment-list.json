@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "az role assignment list output: a bare JSON array of role assignments. Also matches suffixed variants such as az-role-assignment-list-acr.json via longest-prefix mapping. Issue #151.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": [
+      "id",
+      "name",
+      "principalId",
+      "principalType",
+      "roleDefinitionId",
+      "roleDefinitionName",
+      "scope",
+      "type"
+    ],
+    "properties": {
+      "id": { "type": "string" },
+      "name": { "type": "string" },
+      "principalId": { "type": "string" },
+      "principalType": { "type": "string" },
+      "roleDefinitionId": { "type": "string" },
+      "roleDefinitionName": { "type": "string" },
+      "scope": { "type": "string" },
+      "type": { "type": "string" }
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "az aks nodepool list output. az wraps every list under `value`; pool items may carry `count` or `nodeCount` depending on how the fixture was captured, so count is not required. Issue #151.",
+  "type": "object",
+  "required": ["value"],
+  "properties": {
+    "value": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "vmSize", "provisioningState"],
+        "properties": {
+          "name": { "type": "string" },
+          "vmSize": { "type": "string" },
+          "provisioningState": { "type": "string" }
+        }
+      }
+    }
+  }
+}

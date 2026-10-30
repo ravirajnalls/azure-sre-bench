@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "az network vnet subnet show output (subnet object). Also matches suffixed variants such as az-network-vnet-subnet-show-pool2.json via longest-prefix mapping. Issue #151.",
+  "type": "object",
+  "required": ["name", "addressPrefix", "provisioningState", "resourceGroup"],
+  "properties": {
+    "name": { "type": "string" },
+    "addressPrefix": { "type": "string" },
+    "provisioningState": { "type": "string" },
+    "resourceGroup": { "type": "string" }
+  }
+}

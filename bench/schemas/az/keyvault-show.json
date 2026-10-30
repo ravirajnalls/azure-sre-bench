@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "az keyvault show output (vault). The diagnostic fields live in `properties` (vaultUri, RBAC vs access policies). Issue #151.",
+  "type": "object",
+  "required": ["id", "name", "location", "properties", "resourceGroup"],
+  "properties": {
+    "id": { "type": "string" },
+    "name": { "type": "string" },
+    "location": { "type": "string" },
+    "resourceGroup": { "type": "string" },
+    "properties": {
+      "type": "object",
+      "required": ["vaultUri", "provisioningState", "sku"],
+      "properties": {
+        "vaultUri": { "type": "string" },
+        "provisioningState": { "type": "string" },
+        "sku": { "type": "object" }
+      }
+    }
+  }
+}

@@ -48,3 +48,10 @@ jobs:
         env:
           HELDOUT_KEY: ${{ secrets.HELDOUT_KEY }}
         run: pytest -q
+
+      - name: Fixture lint — az JSON shapes (warning-only, issue #151)
+        # The az checker reports warnings/skips only, and lint-fixtures exits
+        # non-zero solely on error-severity findings, so this job is
+        # warning-only by construction: it surfaces shape violations without
+        # blocking merges. Promote to blocking once the corpus is clean.
+        run: python -m bench lint-fixtures --check az
