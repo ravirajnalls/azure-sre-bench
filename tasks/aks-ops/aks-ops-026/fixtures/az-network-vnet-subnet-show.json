@@ -1,0 +1,32 @@
+{
+  "addressPrefix": "10.20.8.0/22",
+  "addressPrefixes": [],
+  "defaultOutboundAccess": false,
+  "delegations": [],
+  "etag": "W/\"00000000-0000-0000-0000-000000000004\"",
+  "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-prod/providers/Microsoft.Network/virtualNetworks/prod-vnet/subnets/app-subnet",
+  "ipAllocations": [],
+  "ipConfigurationProfiles": [],
+  "name": "app-subnet",
+  "natGateway": null,
+  "networkSecurityGroup": {
+    "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-prod/providers/Microsoft.Network/networkSecurityGroups/nsg-prod",
+    "resourceGroup": "rg-prod"
+  },
+  "privateEndpointNetworkPolicies": "Enabled",
+  "privateEndpoints": [],
+  "privateLinkServiceNetworkPolicies": "Enabled",
+  "provisioningState": "Succeeded",
+  "purpose": null,
+  "resourceGroup": "rg-prod",
+  "routeTable": null,
+  "serviceAssociationLinks": [],
+  "serviceEndpoints": [
+    {
+      "locations": ["westeurope", "northeurope"],
+      "provisioningState": "Succeeded",
+      "service": "Microsoft.Storage"
+    }
+  ],
+  "type": "Microsoft.Network/virtualNetworks/subnets"
+}

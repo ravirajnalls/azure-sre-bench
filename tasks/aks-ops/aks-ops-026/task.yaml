@@ -1,0 +1,18 @@
+id: aks-ops-026
+canary: 00000000-0000-0000-0000-000000000114  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
+title: AKS upgrade of the main node pool fails with a generic provisioning error
+category: aks-ops
+difficulty: hard
+tags:
+  - aks-ops
+  - aks
+  - upgrade
+  - azure-cni
+  - networking
+symptom: |
+  The upgrade of prod-aks-eus1 to Kubernetes 1.29.7 keeps failing. The portal
+  shows a generic "Provisioning failed" error roughly twenty minutes into every
+  attempt, with no reason attached. Someone on the apps team already reviewed
+  the pod disruption budgets and confirmed every workload allows disruptions,
+  so cordoning is not the blocker. The control plane is healthy and no
+  application alerts are firing.

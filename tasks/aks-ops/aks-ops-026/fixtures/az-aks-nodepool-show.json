@@ -1,0 +1,49 @@
+{
+  "agentPoolType": "VirtualMachineScaleSets",
+  "availabilityZones": ["1", "2", "3"],
+  "count": 30,
+  "currentOrchestratorVersion": "1.29.2",
+  "enableAutoScaling": false,
+  "enableCustomCaTrust": false,
+  "enableEncryptionAtHost": false,
+  "enableFIPS": false,
+  "enableNodePublicIp": false,
+  "enableUltraSSD": false,
+  "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-prod/providers/Microsoft.ContainerService/managedClusters/prod-aks-eus1/agentPools/app-pool",
+  "kubeletConfig": null,
+  "kubeletDiskType": "OS",
+  "linuxOSConfig": null,
+  "maxPods": 30,
+  "mode": "User",
+  "name": "app-pool",
+  "nodeImageVersion": "AKSUbuntu-2026.10.10",
+  "nodeLabels": {},
+  "nodeTaints": null,
+  "orchestratorVersion": "1.29.7",
+  "osDiskSizeGb": 128,
+  "osDiskType": "Managed",
+  "osSku": "Ubuntu",
+  "osType": "Linux",
+  "podSubnetId": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-prod/providers/Microsoft.Network/virtualNetworks/prod-vnet/subnets/app-subnet",
+  "powerState": {
+    "code": "Running"
+  },
+  "provisioningState": "Upgrading",
+  "proximityPlacementGroupId": null,
+  "scaleSetEvictionPolicy": null,
+  "scaleSetPriority": "Regular",
+  "securityProfile": {
+    "enableSecureBoot": false,
+    "sshAccess": "LocalUser"
+  },
+  "spotMaxPrice": null,
+  "tags": {},
+  "type": "Microsoft.ContainerService/managedClusters/agentPools",
+  "upgradeSettings": {
+    "drainTimeoutInMinutes": 5,
+    "maxSurge": "33%",
+    "nodeSoakDurationInMinutes": 0
+  },
+  "vmSize": "Standard_D8s_v5",
+  "vnetSubnetId": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-prod/providers/Microsoft.Network/virtualNetworks/prod-vnet/subnets/app-subnet"
+}

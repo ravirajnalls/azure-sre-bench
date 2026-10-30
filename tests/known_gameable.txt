@@ -42,6 +42,10 @@ aks-ops-022
 aks-ops-023
 aks-ops-024
 aks-ops-025
+aks-ops-026
+# aks-ops-026 (issue #104): keyword-soup only — its rubric alternatives union
+# to ~220 chars per field, far under the 600 cap; remove when the aks-ops
+# rubric audit (#98) makes the soup fail.
 aks-workloads-012
 aks-workloads-013
 aks-workloads-014

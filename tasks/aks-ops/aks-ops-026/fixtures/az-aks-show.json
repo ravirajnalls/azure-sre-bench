@@ -1,0 +1,101 @@
+{
+  "aadProfile": null,
+  "agentPoolProfiles": [
+    {
+      "availabilityZones": ["1", "2", "3"],
+      "count": 30,
+      "currentOrchestratorVersion": "1.29.2",
+      "enableAutoScaling": false,
+      "maxPods": 30,
+      "mode": "User",
+      "name": "app-pool",
+      "orchestratorVersion": "1.29.7",
+      "osDiskSizeGb": 128,
+      "osType": "Linux",
+      "powerState": {
+        "code": "Running"
+      },
+      "provisioningState": "Upgrading",
+      "type": "VirtualMachineScaleSets",
+      "vmSize": "Standard_D8s_v5",
+      "vnetSubnetId": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-prod/providers/Microsoft.Network/virtualNetworks/prod-vnet/subnets/app-subnet"
+    },
+    {
+      "availabilityZones": ["1", "2", "3"],
+      "count": 3,
+      "currentOrchestratorVersion": "1.29.2",
+      "enableAutoScaling": false,
+      "maxPods": 30,
+      "mode": "System",
+      "name": "sys-pool",
+      "orchestratorVersion": "1.29.7",
+      "osDiskSizeGb": 128,
+      "osType": "Linux",
+      "powerState": {
+        "code": "Running"
+      },
+      "provisioningState": "Succeeded",
+      "type": "VirtualMachineScaleSets",
+      "vmSize": "Standard_D4s_v5",
+      "vnetSubnetId": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-prod/providers/Microsoft.Network/virtualNetworks/prod-vnet/subnets/app-subnet"
+    }
+  ],
+  "apiServerAccessProfile": {
+    "enablePrivateCluster": false,
+    "privateDnsZone": null
+  },
+  "autoUpgradeProfile": null,
+  "diskEncryptionSetId": null,
+  "dnsPrefix": "prod-aks-eus1",
+  "fqdn": "prod-aks-eus1-00000000-0000-0000-0000-000000000005.hcp.westeurope.azmk8s.io",
+  "identity": {
+    "principalId": "00000000-0000-0000-0000-000000000006",
+    "tenantId": "00000000-0000-0000-0000-000000000002",
+    "type": "SystemAssigned"
+  },
+  "kubernetesVersion": "1.29.7",
+  "location": "westeurope",
+  "maxAgentPools": 100,
+  "name": "prod-aks-eus1",
+  "networkProfile": {
+    "dnsServiceIp": "10.0.0.10",
+    "dockerBridgeCidr": null,
+    "ipFamilies": ["IPv4"],
+    "loadBalancerProfile": {
+      "allocatedOutboundPorts": null,
+      "effectiveOutboundIPs": [
+        {
+          "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-prod/providers/Microsoft.Network/publicIPAddresses/ip-prod-aks-eus1"
+        }
+      ],
+      "enableMultipleStandardLoadBalancers": null,
+      "idleTimeoutInMinutes": 30,
+      "managedOutboundIPs": {
+        "count": 2
+      }
+    },
+    "loadBalancerSku": "standard",
+    "networkMode": null,
+    "networkPlugin": "azure",
+    "networkPluginMode": null,
+    "networkPolicy": "calico",
+    "outboundType": "loadBalancer",
+    "podCidr": null,
+    "podCidrs": null,
+    "serviceCidr": "10.0.0.0/16",
+    "serviceCidrs": null
+  },
+  "nodeResourceGroup": "rg-prod-nodes",
+  "podIdentityProfile": null,
+  "powerState": {
+    "code": "Running"
+  },
+  "privateFqdn": null,
+  "provisioningState": "Upgrading",
+  "resourceGroup": "rg-prod",
+  "sku": {
+    "name": "Basic",
+    "tier": "Standard"
+  },
+  "type": "Microsoft.ContainerService/managedClusters"
+}

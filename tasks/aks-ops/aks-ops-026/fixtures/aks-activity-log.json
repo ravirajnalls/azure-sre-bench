@@ -1,0 +1,144 @@
+[
+  {
+    "caller": "platform-oncall@contoso.example",
+    "category": {
+      "localizedValue": "Administrative",
+      "value": "Administrative"
+    },
+    "correlationId": "00000000-0000-0000-0000-000000000006",
+    "eventDataId": "00000000-0000-0000-0000-000000000007",
+    "eventTimestamp": "2026-10-27T23:41:07.412Z",
+    "operationName": {
+      "localizedValue": "Upgrade managed cluster",
+      "value": "Microsoft.ContainerService/managedClusters/upgrade/action"
+    },
+    "properties": {
+      "eventCategory": "Administrative",
+      "serviceRequestId": "00000000-0000-0000-0000-000000000008",
+      "statusCode": "Accepted"
+    },
+    "resourceGroupName": "rg-prod",
+    "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-prod/providers/Microsoft.ContainerService/managedClusters/prod-aks-eus1",
+    "status": {
+      "localizedValue": "Accepted",
+      "value": "Accepted"
+    },
+    "submissionTimestamp": "2026-10-27T23:41:12.883Z",
+    "subscriptionId": "00000000-0000-0000-0000-000000000001",
+    "tenantId": "00000000-0000-0000-0000-000000000002"
+  },
+  {
+    "caller": "platform-oncall@contoso.example",
+    "category": {
+      "localizedValue": "Administrative",
+      "value": "Administrative"
+    },
+    "correlationId": "00000000-0000-0000-0000-000000000006",
+    "eventDataId": "00000000-0000-0000-0000-000000000009",
+    "eventTimestamp": "2026-10-28T00:04:33.108Z",
+    "operationName": {
+      "localizedValue": "Create or Update Virtual Machine Scale Set",
+      "value": "Microsoft.Compute/virtualMachineScaleSets/write"
+    },
+    "properties": {
+      "eventCategory": "Administrative",
+      "serviceRequestId": "00000000-0000-0000-0000-00000000000a",
+      "statusCode": "BadRequest",
+      "statusMessage": "{\"code\":\"SubnetIsFull\",\"message\":\"Subnet 'app-subnet' (10.20.8.0/22) in virtual network 'prod-vnet' has insufficient free IP addresses for the requested virtual machines: 310 required, 118 available.\",\"target\":\"aks-app-pool-33983453-vmss\"}"
+    },
+    "resourceGroupName": "rg-prod",
+    "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-prod/providers/Microsoft.Compute/virtualMachineScaleSets/aks-app-pool-33983453-vmss",
+    "status": {
+      "localizedValue": "Failed",
+      "value": "Failed"
+    },
+    "submissionTimestamp": "2026-10-28T00:05:02.431Z",
+    "subscriptionId": "00000000-0000-0000-0000-000000000001",
+    "tenantId": "00000000-0000-0000-0000-000000000002"
+  },
+  {
+    "caller": "platform-oncall@contoso.example",
+    "category": {
+      "localizedValue": "Administrative",
+      "value": "Administrative"
+    },
+    "correlationId": "00000000-0000-0000-0000-00000000000b",
+    "eventDataId": "00000000-0000-0000-0000-00000000000c",
+    "eventTimestamp": "2026-10-28T00:07:44.260Z",
+    "operationName": {
+      "localizedValue": "Upgrade managed cluster",
+      "value": "Microsoft.ContainerService/managedClusters/upgrade/action"
+    },
+    "properties": {
+      "eventCategory": "Administrative",
+      "serviceRequestId": "00000000-0000-0000-0000-00000000000d",
+      "statusCode": "Accepted"
+    },
+    "resourceGroupName": "rg-prod",
+    "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-prod/providers/Microsoft.ContainerService/managedClusters/prod-aks-eus1",
+    "status": {
+      "localizedValue": "Accepted",
+      "value": "Accepted"
+    },
+    "submissionTimestamp": "2026-10-28T00:07:51.109Z",
+    "subscriptionId": "00000000-0000-0000-0000-000000000001",
+    "tenantId": "00000000-0000-0000-0000-000000000002"
+  },
+  {
+    "caller": "platform-oncall@contoso.example",
+    "category": {
+      "localizedValue": "Administrative",
+      "value": "Administrative"
+    },
+    "correlationId": "00000000-0000-0000-0000-00000000000b",
+    "eventDataId": "00000000-0000-0000-0000-00000000000e",
+    "eventTimestamp": "2026-10-28T00:26:19.887Z",
+    "operationName": {
+      "localizedValue": "Create or Update Virtual Machine Scale Set",
+      "value": "Microsoft.Compute/virtualMachineScaleSets/write"
+    },
+    "properties": {
+      "eventCategory": "Administrative",
+      "serviceRequestId": "00000000-0000-0000-0000-00000000000f",
+      "statusCode": "BadRequest",
+      "statusMessage": "{\"code\":\"SubnetIsFull\",\"message\":\"Subnet 'app-subnet' (10.20.8.0/22) in virtual network 'prod-vnet' has insufficient free IP addresses for the requested virtual machines: 310 required, 118 available.\",\"target\":\"aks-app-pool-33983453-vmss\"}"
+    },
+    "resourceGroupName": "rg-prod",
+    "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-prod/providers/Microsoft.Compute/virtualMachineScaleSets/aks-app-pool-33983453-vmss",
+    "status": {
+      "localizedValue": "Failed",
+      "value": "Failed"
+    },
+    "submissionTimestamp": "2026-10-28T00:26:48.002Z",
+    "subscriptionId": "00000000-0000-0000-0000-000000000001",
+    "tenantId": "00000000-0000-0000-0000-000000000002"
+  },
+  {
+    "caller": "platform-oncall@contoso.example",
+    "category": {
+      "localizedValue": "Administrative",
+      "value": "Administrative"
+    },
+    "correlationId": "00000000-0000-0000-0000-000000000006",
+    "eventDataId": "00000000-0000-0000-0000-000000000008",
+    "eventTimestamp": "2026-10-20T02:11:40.517Z",
+    "operationName": {
+      "localizedValue": "Upgrade managed cluster agent pool",
+      "value": "Microsoft.ContainerService/managedClusters/agentPools/upgrade/action"
+    },
+    "properties": {
+      "eventCategory": "Administrative",
+      "serviceRequestId": "00000000-0000-0000-0000-000000000009",
+      "statusCode": "Succeeded"
+    },
+    "resourceGroupName": "rg-prod",
+    "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-prod/providers/Microsoft.ContainerService/managedClusters/prod-aks-eus1/agentPools/sys-pool",
+    "status": {
+      "localizedValue": "Succeeded",
+      "value": "Succeeded"
+    },
+    "submissionTimestamp": "2026-10-20T02:19:03.664Z",
+    "subscriptionId": "00000000-0000-0000-0000-000000000001",
+    "tenantId": "00000000-0000-0000-0000-000000000002"
+  }
+]
