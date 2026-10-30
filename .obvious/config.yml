@@ -1,0 +1,11 @@
+# Obvious repository policy for ravirajnalls/azure-sre-bench
+# Default branch auto-detected from GitHub repo settings.
+# Note: the remote is an empty repository; GitHub reports no defaultBranchRef yet.
+# "main" is used as the intended default branch (git's initial branch name).
+repo: ravirajnalls/azure-sre-bench
+defaultBranch: main
+merge:
+  # All merge methods are allowed on the GitHub repo (merge, squash, rebase).
+  # Squash is chosen as a safe default for a single-cleanup-commit history.
+  method: squash
+  requireHumanMerge: true
