@@ -1,0 +1,32 @@
+[
+  {
+    "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
+    "slotSetting": false,
+    "value": "InstrumentationKey=00000000-0000-0000-0000-000000000005;IngestionEndpoint=https://uksouth-0.in.applicationinsights.azure.com/"
+  },
+  {
+    "name": "DOCKER_REGISTRY_SERVER_URL",
+    "slotSetting": false,
+    "value": "https://quotesreg.azurecr.io"
+  },
+  {
+    "name": "DOCKER_REGISTRY_SERVER_USERNAME",
+    "slotSetting": false,
+    "value": "quotesreg"
+  },
+  {
+    "name": "DOCKER_REGISTRY_SERVER_PASSWORD",
+    "slotSetting": true,
+    "value": "***"
+  },
+  {
+    "name": "WEBSITES_PORT",
+    "slotSetting": false,
+    "value": "80"
+  },
+  {
+    "name": "WEBSITE_ENABLE_SYNC_UPDATE_SITE",
+    "slotSetting": false,
+    "value": "true"
+  }
+]

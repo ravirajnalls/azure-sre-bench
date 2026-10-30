@@ -1,0 +1,11 @@
+{
+  "root_cause": "The newly deployed image quotes-api:2026.10.30 has the app listening on 5000 (Dockerfile EXPOSE 5000, gunicorn bound to 0.0.0.0:5000), but the WEBSITES_PORT app setting on app-quotes is still 80, so App Service pings 80 and the container never answers on it.",
+  "evidence": [
+    "docker-log.txt: 'didn't respond to HTTP pings on port: 80, failing site start' repeated across restart attempts",
+    "az-webapp-config-appsettings.json: WEBSITES_PORT is still 80",
+    "Dockerfile: EXPOSE 5000 and gunicorn -b 0.0.0.0:5000",
+    "app-log.txt: gunicorn listening on 0.0.0.0:5000 with /healthz returning 200 before App Service kills the container",
+    "az-webapp-show.json: site state Running and availabilityState Normal — the plan and host are healthy (red herring)"
+  ],
+  "fix": "Update the WEBSITES_PORT app setting on app-quotes from 80 to 5000 to match the port the new image listens on, then restart the app."
+}

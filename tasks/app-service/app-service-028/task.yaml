@@ -1,0 +1,17 @@
+id: app-service-028
+title: Custom container returns 503 after image deploy
+category: app-service
+difficulty: easy
+tags:
+  - app-service
+  - azure
+  - containers
+  - app-settings
+symptom: |
+  The app-quotes web app (custom Linux container) started returning 503 to
+  every request immediately after this morning's deploy of image
+  quotes-api:2026.10.30. The same image runs fine locally when started with
+  docker run, and the App Service plan shows healthy CPU and memory with no
+  host restarts. Azure Monitor shows the failures begin at container start
+  rather than ramping in under load. Paged by the availability alert at
+  09:20 UTC.
