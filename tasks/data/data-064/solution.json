@@ -1,0 +1,14 @@
+{
+  "evidence": [
+    "slowlog.txt: every entry is a KEYS * command taking ~0.87-0.92 s — a blocking O(N) iteration over the full 2,148,731-key keyspace",
+    "latency-p99.csv: cache p99 spikes to ~180-250 ms in sharp waves at exactly the :00 and :05 marks with zero timeouts between waves — a */5 schedule signature, not load-correlated traffic",
+    "change-log.txt: CHG-4471 shows cache-inventory-job v1.4.0 changed exportFrequency from nightly to 5m (schedule */5 * * * *) on Tuesday; the waves started after that deploy and a rollback followed the diagnosis",
+    "redis-info.txt: used_memory 3.2G of 8.0G maxmemory with allkeys-lru and evicted_keys:0 — no memory pressure; connected_clients 148 of 10000 and rejected_connections:0 — connections healthy; latency_latest_event:slow-command points at command execution"
+  ],
+  "root_cause": "The five-minute latency waves and timeouts are caused by the KEYS * commands in the slowlog: KEYS is a blocking O(N) iteration over the full 2,148,731-key keyspace (~0.9 s per run), and Redis is single-threaded, so every client request queues behind it until the scan completes. The blocking KEYS * commands come from the observability cache-inventory-job: change-log CHG-4471 shows v1.4.0 changed its key inventory export from nightly to every 5 minutes (schedule */5 * * * *) two days before the waves began — the job's inventory scan issues KEYS * against the shared session cache.",
+  "fix": "Replace the inventory job's KEYS * walk with cursor-based SCAN iteration (SCAN with a modest COUNT hint per page), or source the capacity report from an existing keyspace summary instead of a full keyspace walk; then alert on any O(N) command via the slowlog. Longer term: disable or rename dangerous commands (KEYS) on shared prod caches and require change review for jobs that can issue blocking commands against them.",
+  "evidence_files": [
+    "slowlog.txt",
+    "change-log.txt"
+  ]
+}

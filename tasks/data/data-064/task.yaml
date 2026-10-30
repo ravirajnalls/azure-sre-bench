@@ -1,0 +1,17 @@
+id: data-064
+canary: 00000000-0000-0000-0000-000000000114  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
+title: Redis timeouts in five-minute waves after the observability agent update
+category: data
+difficulty: medium
+tags:
+  - data
+  - azure-redis
+  - keys-command
+  - slowlog
+  - blocking-operations
+symptom: |
+  The session cache (rediscache-session-prod) keeps throwing
+  StackExchange.Redis timeout exceptions, and checkout latency p99
+  spikes in a regular wave pattern. The spikes appeared right after
+  Tuesday's observability agent update; the cache itself shows no
+  memory pressure and connections look normal.

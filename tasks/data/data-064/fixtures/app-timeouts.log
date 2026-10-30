@@ -1,0 +1,24 @@
+2026-10-29T10:00:00.412Z WARN  c.c.CheckoutSessionService [http-nio-8080-exec-7] Cache operation timed out, falling back to db session load
+StackExchange.Redis.RedisTimeoutException: Timeout awaiting a response from the cache. Timeout was 5000ms. Not past buffering limits (IO-QP: 2, IO-CP: 1, Write-Queue: 0, Read-Queue: 0). >TimeoutEvent
+2026-10-29T10:00:01.033Z WARN  c.c.CheckoutSessionService [http-nio-8080-exec-19] Cache operation timed out, falling back to db session load
+StackExchange.Redis.RedisTimeoutException: Timeout awaiting a response from the cache. Timeout was 5000ms. Not past buffering limits (IO-QP: 0, IO-CP: 0, Write-Queue: 0, Read-Queue: 0). >TimeoutEvent
+2026-10-29T10:00:01.588Z WARN  c.c.CheckoutSessionService [http-nio-8080-exec-3] Cache operation timed out, falling back to db session load
+StackExchange.Redis.RedisTimeoutException: Timeout awaiting a response from the cache. Timeout was 5000ms. Not past buffering limits (IO-QP: 0, IO-CP: 1, Write-Queue: 0, Read-Queue: 0). >TimeoutEvent
+2026-10-29T10:05:00.441Z WARN  c.c.CheckoutSessionService [http-nio-8080-exec-11] Cache operation timed out, falling back to db session load
+StackExchange.Redis.RedisTimeoutException: Timeout awaiting a response from the cache. Timeout was 5000ms. Not past buffering limits (IO-QP: 1, IO-CP: 0, Write-Queue: 0, Read-Queue: 0). >TimeoutEvent
+2026-10-29T10:05:01.092Z WARN  c.c.CheckoutSessionService [http-nio-8080-exec-24] Cache operation timed out, falling back to db session load
+StackExchange.Redis.RedisTimeoutException: Timeout awaiting a response from the cache. Timeout was 5000ms. Not past buffering limits (IO-QP: 0, IO-CP: 0, Write-Queue: 0, Read-Queue: 0). >TimeoutEvent
+2026-10-29T10:10:00.398Z WARN  c.c.CheckoutSessionService [http-nio-8080-exec-5] Cache operation timed out, falling back to db session load
+StackExchange.Redis.RedisTimeoutException: Timeout awaiting a response from the cache. Timeout was 5000ms. Not past buffering limits (IO-QP: 0, IO-CP: 0, Write-Queue: 0, Read-Queue: 0). >TimeoutEvent
+2026-10-29T10:10:01.101Z WARN  c.c.CheckoutSessionService [http-nio-8080-exec-14] Cache operation timed out, falling back to db session load
+StackExchange.Redis.RedisTimeoutException: Timeout awaiting a response from the cache. Timeout was 5000ms. Not past buffering limits (IO-QP: 0, IO-CP: 1, Write-Queue: 0, Read-Queue: 0). >TimeoutEvent
+2026-10-29T10:15:00.425Z WARN  c.c.CheckoutSessionService [http-nio-8080-exec-9] Cache operation timed out, falling back to db session load
+StackExchange.Redis.RedisTimeoutException: Timeout awaiting a response from the cache. Timeout was 5000ms. Not past buffering limits (IO-QP: 1, IO-CP: 0, Write-Queue: 0, Read-Queue: 0). >TimeoutEvent
+2026-10-29T10:15:01.017Z WARN  c.c.CheckoutSessionService [http-nio-8080-exec-31] Cache operation timed out, falling back to db session load
+StackExchange.Redis.RedisTimeoutException: Timeout awaiting a response from the cache. Timeout was 5000ms. Not past buffering limits (IO-QP: 0, IO-CP: 0, Write-Queue: 0, Read-Queue: 0). >TimeoutEvent
+2026-10-29T10:20:00.433Z WARN  c.c.CheckoutSessionService [http-nio-8080-exec-2] Cache operation timed out, falling back to db session load
+StackExchange.Redis.RedisTimeoutException: Timeout awaiting a response from the cache. Timeout was 5000ms. Not past buffering limits (IO-QP: 0, IO-CP: 0, Write-Queue: 0, Read-Queue: 0). >TimeoutEvent
+2026-10-29T10:20:01.088Z WARN  c.c.CheckoutSessionService [http-nio-8080-exec-17] Cache operation timed out, falling back to db session load
+StackExchange.Redis.RedisTimeoutException: Timeout awaiting a response from the cache. Timeout was 5000ms. Not past buffering limits (IO-QP: 0, IO-CP: 1, Write-Queue: 0, Read-Queue: 0). >TimeoutEvent
+# NOTE: buffering limits are never hit (Write-Queue/Read-Queue always 0) — the client is not
+# saturated; the server stops responding, then recovers. Timeouts cluster at :00 and :05 marks.
