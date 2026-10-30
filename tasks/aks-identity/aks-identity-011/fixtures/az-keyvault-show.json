@@ -1,0 +1,22 @@
+{
+  "id": "/subscriptions/00000000-0000-0000-0000-000000000002/resourcegroups/rg-reports-prod/providers/Microsoft.KeyVault/vaults/kv-reports-prod",
+  "location": "uksouth",
+  "name": "kv-reports-prod",
+  "properties": {
+    "accessPolicies": [],
+    "createMode": "default",
+    "enableRbacAuthorization": true,
+    "enableSoftDelete": true,
+    "provisioningState": "Succeeded",
+    "publicNetworkAccess": "Enabled",
+    "sku": {
+      "family": "A",
+      "name": "standard"
+    },
+    "softDeleteRetentionInDays": 90,
+    "tenantId": "00000000-0000-0000-0000-000000000001",
+    "vaultUri": "https://kv-reports-prod.vault.azure.net/"
+  },
+  "resourceGroup": "rg-reports-prod",
+  "type": "Microsoft.KeyVault/vaults"
+}

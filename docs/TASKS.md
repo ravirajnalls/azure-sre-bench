@@ -10,6 +10,7 @@
 | ID | Title | Difficulty | Tags |
 | --- | --- | --- | --- |
 | aks-identity-008 | Key Vault access from orders-api fails after namespace move | easy | aks-identity, workload-identity, key-vault, federated-credential |
+| aks-identity-011 | Secrets Store CSI volume fails to mount for reports-worker | medium | aks-identity, secrets-store-csi, key-vault, secret-provider-class |
 
 ## aks-networking
 

@@ -1,0 +1,15 @@
+id: aks-identity-011
+title: Secrets Store CSI volume fails to mount for reports-worker
+category: aks-identity
+difficulty: medium
+tags:
+  - aks-identity
+  - secrets-store-csi
+  - key-vault
+  - secret-provider-class
+symptom: >-
+  New pods for reports-worker are stuck in ContainerCreating with a mount error
+  from secrets-store.csi.k8s.io. Pods that were running since yesterday keep
+  serving, but every freshly scheduled pod hangs on its secrets-store-inline
+  volume. The app image and Helm release were not touched in this morning's
+  rollout, and Key Vault itself reports healthy.

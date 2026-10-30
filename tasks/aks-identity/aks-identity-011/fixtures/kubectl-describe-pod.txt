@@ -1,0 +1,60 @@
+Name:               reports-worker-6b7f8c9d4-xk2vq
+Namespace:          reports
+Priority:           0
+Service Account:    reports-worker
+Node:               aks-nodepool1-31843291-vmss000001/10.240.0.35
+Start Time:         Fri, 30 Oct 2026 05:57:02 +0000
+Labels:             app=reports-worker
+                    pod-template-hash=6b7f8c9d4
+Annotations:        <none>
+Status:             Pending
+IP:
+IPs:                <none>
+Controlled By:      ReplicaSet/reports-worker-6b7f8c9d4
+Containers:
+  reports-worker:
+    Container ID:
+    Image:          ordersprodacr.azurecr.io/reports-worker:2.7.1
+    Image ID:
+    Port:           8080/TCP
+    Host Port:      0/TCP
+    State:          Waiting
+      Reason:       ContainerCreating
+    Ready:         False
+    Restart Count:  0
+    Environment:
+      KEY_VAULT_NAME:   kv-reports-prod
+      REPORTS_QUEUE:    reports-jobs
+    Mounts:
+      /mnt/secrets from secrets-store-inline (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-9xzph (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   False
+  Initialized                 True
+  Ready                       False
+  ContainersReady             False
+  PodScheduled                True
+Volumes:
+  secrets-store-inline:
+    Type:              CSI (a Container Storage Interface (CSI) volume source)
+    Driver:            secrets-store.csi.k8s.io
+    ReadOnly:          true
+    VolumeMode:        Filesystem
+    VolumeAttributes:  secretProviderClass: azure-reports-kv
+  kube-api-access-9xzph:
+    Type:              Projected (a projected volume into the container)
+    TokenExpirationSeconds:  3607
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type     Reason              Age    From                     Message
+  ----     ------              ----   ----                     -------
+  Normal   Scheduled           4m12s  default-scheduler        Successfully assigned reports/reports-worker-6b7f8c9d4-xk2vq to aks-nodepool1-31843291-vmss000001
+  Normal   Pulling             4m11s  kubelet                  Pulling image "ordersprodacr.azurecr.io/reports-worker:2.7.1"
+  Normal   Pulled              3m58s  kubelet                  Successfully pulled image "ordersprodacr.azurecr.io/reports-worker:2.7.1" in 12.904s (12.904s including waiting)
+  Warning  FailedMount         3m41s  kubelet                  MountVolume.SetUp failed for volume "secrets-store-inline" : rpc error: code = Unknown desc = failed to mount secrets store: failed to get key vault secret reports-db-connection-string from key vault kv-reports-prod: failed to acquire token: AADSTS90002: Tenant '00000000-0000-0000-0000-000000000009' not found. Check to make sure you have the correct tenant ID and fix the source of the tenant ID. Trace ID: 00000000-0000-0000-0000-00000000000d Correlation ID: 00000000-0000-0000-0000-00000000000c Timestamp: 2026-10-30 05:57:33Z
+  Warning  FailedMount         3m20s  kubelet                  MountVolume.SetUp failed for volume "secrets-store-inline" : rpc error: code = Unknown desc = failed to mount secrets store: failed to get key vault secret reports-db-connection-string from key vault kv-reports-prod: failed to acquire token: AADSTS90002: Tenant '00000000-0000-0000-0000-000000000009' not found. Check to make sure you have the correct tenant ID and fix the source of the tenant ID. Trace ID: 00000000-0000-0000-0000-00000000000d Correlation ID: 00000000-0000-0000-0000-00000000000c Timestamp: 2026-10-30 05:57:54Z
+  Warning  FailedMount         111s   kubelet                  (combined from similar events): Unable to attach or mount volumes: unmounted volumes=[secrets-store-inline], timed out waiting for the condition
