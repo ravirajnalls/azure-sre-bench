@@ -1,0 +1,5 @@
+NAME                                CPU(cores)   CPU(%)   MEMORY(bytes)   MEMORY(%)
+aks-systempool-41873229-vmss000000  212m         5%       1204Mi          7%
+aks-npuser-41873229-vmss000000      384m         4%       1466Mi          5%
+aks-npuser-41873229-vmss000001      412m         5%       1898Mi          6%
+aks-npuser-41873229-vmss000002      501m         6%       2035Mi          7%

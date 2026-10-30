@@ -1,0 +1,16 @@
+id: aks-workloads-014
+title: New ml-scorer pods stay Pending while the autoscaler scales nothing
+category: aks-workloads
+difficulty: medium
+tags:
+  - aks-workloads
+  - aks
+  - kubernetes
+  - scheduling
+  - autoscaler
+symptom: |
+  New ml-scorer pods from this morning's retrain rollout have been stuck
+  Pending in the ml namespace for over an hour. The cluster autoscaler is
+  enabled and reports healthy, yet no scale-up has happened and every node
+  sits under 40% utilized. Azure quota and node pool sizes were not changed
+  recently.

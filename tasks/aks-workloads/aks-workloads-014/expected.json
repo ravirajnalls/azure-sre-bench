@@ -1,0 +1,9 @@
+{
+  "root_cause": [
+    ["memory request", "30gi", "pod requests 30", "pod's request", "requests 30"],
+    ["allocatable", "larger than", "exceeds", "no node can fit", "doesn't fit", "too large for any node", "bigger than any node"]
+  ],
+  "fix": [
+    ["reduce the memory request", "lower the request", "lower the memory request", "reduce the request", "lower memory request", "reduce memory request", "larger vm", "bigger node", "larger node sku", "new node pool", "bigger node pool"]
+  ]
+}

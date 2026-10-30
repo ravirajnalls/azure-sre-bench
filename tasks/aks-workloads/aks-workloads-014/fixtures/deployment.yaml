@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ml-scorer
+  namespace: ml
+  uid: 00000000-0000-0000-0000-000000000005
+  resourceVersion: "8852714"
+  generation: 3
+  creationTimestamp: "2026-09-02T08:14:55Z"
+  annotations:
+    deployment.kubernetes.io/revision: "3"
+    kubernetes.io/change-cause: >-
+      release 2026.10.30: nightly retrain rollout — bump feature-set version
+      and raise model shard footprint for the October scoring refresh
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: ml-scorer
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: ml-scorer
+        tier: scoring
+    spec:
+      nodeSelector:
+        agentpool: npuser
+      containers:
+        - name: scorer
+          image: mlprodacr00000001.azurecr.io/ml-scorer:2026.10.30
+          args:
+            - "--feature-set=2026.10"
+            - "--shards=2"
+          ports:
+            - name: metrics
+              containerPort: 9102
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 9102
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: "4"
+              memory: 30Gi
+      terminationGracePeriodSeconds: 45
