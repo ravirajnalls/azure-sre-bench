@@ -1,0 +1,20 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: azure-file-media
+provisioner: file.csi.azure.com
+parameters:
+  skuName: Premium_LRS
+  protocol: smb
+reclaimPolicy: Delete
+allowVolumeExpansion: true
+mountOptions:
+  - uid=0
+  - gid=0
+  - file_mode=0755
+  - dir_mode=0755
+  - mfsymlinks
+  - cache=strict
+  - noserverino
+# Hardening change 2026-10-28: mountOptions added "for least privilege" —
+# the storage team copied the defaults from an old wiki page.

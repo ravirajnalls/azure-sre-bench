@@ -1,0 +1,6 @@
+2026-10-29T03:00:01Z INFO  media-processor v2026.10.29 starting, uid=1000 gid=1000
+2026-10-29T03:00:04Z INFO  volume mounted at /mnt/media (azurefile, smb) — mount OK
+2026-10-29T03:00:22Z INFO  transcoding job 8841: reading /mnt/media/inbound/clip_8841.mov
+2026-10-29T03:00:41Z ERROR transcoding job 8841: failed to write /mnt/media/outbound/clip_8841.mp4: PermissionError: [Errno 13] Permission denied
+2026-10-29T03:00:41Z ERROR job 8841 aborted after 3 attempts
+2026-10-29T03:00:45Z ERROR all jobs fail the same way since the storage hardening change — reads work, writes denied

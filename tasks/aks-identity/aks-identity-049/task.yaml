@@ -1,0 +1,18 @@
+id: aks-identity-049
+canary: 00000000-0000-0000-0000-000000000114  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
+title: media-processor gets permission denied writing to its Azure Files volume after the storage hardening change
+category: aks-identity
+difficulty: medium
+tags:
+  - aks-identity
+  - azure-files
+  - csi-driver
+  - mountoptions
+  - permissions
+symptom: |
+  Since the 2026-10-28 storage hardening change, every media-processor
+  transcode job fails seconds after it starts writing its output to
+  /mnt/media, logging "PermissionError: [Errno 13] Permission denied".
+  The pod runs as a non-root user and the volume mounts without errors —
+  reads from the same directory work. The storage account was untouched
+  by the change, and jobs were green for months before this week.
