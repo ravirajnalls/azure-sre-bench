@@ -1,0 +1,5 @@
+# The namespace move IS the incident: orders-api legitimately appears in
+# both the default and orders namespaces across the before/after evidence
+# (the SA was moved; the federated credential subject was not).
+namespace:default
+namespace:orders
