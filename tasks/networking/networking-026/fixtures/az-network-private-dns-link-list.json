@@ -1,0 +1,16 @@
+[
+  {
+    "id": "/subscriptions/00000000-0000-0000-0000-000000000003/resourceGroups/rg-sql-prod/providers/Microsoft.Network/privateDnsZones/privatelink.database.windows.net/virtualNetworkLinks/link-sql-vnet",
+    "name": "link-sql-vnet",
+    "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+    "location": "global",
+    "resourceGroup": "rg-sql-prod",
+    "etag": "00000000-0000-0000-0000-000000000006",
+    "provisioningState": "Succeeded",
+    "registrationEnabled": false,
+    "virtualNetwork": {
+      "id": "/subscriptions/00000000-0000-0000-0000-000000000003/resourceGroups/rg-sql-prod/providers/Microsoft.Network/virtualNetworks/vnet-sql-prod",
+      "resourceGroup": "rg-sql-prod"
+    }
+  }
+]

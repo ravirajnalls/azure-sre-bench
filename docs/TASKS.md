@@ -72,3 +72,9 @@
 | ID | Title | Difficulty | Tags |
 | --- | --- | --- | --- |
 | monitoring-032 | High 5xx rate alert never fires during a 15-minute 5xx spike | hard | monitoring, azure-monitor, scheduled-query-alert, kql, log-analytics |
+
+## networking
+
+| ID | Title | Difficulty | Tags |
+| --- | --- | --- | --- |
+| networking-026 | App Service can't reach SQL after public access disabled | medium | networking, azure, app-service, private-endpoint, private-dns |

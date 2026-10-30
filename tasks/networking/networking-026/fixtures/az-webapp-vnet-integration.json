@@ -1,0 +1,14 @@
+[
+  {
+    "id": "/subscriptions/00000000-0000-0000-0000-000000000003/resourceGroups/rg-app-prod/providers/Microsoft.Web/sites/app-portal/config/virtualNetwork",
+    "name": "app-portal",
+    "type": "Microsoft.Web/sites/config",
+    "resourceGroup": "rg-app-prod",
+    "properties": {
+      "subnetResourceId": "/subscriptions/00000000-0000-0000-0000-000000000003/resourceGroups/rg-app-prod/providers/Microsoft.Network/virtualNetworks/vnet-app-prod/subnets/snet-app-integration",
+      "swiftSupported": true,
+      "resyncRequired": false,
+      "isManual": false
+    }
+  }
+]

@@ -1,0 +1,22 @@
+# nslookup run from the app-portal Kudu (scm) console at 2026-10-30T04:35Z
+# check 1: the SQL server hostname the app connects to
+> nslookup sql-contoso-prod.database.windows.net
+Server:  UnKnown
+Address:  168.63.129.16
+
+DNS request timed out.
+    timeout was 2 seconds.
+Non-authoritative answer:
+Name:    sql-contoso-prod.database.windows.net
+Address:  20.42.65.92
+
+# check 2: control query — general DNS from the sandbox works fine
+> nslookup app-portal.azurewebsites.net
+Server:  UnKnown
+Address:  168.63.129.16
+
+Non-authoritative answer:
+Name:    app-portal.azurewebsites.net
+Address:  52.170.88.14
+Aliases:  app-portal.azurewebsites.net
+          waws-prod-db9-003.cloudapp.azure.com
