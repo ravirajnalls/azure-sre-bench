@@ -32,6 +32,15 @@ from bench.heldout import (
     heldout_key,
     split_of,
 )
+from bench.remediation import (
+    CHECK_KEYS,
+    CHECK_OPS,
+    COMPARISON_OPS,
+    KIND_REMEDIATION,
+    KINDS,
+    is_scalar,
+    normalize_patch_path,
+)
 from bench.sim import COMMANDS_FILENAME
 from bench.sim.sim_cli import parse_entries
 
@@ -170,6 +179,10 @@ def _validate_config(config: dict, task_dir: Path) -> list[str]:
     if split is not None and split not in SPLITS:
         errors.append(f"task.yaml: split must be one of {sorted(SPLITS)}, got '{split}'")
 
+    kind = config.get("kind")
+    if kind is not None and kind not in KINDS:
+        errors.append(f"task.yaml: kind must be one of {sorted(KINDS)}, got '{kind}'")
+
     tags = config.get("tags")
     if tags is not None:
         if not isinstance(tags, list) or not tags:
@@ -253,7 +266,60 @@ def _validate_commands_file(path: Path | None) -> list[str]:
     ]
 
 
-def _validate_expected_data(data: dict) -> list[str]:
+def _validate_checks(checks: list, task_dir: Path) -> list[str]:
+    """Shape rules for a remediation task's `checks` list (issue #110).
+
+    Every malformed check is an authoring error: a typo'd key or op would
+    otherwise be silently ignored by the grader and weaken the task. Check
+    files must already exist under fixtures/ and stay inside it.
+    """
+    errors: list[str] = []
+    for index, check in enumerate(checks):
+        label = f"expected.json: checks[{index}]"
+        if not isinstance(check, dict):
+            errors.append(f"{label} must be an object")
+            continue
+        unknown = sorted(set(check) - CHECK_KEYS)
+        if unknown:
+            errors.append(
+                f"{label}: unknown key(s) {', '.join(unknown)} "
+                "(allowed: file, path, op, value)"
+            )
+        op = check.get("op")
+        if op not in CHECK_OPS:
+            errors.append(f"{label}: 'op' must be one of {list(CHECK_OPS)}, got {op!r}")
+        normalized = normalize_patch_path(check.get("file"))
+        if normalized is None:
+            errors.append(
+                f"{label}: 'file' must be a task-relative path under fixtures/ "
+                "(e.g. 'fixtures/deployment.yaml')"
+            )
+        elif not (task_dir / normalized).is_file():
+            errors.append(f"{label}: file '{check['file']}' not found in fixtures/")
+        path = check.get("path")
+        if not (
+            isinstance(path, str)
+            and path.strip()
+            and all(segment.strip() for segment in path.strip().split("."))
+        ):
+            errors.append(
+                f"{label}: 'path' must be a non-empty dotted path with "
+                "non-empty segments (e.g. 'spec.replicas' or "
+                "'spec.template.spec.containers.0.image')"
+            )
+        if op in COMPARISON_OPS:
+            if "value" not in check:
+                errors.append(f"{label}: op '{op}' requires a 'value'")
+            elif not is_scalar(check["value"]):
+                errors.append(f"{label}: 'value' must be a string, number, or boolean")
+        elif op in CHECK_OPS and "value" in check:
+            errors.append(f"{label}: op '{op}' must not declare a 'value'")
+    return errors
+
+
+def _validate_expected_data(
+    data: dict, task_dir: Path, config: dict | None = None
+) -> list[str]:
     """Rubric shape rules, applied to plaintext and decrypted content alike."""
     errors = []
     for rubric_field in ("root_cause", "fix"):
@@ -282,6 +348,21 @@ def _validate_expected_data(data: dict) -> list[str]:
             "expected.json: 'unsafe' must be a non-empty list "
             "of non-empty string lists"
         )
+
+    # Remediation checks (issue #110): only remediation tasks may declare them,
+    # and every remediation task must declare at least one.
+    kind = config.get("kind") if isinstance(config, dict) else None
+    checks = data.get("checks")
+    if kind == KIND_REMEDIATION:
+        if not (isinstance(checks, list) and checks):
+            errors.append(
+                "expected.json: a remediation task requires a non-empty "
+                "'checks' list ({file, path, op, value} assertions)"
+            )
+        else:
+            errors.extend(_validate_checks(checks, task_dir))
+    elif "checks" in data:
+        errors.append("expected.json: 'checks' requires task.yaml 'kind: remediation'")
     return errors
 
 
@@ -375,12 +456,13 @@ def _validate_distractors(data: dict, task_dir: Path) -> tuple[list[str], list[s
     return errors, warnings
 
 
-def _validate_expected(task_dir: Path) -> tuple[list[str], list[str]]:
-    """Plaintext-rubric validation: shape rules plus distractor rules (issue #94).
+def _validate_expected(task_dir: Path, config: dict | None) -> tuple[list[str], list[str]]:
+    """Plaintext-rubric validation: shape, distractor (#94), and remediation
+    kind/checks consistency (issue #110).
 
     Held-out tasks take the `_validate_heldout_hidden` path instead; the
-    distractor rules run there too, on the decrypted rubric against the same
-    public fixtures.
+    distractor and remediation rules run there too, on the decrypted rubric
+    against the same public fixtures.
     """
     path = task_dir / "expected.json"
     if not path.is_file():
@@ -391,10 +473,9 @@ def _validate_expected(task_dir: Path) -> tuple[list[str], list[str]]:
         return [f"expected.json does not parse: {exc}"], []
     if not isinstance(data, dict):
         return ["expected.json must contain a JSON object"], []
-    errors = _validate_expected_data(data)
+    errors = _validate_expected_data(data, task_dir, config)
     distractor_errors, distractor_warnings = _validate_distractors(data, task_dir)
     return errors + distractor_errors, distractor_warnings
-
 
 
 def _load_solution(task_dir: Path) -> tuple[dict | None, list[str]]:
@@ -498,7 +579,7 @@ def _validate_heldout_hidden(
             errors.append(f"{name}{ENCRYPTED_SUFFIX} must decrypt to a JSON object")
             continue
         if name == "expected.json":
-            errors.extend(_validate_expected_data(data))
+            errors.extend(_validate_expected_data(data, task_dir, config))
             distractor_errors, distractor_warnings = _validate_distractors(
                 data, task_dir
             )
@@ -536,7 +617,7 @@ def inspect_task(task_dir: Path) -> TaskResult:
         result.errors.extend(hidden_errors)
         result.warnings.extend(hidden_warnings)
     else:
-        expected_errors, expected_warnings = _validate_expected(task_dir)
+        expected_errors, expected_warnings = _validate_expected(task_dir, result.config)
         result.errors.extend(expected_errors)
         result.warnings.extend(expected_warnings)
         solution, solution_errors = _load_solution(task_dir)

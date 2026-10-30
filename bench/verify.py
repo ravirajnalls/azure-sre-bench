@@ -19,7 +19,7 @@ from pathlib import Path
 
 import yaml
 
-from bench.grader import grade
+from bench.remediation import grade_for_task
 
 AGENT_FILE = "agent.yaml"
 
@@ -128,8 +128,17 @@ def _check_result(
     except json.JSONDecodeError as exc:
         return task_id, f"task '{task_id}': unparseable expected.json: {exc}", None
 
-    regraded = grade(record["answer"] if isinstance(record["answer"], dict) else {},
-                     rubric)
+    # The re-grade must go through the same dispatch as the original grading,
+    # so remediation tasks re-run their patch checks (issue #110).
+    from bench.run import load_task  # deferred: avoids a circular import
+
+    task = load_task(task_dir) if (task_dir / "task.yaml").is_file() else {}
+    regraded = grade_for_task(
+        record["answer"] if isinstance(record["answer"], dict) else {},
+        rubric,
+        task_dir,
+        task,
+    )
     recorded_score = record["score"]
     recorded_passed = record["passed"]
     if not isinstance(recorded_score, (int, float)) or not isinstance(

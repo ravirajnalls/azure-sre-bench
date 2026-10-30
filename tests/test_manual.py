@@ -62,6 +62,19 @@ def test_load_task_prompt_from_disk(task_dir):
         assert f"### {fixture.name}" in prompt
 
 
+def test_load_task_prompt_mentions_patched_files_for_remediation():
+    """Remediation tasks (issue #110) extend the manual prompt with the
+    patched_files contract, matching the `bench run` workspace hint."""
+    matches = sorted(Path("tasks").rglob("aks-workloads-017"))
+    prompt = load_task_prompt(matches[0])
+    assert "patched_files" in prompt
+
+
+def test_load_task_prompt_omits_remediation_block_for_diagnosis(task_dir):
+    prompt = load_task_prompt(task_dir)
+    assert "patched_files" not in prompt
+
+
 def test_submit_answer_records_manual_mode(tmp_path, task_dir):
     record = submit_answer(
         TASK_ID, passing_answer(), "chatgpt-frontier", results_root=tmp_path

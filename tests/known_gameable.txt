@@ -14,6 +14,10 @@
 # under the 600 cap, so the length cap cannot beat it. Shrinking this list to
 # empty is the rubric audits' job (#96-#99).
 #
+# aks-ops-022 and aks-workloads-017 left the list when they became remediation
+# tasks (issue #110): the probes submit no `patched_files`, so every patch
+# check fails and they can no longer pass.
+#
 # New-task entries (the #92 gate requires an entry whenever a probe passes):
 # - aks-identity-034 (issue #103): keyword-soup only. Its rubric soup is ~240
 #   chars (under the cap), and a distractor can never catch a soup — the
@@ -69,7 +73,6 @@ aks-ops-018
 aks-ops-019
 aks-ops-020
 aks-ops-021
-aks-ops-022
 aks-ops-023
 aks-ops-024
 aks-ops-025
@@ -82,7 +85,6 @@ aks-workloads-013
 aks-workloads-014
 aks-workloads-015
 aks-workloads-016
-aks-workloads-017
 aks-workloads-018
 app-service-028
 cost-031

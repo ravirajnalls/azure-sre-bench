@@ -8,5 +8,13 @@
   ],
   "distractors": [
     ["insufficient resources", "memory pressure", "memory"]
+  ],
+  "checks": [
+    {
+      "file": "fixtures/storageclass.yaml",
+      "path": "volumeBindingMode",
+      "op": "equals",
+      "value": "WaitForFirstConsumer"
+    }
   ]
 }

@@ -1,9 +1,9 @@
 {
-  "root_cause": "The managed-csi-premium-zonal StorageClass uses volumeBindingMode: Immediate, so the disk was provisioned immediately in zone eastus-3 before any pod was scheduled. Every node in the cluster runs in eastus-1 or eastus-2, so the PV's zone node affinity can never be satisfied — the scheduler rejects all nodes with a volume node affinity conflict and the pod stays Pending even though the PVC is Bound.",
+  "root_cause": "The managed-csi-premium-zonal StorageClass uses volumeBindingMode: Immediate, so the disk was provisioned immediately in zone eastus-3 before any pod was scheduled. Every node in the cluster runs in eastus-1 or eastus-2, so the PV's zone node affinity can never be satisfied \u2014 the scheduler rejects all nodes with a volume node affinity conflict and the pod stays Pending even though the PVC is Bound.",
   "evidence": [
     "storageclass.yaml: managed-csi-premium-zonal sets volumeBindingMode: Immediate with zoned Premium_LRS",
     "kubectl-get-pv.yaml: PV pvc-00000000-0000-0000-0000-000000000002 nodeAffinity requires topology.disk.csi.azure.com/zone eastus-3",
-    "kubectl-describe-pod.txt: FailedScheduling — 0/4 nodes are available: 4 node(s) had volume node affinity conflict",
+    "kubectl-describe-pod.txt: FailedScheduling \u2014 0/4 nodes are available: 4 node(s) had volume node affinity conflict",
     "kubectl-get-nodes-zones.txt: all nodes run in eastus-1 or eastus-2",
     "az-aks-nodepool-list.json: both node pools span availabilityZones 1 and 2 only"
   ],
@@ -11,5 +11,8 @@
   "evidence_files": [
     "kubectl-get-pv.yaml",
     "kubectl-get-nodes-zones.txt"
-  ]
+  ],
+  "patched_files": {
+    "fixtures/storageclass.yaml": "apiVersion: storage.k8s.io/v1\nkind: StorageClass\nmetadata:\n  name: managed-csi-premium-zonal\nprovisioner: disk.csi.azure.com\nparameters:\n  skuName: Premium_LRS\n  zoned: \"true\"\n  cachingMode: ReadOnly\nreclaimPolicy: Delete\nmountOptions:\n  - xfs\nallowVolumeExpansion: true\nvolumeBindingMode: WaitForFirstConsumer\n"
+  }
 }
