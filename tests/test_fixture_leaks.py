@@ -231,10 +231,10 @@ def test_cli_max_lines_flag(tmp_path: Path, capsys):
 
 
 def test_checkers_are_registered(tmp_path: Path):
-    """`leaks` and `size` join the registry alongside `az` (#151) and `consistency` (#152)."""
+    """`leaks` and `size` join the registry alongside `az` (#151), `consistency` (#152), and `logs` (#460)."""
     from bench.lint_fixtures import CHECKS, Finding, run_checks
 
-    assert set(CHECKS) == {"az", "consistency", "leaks", "size"}
+    assert set(CHECKS) == {"az", "consistency", "leaks", "logs", "size"}
     task_dir = copy_task(tmp_path)
     fixture = task_dir / "fixtures" / "kubectl-logs-ingress.txt"
     fixture.write_text("# the cause is ingress saturation\nlogs:\n")
