@@ -1,0 +1,49 @@
+{
+  "required_facts": [
+    [
+      ["47", "forty-seven"]
+    ],
+    [
+      ["federated", "fic"],
+      ["subject"],
+      ["default", "old namespace"]
+    ],
+    [
+      ["system:serviceaccount:orders:orders-api", "orders:orders-api"],
+      ["federated", "fic", "credential"]
+    ],
+    [
+      ["runbook", "checklist", "iac", "infrastructure as code", "pre-move"]
+    ]
+  ],
+  "forbidden_claims": [
+    [
+      "key vault outage",
+      "keyvault outage",
+      "vault misconfig",
+      "kv misconfig",
+      "vault was misconfigured",
+      "key vault was misconfigured",
+      "key vault was down",
+      "key vault returned an error because of",
+      "vault throttled"
+    ],
+    [
+      "rbac misconfig",
+      "rbac was wrong",
+      "wrong role assignment",
+      "role assignment was wrong",
+      "missing role assignment",
+      "lacked the role",
+      "rbac denied",
+      "rbac blocked"
+    ],
+    [
+      "alex",
+      "priya",
+      "human error",
+      "caused by a person",
+      "individual error"
+    ]
+  ]
+}

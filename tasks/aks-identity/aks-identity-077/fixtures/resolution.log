@@ -1,0 +1,34 @@
+RESOLUTION LOG — INC-2026-1030-118 (orders-api / kv-orders-prod)
+Operator: on-call (chronological, machine-stamped at entry)
+
+22:16:02  Page: orders-api 5xx rate 41% (dashboard: app insights), HTTP 500 on
+          all /orders endpoints. Customer impact window opened at 22:16.
+22:17:40  kubectl get pods -n orders: all orders-api pods Running 1/1 — probes
+          green, so the failure is at request time, not startup.
+22:19:15  kubectl logs -n orders deploy/orders-api --tail=200: every request that
+          touches a secret logs
+          " keyvault.BaseClient#GetSecret.Failure[(...) respond=403 ...]".
+22:22:51  Checked Key Vault metrics (kv-orders-prod): requests, latency and
+          errors flat — the vault itself is healthy.
+22:26:05  Checked access on the vault: role assignment list shows
+          'Key Vault Secrets User' for principal 00000000-0000-0000-0000-000000000004
+          (id-orders-api-prod), created 2026-08-14 — unchanged.
+22:31:12  Hypothesis: workload identity exchange, not vault authz. The pod's
+          projected service-account token now requests
+          system:serviceaccount:orders:orders-api after the namespace move.
+22:41:37  az identity federated-credential list for id-orders-api-prod: the
+          only credential is fic-orders-api-default, subject
+          "system:serviceaccount:default:orders-api" — still bound to the OLD
+          namespace. Token exchange fails: subject mismatch.
+22:44:02  Decision: add a federated credential for the orders-namespace
+          service account (keep the old one until rollback window closes).
+22:58:19  az identity federated-credential create --name fic-orders-api-orders
+          --identity-name id-orders-api-prod --issuer <oidc-issuer>
+          --subject system:serviceaccount:orders:orders-api
+          --audience api://AzureADTokenExchange — Succeeded.
+23:01:44  kubectl rollout restart deploy/orders-api -n orders (fresh token
+          exchange); pods Ready.
+23:03:10  5xx rate back to baseline (0.0%); /orders returning 200. Customer
+          impact window closed at 23:03 — 47 minutes total.
+23:11:55  Old credential fic-orders-api-default left in place, scheduled for
+          removal after the rollback window (48h).

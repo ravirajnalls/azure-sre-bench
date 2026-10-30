@@ -1,0 +1,21 @@
+2026-10-30T06:00:12.481Z INFO  [startup] Starting application orders-api version 1.42.0
+2026-10-30T06:00:12.715Z INFO  [startup] Listening on http://+:8080
+2026-10-30T06:00:12.802Z INFO  [startup] Workload identity token projected at /var/run/secrets/azure/tokens/azure-identity-token
+2026-10-30T06:00:12.930Z INFO  [kv] Key Vault secret provider initialized for vault kv-orders-prod
+2026-10-30T06:00:13.104Z INFO  [http] GET /healthz 200 12ms
+2026-10-30T06:00:14.902Z INFO  [http] GET /healthz 200 9ms
+2026-10-30T06:00:15.131Z INFO  [http] GET /api/orders/88412 request started
+2026-10-30T06:00:15.134Z ERROR [kv] Failed to fetch secret db-connection-string from Key Vault kv-orders-prod
+2026-10-30T06:00:15.134Z ERROR [kv] Azure.Identity.CredentialUnavailableException: DefaultAzureCredential failed to obtain a token from Managed Identity
+2026-10-30T06:00:15.134Z ERROR [kv] Azure.Identity.AuthenticationFailedException: AADSTS70021: No matching federated identity record found for presented assertion.
+Issuer: 'https://oidcprod.uksouth.oic.azure.com/00000000-0000-0000-0000-000000000006/'.
+Presented assertion subject: 'system:serviceaccount:orders:orders-api'.
+2026-10-30T06:00:15.138Z ERROR [http] GET /api/orders/88412 500 7ms
+2026-10-30T06:00:15.301Z INFO  [http] GET /api/orders/88413 request started
+2026-10-30T06:00:15.304Z ERROR [kv] Failed to fetch secret db-connection-string from Key Vault kv-orders-prod
+2026-10-30T06:00:15.304Z ERROR [kv] Azure.Identity.AuthenticationFailedException: AADSTS70021: No matching federated identity record found for presented assertion.
+Issuer: 'https://oidcprod.uksouth.oic.azure.com/00000000-0000-0000-0000-000000000006/'.
+Presented assertion subject: 'system:serviceaccount:orders:orders-api'.
+2026-10-30T06:00:15.306Z ERROR [http] GET /api/orders/88413 500 5ms
+2026-10-30T06:00:15.512Z WARN  [http] 5xx rate exceeded alert threshold for the last 2 minutes
+2026-10-30T06:00:15.520Z INFO  [http] GET /healthz 200 8ms
