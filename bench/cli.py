@@ -2,8 +2,9 @@
 
 Issue #1 scaffolded the subcommand surface; `validate` and `list` are live as of
 issue #2, `grade` as of issue #3, `run` as of issue #4, `site` as of issue #40,
-`leaderboard` as of issue #41, `catalog` as of issue #42, and `new` as of
-issue #120: the full subcommand surface is implemented.
+`leaderboard` as of issue #41, `catalog` as of issue #42, `verify` as of issue
+#118, `submit` and `prompt` as of issue #124, `new` as of issue #120, and
+`mcp-serve` as of issue #123: the full subcommand surface is implemented.
 """
 
 from __future__ import annotations
@@ -19,7 +20,7 @@ from bench.tasks import difficulty_distribution, load_tasks
 
 SUBCOMMANDS = (
     "validate", "list", "grade", "run", "verify", "submit", "prompt", "site",
-    "leaderboard", "catalog", "new",
+    "leaderboard", "catalog", "new", "mcp-serve",
 )
 
 IMPLEMENTED = SUBCOMMANDS
@@ -108,6 +109,29 @@ def build_parser() -> argparse.ArgumentParser:
                 "--tasks-root",
                 default="tasks",
                 help="task discovery root (default: ./tasks)",
+            )
+        elif name == "mcp-serve":
+            mcp_parser = sub.add_parser(
+                name,
+                help="serve one task over the Model Context Protocol (stdio)",
+            )
+            mcp_parser.add_argument(
+                "--task",
+                required=True,
+                help="task ID to serve, e.g. aks-networking-001",
+            )
+            mcp_parser.add_argument(
+                "--tasks-root",
+                default="tasks",
+                help="task discovery root (default: ./tasks)",
+            )
+            mcp_parser.add_argument(
+                "--answer-file",
+                default=None,
+                help=(
+                    "where submit_answer writes the contract JSON "
+                    "(default: $BENCH_MCP_ANSWER_FILE or ./bench-mcp-answer.json)"
+                ),
             )
         elif name == "verify":
             verify_parser = sub.add_parser(
@@ -362,6 +386,10 @@ def main(argv: list[str] | None = None) -> int:
             from bench.site import cmd_site  # deferred: keeps --help cheap
 
             return cmd_site(args)
+        if args.command == "mcp-serve":
+            from bench.mcp_server import cmd_mcp_serve  # deferred: keeps --help cheap
+
+            return cmd_mcp_serve(args)
         root = Path(getattr(args, "root", "tasks"))
         if args.command == "validate":
             return cmd_validate(root)

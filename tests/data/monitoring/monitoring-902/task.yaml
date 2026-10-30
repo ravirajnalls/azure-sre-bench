@@ -1,0 +1,10 @@
+id: monitoring-902
+title: "Test incident: checkout API latency spike from Redis pool exhaustion"
+category: monitoring
+difficulty: easy
+tags:
+  - test-fixture
+symptom: >
+  Synthetically generated symptom for MCP server tests. The p95 latency on the
+  checkout API tripled at 14:02 UTC and the billing worker is throwing
+  intermittent 500s. CPU and memory on the pods are flat.

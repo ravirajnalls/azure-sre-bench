@@ -1,0 +1,6 @@
+NAME                          READY   STATUS             RESTARTS   AGE
+billing-api-7d9f8b6c5-xk2pq   0/1     CrashLoopBackOff   41         3d2h
+billing-api-7d9f8b6c5-m8vzn   0/1     CrashLoopBackOff   39         3d2h
+frontend-web-5c8d7f9b6-t4rqs  1/1     Running            0          12d
+frontend-web-5c8d7f9b6-v7nmp  1/1     Running            0          12d
+redis-cache-0                 1/1     Running            0          45d
