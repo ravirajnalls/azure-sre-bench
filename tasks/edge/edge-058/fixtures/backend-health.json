@@ -1,0 +1,29 @@
+{
+  "backendAddressPools": [
+    {
+      "name": "appgw-backend-pool",
+      "id": "/subscriptions/00000000-0000-0000-0000-000000000004/resourceGroups/rg-web-prod/providers/Microsoft.Network/applicationGateways/appgw-prod/backendAddressPools/appgw-backend-pool",
+      "backendAddresses": [
+        { "fqdn": "support-api.internal.contoso-apps.com", "ipAddress": null },
+        { "fqdn": "www-api.internal.contoso-apps.com", "ipAddress": null }
+      ],
+      "backendHealth": [
+        {
+          "server": "support-api.internal.contoso-apps.com",
+          "address": "10.30.1.10",
+          "health": "Healthy",
+          "healthProbeLog": "Probe GET https://support-api.internal.contoso-apps.com:443/healthz returned 200 in 8 ms",
+          "httpStatus": 200
+        },
+        {
+          "server": "www-api.internal.contoso-apps.com",
+          "address": "10.30.1.11",
+          "health": "Healthy",
+          "healthProbeLog": "Probe GET https://www-api.internal.contoso-apps.com:443/healthz returned 200 in 7 ms",
+          "httpStatus": 200
+        }
+      ]
+    }
+  ],
+  "provisioningState": "Succeeded"
+}

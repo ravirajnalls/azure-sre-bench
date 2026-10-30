@@ -1,0 +1,20 @@
+id: edge-058
+canary: 00000000-0000-0000-0000-000000000114  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
+title: "App Gateway WAF blocks legitimate POSTs"
+category: edge
+difficulty: medium
+tags:
+  - edge
+  - azure
+  - application-gateway
+  - waf
+  - owasp
+symptom: |
+  Since this morning, customers submitting the support form on
+  support.contoso.com get a 403 error page, while every other page on the
+  site loads normally. The form worked before the weekend; nothing in the
+  form itself changed. Backend service owners say their pods are running
+  and the app's own logs show normal page traffic. The support team is
+  losing tickets — every failed submission is a customer who already had
+  a problem, trying to report it. Paged by the support-form-403s report
+  from customer care at 09:40 UTC.

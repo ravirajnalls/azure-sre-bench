@@ -1,0 +1,33 @@
+{
+  "id": "/subscriptions/00000000-0000-0000-0000-000000000004/resourceGroups/rg-web-prod/providers/Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies/waf-policy-appgw",
+  "name": "waf-policy-appgw",
+  "type": "Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies",
+  "location": "westeurope",
+  "resourceGroup": "rg-web-prod",
+  "properties": {
+    "policySettings": {
+      "requestBodyCheck": true,
+      "maxRequestBodySizeInKb": 128,
+      "fileUploadLimitInMb": 100,
+      "mode": "Prevention",
+      "state": "Enabled",
+      "jsChallenge": "Enabled"
+    },
+    "managedRules": {
+      "managedRuleSets": [
+        {
+          "ruleSetType": "OWASP",
+          "ruleSetVersion": "3.2",
+          "ruleGroupOverrides": []
+        },
+        {
+          "ruleSetType": "Microsoft_BotManagerRuleSet",
+          "ruleSetVersion": "1.0",
+          "ruleGroupOverrides": []
+        }
+      ]
+    },
+    "customRules": [],
+    "provisioningState": "Succeeded"
+  }
+}

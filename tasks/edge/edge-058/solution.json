@@ -1,0 +1,15 @@
+{
+  "root_cause": "The Application Gateway WAF (waf-policy-appgw, OWASP CRS 3.2) runs in Prevention mode and rule 942100 (SQL injection via libinjection) blocks the support form's POST /api/support/ticket: the free-text description field routinely contains quote patterns like '1'='1' that libinjection scores as SQLi, so legitimate submissions are blocked with 403 before they ever reach the backend.",
+  "evidence": [
+    "waf-firewall-log.kql.csv: every blocked entry is rule 942100 'SQL Injection Attack Detected via libinjection' on POST /api/support/ticket, action Blocked, 403",
+    "az-network-application-gateway-waf-policy-show.json: policySettings.mode is Prevention with requestBodyCheck enabled and no ruleGroupOverrides or custom rules — nothing exempts the form",
+    "app.log: page views arrive all morning but there are no POST /api/support/ticket entries after 2026-10-25 — blocked requests never reach the backend",
+    "request-sample.txt: a genuine customer description contains '1'='1' and quote-heavy prose, exactly what libinjection flags",
+    "backend-health.json: appgw-backend-pool members are all Healthy with 200 probes — the backend is fine (red herring)"
+  ],
+  "fix": "Tune the WAF rather than the app: add a targeted exclusion for the description form field on rule 942100 (or a scoped custom rule allowing legitimate /api/support/ticket posts), or switch the policy to Detection mode while the exclusion is rolled out. Do not simply disable the rule globally without scoping.",
+  "evidence_files": [
+    "waf-firewall-log.kql.csv",
+    "az-network-application-gateway-waf-policy-show.json"
+  ]
+}
