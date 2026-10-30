@@ -11,7 +11,7 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-from bench.tasks import CATEGORIES
+from bench.tasks import CANARY_GUID, CATEGORIES
 
 # Template content lives here as constants so `scaffold_task` is a plain
 # write-and-return. Placeholders use the <REPLACE-ME-...> convention: every
@@ -27,6 +27,7 @@ FIX_TOKEN = "<REPLACE-ME-fix-keyword>"
 
 TASK_YAML_TEMPLATE = """\
 id: {task_id}
+canary: {canary}  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
 title: "{title}"
 category: {category}
 difficulty: easy  # one of: easy / medium / hard
@@ -109,7 +110,7 @@ def scaffold_task(tasks_root: Path, category: str, title: str) -> Path:
     (task_dir / "task.yaml").write_text(
         TASK_YAML_TEMPLATE.format(
             task_id=task_id, title=yaml_title, category=category,
-            symptom=SYMPTOM_PLACEHOLDER,
+            symptom=SYMPTOM_PLACEHOLDER, canary=CANARY_GUID,
         ),
         encoding="utf-8",
     )
