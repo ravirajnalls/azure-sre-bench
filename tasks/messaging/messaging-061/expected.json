@@ -1,0 +1,12 @@
+{
+  "root_cause": [
+    ["partition"],
+    ["4", "partition count"]
+  ],
+  "fix": [
+    ["more partitions", "premium", "dedicated", "new hub", "increase partition"]
+  ],
+  "distractors": [
+    ["throughputunits", "throughput units", "throttledrequests", "throttling"]
+  ]
+}

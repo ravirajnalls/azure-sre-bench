@@ -1,0 +1,18 @@
+id: messaging-061
+canary: 00000000-0000-0000-0000-000000000114  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
+title: Event Hubs consumer lag keeps growing despite scaling out
+category: messaging
+difficulty: medium
+tags:
+  - messaging
+  - azure
+  - eventhubs
+  - streaming
+  - scaling
+symptom: |
+  Telemetry dashboards are running hours behind: the event processor
+  behind the telemetry hub cannot keep up with the ingress rate. The team has
+  already scaled the processor out from 4 to 16 instances over the past two
+  days, and the lag curve has not bent at all. Checkpoints are being written,
+  no errors are in the processor logs, and the platform team confirms the
+  namespace is not rate limited.

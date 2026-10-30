@@ -1,0 +1,14 @@
+{
+  "root_cause": "The telemetry hub has only 4 partitions (partitionCount 4 in az-eventhubs-eventhub-show.json), and within the telemetry-processors consumer group each partition can be owned by at most one processor instance — so no matter how many of the 16 instances run, at most 4 are ever pumping events and the other 12 sit idle with no partitions assigned (processor.log). The lag grows because 4 partitions cannot drain the ingress rate; adding instances cannot help while the partition count stays at 4.",
+  "evidence": [
+    "az-eventhubs-eventhub-show.json: partitionCount is 4 (partitionIds 0-3) — the hub's degree of parallelism is 4",
+    "processor.log: instances telemetry-processor-004/008/012/013 and others log 'no partitions assigned; waiting for ownership changes' while exactly 4 instances (one per partition) pump events",
+    "consumer-lag.csv: lag grows monotonically on all four partitions across the scale-out window — parallelism is capped even as instance count quadruples",
+    "checkpoint-blobs.json: exactly 4 checkpoint blobs exist, one per partition, all advancing — consumers that own partitions are healthy, the idle ones have nothing to consume"
+  ],
+  "fix": "Raise the hub's degree of parallelism: create a replacement hub with more partitions (partition count is fixed at creation on a Standard-tier namespace — migrate producers/consumers to a new hub with e.g. 16 or 32 partitions, or move the namespace to Premium/Dedicated where partitions can be increased in place), so all 16 instances in the group can own partitions. Alternatively re-shard telemetry across multiple hubs so total partitions exceed the instance count.",
+  "evidence_files": [
+    "az-eventhubs-eventhub-show.json",
+    "processor.log"
+  ]
+}
