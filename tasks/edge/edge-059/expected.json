@@ -1,7 +1,7 @@
 {
   "root_cause": [
     ["set-header", "policy", "inbound"],
-    ["authorization", "auth header", "bearer"]
+    ["missing authorization", "authorization header", "auth header", "strips", "stripped", "no authorization"]
   ],
   "fix": [
     ["remove the set-header", "remove the set-header policy", "delete the set-header", "exists-action", "override", "stop deleting the authorization"]

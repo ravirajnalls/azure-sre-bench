@@ -1,5 +1,5 @@
 {
-  "traceId": "9a41c0de-0000-0000-0000-000000000005",
+  "traceId": "00000000-0000-0000-0000-000000000005",
   "source": "az apim api trace --apim-name apim-prod --api orders-api",
   "capturedAt": "2026-10-30T21:58:04Z",
   "entries": [
