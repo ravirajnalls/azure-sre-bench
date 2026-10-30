@@ -23,6 +23,7 @@
 
 | ID | Title | Difficulty | Tags |
 | --- | --- | --- | --- |
+| aks-networking-001 | Pods can't resolve external hostnames | medium | aks, dns, coredns, kubernetes, azure |
 | aks-networking-002 | Ingress returns 502 for /shop after a release | easy | aks, ingress, service-selector, kubernetes |
 | aks-networking-004 | billing-api can't reach its postgres pod after a security hardening change | easy | aks, networkpolicy, postgres, kubernetes |
 | aks-networking-005 | Egress to the internet fails after firewall rollout | medium | aks, aks-networking, azure-firewall, udr, egress |
