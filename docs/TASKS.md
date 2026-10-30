@@ -34,6 +34,7 @@
 | aks-networking-006 | Internal service exposed with a public IP | easy | aks, load-balancer, service-annotation, kubernetes |
 | aks-networking-007 | Private cluster API unreachable from the ops jumpbox | medium | aks, private-cluster, private-dns-zone, vnet-peering, dns |
 | aks-networking-033 | Intermittent timeouts from payments-api to the partner settlement API | hard | aks, snat, outbound-connectivity, load-balancer, nat-gateway |
+| aks-networking-038 | New node pool can't reach Azure SQL | hard | aks, azure-sql, vnet-rule, service-endpoint, subnet |
 
 ## aks-ops
 

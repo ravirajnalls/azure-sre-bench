@@ -22,6 +22,13 @@
 #   fixture (az-identity-federated-credential-list.json) sorts first
 #   alphabetically, so their dump blames the distractor. Entry leaves with
 #   the audits (#96-#99) like the rest.
+# - aks-networking-038 (issue #107): keyword-soup only. Its rubric soup is
+#   ~110 chars (under the cap), and a distractor can never catch a soup — the
+#   validator forbids distractor/root_cause overlap, so a soup consists only
+#   of rubric alternatives. Both dump probes score 0 on it: fixture-dump
+#   blows the 600-char caps and names the nsg distractor, and minimal-dump's
+#   capped dump (app.log sorts first) contains no rubric alternative. Entry
+#   leaves with the audits (#96-#99) like the rest.
 ado-pipelines-030
 aks-identity-008
 aks-identity-009
@@ -39,6 +46,7 @@ aks-networking-004
 aks-networking-005
 aks-networking-006
 aks-networking-007
+aks-networking-038
 aks-ops-018
 aks-ops-019
 aks-ops-020

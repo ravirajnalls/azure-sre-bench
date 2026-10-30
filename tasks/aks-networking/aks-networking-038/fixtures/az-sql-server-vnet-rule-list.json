@@ -1,0 +1,13 @@
+{
+  "value": [
+    {
+      "id": "/subscriptions/00000000-0000-0000-0000-000000000002/resourceGroups/rg-sql-ledger/providers/Microsoft.Sql/servers/sql-ledger/virtualNetworkRules/allow-snet-aks-pool1",
+      "name": "allow-snet-aks-pool1",
+      "provisioningState": "Ready",
+      "resourceGroupName": "rg-sql-ledger",
+      "type": "Microsoft.Sql/servers/virtualNetworkRules",
+      "virtualNetworkSubnetId": "/subscriptions/00000000-0000-0000-0000-000000000002/resourceGroups/rg-aks-prod/providers/Microsoft.Network/virtualNetworks/vnet-aks-spoke/subnets/snet-aks-pool1",
+      "ignoreMissingVnetServiceEndpoint": false
+    }
+  ]
+}
