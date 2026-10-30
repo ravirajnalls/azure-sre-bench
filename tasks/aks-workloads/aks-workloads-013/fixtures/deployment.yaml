@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: search-indexer
+  namespace: search
+  uid: 00000000-0000-0000-0000-000000000004
+  resourceVersion: "8846127"
+  generation: 6
+  creationTimestamp: "2026-09-02T09:18:44Z"
+  annotations:
+    deployment.kubernetes.io/revision: "6"
+    kubernetes.io/change-cause: >-
+      release 2026.10.29: switch indexer to the new document-enrichment
+      pipeline and raise batch size to smooth queue lag after the catalog
+      migration
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: search-indexer
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: search-indexer
+    spec:
+      containers:
+        - name: indexer
+          image: shopacr00000001.azurecr.io/search-indexer:2026.10.29
+          env:
+            - name: QUEUE_BROKER
+              value: amqp://catalog-events.search.svc.cluster.local:5672
+            - name: INDEX_NAME
+              value: catalog-products
+            - name: JAVA_TOOL_OPTIONS
+              value: -Xms256m -Xmx768m
+          resources:
+            requests:
+              cpu: 250m
+              memory: 384Mi
+            limits:
+              cpu: "1"
+              memory: 512Mi
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8081
+            initialDelaySeconds: 5
+            periodSeconds: 10
+      terminationGracePeriodSeconds: 30

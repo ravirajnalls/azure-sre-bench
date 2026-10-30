@@ -1,0 +1,49 @@
+2026-10-30 09:12:47,104 [main] INFO  org.eclipse.jetty.util.log - Logging initialized @1284ms to org.eclipse.jetty.util.log.Slf4jLog
+2026-10-30 09:12:47,358 [main] INFO  o.s.s.concurrent.ThreadPoolTaskExecutor - Initializing ExecutorService 'applicationTaskExecutor'
+2026-10-30 09:12:48,017 [main] INFO  c.shop.search.IndexerApplication - Started IndexerApplication in 3.812 seconds (JVM running for 4.905)
+2026-10-30 09:12:48,104 [main] INFO  c.shop.search.OpenJDK - Picked up JAVA_TOOL_OPTIONS: -Xms256m -Xmx768m
+2026-10-30 09:13:02,441 [indexer-1] INFO  c.shop.search.BatchProcessor - Batch 4401 committed: 1200 documents, took 38.2s
+2026-10-30 09:13:41,872 [indexer-1] INFO  c.shop.search.BatchProcessor - Batch 4402 committed: 1200 documents, took 39.4s
+2026-10-30 09:14:20,315 [indexer-1] INFO  c.shop.search.BatchProcessor - Batch 4403 committed: 1200 documents, took 38.7s
+2026-10-30 09:14:59,022 [indexer-1] INFO  c.shop.search.BatchProcessor - Batch 4404 committed: 1200 documents, took 38.6s
+2026-10-30 09:15:37,668 [indexer-1] INFO  c.shop.search.BatchProcessor - Batch 4405 committed: 1200 documents, took 38.5s
+2026-10-30 09:16:16,209 [indexer-1] INFO  c.shop.search.BatchProcessor - Batch 4406 committed: 1200 documents, took 38.4s
+2026-10-30 09:16:54,983 [indexer-1] INFO  c.shop.search.BatchProcessor - Batch 4407 committed: 1200 documents, took 38.7s
+2026-10-30 09:17:33,540 [indexer-1] INFO  c.shop.search.BatchProcessor - Batch 4408 committed: 1200 documents, took 38.5s
+2026-10-30 09:18:12,117 [indexer-1] INFO  c.shop.search.BatchProcessor - Batch 4409 committed: 1200 documents, took 38.5s
+2026-10-30 09:18:50,704 [indexer-1] INFO  c.shop.search.BatchProcessor - Batch 4410 committed: 1200 documents, took 38.5s
+2026-10-30 09:19:29,341 [indexer-1] INFO  c.shop.search.BatchProcessor - Batch 4411 committed: 1200 documents, took 38.6s
+2026-10-30 09:20:07,952 [indexer-1] INFO  c.shop.search.BatchProcessor - Batch 4412 committed: 1200 documents, took 38.6s
+2026-10-30 09:20:46,610 [indexer-1] INFO  c.shop.search.BatchProcessor - Batch 4413 committed: 1200 documents, took 38.6s
+2026-10-30 09:21:25,247 [indexer-1] INFO  c.shop.search.BatchProcessor - Batch 4414 committed: 1200 documents, took 38.6s
+2026-10-30 09:22:03,881 [indexer-1] INFO  c.shop.search.BatchProcessor - Batch 4415 committed: 1200 documents, took 38.6s
+2026-10-30 09:22:42,566 [indexer-1] INFO  c.shop.search.BatchProcessor - Batch 4416 committed: 1200 documents, took 38.6s
+2026-10-30 09:23:21,190 [indexer-1] INFO  c.shop.search.BatchProcessor - Batch 4417 committed: 1200 documents, took 38.6s
+2026-10-30 09:23:59,847 [indexer-1] INFO  c.shop.search.BatchProcessor - Batch 4418 committed: 1200 documents, took 38.6s
+2026-10-30 09:24:38,506 [indexer-1] INFO  c.shop.search.BatchProcessor - Batch 4419 committed: 1200 documents, took 38.6s
+2026-10-30 09:25:17,152 [indexer-1] INFO  c.shop.search.BatchProcessor - Batch 4420 committed: 1200 documents, took 38.6s
+2026-10-30 09:25:55,809 [indexer-1] INFO  c.shop.search.BatchProcessor - Batch 4421 committed: 1200 documents, took 38.6s
+2026-10-30 09:26:34,470 [indexer-1] INFO  c.shop.search.BatchProcessor - Batch 4422 committed: 1200 documents, took 38.6s
+2026-10-30 09:27:13,098 [indexer-1] INFO  c.shop.search.BatchProcessor - Batch 4423 committed: 1200 documents, took 38.6s
+2026-10-30 09:27:51,772 [indexer-1] INFO  c.shop.search.BatchProcessor - Batch 4424 committed: 1200 documents, took 38.6s
+2026-10-30 09:28:30,415 [indexer-1] INFO  c.shop.search.BatchProcessor - Batch 4425 committed: 1200 documents, took 38.6s
+2026-10-30 09:29:09,066 [indexer-1] INFO  c.shop.search.BatchProcessor - Batch 4426 committed: 1200 documents, took 38.6s
+2026-10-30 09:29:47,714 [indexer-1] INFO  c.shop.search.BatchProcessor - Batch 4427 committed: 1200 documents, took 38.6s
+2026-10-30 09:30:26,385 [indexer-1] INFO  c.shop.search.BatchProcessor - Batch 4428 committed: 1200 documents, took 38.6s
+2026-10-30 09:31:05,032 [indexer-1] INFO  c.shop.search.BatchProcessor - Batch 4429 committed: 1200 documents, took 38.6s
+2026-10-30 09:31:43,678 [indexer-1] INFO  c.shop.search.BatchProcessor - Batch 4430 committed: 1200 documents, took 38.6s
+2026-10-30 09:32:22,349 [indexer-1] INFO  c.shop.search.BatchProcessor - Batch 4431 committed: 1200 documents, took 38.6s
+2026-10-30 09:33:00,981 [indexer-1] INFO  c.shop.search.BatchProcessor - Batch 4432 committed: 1200 documents, took 38.6s
+2026-10-30 09:33:39,644 [indexer-1] INFO  c.shop.search.BatchProcessor - Batch 4433 committed: 1200 documents, took 38.6s
+2026-10-30 09:34:18,279 [indexer-1] INFO  c.shop.search.BatchProcessor - Batch 4434 committed: 1200 documents, took 38.6s
+2026-10-30 09:34:56,938 [indexer-1] INFO  c.shop.search.BatchProcessor - Batch 4435 committed: 1200 documents, took 38.6s
+2026-10-30 09:35:35,592 [indexer-1] INFO  c.shop.search.BatchProcessor - Batch 4436 committed: 1200 documents, took 38.6s
+2026-10-30 09:36:14,231 [indexer-1] INFO  c.shop.search.BatchProcessor - Batch 4437 committed: 1200 documents, took 38.6s
+2026-10-30 09:36:52,884 [indexer-1] INFO  c.shop.search.BatchProcessor - Batch 4438 committed: 1200 documents, took 38.6s
+2026-10-30 09:37:31,552 [indexer-1] INFO  c.shop.search.BatchProcessor - Batch 4439 committed: 1200 documents, took 38.6s
+2026-10-30 09:38:10,207 [indexer-1] INFO  c.shop.search.BatchProcessor - Batch 4440 committed: 1200 documents, took 38.6s
+2026-10-30 09:38:48,868 [indexer-1] INFO  c.shop.search.BatchProcessor - Batch 4441 committed: 1200 documents, took 38.6s
+2026-10-30 09:39:27,509 [indexer-1] INFO  c.shop.search.BatchProcessor - Batch 4442 committed: 1200 documents, took 38.6s
+2026-10-30 09:40:06,167 [indexer-1] INFO  c.shop.search.BatchProcessor - Batch 4443 committed: 1200 documents, took 38.6s
+2026-10-30 09:40:44,828 [indexer-1] INFO  c.shop.search.BatchProcessor - Batch 4444 committed: 1200 documents, took 38.6s
+2026-10-30 09:40:56,112 [indexer-1] INFO  c.shop.search.BatchProcessor - Batch 4445 committed: 1200 documents, took 38.6s
