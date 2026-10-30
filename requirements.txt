@@ -13,3 +13,7 @@ smolagents[litellm]>=1.19,<2
 # Semantic Kernel adapter (issue #172): ChatCompletionAgent with an Azure
 # OpenAI/Foundry deployment or any OpenAI-compatible endpoint (LLM_* env trio)
 semantic-kernel>=1.46,<2
+# AutoGen adapter (issue #173): investigator/reviewer team over any
+# OpenAI-compatible endpoint (LLM_* env trio) or an injected model client
+autogen-agentchat>=0.7,<0.8
+autogen-ext[openai]>=0.7,<0.8

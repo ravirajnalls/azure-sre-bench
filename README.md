@@ -384,6 +384,31 @@ factory (a `ChatCompletionClientBase` built your way) —
 demonstrates the wiring against a scripted fake service (no API key needed).
 On any failure the adapter prints `{}` and exits 0, graded as a FAIL.
 
+## Run an AutoGen team
+
+`agents/autogen_adapter.py` runs an AutoGen
+[`RoundRobinGroupChat`](https://microsoft.github.io/autogen/stable//user-guide/agentchat-user-guide/teams.html)
+on the same tool boundary as the ReAct baseline: an **investigator** agent
+holds the `list_files`, `read_file`, `run_command`, and `submit_answer` tools
+and drives the diagnosis, while a tool-less **reviewer** agent challenges its
+hypothesis against the evidence (the red herring included) before the
+investigator finalizes. The team measures whether a critic improves distractor
+resistance versus the single-agent ReAct baseline. The model client is any
+OpenAI-compatible endpoint via the shared `LLM_BASE_URL` / `LLM_API_KEY` /
+`LLM_MODEL` env trio:
+
+```bash
+LLM_BASE_URL=... LLM_API_KEY=... LLM_MODEL=... \
+python -m bench run --agent agents/autogen_adapter.py --task aks-networking-001
+```
+
+`AUTOGEN_AGENT_TARGET=module:attribute` overrides the wiring with a factory
+returning a `ChatCompletionClient` —
+[`examples/autogen_team.py`](examples/autogen_team.py) demonstrates the wiring
+with AutoGen's replay client (a scripted hypothesis → challenge → final report
+transcript, no API key needed). On any failure the adapter prints `{}` and
+exits 0, graded as a FAIL.
+
 ## Run an MCP-capable agent
 
 Any agent that speaks the Model Context Protocol can be benchmarked through the
