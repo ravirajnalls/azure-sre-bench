@@ -1,0 +1,14 @@
+{
+  "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-aks/providers/Microsoft.ContainerService/managedClusters/aks-prod/providers/Microsoft.Insights/diagnosticSettings/audit-archive",
+  "name": "audit-archive",
+  "properties": {
+    "storageAccountId": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-observability/providers/Microsoft.Storage/storageAccounts/stauditarchive",
+    "logs": [
+      { "category": "kube-audit-admin", "enabled": true, "retentionPolicy": { "days": 90, "enabled": true } },
+      { "category": "kube-audit", "enabled": true, "retentionPolicy": { "days": 90, "enabled": true } },
+      { "category": "guard", "enabled": true, "retentionPolicy": { "days": 90, "enabled": true } },
+      { "category": "kube-controller-manager", "enabled": true, "retentionPolicy": { "days": 30, "enabled": true } }
+    ],
+    "workspaceId": null
+  }
+}

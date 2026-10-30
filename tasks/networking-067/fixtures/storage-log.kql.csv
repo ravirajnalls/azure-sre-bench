@@ -1,0 +1,9 @@
+time,operation_name,status_code,status_text,caller_ip_address,user_agent,requester_object_name,object_name
+2026-10-25T03:12:40.118Z,AppendBlock,403,AuthorizationFailure,20.42.65.92,Azure-Monitor-Log/1.0,stauditarchive,archive/cluster=aks-prod/year=2026/month=10/day=25/audit_0001
+2026-10-25T03:12:44.302Z,AppendBlock,403,AuthorizationFailure,20.42.65.92,Azure-Monitor-Log/1.0,stauditarchive,archive/cluster=aks-prod/year=2026/month=10/day=25/audit_0002
+2026-10-25T09:41:02.774Z,AppendBlock,403,AuthorizationFailure,20.42.65.92,Azure-Monitor-Log/1.0,stauditarchive,archive/cluster=aks-prod/year=2026/month=10/day=25/audit_0003
+2026-10-26T03:12:51.550Z,AppendBlock,403,AuthorizationFailure,20.42.65.92,Azure-Monitor-Log/1.0,stauditarchive,archive/cluster=aks-prod/year=2026/month=10/day=26/audit_0001
+2026-10-27T03:13:03.212Z,AppendBlock,403,AuthorizationFailure,20.42.65.92,Azure-Monitor-Log/1.0,stauditarchive,archive/cluster=aks-prod/year=2026/month=10/day=27/audit_0001
+2026-10-28T03:12:58.903Z,AppendBlock,403,AuthorizationFailure,20.42.65.92,Azure-Monitor-Log/1.0,stauditarchive,archive/cluster=aks-prod/year=2026/month=10/day=28/audit_0001
+2026-10-29T03:13:10.441Z,AppendBlock,403,AuthorizationFailure,20.42.65.92,Azure-Monitor-Log/1.0,stauditarchive,archive/cluster=aks-prod/year=2026/month=10/day=29/audit_0001
+2026-10-30T03:12:49.675Z,AppendBlock,403,AuthorizationFailure,20.42.65.92,Azure-Monitor-Log/1.0,stauditarchive,archive/cluster=aks-prod/year=2026/month=10/day=30/audit_0001

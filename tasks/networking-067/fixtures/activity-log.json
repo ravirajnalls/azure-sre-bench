@@ -1,0 +1,34 @@
+[
+  {
+    "eventDataId": "00000000-0000-0000-0000-000000000002",
+    "operationName": {
+      "value": "Microsoft.Storage/storageAccounts/write",
+      "localizedValue": "Update storage account"
+    },
+    "resourceGroupName": "rg-observability",
+    "resourceProviderName": { "value": "Microsoft.Storage", "localizedValue": "Microsoft.Storage" },
+    "resourceType": { "value": "storageAccounts", "localizedValue": "Storage accounts" },
+    "name": { "value": "stauditarchive", "localizedValue": "stauditarchive" },
+    "caller": "sp-sec-hardening@contoso.example",
+    "status": { "value": "Succeeded", "localizedValue": "Succeeded" },
+    "submissionTimestamp": "2026-10-24T17:02:11.884Z",
+    "properties": {
+      "eventCategory": "Administrative",
+      "requestbody": "{\"properties\":{\"networkAcls\":{\"defaultAction\":\"Deny\",\"ipRules\":[{\"value\":\"203.0.113.24\",\"action\":\"Allow\"},{\"value\":\"203.0.113.25\",\"action\":\"Allow\"}],\"virtualNetworkRules\":[{\"id\":\".../subnets/snet-corp\",\"action\":\"Allow\"}]}}}"
+    }
+  },
+  {
+    "eventDataId": "00000000-0000-0000-0000-000000000003",
+    "operationName": {
+      "value": "Microsoft.Insights/diagnosticSettings/write",
+      "localizedValue": "Create or Update diagnostic setting"
+    },
+    "resourceGroupName": "rg-aks",
+    "resourceType": { "value": "managedClusters/diagnosticSettings", "localizedValue": "Diagnostic settings" },
+    "name": { "value": "audit-archive", "localizedValue": "audit-archive" },
+    "caller": " monitoring-admin@contoso.example ",
+    "status": { "value": "Succeeded", "localizedValue": "Succeeded" },
+    "submissionTimestamp": "2026-10-24T16:44:03.100Z",
+    "properties": { "eventCategory": "Administrative" }
+  }
+]

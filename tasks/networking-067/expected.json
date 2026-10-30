@@ -1,0 +1,12 @@
+{
+  "root_cause": [
+    ["bypass", "trusted"],
+    ["azureservices", "azure services", "deny"]
+  ],
+  "fix": [
+    ["bypass azureservices", "azure services", "trusted microsoft services"]
+  ],
+  "distractors": [
+    ["role assignment", "contributor"]
+  ]
+}

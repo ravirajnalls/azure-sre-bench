@@ -1,0 +1,15 @@
+{
+  "root_cause": "The lockdown update on stauditarchive set networkRuleSet defaultAction to Deny and emptied the bypass list, so the AzureServices bypass is gone — the trusted first-party monitoring service that writes the AKS audit archives is no longer exempt from the network rules, and its AppendBlock calls are rejected before RBAC is ever consulted.",
+  "evidence": [
+    "az-storage-account-show.json: networkAcls shows defaultAction Deny, corporate subnet/IP allows, and an empty bypass array — AzureServices is not exempted",
+    "activity-log.json: sp-sec-hardening's 2026-10-24 storageAccounts/write replaced the networkAcls with a Deny-by-default ruleset and no bypass (the lockdown change)",
+    "storage-log.kql.csv: every archive AppendBlock from 20.42.65.92 (Azure Monitor) returns 403 starting 2026-10-25, the day after the lockdown",
+    "az-monitor-diagnostic-settings-show.json: the audit-archive setting is healthy — correct storageAccountId, all audit categories enabled (red herring check)",
+    "az-role-assignment-list.json: Storage Blob Data Contributor for monitoring-writer exists — RBAC is not the blocker (red herring)"
+  ],
+  "fix": "Restore the trusted-service exemption: set networkRuleSet bypass to [\"AzureServices\"] on stauditarchive (e.g. az storage account update --default-action Deny --bypass AzureServices ... plus the subnet/IP rules), keep the lockdown rules for everything else, and verify the next archive append succeeds and blobs reappear in the archive container.",
+  "evidence_files": [
+    "az-storage-account-show.json",
+    "activity-log.json"
+  ]
+}

@@ -1,0 +1,18 @@
+[
+  {
+    "roleDefinitionId": "/subscriptions/00000000-0000-0000-0000-000000000001/providers/Microsoft.Authorization/roleDefinitions/ba92f5b4-2d11-453d-a403-e96b0029c9fe",
+    "roleDefinitionName": "Storage Blob Data Contributor",
+    "scope": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-observability/providers/Microsoft.Storage/storageAccounts/stauditarchive",
+    "principalId": "00000000-0000-0000-0000-000000000004",
+    "principalType": "ServicePrincipal",
+    "principalName": "monitoring-writer"
+  },
+  {
+    "roleDefinitionId": "/subscriptions/00000000-0000-0000-0000-000000000001/providers/Microsoft.Authorization/roleDefinitions/17d1049b-9a84-46fb-8f53-869881c3d3ab",
+    "roleDefinitionName": "Storage Account Contributor",
+    "scope": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-observability/providers/Microsoft.Storage/storageAccounts/stauditarchive",
+    "principalId": "00000000-0000-0000-0000-000000000008",
+    "principalType": "Group",
+    "principalName": "grp-storage-operators"
+  }
+]

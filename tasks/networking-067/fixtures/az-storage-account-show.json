@@ -1,0 +1,26 @@
+{
+  "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-observability/providers/Microsoft.Storage/storageAccounts/stauditarchive",
+  "name": "stauditarchive",
+  "kind": "StorageV2",
+  "location": "westeurope",
+  "sku": { "name": "Standard_GRS", "tier": "Standard" },
+  "creationTime": "2024-03-11T09:12:40.221Z",
+  "properties": {
+    "allowSharedKeyAccess": true,
+    "publicNetworkAccess": "Enabled",
+    "networkAcls": {
+      "bypass": [],
+      "defaultAction": "Deny",
+      "ipRules": [
+        { "value": "203.0.113.24", "action": "Allow" },
+        { "value": "203.0.113.25", "action": "Allow" }
+      ],
+      "virtualNetworkRules": [
+        {
+          "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-corp/providers/Microsoft.Network/virtualNetworks/vnet-corp/subnets/snet-corp",
+          "action": "Allow"
+        }
+      ]
+    }
+  }
+}

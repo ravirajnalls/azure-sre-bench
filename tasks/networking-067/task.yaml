@@ -1,0 +1,20 @@
+id: networking-067
+canary: 00000000-0000-0000-0000-000000000115  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
+title: "Storage firewall blocks a trusted service"
+category: networking
+difficulty: medium
+tags:
+  - networking
+  - azure
+  - storage
+  - monitoring
+  - firewall
+symptom: |
+  After last week's storage lockdown (the account was opened to the
+  corporate subnets and everything else was denied), the diagnostic
+  settings that archive AKS audit logs to the `stauditarchive` storage
+  account have stopped writing — the archive container has no new blobs
+  in 5 days and the compliance report on log retention is failing. The
+  diagnostic setting itself looks healthy in the portal: enabled,
+  pointed at the right storage account, all audit categories on. Nothing
+  in the cluster changed. Paged by the archive-age alert at 08:40 UTC.
