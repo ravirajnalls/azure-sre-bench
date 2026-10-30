@@ -15,6 +15,11 @@ one static file) filters the tables by category, task difficulty, open-source
 only, and grading mode — the site reads task difficulty from `tasks_root` at
 build time and bakes it into `data-` attributes.
 
+Learn pages (issue #149): `bench site` also renders `site/learn.html` — one
+spoiler-collapsed (`<details>`) section per task that ships an `explainer.md`,
+rendered from a minimal Markdown subset with everything HTML-escaped. Sections
+stay collapsed by default so a reader cannot be spoiled by scrolling.
+
 Same-version rendering (issue #95): a record graded under a different grader
 version or an older rubric renders `stale`, a record written before the
 version fields existed renders `legacy` — neither contributes to the ranking
@@ -26,6 +31,7 @@ from __future__ import annotations
 import argparse
 import html
 import json
+import re
 from pathlib import Path
 
 import yaml
@@ -44,6 +50,7 @@ from bench.verify import load_agent_metadata
 
 DEFAULT_RESULTS_ROOT = "results"
 DEFAULT_OUT = "site/index.html"
+DEFAULT_LEARN_OUT = "site/learn.html"
 
 # Cell states for the task x agent heatmap.
 CELL_PASS = "pass"
@@ -388,6 +395,128 @@ def aggregate(
     }
 
 
+def load_explainers(tasks_root: Path) -> dict[str, dict]:
+    """Read every `explainer.md` under the tasks root (issue #149).
+
+    Returns task id -> `{"title", "html"}` for each task that ships an
+    explainer; tasks without one are simply absent (the Learn page renders an
+    empty state when the whole corpus has none). Unreadable explainer files
+    are skipped — the same failure-isolation rule `load_results` applies to
+    result records.
+    """
+    explainers: dict[str, dict] = {}
+    tasks_root = Path(tasks_root)
+    if not tasks_root.is_dir():
+        return explainers
+    for path in sorted(tasks_root.glob("*/*/explainer.md")):
+        try:
+            text = path.read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            continue
+        task_id = path.parent.name
+        title = task_id
+        try:
+            config = yaml.safe_load(
+                (path.parent / "task.yaml").read_text(encoding="utf-8")
+            )
+            if isinstance(config, dict) and config.get("title"):
+                title = str(config["title"])
+        except yaml.YAMLError:
+            # No parseable task.yaml: the id is a fine summary label.
+            pass
+        explainers[task_id] = {"title": title, "html": render_explainer_html(text)}
+    return explainers
+
+
+def render_explainer_html(text: str) -> str:
+    """Render an explainer's minimal Markdown subset to HTML (issue #149).
+
+    Supported: fenced ``` code blocks, `#`/`##`/`###` headings, `- ` and
+    `* ` list items, and plain paragraphs. Everything is HTML-escaped first —
+    explainer prose quotes log lines and must never inject markup.
+    """
+    out: list[str] = []
+    in_code = False
+    in_list = False
+    for raw_line in text.splitlines():
+        line = html.escape(raw_line.rstrip())
+        if line.startswith("```"):
+            if in_list:
+                out.append("</ul>")
+                in_list = False
+            out.append("</pre>" if in_code else "<pre><code>")
+            in_code = not in_code
+            continue
+        if in_code:
+            out.append(line)
+            continue
+        heading = re.fullmatch(r"(#{1,3}) (.+)", line)
+        if heading:
+            if in_list:
+                out.append("</ul>")
+                in_list = False
+            level = len(heading.group(1))
+            out.append(f"<h{level + 1}>{heading.group(2)}</h{level + 1}>")
+            continue
+        item = re.match(r"[-*] (.+)", line)
+        if item:
+            if not in_list:
+                out.append("<ul>")
+                in_list = True
+            out.append(f"<li>{item.group(1)}</li>")
+            continue
+        if in_list:
+            out.append("</ul>")
+            in_list = False
+        if line.strip():
+            out.append(f"<p>{line}</p>")
+    if in_list:
+        out.append("</ul>")
+    if in_code:
+        out.append("</pre>")
+    return "\n".join(out)
+
+
+def render_learn_html(explainers: dict[str, dict]) -> str:
+    """Render the Learn page: one spoiler-collapsed section per task."""
+    parts = [
+        "<!DOCTYPE html>",
+        '<html lang="en">',
+        "<head>",
+        '<meta charset="utf-8">',
+        '<meta name="viewport" content="width=device-width, initial-scale=1">',
+        "<title>Azure SRE Bench — Learn</title>",
+        f"<style>{_STYLE}</style>",
+        "</head>",
+        "<body>",
+        "<h1>Azure SRE Bench — Learn</h1>",
+        '<p>Post-incident write-ups, one per task. Sections are collapsed — '
+        "open only what you want spoiled.</p>",
+    ]
+    if not explainers:
+        parts.append(
+            '<p class="empty">No explainers yet. Tasks ship one as '
+            "<code>explainer.md</code> (required from task ID 041 on — see "
+            "AGENTS.md, issue #149).</p>"
+        )
+    for task_id, entry in sorted(explainers.items()):
+        parts.append("<details>")
+        parts.append(
+            f'<summary><code>{html.escape(task_id)}</code> — '
+            f"{html.escape(entry['title'])}</summary>"
+        )
+        parts.append(entry["html"])
+        parts.append("</details>")
+    parts.append("<footer>")
+    parts.append(
+        '<a href="index.html">Leaderboard</a> &middot; '
+        "Generated by <code>bench site</code>"
+    )
+    parts.append("</footer>")
+    parts.append("</body></html>")
+    return "\n".join(parts)
+
+
 def _cell(outcome: dict | None) -> str:
     if outcome is None:
         return CELL_NONE
@@ -526,6 +655,8 @@ def render_html(agg: dict) -> str:
         "</head>",
         "<body>",
         "<h1>Azure SRE Bench — Leaderboard</h1>",
+        '<p><a href="learn.html">Learn pages</a> — per-task write-ups, '
+        "spoiler-collapsed.</p>",
     ]
 
     if not agg["tasks"]:
@@ -616,7 +747,7 @@ def render_html(agg: dict) -> str:
 
 
 def cmd_site(args: argparse.Namespace) -> int:
-    """CLI entry for `bench site`: load results, render, write the page."""
+    """CLI entry for `bench site`: load results, render, write the pages."""
     results = load_results(Path(args.results_root))
     agent_metadata = load_agent_metadata_map(Path(args.results_root))
     difficulties = task_difficulties(Path(args.tasks_root))
@@ -629,6 +760,11 @@ def cmd_site(args: argparse.Namespace) -> int:
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(render_html(agg), encoding="utf-8")
+    learn_out = Path(getattr(args, "learn_out", DEFAULT_LEARN_OUT))
+    explainers = load_explainers(Path(args.tasks_root))
+    learn_out.parent.mkdir(parents=True, exist_ok=True)
+    learn_out.write_text(render_learn_html(explainers), encoding="utf-8")
     n_results = sum(len(records) for records in results.values())
     print(f"wrote {out} ({len(results)} runs, {n_results} task results)")
+    print(f"wrote {learn_out} ({len(explainers)} explainer pages)")
     return 0

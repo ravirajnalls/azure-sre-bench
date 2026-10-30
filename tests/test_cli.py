@@ -23,3 +23,73 @@ def test_every_advertised_subcommand_is_implemented():
     # All subcommands (issues #2-#4 and #40-#42) are implemented; the advertised
     # surface and the dispatchable set must never drift apart.
     assert set(SUBCOMMANDS) == set(IMPLEMENTED)
+
+
+# --- bench explain (issue #149) ----------------------------------------------
+
+import shutil
+from pathlib import Path
+
+DATA_TASK = Path(__file__).parent / "data" / "tasks" / "monitoring" / "monitoring-001"
+
+EXPLAINER = """\
+# monitoring-001 — explainer
+
+## How to investigate
+
+Read `fixtures/kubectl-get-pods.txt`.
+
+## Why the red herring misleads
+
+The metrics dip predates the incident.
+
+## Root cause
+
+Wrong backend path.
+
+## Fix
+
+Correct it.
+
+## Prevention
+
+Manifest lint.
+
+## Further reading
+
+- docs
+"""
+
+
+def make_task(tmp_path: Path) -> Path:
+    dest = tmp_path / "tasks" / "monitoring" / "monitoring-001"
+    shutil.copytree(DATA_TASK, dest)
+    return dest
+
+
+def test_explain_prints_explainer(tmp_path, capsys):
+    task_dir = make_task(tmp_path)
+    (task_dir / "explainer.md").write_text(EXPLAINER, encoding="utf-8")
+
+    exit_code = main(
+        ["explain", "--task", "monitoring-001", "--tasks-root", str(tmp_path / "tasks")]
+    )
+    assert exit_code == 0
+    assert "## How to investigate" in capsys.readouterr().out
+
+
+def test_explain_missing_explainer_errors(tmp_path, capsys):
+    make_task(tmp_path)
+    exit_code = main(
+        ["explain", "--task", "monitoring-001", "--tasks-root", str(tmp_path / "tasks")]
+    )
+    assert exit_code == 2
+    assert "error:" in capsys.readouterr().err
+
+
+def test_explain_unknown_task_errors(tmp_path, capsys):
+    exit_code = main(
+        ["explain", "--task", "no-such-999", "--tasks-root", str(tmp_path / "tasks")]
+    )
+    assert exit_code == 2
+    assert "error:" in capsys.readouterr().err

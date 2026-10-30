@@ -75,6 +75,22 @@ CANARY_COMMENT = (
 MIN_FIXTURES = 2
 MAX_FIXTURES = 10
 
+# Per-task explainer (issue #149): a spoiler document for humans — never agent
+# evidence, so the runner keeps it out of the workspace like expected.json.
+# Optional for the existing corpus; required from task ID 041 on so every new
+# task ships its Learn page. AGENTS.md "Explainer" documents the format and
+# aks-identity-008 is the filled example.
+EXPLAINER_FILENAME = "explainer.md"
+EXPLAINER_REQUIRED_FROM = 41
+EXPLAINER_REQUIRED_HEADINGS = (
+    "How to investigate",
+    "Why the red herring misleads",
+    "Root cause",
+    "Fix",
+    "Prevention",
+    "Further reading",
+)
+
 # Any GUID-shaped token in a fixture must be a placeholder of the form
 # 00000000-0000-0000-0000-00000000000X (issue #2; AGENTS.md "Fixtures").
 GUID_RE = re.compile(
@@ -314,6 +330,67 @@ def _validate_checks(checks: list, task_dir: Path) -> list[str]:
                 errors.append(f"{label}: 'value' must be a string, number, or boolean")
         elif op in CHECK_OPS and "value" in check:
             errors.append(f"{label}: op '{op}' must not declare a 'value'")
+    return errors
+
+
+def explainer_required(task_id: str) -> bool:
+    """Task IDs at and above 041 must ship an explainer (issue #149).
+
+    The backlog number is the digits after the last hyphen; a non-numeric id
+    (never produced by the validator's own id check) is simply not required.
+    """
+    tail = task_id.rsplit("-", 1)[-1]
+    return tail.isdigit() and int(tail) >= EXPLAINER_REQUIRED_FROM
+
+
+def _validate_explainer(task_dir: Path, task_id: str) -> list[str]:
+    """Shape rules for `explainer.md` (issue #149).
+
+    Required from task ID 041 on, optional before. When present, every one of
+    the six section headings must appear as a `##` heading, and every
+    `fixtures/<file>` the prose names must exist — a reference to a renamed
+    or deleted fixture would hand readers a dead link.
+    """
+    path = task_dir / EXPLAINER_FILENAME
+    if not path.is_file():
+        if explainer_required(task_id):
+            return [
+                f"missing {EXPLAINER_FILENAME} (required for task IDs "
+                f">= {EXPLAINER_REQUIRED_FROM:03d}; see AGENTS.md 'Explainer')"
+            ]
+        return []
+    try:
+        text = path.read_text(encoding="utf-8", errors="replace")
+    except OSError as exc:
+        return [f"{EXPLAINER_FILENAME}: unreadable ({exc})"]
+
+    headings = {
+        line.strip()
+        for line in text.splitlines()
+        if line.strip().startswith("##")
+    }
+    missing = [
+        heading
+        for heading in EXPLAINER_REQUIRED_HEADINGS
+        if f"## {heading}" not in headings
+    ]
+    errors = [
+        f"{EXPLAINER_FILENAME}: missing required '## {heading}' heading "
+        "(AGENTS.md 'Explainer')"
+        for heading in missing
+    ]
+    fixtures_dir = task_dir / "fixtures"
+    fixture_names = (
+        {fixture.name for fixture in fixtures_dir.iterdir() if fixture.is_file()}
+        if fixtures_dir.is_dir()
+        else set()
+    )
+    for ref in sorted(set(re.findall(r"fixtures/[A-Za-z0-9._/-]+", text))):
+        if ref.rsplit("/", 1)[-1] not in fixture_names:
+            errors.append(
+                f"{EXPLAINER_FILENAME}: references '{ref}' but it does not "
+                "exist under fixtures/"
+            )
     return errors
 
 
@@ -610,6 +687,12 @@ def inspect_task(task_dir: Path) -> TaskResult:
                 result.errors.append("task.yaml must contain a mapping")
 
     result.errors.extend(_validate_fixtures(task_dir))
+    task_id = (
+        str(result.config.get("id"))
+        if isinstance(result.config, dict) and result.config.get("id")
+        else task_dir.name
+    )
+    result.errors.extend(_validate_explainer(task_dir, task_id))
     if split_of(result.config) == SPLIT_HELDOUT:
         hidden_errors, hidden_warnings = _validate_heldout_hidden(
             task_dir, heldout_key(), result.config

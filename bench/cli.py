@@ -4,8 +4,9 @@ Issue #1 scaffolded the subcommand surface; `validate` and `list` are live as of
 issue #2, `grade` as of issue #3, `run` as of issue #4, `site` as of issue #40,
 `leaderboard` as of issue #41, `catalog` as of issue #42, `verify` as of issue
 #118, `submit` and `prompt` as of issue #124, `new` as of issue #120,
-`mcp-serve` as of issue #123, `sweep` as of issue #125, and `export` as of
-issue #117: the full
+<<<<<<< HEAD
+`mcp-serve` as of issue #123, `sweep` as of issue #125, `export` as of
+issue #117, and `explain` as of issue #149: the full
 subcommand surface is implemented. `bench run --release` (issue #116) checks
 a run against a frozen release manifest in `releases/`.
 """
@@ -25,7 +26,7 @@ from bench.tasks import difficulty_distribution, load_tasks
 
 SUBCOMMANDS = (
     "validate", "list", "grade", "run", "verify", "submit", "prompt", "site",
-    "leaderboard", "catalog", "new", "mcp-serve", "sweep", "export",
+    "leaderboard", "catalog", "new", "mcp-serve", "sweep", "export", "explain",
 )
 
 IMPLEMENTED = SUBCOMMANDS
@@ -241,6 +242,24 @@ def build_parser() -> argparse.ArgumentParser:
                 default="tasks",
                 help="task discovery root for rubric-hash staleness (default: ./tasks)",
             )
+            site_parser.add_argument(
+                "--learn-out",
+                default="site/learn.html",
+                help="output Learn page path (default: site/learn.html)",
+            )
+        elif name == "explain":
+            explain_parser = sub.add_parser(
+                name,
+                help="print a task's explainer.md (spoiler: full write-up, issue #149)",
+            )
+            explain_parser.add_argument(
+                "--task", required=True, help="task ID, e.g. aks-identity-008"
+            )
+            explain_parser.add_argument(
+                "--tasks-root",
+                default="tasks",
+                help="task discovery root (default: ./tasks)",
+            )
         elif name == "validate":
             validate_parser = sub.add_parser(
                 name, help="validate every task directory under the root"
@@ -344,6 +363,18 @@ def cmd_grade(args: argparse.Namespace) -> int:
         print(f"error: {exc}", file=sys.stderr)
         return 2
     print(json.dumps(grade_for_task(answer, rubric, task_dir, task), indent=2))
+    return 0
+
+
+def cmd_explain(args: argparse.Namespace) -> int:
+    """Print a task's explainer.md to stdout (issue #149)."""
+    try:
+        task_dir = find_task_dir(args.task, Path(args.tasks_root))
+        explainer = (task_dir / "explainer.md").read_text(encoding="utf-8")
+    except (FileNotFoundError, OSError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 2
+    print(explainer, end="" if explainer.endswith("\n") else "\n")
     return 0
 
 
@@ -501,6 +532,8 @@ def main(argv: list[str] | None = None) -> int:
             return cmd_sweep(args)
         if args.command == "submit":
             return cmd_submit(args)
+        if args.command == "explain":
+            return cmd_explain(args)
         if args.command == "prompt":
             from bench.manual import SYSTEM_PROMPT, load_task_prompt
 

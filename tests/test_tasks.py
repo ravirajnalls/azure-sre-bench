@@ -806,3 +806,121 @@ def test_commands_file_invalid_yaml_is_reported(tmp_path: Path):
         error.startswith("fixtures/_commands.yaml: invalid YAML")
         for error in result.errors
     )
+
+
+# --- explainer.md (issue #149) ------------------------------------------------
+
+VALID_EXPLAINER = """\
+# {task_id} — explainer
+
+## How to investigate
+
+Open `fixtures/kubectl-logs-ingress.txt` first: the 502s start at the ingress.
+
+## Why the red herring misleads
+
+`fixtures/az-monitor-metrics.json` shows a dip, but the timestamps predate the
+incident — it is background, not cause.
+
+## Root cause
+
+The wrong backend path in the ingress.
+
+## Fix
+
+Correct the path.
+
+## Prevention
+
+Add a manifest lint.
+
+## Further reading
+
+- ingress docs
+"""
+
+
+def write_explainer(task_dir: Path, text: str, task_id: str = "monitoring-001") -> None:
+    (task_dir / "explainer.md").write_text(
+        text.format(task_id=task_id), encoding="utf-8"
+    )
+
+
+def test_explainer_optional_below_041(tmp_path: Path):
+    """Existing-corpus tasks (< 041) stay valid without an explainer."""
+    copy_task(tmp_path)
+    result = load_one(tmp_path)
+    assert not any("explainer" in error for error in result.errors)
+
+
+def test_explainer_required_from_041(tmp_path: Path):
+    task_dir = copy_task(tmp_path)
+    renamed = task_dir.parent / "monitoring-041"
+    task_dir.rename(renamed)
+    patch_yaml(renamed, id="monitoring-041")
+    result = load_one(tmp_path)
+    assert any(
+        error.startswith("missing explainer.md") for error in result.errors
+    )
+
+
+def test_explainer_required_from_041_satisfied(tmp_path: Path):
+    task_dir = copy_task(tmp_path)
+    renamed = task_dir.parent / "monitoring-041"
+    task_dir.rename(renamed)
+    patch_yaml(renamed, id="monitoring-041")
+    write_explainer(renamed, VALID_EXPLAINER, "monitoring-041")
+    result = load_one(tmp_path)
+    assert not any("explainer" in error for error in result.errors)
+
+
+@pytest.mark.parametrize("heading", [
+    "How to investigate",
+    "Why the red herring misleads",
+    "Root cause",
+    "Fix",
+    "Prevention",
+    "Further reading",
+])
+def test_explainer_missing_heading_is_reported(tmp_path: Path, heading: str):
+    task_dir = copy_task(tmp_path)
+    write_explainer(task_dir, VALID_EXPLAINER)
+    text = (task_dir / "explainer.md").read_text(encoding="utf-8")
+    (task_dir / "explainer.md").write_text(
+        text.replace(f"## {heading}", "## Something else"), encoding="utf-8"
+    )
+    result = load_one(tmp_path)
+    assert any(
+        f"missing required '## {heading}'" in error for error in result.errors
+    )
+
+
+def test_explainer_dead_fixture_reference_is_reported(tmp_path: Path):
+    task_dir = copy_task(tmp_path)
+    write_explainer(task_dir, VALID_EXPLAINER)
+    (task_dir / "explainer.md").write_text(
+        (task_dir / "explainer.md").read_text(encoding="utf-8")
+        + "\nSee `fixtures/kubectl-describe-node.txt`.\n",
+        encoding="utf-8",
+    )
+    result = load_one(tmp_path)
+    assert any(
+        "references 'fixtures/kubectl-describe-node.txt' but it does not"
+        in error
+        for error in result.errors
+    )
+
+
+def test_explainer_valid_has_no_errors(tmp_path: Path):
+    task_dir = copy_task(tmp_path)
+    write_explainer(task_dir, VALID_EXPLAINER)
+    result = load_one(tmp_path)
+    assert not any("explainer" in error for error in result.errors)
+
+
+def test_real_corpus_explainers_are_valid():
+    """Every explainer in the real corpus (including the 008 example) validates."""
+    for result in load_tasks(Path("tasks")):
+        assert not any("explainer" in error for error in result.errors), (
+            f"{result.path}: {result.errors}"
+        )
