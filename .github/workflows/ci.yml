@@ -34,11 +34,15 @@ jobs:
             echo "No tasks authored yet — corpus validation activates with the first task."
           fi
 
-      - name: Fixture leak and size lint (issue #154)
-        # `bench lint-fixtures` fails on any fixture that states a rubric
-        # alternative, carries an answer-hint word, or exceeds the line
-        # ceiling. HELDOUT_KEY is optional: a locked rubric skips the leak
-        # scan and still gets the size checks.
+      - name: Fixture lint — all checkers, blocking (issues #150-#155)
+        # Runs every registered checker (az, consistency, leaks, size, logs)
+        # in one blocking gate: any ERROR-severity finding fails the build
+        # (issue #155). WARNING/SKIPPED findings — unknown az prefixes,
+        # advisory log-realism notes, custom-resource schema gaps — are
+        # reported in the log for follow-up lint-fix PRs but never fail CI.
+        # kubernetes-validate is not installed in this job, so the k8s check
+        # degrades to one SKIPPED finding; the dedicated lint-fixtures job
+        # validates k8s fixtures with real schemas.
         env:
           HELDOUT_KEY: ${{ secrets.HELDOUT_KEY }}
         run: python -m bench lint-fixtures
@@ -58,23 +62,11 @@ jobs:
           HELDOUT_KEY: ${{ secrets.HELDOUT_KEY }}
         run: pytest -q
 
-      - name: Fixture lint — az JSON shapes (warning-only, issue #151)
-        # The az checker reports warnings/skips only, and lint-fixtures exits
-        # non-zero solely on error-severity findings, so this job is
-        # warning-only by construction: it surfaces shape violations without
-        # blocking merges. Promote to blocking once the corpus is clean.
-        run: python -m bench lint-fixtures --check az
-
-      - name: Fixture lint — timestamps and log realism (warning-only, issue #153)
-        # The logs checker reports WARNING-severity findings only, so like the
-        # az step above this surfaces fixture problems without blocking
-        # merges. Issue #155 owns promoting fixture checks to blocking.
-        run: python -m bench lint-fixtures --check logs
-
   # K8s fixture lint (issue #150): report invalid Kubernetes resources per
   # task. Separate job because it needs the kubernetes-validate schema
-  # package; k8s findings are warning-severity, so it is warning-only by
-  # construction like the az step above.
+  # package; it joins the same blocking gate as the consolidated fixture
+  # lint step (issue #155): non-zero on ERROR-severity findings, warnings
+  # reported but non-blocking.
   lint-fixtures:
     runs-on: ubuntu-latest
     steps:
@@ -90,5 +82,9 @@ jobs:
         # because only this check needs them.
         run: pip install -r requirements.txt kubernetes-validate
 
-      - name: K8s fixture lint (warning-only, issue #150)
+      - name: K8s fixture lint (blocking, issues #150 + #155)
+        # Same blocking semantics as the consolidated fixture lint step:
+        # exits non-zero on ERROR-severity findings; WARNING/SKIPPED
+        # findings (custom resources with no upstream schema) are reported
+        # but do not fail the run.
         run: python -m bench lint-fixtures --check k8s
