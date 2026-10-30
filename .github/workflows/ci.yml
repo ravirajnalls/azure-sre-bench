@@ -55,3 +55,9 @@ jobs:
         # warning-only by construction: it surfaces shape violations without
         # blocking merges. Promote to blocking once the corpus is clean.
         run: python -m bench lint-fixtures --check az
+
+      - name: Fixture lint — timestamps and log realism (warning-only, issue #153)
+        # The logs checker reports WARNING-severity findings only, so like the
+        # az step above this surfaces fixture problems without blocking
+        # merges. Issue #155 owns promoting fixture checks to blocking.
+        run: python -m bench lint-fixtures --check logs
