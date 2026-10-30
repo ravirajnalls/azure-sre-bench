@@ -1,9 +1,13 @@
 {
   "root_cause": [
-    ["disk pressure", "diskpressure", "disk full"],
-    ["legacy-audit-agent", "audit-debug", "hostpath"]
+    ["disk pressure", "diskpressure", "ephemeral storage", "disk full"],
+    ["legacy-audit-agent", "audit-debug", "hostpath", "unrotated"]
   ],
   "fix": [
-    ["rotat", "remove the hostpath", "log rotation", "clean"]
+    ["rotat", "remove the hostpath", "log rotation", "clean", "uncordon"]
+  ],
+  "distractors": [
+    ["docker", "containerd", "image bloat"],
+    ["memory pressure", "cpu contention", "memory"]
   ]
 }

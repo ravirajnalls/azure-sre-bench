@@ -7,6 +7,11 @@ rubrics in the repo. It never reads fixtures, the symptom, or its workspace:
 if this agent passes a task, the rubric is gameable by substring matching
 alone, and no amount of investigation was required.
 
+"Every rubric alternative" includes the rubric's distractor groups: the
+mechanical cheat unions whatever the rubric contains into the diagnosis,
+which is exactly the answer the distractor defense (issue #94) exists to
+catch. A cheater that understood the rubric well enough to exclude trap
+words while keeping the rest would effectively have to know the answer.
 This is a probe for the CI gameability gate (`tests/test_gameability.py`),
 not a baseline; its results land under `results/adversarial-*` and are
 excluded from the leaderboard and site.
@@ -44,9 +49,21 @@ def soup(groups: object) -> str:
 
 
 def soup_answer(rubric: dict) -> dict:
-    """Contract-shaped answer that covers every alternative of every group."""
+    """Contract-shaped answer that covers every alternative of every group.
+
+    The diagnosis field unions the root-cause groups *and* the distractor
+    groups — a mechanical rubric reader cannot tell trap words from real
+    ones, which is how the distractor defense (issue #94) defeats this cheat.
+    """
     return {
-        "root_cause": soup(rubric.get("root_cause")),
+        "root_cause": " ".join(
+            part
+            for part in (
+                soup(rubric.get("root_cause")),
+                soup(rubric.get("distractors")),
+            )
+            if part
+        ),
         "evidence": [],  # no fixture was read — there is nothing real to cite
         "fix": soup(rubric.get("fix")),
     }

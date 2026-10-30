@@ -1,8 +1,11 @@
 {
   "root_cause": [
-    ["v1beta1", "v2beta2", "deprecated", "removed api"]
+    ["policy/v1beta1", "autoscaling/v2beta2", "v1beta1", "v2beta2", "deprecated", "removed api", "no matches for kind"]
   ],
   "fix": [
     ["policy/v1", "autoscaling/v2"]
+  ],
+  "distractors": [
+    ["minavailable", "averageutilization", "autoscaler misconfiguration"]
   ]
 }

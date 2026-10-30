@@ -1,9 +1,13 @@
 {
   "root_cause": [
-    ["system pool", "systempool", "nodepool1"],
-    ["mincount", "min count", "d16"]
+    ["system pool", "systempool", "system node pool"],
+    ["mincount", "min count", "standard_d16s_v5", "d16s_v5", "d16"]
   ],
   "fix": [
-    ["mincount", "min count", "smaller vm", "d4s"]
+    ["mincount", "min count", "lower", "standard_d4s_v5", "d4s", "smaller vm"]
+  ],
+  "distractors": [
+    ["containerlog", "ingestion spike", "log analytics bill"],
+    ["managed disks", "storage cost", "npuser"]
   ]
 }

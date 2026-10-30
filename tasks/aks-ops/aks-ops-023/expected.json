@@ -1,9 +1,12 @@
 {
   "root_cause": [
-    ["spot"],
-    ["all replicas", "same pool", "every replica", "tolerat"]
+    ["spot", "npspot", "scalesetpriority"],
+    ["tolerat", "no node affinity", "topology spread", "all replicas", "same pool"]
   ],
   "fix": [
     ["affinity", "topology spread", "topologyspreadconstraints", "remove the toleration", "regular pool", "regular node pool", "non-spot"]
+  ],
+  "distractors": [
+    ["allowed disruptions", "pdb blocked", "pdb prevented"]
   ]
 }
