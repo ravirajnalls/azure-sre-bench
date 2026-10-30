@@ -21,7 +21,7 @@ README = Path("README.md")
 
 
 def main() -> int:
-    table = leaderboard_markdown(RESULTS_DIR)
+    table = leaderboard_markdown(RESULTS_DIR, Path("tasks"))
     update_readme(README, table)
     print(f"Updated the leaderboard block in {README}")
     return 0

@@ -16,7 +16,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from bench.grader import cap_evidence, grade
+from bench import GRADER_VERSION, RESULT_SCHEMA_VERSION
+from bench.grader import cap_evidence, extract_usage, grade, rubric_sha256
 from bench.heldout import ENCRYPTED_SUFFIX, HeldoutKeyError, load_hidden_json
 
 ANSWER_CONTRACT = {
@@ -111,6 +112,12 @@ def submit_answer(
     result = grade(answer, rubric)
     record = {
         "task": task_id,
+        # Same result-schema extension as `bench run` (issue #95): a manual
+        # record self-describes its schema, grader, and rubric exactly like a
+        # runner record, so renderers treat both uniformly.
+        "schema_version": RESULT_SCHEMA_VERSION,
+        "grader_version": GRADER_VERSION,
+        "rubric_sha256": rubric_sha256(rubric),
         "mode": "manual",
         "agent": agent,
         "elapsed_s": None,
@@ -121,7 +128,13 @@ def submit_answer(
         "detail": result["detail"],
         "timed_out": False,
         "returncode": None,
+        # The manual protocol observes no simulated-CLI trace; an explicit
+        # empty list keeps the schema uniform with runner records.
+        "commands": [],
     }
+    usage = extract_usage(answer)
+    if usage is not None:
+        record["usage"] = usage
     out_dir = Path(results_root) / agent
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / f"{task_id}.json").write_text(

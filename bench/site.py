@@ -6,6 +6,11 @@ an overall table (agent, passed, mean score), a per-category breakdown, and a
 task x agent pass/fail heatmap. No build step, no JavaScript, readable on a
 phone. With zero result folders the page renders an empty state instead of
 failing, so it can be built before the first benchmark run exists.
+
+Same-version rendering (issue #95): a record graded under a different grader
+version or an older rubric renders `stale`, a record written before the
+version fields existed renders `legacy` — neither contributes to the ranking
+numbers, and the heatmap marks their cells instead of claiming PASS/FAIL.
 """
 
 from __future__ import annotations
@@ -15,8 +20,14 @@ import html
 import json
 from pathlib import Path
 
-from bench.leaderboard import ADVERSARIAL_PREFIX
-from bench.tasks import CATEGORIES
+from bench.leaderboard import (
+    ADVERSARIAL_PREFIX,
+    STATUS_CURRENT,
+    STATUS_LEGACY,
+    STATUS_STALE,
+    classify_record,
+)
+from bench.tasks import CATEGORIES, current_rubric_hashes
 
 DEFAULT_RESULTS_ROOT = "results"
 DEFAULT_OUT = "site/index.html"
@@ -25,6 +36,17 @@ DEFAULT_OUT = "site/index.html"
 CELL_PASS = "pass"
 CELL_FAIL = "fail"
 CELL_NONE = "none"
+CELL_STALE = "stale"
+CELL_LEGACY = "legacy"
+
+# Heatmap labels per cell state (&mdash; renders as an em dash).
+_CELL_LABELS = {
+    CELL_PASS: "PASS",
+    CELL_FAIL: "FAIL",
+    CELL_NONE: "&mdash;",
+    CELL_STALE: "STALE",
+    CELL_LEGACY: "LEGACY",
+}
 
 _STYLE = """\
 :root { color-scheme: light dark; }
@@ -49,8 +71,11 @@ td.heat { text-align: center; font-weight: 600; font-size: 0.85rem; }
 @media (prefers-color-scheme: dark) {
   th, td { border-color: #30363d; }
   .pass { color: #3fb950; } .fail { color: #f85149; }
+  .stale { color: #d29922; }
 }
 .none { color: #8c959f; font-weight: 400; }
+.stale { color: #9a6700; }
+.legacy { color: #8c959f; font-style: italic; }
 .empty { border: 1px dashed #8c959f; padding: 1rem; border-radius: 6px; }
 footer { margin-top: 2.5rem; font-size: 0.85rem; color: #8c959f; }
 code { font-family: ui-monospace, monospace; }
@@ -100,12 +125,18 @@ def task_category(task_id: str) -> str:
     return "other"
 
 
-def aggregate(results: dict[str, list[dict]]) -> dict:
+def aggregate(results: dict[str, list[dict]], rubric_hashes: dict[str, str] | None = None) -> dict:
     """Reduce raw run records into the tables the site renders.
 
     Returns `{"agents", "tasks", "overall", "by_category", "heatmap"}` where
     overall rows are per agent, by_category rows are per category with one
     sub-row per agent that ran it, and heatmap rows carry one cell per agent.
+
+    Same-version math (issue #95): only records classified `current` contribute
+    to the ranking numbers; stale and legacy records keep their heatmap cells
+    (marked STALE/LEGACY) but drop out of passed/mean. Overall rows carry the
+    agent's status — `current` when any of its records is current, else the
+    weakest state present (`stale`, then `legacy`).
     """
     agents = sorted(results)
     # (agent, task) -> graded outcome; last record wins if a task appears twice.
@@ -119,7 +150,11 @@ def aggregate(results: dict[str, list[dict]]) -> dict:
                 score = float(record.get("score", 0.0))
             except (TypeError, ValueError):
                 score = 0.0
-            outcomes[(agent, task)] = {"passed": bool(record.get("passed")), "score": score}
+            outcomes[(agent, task)] = {
+                "passed": bool(record.get("passed")),
+                "score": score,
+                "status": classify_record(record, rubric_hashes),
+            }
     tasks = sorted({task for _, task in outcomes})
 
     def row(agent: str, category: str | None) -> dict:
@@ -128,15 +163,30 @@ def aggregate(results: dict[str, list[dict]]) -> dict:
             for (run, task), outcome in outcomes.items()
             if run == agent and (category is None or task_category(task) == category)
         ]
-        passed = sum(1 for outcome in picked if outcome["passed"])
+        counted = [outcome for outcome in picked if outcome["status"] == STATUS_CURRENT]
+        passed = sum(1 for outcome in counted if outcome["passed"])
         mean = (
-            round(sum(outcome["score"] for outcome in picked) / len(picked), 3)
-            if picked
+            round(sum(outcome["score"] for outcome in counted) / len(counted), 3)
+            if counted
             else 0.0
         )
-        return {"agent": agent, "passed": passed, "total": len(picked), "mean_score": mean}
+        return {"agent": agent, "passed": passed, "total": len(counted), "mean_score": mean}
 
-    overall = [row(agent, None) for agent in agents]
+    def agent_status(agent: str) -> str:
+        statuses = [
+            outcome["status"]
+            for (run, _), outcome in outcomes.items()
+            if run == agent
+        ]
+        if not statuses:
+            # No graded outcomes at all: no current-version result to rank,
+            # matching the leaderboard's empty-run status.
+            return STATUS_LEGACY
+        if STATUS_CURRENT in statuses:
+            return STATUS_CURRENT
+        return STATUS_STALE if STATUS_STALE in statuses else STATUS_LEGACY
+
+    overall = [{**row(agent, None), "status": agent_status(agent)} for agent in agents]
 
     by_category: list[dict] = []
     for category in sorted({task_category(task) for task in tasks}):
@@ -169,6 +219,11 @@ def aggregate(results: dict[str, list[dict]]) -> dict:
 def _cell(outcome: dict | None) -> str:
     if outcome is None:
         return CELL_NONE
+    status = outcome.get("status", STATUS_CURRENT)
+    if status == STATUS_STALE:
+        return CELL_STALE
+    if status == STATUS_LEGACY:
+        return CELL_LEGACY
     return CELL_PASS if outcome["passed"] else CELL_FAIL
 
 
@@ -176,6 +231,7 @@ def _summary_row(entry: dict) -> str:
     esc_agent = html.escape(entry["agent"])
     return (
         f"<tr><td>{esc_agent}</td>"
+        f'<td>{html.escape(entry.get("status", STATUS_CURRENT))}</td>'
         f'<td class="num">{entry["passed"]}/{entry["total"]}</td>'
         f'<td class="num">{entry["mean_score"]:.3f}</td></tr>'
     )
@@ -206,7 +262,8 @@ def render_html(agg: dict) -> str:
         parts.append("<h2>Overall</h2>")
         parts.append('<div class="tablewrap"><table>')
         parts.append(
-            "<tr><th>Agent</th><th class=num>Passed</th><th class=num>Mean score</th></tr>"
+            "<tr><th>Agent</th><th>Status</th><th class=num>Passed</th>"
+            "<th class=num>Mean score</th></tr>"
         )
         parts.extend(_summary_row(entry) for entry in agg["overall"])
         parts.append("</table></div>")
@@ -242,10 +299,8 @@ def render_html(agg: dict) -> str:
         parts.append(f"<tr><th>Task</th>{header}</tr>")
         for row in agg["heatmap"]:
             cells = "".join(
-                f'<td class="heat {state}">{label}</td>'
-                for state, label in zip(
-                    row["cells"], ("PASS", "FAIL", "&mdash;")
-                )
+                f'<td class="heat {state}">{_CELL_LABELS.get(state, "&mdash;")}</td>'
+                for state in row["cells"]
             )
             parts.append(f"<tr><td>{html.escape(row['task'])}</td>{cells}</tr>")
         parts.append("</table></div>")
@@ -261,7 +316,7 @@ def render_html(agg: dict) -> str:
 def cmd_site(args: argparse.Namespace) -> int:
     """CLI entry for `bench site`: load results, render, write the page."""
     results = load_results(Path(args.results_root))
-    agg = aggregate(results)
+    agg = aggregate(results, current_rubric_hashes(Path(args.tasks_root)))
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(render_html(agg), encoding="utf-8")

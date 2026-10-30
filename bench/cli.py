@@ -183,6 +183,11 @@ def build_parser() -> argparse.ArgumentParser:
                 default="results",
                 help="results root directory (default: ./results)",
             )
+            leaderboard_parser.add_argument(
+                "--tasks-root",
+                default="tasks",
+                help="task discovery root for rubric-hash staleness (default: ./tasks)",
+            )
         elif name == "site":
             site_parser = sub.add_parser(
                 name, help="build the static leaderboard site from results/"
@@ -196,6 +201,11 @@ def build_parser() -> argparse.ArgumentParser:
                 "--out",
                 default="site/index.html",
                 help="output HTML path (default: site/index.html)",
+            )
+            site_parser.add_argument(
+                "--tasks-root",
+                default="tasks",
+                help="task discovery root for rubric-hash staleness (default: ./tasks)",
             )
         elif name == "validate":
             validate_parser = sub.add_parser(
@@ -387,7 +397,9 @@ def cmd_leaderboard(args: argparse.Namespace) -> int:
     """Print the markdown leaderboard table from `--results-root` (issue #41)."""
     from bench.leaderboard import leaderboard_markdown  # deferred: keeps --help cheap
 
-    print(leaderboard_markdown(Path(getattr(args, "results_root", "results"))))
+    print(
+        leaderboard_markdown(Path(args.results_root), Path(args.tasks_root))
+    )
     return 0
 
 

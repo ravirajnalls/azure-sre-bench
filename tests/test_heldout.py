@@ -20,6 +20,7 @@ from pathlib import Path
 import pytest
 import yaml
 
+from bench import GRADER_VERSION
 from bench.heldout import (
     ENCRYPTED_SUFFIX,
     SPLIT_HELDOUT,
@@ -404,7 +405,15 @@ def test_encrypt_script_decrypt_round_trip(tmp_path, key: str):
 def write_record(results_root: Path, run: str, task: str, split: str | None, passed: bool):
     run_dir = results_root / run
     run_dir.mkdir(parents=True, exist_ok=True)
-    record = {"task": task, "score": 1.0 if passed else 0.0, "passed": passed}
+    # Current result-schema shape (issue #95): records without the version
+    # fields render legacy and drop out of the counts.
+    record = {
+        "task": task,
+        "score": 1.0 if passed else 0.0,
+        "passed": passed,
+        "grader_version": GRADER_VERSION,
+        "rubric_sha256": "b" * 64,
+    }
     if split is not None:
         record["split"] = split
     (run_dir / f"{task}.json").write_text(json.dumps(record), encoding="utf-8")

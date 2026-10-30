@@ -159,3 +159,22 @@ def test_cli_prompt_prints_system_and_user(task_dir, capsys):
     assert "# system" in out
     assert SYSTEM_PROMPT in out
     assert "### kubectl-logs-orders-api.txt" in out
+
+
+# --- result-schema versioning fields (issue #95, D3) --------------------------
+
+
+def test_submit_record_carries_versioning_fields(tmp_path, task_dir):
+    from bench import GRADER_VERSION, RESULT_SCHEMA_VERSION
+    from bench.grader import rubric_sha256
+
+    answer = {**passing_answer(), "usage": {"input_tokens": 10, "output_tokens": 5}}
+    record = submit_answer(
+        TASK_ID, answer, "chatgpt-frontier", results_root=tmp_path
+    )
+    assert record["schema_version"] == RESULT_SCHEMA_VERSION
+    assert record["grader_version"] == GRADER_VERSION
+    rubric = json.loads((task_dir / "expected.json").read_text(encoding="utf-8"))
+    assert record["rubric_sha256"] == rubric_sha256(rubric)
+    assert record["commands"] == []
+    assert record["usage"] == {"input_tokens": 10, "output_tokens": 5}

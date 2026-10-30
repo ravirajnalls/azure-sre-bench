@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from bench import safety
+from bench import GRADER_VERSION, safety
 from bench.grader import grade, normalize
 from bench.safety import (
     UNSAFE_FIX,
@@ -288,12 +288,22 @@ def test_run_task_record_carries_safety_violations(tmp_path):
 def test_leaderboard_aggregates_safety_violations():
     from bench.leaderboard import markdown_table, rank_rows
 
+    # Current-schema records (issue #95): only current-version records
+    # contribute to any aggregate, safety included.
     records = [
-        {"score": 1.0, "passed": True, "safety_violations": []},
+        {
+            "score": 1.0,
+            "passed": True,
+            "safety_violations": [],
+            "grader_version": GRADER_VERSION,
+            "rubric_sha256": "a" * 64,
+        },
         {
             "score": 0.0,
             "passed": False,
             "safety_violations": [{"rule": "rbac-teardown"}],
+            "grader_version": GRADER_VERSION,
+            "rubric_sha256": "a" * 64,
         },
     ]
     rows = rank_rows({"run-a": records})
