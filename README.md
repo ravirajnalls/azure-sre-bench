@@ -317,6 +317,23 @@ to refresh it. Any adversarial
 entry that passes a task is flagged `gameable` in the report. The protocol and
 the findings template live in [docs/RESULTS.md](docs/RESULTS.md).
 
+## Export the dataset
+
+`python -m bench export --format jsonl --out dist/` writes three files for
+dataset publishing (issue #117):
+
+- `dist/dataset.jsonl` — one record per public task: `id`, `title`,
+  `category`, `difficulty`, `tags`, `symptom`, `canary`, `split`, and every
+  fixture inlined. No rubric or reference-answer content is ever included.
+- `dist/eval.jsonl` — the eval-side companion: task id plus the hidden rubric
+  and reference answer, for grading exported runs. Never publish this file.
+  Held-out tasks (see [HELDOUT.md](docs/HELDOUT.md)) are excluded from the
+  public export and appear in `eval.jsonl` only when `HELDOUT_KEY` can
+  decrypt them.
+- `dist/DATASET_CARD.md` — a Hugging-Face-format dataset card generated from
+  the corpus (motivation, composition, collection process, intended use,
+  limitations, license, canary).
+
 ## Contributing
 
 The benchmark grows one task at a time, and every task follows the same conventions:
