@@ -1019,3 +1019,51 @@ def test_task_category_and_difficulties_importable_from_tasks(tmp_path: Path):
     assert tasks_module.task_difficulties(tmp_path / "tasks") == {
         "monitoring-001": "easy"
     }
+# --- failure taxonomy chart (issue #163) --------------------------------------
+
+
+def test_aggregate_carries_per_agent_failure_counts():
+    agg = aggregate(
+        {
+            "agent": [
+                record("cost-001", 1.0, True),
+                record("cost-002", 0.0, False),  # unmatched diagnosis → wrong_layer
+                {
+                    **record("cost-003", 0.0, False),
+                    "timed_out": True,
+                },
+            ]
+        }
+    )
+    counts = agg["failures"]["agent"]
+    assert counts["wrong_layer"] == 1
+    assert counts["timeout"] == 1
+    assert sum(counts.values()) == 2
+
+
+def test_render_html_shows_failure_modes_section():
+    agg = aggregate(
+        {
+            "agent": [
+                record("cost-001", 1.0, True),
+                {
+                    **record("cost-002", 0.0, False),
+                    "timed_out": True,
+                },
+            ],
+            "clean": [record("cost-001", 1.0, True)],
+        }
+    )
+    page = render_html(agg)
+    assert "<h2>Failure modes</h2>" in page
+    assert 'aria-label="Failure taxonomy per agent"' in page
+    assert "timeout" in page
+    assert "No failed results: clean" in page
+
+
+def test_render_html_failure_section_without_any_failures():
+    agg = aggregate({"agent": [record("cost-001", 1.0, True)]})
+    page = render_html(agg)
+    assert "<h2>Failure modes</h2>" in page
+    assert "No failed results to classify yet." in page
+

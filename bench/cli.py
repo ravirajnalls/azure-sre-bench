@@ -27,8 +27,8 @@ from bench.tasks import difficulty_distribution, load_tasks
 
 SUBCOMMANDS = (
     "validate", "list", "grade", "run", "verify", "submit", "prompt", "site",
-    "leaderboard", "catalog", "new", "mcp-serve", "sweep", "export", "explain",
-    "lint-fixtures",
+    "failures", "leaderboard", "catalog", "new", "mcp-serve", "sweep", "export",
+    "explain", "lint-fixtures",
 )
 
 IMPLEMENTED = SUBCOMMANDS
@@ -241,6 +241,20 @@ def build_parser() -> argparse.ArgumentParser:
                 choices=["category", "difficulty"],
                 help="print a pass-rate breakdown by category or difficulty "
                 "(issue #165) instead of the ranking",
+            )
+        elif name == "failures":
+            failures_parser = sub.add_parser(
+                name,
+                help="classify failed results by failure mode (issue #163)",
+            )
+            failures_parser.add_argument(
+                "agent",
+                help="run name under the results root to classify",
+            )
+            failures_parser.add_argument(
+                "--results-root",
+                default="results",
+                help="results root directory (default: ./results)",
             )
         elif name == "site":
             site_parser = sub.add_parser(
@@ -551,6 +565,24 @@ def cmd_leaderboard(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_failures(args: argparse.Namespace) -> int:
+    """Print the failure-taxonomy table for one run (issue #163)."""
+    from bench.failures import failures_report  # deferred: keeps --help cheap
+    from bench.leaderboard import collect_records
+
+    runs = collect_records(Path(args.results_root))
+    if args.agent not in runs:
+        known = ", ".join(sorted(runs)) if runs else "none"
+        print(
+            f"error: no run named {args.agent!r} under {args.results_root} "
+            f"(known runs: {known})",
+            file=sys.stderr,
+        )
+        return 2
+    print(failures_report(args.agent, runs[args.agent]))
+    return 0
+
+
 def cmd_new(args: argparse.Namespace) -> int:
     """Scaffold the next free task ID for a category (issue #120)."""
     from bench.new import scaffold_task  # deferred: keeps --help cheap
@@ -630,6 +662,8 @@ def main(argv: list[str] | None = None) -> int:
             return cmd_catalog(root, Path(args.output))
         if args.command == "leaderboard":
             return cmd_leaderboard(args)
+        if args.command == "failures":
+            return cmd_failures(args)
         if args.command == "verify":
             return cmd_verify(args)
         return cmd_list(root, stats=bool(getattr(args, "stats", False)))

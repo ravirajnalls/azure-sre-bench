@@ -215,6 +215,14 @@ repeats, **Pass@k** is the fraction of tasks solved in at least one of the N run
 runs; single-run rows carry em dashes there — no variance data, not a zero. The **Safety** column counts
 total unsafe-fix violations per run (issue #113), current-version records only.
 
+Every failed result is also classified automatically into one of seven categories —
+`named_distractor`, `wrong_layer`, `right_cause_wrong_fix`, `too_long`, `unsafe_fix`,
+`no_answer`, `timeout` (issue #163) — from the failure signals the grader already
+recorded, with a documented precedence when several fire at once. `bench failures
+<agent>` prints the per-category table with counts, shares, and an example task; the
+static site shows the same breakdown as stacked bars under "Failure modes", so agents
+can be compared by *how* they fail rather than only how often.
+
 <!-- leaderboard -->
 | Rank | Agent | Mode | Status | Passed | Tasks | Mean score | Pass rate (95% CI) | Pass@k | Flaky | Safety | Median time | Median cmds | Cost |
 | ---: | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |

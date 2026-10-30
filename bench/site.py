@@ -46,6 +46,10 @@ from pathlib import Path
 
 import yaml
 
+from bench.failures import (
+    CATEGORIES as FAILURE_CATEGORIES,
+)
+from bench.failures import failure_counts
 from bench.leaderboard import (
     ADVERSARIAL_PREFIX,
     STATUS_CURRENT,
@@ -502,6 +506,7 @@ def aggregate(
         }
         for task in tasks
     ]
+    failures = {agent: failure_counts(results.get(agent, [])) for agent in agents}
     return {
         "agents": agents,
         "tasks": tasks,
@@ -509,6 +514,7 @@ def aggregate(
         "by_category": by_category,
         "by_difficulty": by_difficulty,
         "heatmap": heatmap,
+        "failures": failures,
     }
 
 
@@ -757,6 +763,87 @@ def render_difficulty_chart(agg: dict) -> str | None:
             )
     out.append("</svg>")
     return "\n".join(out)
+# Muted, distinguishable segment colors, one per failure category (#163).
+_FAILURE_COLORS = {
+    "named_distractor": "#e4572e",
+    "wrong_layer": "#9467bd",
+    "right_cause_wrong_fix": "#1f77b4",
+    "too_long": "#8c8c8c",
+    "unsafe_fix": "#d62728",
+    "no_answer": "#7f7f7f",
+    "timeout": "#e6a700",
+}
+
+
+def render_failures_chart(agg: dict) -> tuple[str | None, list[str]]:
+    """Render the #163 taxonomy as stacked horizontal bars, one per agent.
+
+    Returns `(svg, clean)`; `svg` is None when no agent recorded a failure,
+    and `clean` names every agent with zero failures. Bar length scales the
+    agent's failure count to the worst agent; segments follow the canonical
+    category order and carry a `<title>` tooltip with the raw count.
+    """
+    breakdown = agg.get("failures") or {}
+    rows = [
+        (agent, counts)
+        for agent, counts in breakdown.items()
+        if sum(counts.values()) > 0
+    ]
+    clean = [
+        agent
+        for agent, counts in breakdown.items()
+        if sum(counts.values()) == 0
+    ]
+    if not rows:
+        return None, clean
+    bar_left = 150.0  # room for agent names
+    bar_span = _CHART_W - bar_left - 40.0  # room for count labels
+    row_h = 26.0
+    top = 10.0
+    legend_y = top + row_h * len(rows) + 24.0
+    height = legend_y + 44.0  # two legend rows
+    max_failed = max(sum(counts.values()) for _, counts in rows)
+
+    out: list[str] = [
+        f'<svg class="chart" viewBox="0 0 {_CHART_W} {height:.0f}" role="img" '
+        'aria-label="Failure taxonomy per agent">',
+    ]
+    for index, (agent, counts) in enumerate(rows):
+        y = top + index * row_h
+        failed = sum(counts.values())
+        out.append(
+            f'<text x="{bar_left - 8:.0f}" y="{y + row_h / 2 + 4:.1f}" '
+            f'text-anchor="end">{html.escape(agent)}</text>'
+        )
+        offset = 0.0
+        for category in FAILURE_CATEGORIES:
+            count = counts.get(category, 0)
+            if not count:
+                continue
+            seg_w = count / max_failed * bar_span
+            out.append(
+                f'<rect x="{bar_left + offset:.1f}" y="{y + 4:.1f}" '
+                f'width="{seg_w:.1f}" height="{row_h - 8:.1f}" '
+                f'fill="{_FAILURE_COLORS[category]}">'
+                f"<title>{category}: {count}</title></rect>"
+            )
+            offset += seg_w
+        out.append(
+            f'<text x="{bar_left + bar_span + 8:.0f}" '
+            f'y="{y + row_h / 2 + 4:.1f}">{failed}</text>'
+        )
+    for index, category in enumerate(FAILURE_CATEGORIES):
+        col = index % 4
+        row = index // 4
+        x = bar_left + col * 115.0
+        y = legend_y + row * 20.0
+        out.append(
+            f'<rect x="{x:.0f}" y="{y:.0f}" width="12" height="12" '
+            f'fill="{_FAILURE_COLORS[category]}"/>'
+        )
+        out.append(f'<text x="{x + 17:.0f}" y="{y + 10:.0f}">{category}</text>')
+    out.append("</svg>")
+    return "\n".join(out), clean
 
 
 def load_explainers(tasks_root: Path) -> dict[str, dict]:
@@ -1096,6 +1183,18 @@ def render_html(agg: dict) -> str:
             else:
                 note = f"No cost data: {', '.join(html.escape(a) for a in no_cost)}"
             parts.append(f'<p class="empty">{note}</p>')
+
+        parts.append("<h2>Failure modes</h2>")
+        chart_svg, clean_agents = render_failures_chart(agg)
+        if chart_svg is not None:
+            parts.append(chart_svg)
+            if clean_agents:
+                parts.append(
+                    '<p class="empty">No failed results: '
+                    f"{', '.join(html.escape(a) for a in clean_agents)}</p>"
+                )
+        else:
+            parts.append('<p class="empty">No failed results to classify yet.</p>')
 
         parts.append("<h2>By category</h2>")
         parts.append('<div class="tablewrap"><table id="tbl-bycat">')
