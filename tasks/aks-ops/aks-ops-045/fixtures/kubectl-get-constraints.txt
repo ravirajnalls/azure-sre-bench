@@ -1,0 +1,11 @@
+NAME                                                       ENFORCEMENT-ACTION   VIOLATIONS   AGE
+k8sazurev2containerallowedimages                           deny                 3            214d
+k8sazurev1containerlimits                                  deny                 0            214d
+k8sazurev1containerresourcelimits                          dryrun               0            214d
+k8sazurev3allowedhostpaths                                 deny                 0            214d
+
+Details for k8sazurev2containerallowedimages:
+  Assigned by:      Azure Policy — "Kubernetes cluster containers should only use approved images"
+  Enforcement:      deny
+  Violating pods:   3 (namespace: reporting)
+  Latest violation: reporting/reporting-api — image not from an approved registry

@@ -1,0 +1,15 @@
+{
+  "root_cause": "Azure Policy (Gatekeeper) on the cluster denies the deployment: the assigned K8sAzureContainerAllowedImages constraint 'Kubernetes cluster containers should only use allowed images' only permits images from benchacr0001.azurecr.io and mcr.microsoft.com, and the pipeline pushes the reporting-api image to docker.io/contoso — an unapproved registry — so the validation.gatekeeper.sh admission webhook denies kubectl apply with enforcementAction: deny.",
+  "evidence": [
+    "pipeline-log.txt: the apply fails with 'Admission webhook validation.gatekeeper.sh denied the request ... Denied by constraint k8sazurev2containerallowedimages assigned by Azure Policy', while the docker build and push to docker.io/contoso/reporting-api:1.4.2 succeeded",
+    "k8sazurev2containerallowedimages.yaml: the constraint is enforcementAction deny and its allowedRepoRegexes only match benchacr0001.azurecr.io and mcr.microsoft.com — docker.io/contoso matches nothing",
+    "deployment.yaml: the rollout deploys image docker.io/contoso/reporting-api:1.4.2, outside the allowed registries",
+    "gatekeeper-audit.log: audit violations record 'container image docker.io/contoso/reporting-api:1.4.2 is not from an approved registry' for the reporting pods",
+    "az-role-assignment-list.json: the release service principal holds AcrPull, Key Vault Secrets User, and AKS Cluster User — RBAC is intact and not the cause"
+  ],
+  "fix": "Move the image into an approved registry and deploy from it: import the image from docker.io into the ACR (e.g. az acr import --registry benchacr0001 --source docker.io/contoso/reporting-api:1.4.2) and change deployment.yaml to reference benchacr0001.azurecr.io/contoso/reporting-api:1.4.2. Alternatively, have the pipeline build and push directly to benchacr0001.azurecr.io, or have the platform team add docker.io/contoso to the constraint's allowedRepoRegexes if Docker Hub is genuinely approved — the deny disappears once the image registry is allowed.",
+  "evidence_files": [
+    "k8sazurev2containerallowedimages.yaml",
+    "deployment.yaml"
+  ]
+}
