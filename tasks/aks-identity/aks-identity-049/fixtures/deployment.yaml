@@ -27,5 +27,6 @@ spec:
         - name: media
           persistentVolumeClaim:
             claimName: media-pvc
-# fsGroup is set, but the azure-file CSI driver does not apply fsGroup to
-# SMB mount options — the StorageClass mountOptions win.
+# The pod's security context requests group 2000 for volume ownership, but
+# the azure-file CSI driver never applies it to SMB volumes — whatever the
+# StorageClass passes at volume creation time wins.
