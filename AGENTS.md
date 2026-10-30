@@ -47,9 +47,16 @@ Categories: `aks-networking`, `aks-identity`, `aks-workloads`, `aks-ops`, `netwo
   (issue #151) validates canned `az` output against minimal JSON Schemas in
   `bench/schemas/az/`, matched by filename prefix (longest prefix wins, so
   `az-role-assignment-list-acr.json` uses the role-assignment schema). Unknown
-  `az-*` fixtures are skipped with a warning, not failed. The CI step is
-  warning-only; new az fixtures should satisfy the mapped schema or a follow-up
-  fix lands via the fixture-lint issues.
+  `az-*` fixtures are skipped, not failed.
+
+### Fixture lint in CI (`bench lint-fixtures`, issues #150-#155)
+
+All registered checkers — `az` (#151), `consistency` (#152), `leaks`/`size`
+(#154), `logs` (#153), and `k8s` (#150, dedicated job with the
+`kubernetes-validate` dependency) — run blocking in CI (issue #155): any
+ERROR-severity finding fails the build. WARNING/SKIPPED findings are printed
+in the CI log and must be cleaned up by a follow-up lint-fix PR, but never
+fail CI on their own; severity is the checker's error-vs-advisory posture.
 
 ### Cross-file consistency lint (`bench lint-fixtures`, issue #152)
 
@@ -70,6 +77,17 @@ as the `consistency` check.
 - Multi-resource list outputs (`az-vm-list`, `az-disk-list`) may vary locations
   and zones per entry; the checker compares spatial facts only across
   single-resource documents. `fixtures/_commands.yaml` is never linted.
+
+### Timestamp and log-realism lint (`bench lint-fixtures --check logs`, issue #153)
+
+The `logs` checker parses every timestamp in `.txt`/`.log` fixtures and
+time-series CSVs: ISO 8601 / klog / RFC-1123 stamps must parse, timestamps
+must be monotonic within a capture stream (a shell-prompt line resets the
+baseline), event times across a task's files must fit the 7-day incident
+window, kubectl event rows must carry real event reasons and parseable ages,
+and timestamped app-log lines must carry a severity level (Azure DevOps
+transcript markers and Functions host lifecycle lines are exempt). Findings
+are WARNING-severity: reported in CI, non-blocking.
 
 ## Task.yaml canary (issue #114)
 
@@ -142,7 +160,9 @@ fixture (manifests and `kubectl get -o yaml` output) against the cluster
 version in the task's `fixtures/az-aks-show.json` (default 1.31.1), using the
 offline kubernetes-json-schema schemas shipped by the `kubernetes-validate`
 pip package (the same registry kubeconform resolves). Findings are
-warning-severity, so the CI job is warning-only by construction.
+warning-severity or skipped; the dedicated CI job joins the blocking fixture
+gate (issue #155) — it fails on ERROR-severity findings, and warnings are
+reported for follow-up.
 
 - A fixture that is invalid against the task's cluster version — including
   API versions removed by the upgrade the task depicts (e.g. aks-ops-019's

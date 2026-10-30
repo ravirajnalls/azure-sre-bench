@@ -9,6 +9,7 @@ import pytest
 from jsonschema.validators import validator_for
 
 from bench.cli import main
+from bench.fixture_leaks import MAX_FIXTURE_LINES
 from bench.lint_fixtures import (
     AZ_PREFIX_SCHEMAS,
     ERROR,
@@ -144,6 +145,27 @@ def test_cli_exits_zero_when_only_warnings(task_tree: Path, capsys) -> None:
     assert rc == 0
     assert "SKIPPED" in out
     assert "warning-only" in out or "az:" in out
+
+
+def test_cli_exits_one_on_error_findings(tmp_path: Path, capsys) -> None:
+    """Blocking gate (issue #155): an ERROR finding fails the all-checkers run.
+
+    An oversized fixture trips the `size` checker's line ceiling, which is
+    ERROR-severity; with warnings alone the run still exits zero (see
+    test_cli_exits_zero_when_only_warnings). No ``--check`` so this mirrors
+    the consolidated blocking step in CI exactly.
+    """
+    fixtures = tmp_path / "aks-identity" / "task-y" / "fixtures"
+    fixtures.mkdir(parents=True)
+    (fixtures / "kubectl-logs-pod.txt").write_text(
+        "\n".join(f"log line {n}" for n in range(MAX_FIXTURE_LINES + 1)),
+        encoding="utf-8",
+    )
+    rc = main(["lint-fixtures", "--tasks-root", str(tmp_path)])
+    out = capsys.readouterr().out
+    assert rc == 1
+    assert "ERROR" in out
+    assert "exceeds the" in out
 
 
 def test_cli_rejects_unknown_check(task_tree: Path) -> None:
