@@ -2,6 +2,7 @@ id: aks-ops-022
 canary: 00000000-0000-0000-0000-000000000114  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
 title: StatefulSet pod stays Pending while its PVC is Bound
 category: aks-ops
+kind: remediation
 difficulty: medium
 tags:
   - aks-ops

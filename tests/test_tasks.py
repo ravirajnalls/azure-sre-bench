@@ -24,6 +24,7 @@ import yaml
 
 from bench.grader import grade
 from bench.heldout import SPLIT_HELDOUT, heldout_key, load_hidden_json, split_of
+from bench.remediation import grade_for_task
 from bench.run import run_task
 from bench.tasks import CANARY_GUID, inspect_task, load_tasks
 
@@ -685,9 +686,13 @@ def test_task_validates_clean(task_dir: Path):
 
 @pytest.mark.parametrize("task_dir", _discovered_task_dirs(), ids=_task_label)
 def test_reference_solution_passes_own_task(task_dir: Path):
-    """Integrity invariant (solvability): solution.json scores passed == True."""
+    """Integrity invariant (solvability): solution.json scores passed == True.
+
+    Graded through the shared dispatcher (issue #110) so a remediation task's
+    reference must satisfy its own patch checks, not just the diagnosis.
+    """
     solution, expected = _load_rubric_pair(task_dir)
-    result = grade(solution, expected)
+    result = grade_for_task(solution, expected, task_dir, _config_of(task_dir))
     assert result["passed"], (
         f"reference solution for {_task_label(task_dir)} does not pass its own "
         f"rubric (score={result['score']}):\n{json.dumps(result['detail'], indent=2)}"

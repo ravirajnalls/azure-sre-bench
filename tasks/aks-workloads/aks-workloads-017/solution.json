@@ -1,14 +1,17 @@
 {
-  "root_cause": "The checkout-api container has no cpu resource request — the deployment manifest never sets resources.requests.cpu, so the HorizontalPodAutoscaler cannot compute CPU utilization (usage divided by request) for any pod. Every replica reports <unknown>/70% utilization and the HPA stays pinned at minReplicas while the pods are actually pegged.",
+  "root_cause": "The checkout-api container has no cpu resource request \u2014 the deployment manifest never sets resources.requests.cpu, so the HorizontalPodAutoscaler cannot compute CPU utilization (usage divided by request) for any pod. Every replica reports <unknown>/70% utilization and the HPA stays pinned at minReplicas while the pods are actually pegged.",
   "evidence": [
-    "deployment.yaml: the checkout-api container defines no resources block at all — no cpu request is set",
+    "deployment.yaml: the checkout-api container defines no resources block at all \u2014 no cpu request is set",
     "kubectl-get-hpa.txt: TARGETS reads <unknown>/70%, meaning utilization cannot be computed",
-    "kubectl-describe-hpa.txt: FailedComputeMetricsReplicas — missing request for cpu",
+    "kubectl-describe-hpa.txt: FailedComputeMetricsReplicas \u2014 missing request for cpu",
     "kubectl-top-pod.txt: metrics-server does report usage (roughly 900m per pod), so metrics flow and only the request is absent"
   ],
-  "fix": "Set a cpu request on the checkout-api container in the deployment — add a resources.requests block (requests.cpu sized against observed usage, e.g. 500m, with a matching memory request) — so the HPA can compute utilization percentages and scale between minReplicas and maxReplicas.",
+  "fix": "Set a cpu request on the checkout-api container in the deployment \u2014 add a resources.requests block (requests.cpu sized against observed usage, e.g. 500m, with a matching memory request) \u2014 so the HPA can compute utilization percentages and scale between minReplicas and maxReplicas.",
   "evidence_files": [
     "deployment.yaml",
     "kubectl-describe-hpa.txt"
-  ]
+  ],
+  "patched_files": {
+    "fixtures/deployment.yaml": "apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: checkout-api\n  namespace: shop\n  labels:\n    app.kubernetes.io/name: checkout-api\n    app.kubernetes.io/part-of: checkout\nspec:\n  replicas: 3\n  selector:\n    matchLabels:\n      app: checkout-api\n  template:\n    metadata:\n      labels:\n        app: checkout-api\n    spec:\n      serviceAccountName: checkout-api\n      containers:\n        - name: checkout-api\n          image: checkoutprod0000.azurecr.io/checkout-api:v1.14.2\n          ports:\n            - name: http\n              containerPort: 8080\n          env:\n            - name: SPRING_PROFILES_ACTIVE\n              value: prod\n            - name: ORDER_SERVICE_URL\n              value: http://orders-api.shop.svc.cluster.local:8080\n          resources:\n            requests:\n              cpu: \"500m\"\n              memory: \"512Mi\"\n          livenessProbe:\n            httpGet:\n              path: /healthz\n              port: 8080\n            initialDelaySeconds: 10\n            periodSeconds: 5\n          readinessProbe:\n            httpGet:\n              path: /ready\n              port: 8080\n            initialDelaySeconds: 5\n            periodSeconds: 5\n          terminationMessagePolicy: FallbackToLogsOnError\n"
+  }
 }

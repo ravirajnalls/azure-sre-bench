@@ -8,5 +8,17 @@
   ],
   "distractors": [
     ["maxreplicas", "hpa is misconfigured", "maxreplicas is too low"]
+  ],
+  "checks": [
+    {
+      "file": "fixtures/deployment.yaml",
+      "path": "spec.template.spec.containers.0.resources.requests.cpu",
+      "op": "exists"
+    },
+    {
+      "file": "fixtures/deployment.yaml",
+      "path": "spec.template.spec.containers.0.resources.requests.memory",
+      "op": "exists"
+    }
   ]
 }

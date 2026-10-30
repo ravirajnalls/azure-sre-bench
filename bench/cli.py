@@ -18,8 +18,8 @@ from pathlib import Path
 
 from bench import __version__
 from bench.export import SUPPORTED_FORMATS
-from bench.grader import grade
 from bench.heldout import ENCRYPTED_SUFFIX, HeldoutKeyError, load_hidden_json
+from bench.remediation import grade_for_task
 from bench.tasks import difficulty_distribution, load_tasks
 
 SUBCOMMANDS = (
@@ -333,7 +333,7 @@ def cmd_grade(args: argparse.Namespace) -> int:
     except (FileNotFoundError, json.JSONDecodeError, HeldoutKeyError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2
-    print(json.dumps(grade(answer, rubric), indent=2))
+    print(json.dumps(grade_for_task(answer, rubric, task_dir, task), indent=2))
     return 0
 
 

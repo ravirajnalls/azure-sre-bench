@@ -167,6 +167,41 @@ Example — for a task whose red herring is a healthy-looking RBAC role assignme
 "distractors": [["missing Key Vault Secrets User role", "rbac misconfiguration"]]
 ```
 
+## Remediation tasks (issue #110)
+
+A task may declare `kind: remediation` in `task.yaml` (absent means `diagnosis`).
+Remediation tasks extend the answer contract with `patched_files` — full new file
+contents keyed by task-relative path — and the rubric with a `checks` list evaluated
+against the patched tree. The validator requires the pair to ship together: a
+remediation task without a non-empty `checks` list, or `checks` on a task that is not
+remediation, is an authoring error. The grader also treats a `checks`-bearing rubric
+as remediation regardless of `task.yaml`, so the patch half can never be silently
+skipped. Reference answers must include `patched_files` that satisfy their own checks
+(the CI solvability check runs through the same dispatcher).
+
+Check shape (`expected.json`):
+
+```json
+{
+  "root_cause": [["..."]],
+  "fix": [["..."]],
+  "checks": [
+    {"file": "fixtures/deployment.yaml", "path": "spec.replicas",
+     "op": "equals", "value": 3}
+  ]
+}
+```
+
+- `file` — task-relative, must stay under `fixtures/` and already exist.
+- `path` — dotted keys with bare-integer list indexes
+  (`spec.template.spec.containers.0.image`). A key containing a literal dot cannot be
+  addressed; restructure the check instead.
+- `op` — `equals` (strict: `3` ≠ `"3"`, `true` ≠ `1`), `exists` (present and non-null),
+  `absent`, `gte`/`lte` (numeric; a non-numeric stored value fails the check).
+- Comparison ops require a scalar `value`; `exists`/`absent` must not declare one. A
+  malformed check is a validator error, and the grader fails it closed with reason
+  `check_invalid` — it is never silently skipped.
+
 ## Reference answer (`solution.json`)
 
 The reference answer must score `passed == true` on its own task when run through the

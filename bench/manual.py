@@ -17,8 +17,9 @@ import json
 from pathlib import Path
 
 from bench import GRADER_VERSION, RESULT_SCHEMA_VERSION
-from bench.grader import cap_evidence, extract_usage, grade, rubric_sha256
+from bench.grader import cap_evidence, extract_usage, rubric_sha256
 from bench.heldout import ENCRYPTED_SUFFIX, HeldoutKeyError, load_hidden_json
+from bench.remediation import grade_for_task, is_remediation
 
 ANSWER_CONTRACT = {
     "root_cause": "str (required) — the specific technical cause of the incident",
@@ -71,6 +72,17 @@ def build_prompt(symptom: str, fixtures: dict[str, str]) -> str:
     )
 
 
+REMEDIATION_BLOCK = """
+
+## Remediation
+
+This is a remediation task: also include a `patched_files` object in the JSON
+answer, mapping `fixtures/<file>` paths to the full new file content that
+implements your fix. Every patched file is checked against task assertions and
+scanned for unsafe changes.
+"""
+
+
 def load_task_prompt(task_dir: Path) -> str:
     """Build the paste-ready prompt from a task directory on disk."""
     from bench.run import load_task  # deferred: avoids a circular import
@@ -82,7 +94,11 @@ def load_task_prompt(task_dir: Path) -> str:
         for path in sorted((task_dir / "fixtures").iterdir())
         if path.is_file()
     } if (task_dir / "fixtures").is_dir() else {}
-    return build_prompt(str(task.get("symptom", "")), fixtures)
+    prompt = build_prompt(str(task.get("symptom", "")), fixtures)
+    if is_remediation(task):
+        # Same contract the `bench run` workspace hint gives agents (issue #110).
+        prompt += REMEDIATION_BLOCK
+    return prompt
 
 
 def submit_answer(
@@ -109,7 +125,7 @@ def submit_answer(
     # Held-out rubrics decrypt only when HELDOUT_KEY is present (issue #115).
     task = load_task(task_dir) if (task_dir / "task.yaml").is_file() else {}
     rubric = load_hidden_json(task_dir, "expected.json", config=task)
-    result = grade(answer, rubric)
+    result = grade_for_task(answer, rubric, task_dir, task)
     record = {
         "task": task_id,
         # Same result-schema extension as `bench run` (issue #95): a manual

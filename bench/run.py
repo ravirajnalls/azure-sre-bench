@@ -25,6 +25,7 @@ import yaml
 from bench import GRADER_VERSION, RESULT_SCHEMA_VERSION
 from bench.grader import cap_evidence, extract_files_read, extract_usage, grade, rubric_sha256
 from bench.heldout import HeldoutKeyError, load_hidden_json, split_of
+from bench.remediation import grade_for_task, is_remediation
 from bench.sim import COMMANDS_ENV, COMMANDS_FILENAME, LOG_ENV, LOG_FILENAME, SIM_DIR
 
 TASKS_DIR = Path("tasks")
@@ -68,6 +69,14 @@ def prepare_workspace(task_dir: Path, workspace: Path) -> None:
     symptom_md = (
         f"# {title}\n\n{task.get('symptom', '')}\n\nEvidence is in `fixtures/`.\n"
     )
+    if is_remediation(task):
+        # The runner's only agent-facing surface: a remediation task (issue
+        # #110) must tell agents the patch half of the answer contract.
+        symptom_md += (
+            "\nThis is a remediation task: include a `patched_files` object in "
+            "your answer, mapping `fixtures/<file>` paths to the full new file "
+            "content that implements your fix.\n"
+        )
     (Path(workspace) / "symptom.md").write_text(symptom_md, encoding="utf-8")
 
 
@@ -223,8 +232,10 @@ def run_task(
         shutil.rmtree(workspace, ignore_errors=True)
 
     answer = parse_answer(stdout)
+    # One grading entry point for every surface: remediation tasks run their
+    # patch checks here too (issue #110).
     rubric = _load_rubric(task_dir, task)
-    result = grade(answer, rubric)
+    result = grade_for_task(answer, rubric, task_dir, task)
     record = {
         "task": task_id,
         "split": split_of(task),

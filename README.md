@@ -163,6 +163,36 @@ near-miss (see `tests/test_safety.py`). The full suite must stay green — in
 particular the corpus-wide check that every reference solution in `tasks/` keeps
 zero violations. Keep patterns tight: catch the unsafe action, not its description.
 
+## Remediation track
+
+Diagnosis alone never proves an agent can fix anything. A task that declares
+`kind: remediation` in its `task.yaml` (issue #110) extends the answer contract with
+`patched_files` — an object mapping `fixtures/<file>` paths to the full new file
+content that implements the fix:
+
+```json
+{
+  "root_cause": "...", "evidence": ["..."], "fix": "scale checkout-api",
+  "patched_files": {"fixtures/deployment.yaml": "<full new content>"}
+}
+```
+
+The rubric gains a `checks` list of `{file, path, op, value}` assertions evaluated
+against the patched files (ops: `equals`, `exists`, `absent`, `gte`, `lte`; `path` is
+dotted, e.g. `spec.template.spec.containers.0.image`). Checks count as scoring units
+alongside the rubric's concept groups, and a remediation task passes only when the
+diagnosis groups **and** every check pass.
+
+- The grader patches a **scratch copy** of `fixtures/`; the corpus itself is never
+  modified, and a patch to a path outside `fixtures/` fails the task with reason
+  `patch_outside_fixtures` without touching the disk.
+- `bench run` and the manual protocol tell agents about the extra key in the task
+  prompt.
+- Safety rules (#113) apply to every patched file, not just the `fix` text — that is
+  the point of the track. A patch granting cluster-admin fails the task.
+- `aks-workloads-017` and `aks-ops-022` ship as remediation tasks; agents that submit
+  no patches (including the adversarial probes) cannot pass them.
+
 ## Leaderboard
 
 Regenerated from `results/` by `python scripts/update_leaderboard.py` after baseline
