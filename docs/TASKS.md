@@ -39,6 +39,7 @@
 | aks-ops-019 | Deployments broke after cluster upgrade | easy | aks-ops, aks, kubernetes, gitops, flux, upgrade |
 | aks-ops-021 | Node repeatedly NotReady with pod evictions while CPU and memory look healthy | medium | aks-ops, aks, node, kubelet, kubernetes |
 | aks-ops-022 | StatefulSet pod stays Pending while its PVC is Bound | medium | aks-ops, aks, storage, statefulset, kubernetes |
+| aks-ops-024 | Container logs missing in Log Analytics | medium | aks-ops, aks, monitoring, container-insights, log-analytics |
 | aks-ops-025 | AKS monthly bill doubled while traffic is flat | medium | aks-ops, aks, cost, autoscaling, kubernetes |
 
 ## aks-workloads

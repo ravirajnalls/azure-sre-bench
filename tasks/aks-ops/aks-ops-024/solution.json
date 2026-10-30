@@ -1,0 +1,11 @@
+{
+  "root_cause": "The container-logs data collection rule exists and is configured correctly, but it has no data collection rule association (DCRA) with the new cluster resource. The association was lost when aks-prod-eus-02 was rebuilt on 2026-10-23: a DCRA references the immutable cluster resource ID, and the rebuilt resource is a new one, so no rule links the cluster to the workspace and ContainerLogV2 stays empty even though the rule, the workspace, and the agents are all healthy.",
+  "evidence": [
+    "kql-containerlogv2-count.csv: ContainerLogV2 row counts drop from ~50k/day to 0 from 2026-10-24 onward",
+    "az-monitor-dcr-show.json: dcr-container-insights exists, provisioningState Succeeded, with a data flow for Microsoft-ContainerLogV2 to the law-prod-01 workspace",
+    "az-monitor-dcr-association-list.json: zero data collection rule associations exist on the aks-prod-eus-02 cluster resource",
+    "az-aks-show.json: the omsagent addon is enabled and points at law-prod-01, so the workspace link itself is not the problem",
+    "kubectl-get-pods-ama-logs.txt: every ama-logs agent pod is Running, ruling out an agent failure"
+  ],
+  "fix": "Re-create the missing data collection rule association that links the dcr-container-insights rule to the rebuilt cluster resource, e.g. az monitor data-collection rule association create --dcr-name dcr-container-insights --resource /subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-prod-01/providers/Microsoft.ContainerService/managedClusters/aks-prod-eus-02. The association was lost when the cluster was rebuilt and must be re-created for logs to flow again."
+}

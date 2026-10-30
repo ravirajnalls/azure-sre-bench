@@ -1,0 +1,8 @@
+{
+  "root_cause": [
+    ["association", "dcra"]
+  ],
+  "fix": [
+    ["association", "dcra", "associate"]
+  ]
+}
