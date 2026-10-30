@@ -152,6 +152,26 @@ training corpus or a derived dataset, it is evidence that the benchmark corpus
 was seen during training — please report it. The `bench validate` command
 rejects any task missing the canary, so contributors must not remove it.
 
+## Run a LangChain agent
+
+`agents/langchain_adapter.py` adapts any importable LangChain runnable or agent to
+the benchmark: it builds the three scoped tools around the task directory —
+`read_file` (call with no path to list files), `run_command` (shell, run from the
+task directory), and `submit_answer` — and hands them to a factory you point at
+through `LANGCHAIN_AGENT_TARGET`. The adapter is model-agnostic; a runnable
+[`examples/langchain_agent.py`](examples/langchain_agent.py) demonstrates the wiring
+against a scripted fake chat model (no API key needed):
+
+```bash
+TASK_DIR=tasks/monitoring/monitoring-032 \
+LANGCHAIN_AGENT_TARGET=examples.langchain_agent:build_agent \
+python agents/langchain_adapter.py
+```
+
+The adapter never talks to a model itself — your runnable does, inside the same
+tool boundary as the ReAct baseline (only `symptom.md` and `fixtures/` are
+readable). On any failure it prints `{}` and exits 0, graded as a FAIL.
+
 ## Contributing
 
 The benchmark grows one task at a time, and every task follows the same conventions:
