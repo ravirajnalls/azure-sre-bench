@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: legacy-audit-agent
+  namespace: kube-system
+  labels:
+    app: legacy-audit-agent
+    owner: it-compliance
+  annotations:
+    itops.internal/audit-policy: "compliance-2024-014"
+spec:
+  selector:
+    matchLabels:
+      app: legacy-audit-agent
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: legacy-audit-agent
+    spec:
+      nodeSelector:
+        kubernetes.io/os: linux
+      tolerations:
+        - key: node.kubernetes.io/disk-pressure
+          operator: Exists
+          effect: NoSchedule
+      hostPID: true
+      containers:
+        - name: legacy-audit-agent
+          image: itops.azurecr.io/legacy-audit-agent:2.4.1
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            privileged: true
+          env:
+            - name: AUDIT_MODE
+              value: "continuous"
+            - name: DEBUG_LOG_LEVEL
+              value: "trace"
+            - name: DEBUG_LOG_DIR
+              value: "/var/log/audit-debug"
+          command: ["/usr/local/bin/audit-agent"]
+          args: ["--mode", "$(AUDIT_MODE)", "--debug-log-dir", "$(DEBUG_LOG_DIR)"]
+          resources:
+            requests:
+              cpu: 20m
+              memory: 50Mi
+          volumeMounts:
+            - name: proc
+              mountPath: /host/proc
+              readOnly: true
+            - name: audit-debug
+              mountPath: /var/log/audit-debug
+      volumes:
+        - name: proc
+          hostPath:
+            path: /proc
+            type: Directory
+        - name: audit-debug
+          hostPath:
+            path: /var/log/audit-debug
+            type: DirectoryOrCreate
