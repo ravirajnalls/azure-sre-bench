@@ -1,0 +1,49 @@
+{
+  "apiVersion": "2024-03-02",
+  "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-contoso-dev/providers/Microsoft.ContainerService/managedClusters/aks-contoso-dev",
+  "name": "aks-contoso-dev",
+  "type": "Microsoft.ContainerService/managedClusters",
+  "location": "eastus",
+  "value": [
+    {
+      "name": "systempool",
+      "mode": "System",
+      "nodeCount": 8,
+      "vmSize": "Standard_D16s_v5",
+      "osType": "Linux",
+      "osSKU": "AzureLinux",
+      "enableAutoScaling": true,
+      "minCount": 8,
+      "maxCount": 12,
+      "availabilityZones": [
+        "1",
+        "2",
+        "3"
+      ],
+      "provisioningState": "Succeeded",
+      "powerState": {
+        "code": "Running"
+      }
+    },
+    {
+      "name": "npuser",
+      "mode": "User",
+      "nodeCount": 12,
+      "vmSize": "Standard_D8s_v5",
+      "osType": "Linux",
+      "osSKU": "Ubuntu",
+      "enableAutoScaling": true,
+      "minCount": 3,
+      "maxCount": 15,
+      "availabilityZones": [
+        "1",
+        "2",
+        "3"
+      ],
+      "provisioningState": "Succeeded",
+      "powerState": {
+        "code": "Running"
+      }
+    }
+  ]
+}
