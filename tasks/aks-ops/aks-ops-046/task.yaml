@@ -1,0 +1,19 @@
+id: aks-ops-046
+canary: 00000000-0000-0000-0000-000000000114  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
+title: Node reboots evict pods every Tuesday mid-morning
+category: aks-ops
+difficulty: medium
+tags:
+  - aks-ops
+  - aks
+  - node
+  - maintenance-window
+  - upgrades
+  - kubernetes
+symptom: |
+  Every Tuesday around 10:00 local time, pods across the aks-prod-eu cluster
+  get evicted and restarted while their nodes reboot one by one. It happened
+  again this week: user-facing latency spiked for ~20 minutes, eviction alerts
+  fired cluster-wide, and everything recovered on its own. Nobody on the team
+  triggered anything, no deployment or node pool change ships on Tuesdays, and
+  the nodes' CPU and memory look flat in the dashboards when it happens.

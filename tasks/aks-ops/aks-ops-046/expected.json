@@ -1,0 +1,12 @@
+{
+  "root_cause": [
+    ["node os upgrade", "node os image", "nodeosupgradechannel", "node image", "os image upgrade", "automatic node os"],
+    ["maintenance", "no maintenance window", "default window", "no aksmanagednodeosupgradeschedule", "maintenance configuration"]
+  ],
+  "fix": [
+    ["aksmanagednodeosupgradeschedule", "maintenance window", "maintenance configuration", "schedule the node os upgrade", "configure a window", "stage window"]
+  ],
+  "distractors": [
+    ["memory", "memory pressure", "oom", "out of memory", "memory leak"]
+  ]
+}

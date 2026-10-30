@@ -1,0 +1,39 @@
+{
+  "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-prod-01/providers/Microsoft.ContainerService/managedClusters/aks-prod-eu",
+  "name": "aks-prod-eu",
+  "location": "westeurope",
+  "kubernetesVersion": "1.30.6",
+  "dnsPrefix": "aks-prod-eu-01",
+  "fqdn": "aks-prod-eu-01.hcp.westeurope.azmk8s.io",
+  "autoUpgradeProfile": {
+    "upgradeChannel": "stable",
+    "nodeOSUpgradeChannel": "NodeImage",
+    "lookBackInterval": "0h",
+    "notScheduledTime": "2026-10-27T09:02:11.411392600Z"
+  },
+  "agentPoolProfiles": [
+    {
+      "name": "systempool",
+      "count": 2,
+      "vmSize": "Standard_D4ads_v5",
+      "mode": "System",
+      "osType": "Linux",
+      "osSKU": "Ubuntu",
+      "maxPods": 110,
+      "type": "VirtualMachineScaleSets"
+    },
+    {
+      "name": "npuser",
+      "count": 4,
+      "vmSize": "Standard_D8ads_v5",
+      "mode": "User",
+      "osType": "Linux",
+      "osSKU": "Ubuntu",
+      "maxPods": 110,
+      "type": "VirtualMachineScaleSets"
+    }
+  ],
+  "provisioningState": "Succeeded",
+  "resourceGroup": "rg-prod-01",
+  "type": "Microsoft.ContainerService/managedClusters"
+}

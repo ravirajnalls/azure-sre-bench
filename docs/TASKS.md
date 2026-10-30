@@ -57,6 +57,7 @@
 | aks-ops-037 | TLS certificate for shop.contoso.com expired and renewal is silently failing | hard | aks-ops, cert-manager, tls, ingress, letsencrypt, kubernetes |
 | aks-ops-043 | Node auto-provisioning creates no nodes while GPU inference pods stay Pending | medium | aks-ops, aks, node, auto-provisioning, karpenter, gpu, kubernetes |
 | aks-ops-045 | Azure Policy denies deployment with a vague error | medium | aks-ops, aks, azure-policy, gatekeeper, kubernetes, deployment |
+| aks-ops-046 | Node reboots evict pods every Tuesday mid-morning | medium | aks-ops, aks, node, maintenance-window, upgrades, kubernetes |
 | aks-ops-050 | kubectl logs and exec time out on every pod while get and apply work | hard | aks-ops, konnectivity, azure-firewall, egress, kubernetes |
 | aks-ops-051 | Deploys from the new self-hosted agent pool time out reaching the API server | medium | aks-ops, api-server-authorized-ip-ranges, nat-gateway, azure-devops, networking |
 | aks-ops-055 | Zookeeper ensemble loses quorum a few times a week, always overnight | hard | aks-ops, statefulset, cluster-autoscaler, poddisruptionbudget, quorum |

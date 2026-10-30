@@ -1,0 +1,48 @@
+[
+  {
+    "subStatus": {
+      "value": "Succeeded",
+      "localizedValue": "Succeeded"
+    },
+    "operationName": {
+      "value": "Microsoft.ContainerService/managedClusters/upgrade/action",
+      "localizedValue": "Upgrade Managed Cluster"
+    },
+    "resourceGroupName": "rg-prod-01",
+    "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-prod-01/providers/Microsoft.ContainerService/managedClusters/aks-prod-eu",
+    "eventTimestamp": "2026-10-27T08:55:04.332Z",
+    "caller": "Microsoft Container Service (auto-upgrade)",
+    "category": {
+      "value": "Administrative",
+      "localizedValue": "Administrative"
+    },
+    "properties": {
+      "channel": "NodeImage",
+      "description": "Automatic node OS image upgrade started for cluster aks-prod-eu",
+      "targetPool": "npuser"
+    }
+  },
+  {
+    "subStatus": {
+      "value": "Succeeded",
+      "localizedValue": "Succeeded"
+    },
+    "operationName": {
+      "value": "Microsoft.ContainerService/managedClusters/upgrade/action",
+      "localizedValue": "Upgrade Managed Cluster"
+    },
+    "resourceGroupName": "rg-prod-01",
+    "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-prod-01/providers/Microsoft.ContainerService/managedClusters/aks-prod-eu",
+    "eventTimestamp": "2026-10-20T08:58:41.019Z",
+    "caller": "Microsoft Container Service (auto-upgrade)",
+    "category": {
+      "value": "Administrative",
+      "localizedValue": "Administrative"
+    },
+    "properties": {
+      "channel": "NodeImage",
+      "description": "Automatic node OS image upgrade started for cluster aks-prod-eu",
+      "targetPool": "npuser"
+    }
+  }
+]
