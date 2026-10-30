@@ -15,6 +15,10 @@ one static file) filters the tables by category, task difficulty, open-source
 only, and grading mode — the site reads task difficulty from `tasks_root` at
 build time and bakes it into `data-` attributes.
 
+Cost vs accuracy (issue #164): a scatter plot of each agent's total recorded
+cost against its pass rate, with the Pareto frontier (no agent dominated on
+both axes) highlighted and agents without cost telemetry listed separately.
+
 Learn pages (issue #149): `bench site` also renders `site/learn.html` — one
 spoiler-collapsed (`<details>`) section per task that ships an `explainer.md`,
 rendered from a minimal Markdown subset with everything HTML-escaped. Sections
@@ -97,6 +101,23 @@ td.heat { text-align: center; font-weight: 600; font-size: 0.85rem; }
 .stale { color: #9a6700; }
 .legacy { color: #8c959f; font-style: italic; }
 .empty { border: 1px dashed #8c959f; padding: 1rem; border-radius: 6px; }
+/* Issue-#164 cost vs accuracy chart */
+.chart { width: 100%; height: auto; }
+.chart text { fill: #1f2328; font-size: 12px; font-family: system-ui, sans-serif; }
+.chart .grid { stroke: #d0d7de; stroke-width: 1; }
+.chart .axis { stroke: #8c959f; stroke-width: 1; }
+.chart .pt { fill: #57606a; }
+.chart .pt.frontier { fill: #1a7f37; }
+.chart .frontier-line {
+  fill: none; stroke: #1a7f37; stroke-width: 1.5; stroke-dasharray: 4 3;
+}
+@media (prefers-color-scheme: dark) {
+  .chart text { fill: #e6edf3; }
+  .chart .grid { stroke: #30363d; }
+  .chart .pt { fill: #8b949e; }
+  .chart .pt.frontier { fill: #3fb950; }
+  .chart .frontier-line { stroke: #3fb950; }
+}
 /* Issue-#119 filters: wrap on phone width; .hidden hides filtered-out rows. */
 .filters {
   display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center;
@@ -395,6 +416,131 @@ def aggregate(
     }
 
 
+# --- cost vs accuracy chart (issue #164) ---------------------------------------
+
+
+def pass_rate(entry: dict) -> float | None:
+    """An overall row's pass rate in [0, 1]; None when nothing was counted."""
+    total = entry.get("total", 0)
+    if not total:
+        return None
+    return entry["passed"] / total
+
+
+def cost_accuracy_points(agg: dict) -> tuple[list[dict], list[str]]:
+    """Split overall rows into chartable points and cost-less names (issue #164).
+
+    Returns `(points, no_cost)` where each point is
+    `{"agent", "cost_usd", "rate"}` — an agent's total recorded cost against
+    its pass rate. An agent whose records never carried `usage` telemetry has
+    no cost and cannot sit on a cost axis, so it is listed separately rather
+    than silently plotted at zero (which would claim a $0 run).
+    """
+    points: list[dict] = []
+    no_cost: list[str] = []
+    for entry in agg["overall"]:
+        rate = pass_rate(entry)
+        cost = entry.get("total_cost_usd")
+        if rate is None or cost is None:
+            no_cost.append(entry["agent"])
+        else:
+            points.append({"agent": entry["agent"], "cost_usd": cost, "rate": rate})
+    return points, no_cost
+
+
+def pareto_frontier(points: list[dict]) -> set[str]:
+    """Agents on the cost/accuracy Pareto frontier (issue #164).
+
+    An agent is on the frontier when no other agent cost at most as much
+    while passing at least as many tasks and beating it on at least one of
+    the two. Ties (same cost and rate) dominate nothing — neither point of a
+    pair hides the other.
+    """
+    frontier: set[str] = set()
+    for a in points:
+        dominated = any(
+            b["cost_usd"] <= a["cost_usd"]
+            and b["rate"] >= a["rate"]
+            and (b["cost_usd"] < a["cost_usd"] or b["rate"] > a["rate"])
+            for b in points
+            if b is not a
+        )
+        if not dominated:
+            frontier.add(a["agent"])
+    return frontier
+
+
+_CHART_W, _CHART_H = 640, 340
+_CHART_PAD = {"left": 56, "right": 24, "top": 20, "bottom": 44}
+
+
+def render_cost_chart(agg: dict) -> tuple[str | None, list[str]]:
+    """Render the #164 scatter as a self-contained SVG.
+
+    Returns `(svg, no_cost)`; `svg` is None when no agent reported cost, and
+    `no_cost` then names every agent for the side list. X spans 0 to the
+    largest total cost; Y is the pass rate, 0-100%. The dashed polyline links
+    the Pareto frontier, cheapest-first.
+    """
+    points, no_cost = cost_accuracy_points(agg)
+    if not points:
+        return None, no_cost
+    frontier = pareto_frontier(points)
+    pad = _CHART_PAD
+    max_cost = max(p["cost_usd"] for p in points)
+    x_max = max_cost if max_cost > 0 else 1.0
+
+    def px(x: float) -> float:
+        return pad["left"] + (x / x_max) * (_CHART_W - pad["left"] - pad["right"])
+
+    def py(rate: float) -> float:
+        return _CHART_H - pad["bottom"] - rate * (
+            _CHART_H - pad["top"] - pad["bottom"]
+        )
+
+    out: list[str] = [
+        f'<svg class="chart" viewBox="0 0 {_CHART_W} {_CHART_H}" role="img" '
+        'aria-label="Total cost vs pass rate per agent">',
+        # Horizontal grid + Y tick labels at 0/25/50/75/100%.
+    ]
+    for frac in (0.0, 0.25, 0.5, 0.75, 1.0):
+        y = py(frac)
+        out.append(f'<line class="grid" x1="{pad["left"]}" y1="{y:.1f}" '
+                   f'x2="{_CHART_W - pad["right"]}" y2="{y:.1f}"/>')
+        out.append(f'<text x="{pad["left"] - 8}" y="{y + 4:.1f}" '
+                   f'text-anchor="end">{frac * 100:g}%</text>')
+    # X tick labels at 0, mid, max cost.
+    for frac in (0.0, 0.5, 1.0):
+        x = px(max_cost * frac)
+        out.append(f'<text x="{x:.1f}" y="{_CHART_H - pad["bottom"] + 20}" '
+                   f'text-anchor="middle">${max_cost * frac:g}</text>')
+    # Axes.
+    out.append(f'<line class="axis" x1="{pad["left"]}" y1="{pad["top"]}" '
+               f'x2="{pad["left"]}" y2="{_CHART_H - pad["bottom"]}"/>')
+    out.append(f'<line class="axis" x1="{pad["left"]}" '
+               f'y1="{_CHART_H - pad["bottom"]}" x2="{_CHART_W - pad["right"]}" '
+               f'y2="{_CHART_H - pad["bottom"]}"/>')
+    out.append(f'<text x="{(_CHART_W + pad["left"]) // 2}" y="{_CHART_H - 8}" '
+               'text-anchor="middle">Total cost (USD)</text>')
+    # Frontier line, cheapest to most expensive along the frontier.
+    on_frontier = sorted(
+        (p for p in points if p["agent"] in frontier), key=lambda p: p["cost_usd"]
+    )
+    if len(on_frontier) > 1:
+        coords = " ".join(
+            f"{px(p['cost_usd']):.1f},{py(p['rate']):.1f}" for p in on_frontier
+        )
+        out.append(f'<polyline class="frontier-line" points="{coords}"/>')
+    for p in points:
+        cls = "pt frontier" if p["agent"] in frontier else "pt"
+        x, y = px(p["cost_usd"]), py(p["rate"])
+        out.append(f'<circle class="{cls}" cx="{x:.1f}" cy="{y:.1f}" r="5"/>')
+        out.append(f'<text x="{x:.1f}" y="{y - 10:.1f}" text-anchor="middle">'
+                   f'{html.escape(p["agent"])}</text>')
+    out.append("</svg>")
+    return "\n".join(out), no_cost
+
+
 def load_explainers(tasks_root: Path) -> dict[str, dict]:
     """Read every `explainer.md` under the tasks root (issue #149).
 
@@ -677,6 +823,22 @@ def render_html(agg: dict) -> str:
         )
         parts.extend(_summary_row(entry) for entry in agg["overall"])
         parts.append("</table></div>")
+
+        parts.append("<h2>Cost vs accuracy</h2>")
+        chart_svg, no_cost = render_cost_chart(agg)
+        if chart_svg is not None:
+            parts.append(chart_svg)
+            parts.append(
+                '<p class="sub">The dashed line links the Pareto frontier — '
+                "no agent on it is beaten by another on both cost and pass "
+                "rate.</p>"
+            )
+        if no_cost:
+            if chart_svg is None:
+                note = "No agent reported cost telemetry yet."
+            else:
+                note = f"No cost data: {', '.join(html.escape(a) for a in no_cost)}"
+            parts.append(f'<p class="empty">{note}</p>')
 
         parts.append("<h2>By category</h2>")
         parts.append('<div class="tablewrap"><table id="tbl-bycat">')
