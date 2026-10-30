@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: checkout-api
+  namespace: checkout
+  labels:
+    app: checkout-api
+spec:
+  replicas: 6
+  selector:
+    matchLabels:
+      app: checkout-api
+  template:
+    metadata:
+      labels:
+        app: checkout-api
+    spec:
+      containers:
+        - name: checkout-api
+          image: registry.contoso.com/pay/checkout-api:2.19.4
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DB_HOST
+              value: pgbouncer.checkout.svc.cluster.local
+            - name: DB_PORT
+              value: "6432"
+            - name: DB_POOL_MAX
+              value: "8"
+            - name: LOG_LEVEL
+              value: info
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10

@@ -1,0 +1,10 @@
+NAME                              READY   STATUS    RESTARTS   AGE   IP             NODE
+checkout-api-7d9c6b5f4-2qmx7      1/1     Running   0          5h    10.244.3.18    aks-apps-3
+checkout-api-7d9c6b5f4-7tj4k      1/1     Running   0          5h    10.244.1.44    aks-apps-1
+checkout-api-7d9c6b5f4-h8p2m      1/1     Running   0          5h    10.244.2.9     aks-apps-2
+checkout-api-7d9c6b5f4-kqz4w      1/1     Running   0          5h    10.244.3.31    aks-apps-3
+checkout-api-7d9c6b5f4-rv6x8      1/1     Running   0          5h    10.244.1.77    aks-apps-1
+checkout-api-7d9c6b5f4-xn3jd      1/1     Running   0          5h    10.244.2.52    aks-apps-2
+recommendation-svc-5f8d7b9c4-abcde 1/1    Running   0          19h   10.244.4.12    aks-apps-3
+recommendation-svc-5f8d7b9c4-fghij 1/1    Running   0          19h   10.244.5.20    aks-apps-4
+pgbouncer-0                       1/1     Running   0          21d   10.244.6.5     aks-system-1

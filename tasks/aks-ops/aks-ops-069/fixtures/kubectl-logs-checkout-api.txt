@@ -1,0 +1,15 @@
+2026-10-30T14:03:58.214Z INFO  checkout-api req=7f3a2b pool=checkout-db message="connection acquired (in use 6/8, waiters 0)"
+2026-10-30T14:04:12.551Z INFO  checkout-api req=1d90cc upstream=recommendation-svc status=200 latency_ms=41
+2026-10-30T14:04:59.003Z INFO  checkout-api req=8b2e17 pool=checkout-db message="connection acquired (in use 7/8, waiters 1)"
+2026-10-30T14:05:20.417Z INFO  checkout-api req=5c77a1 pool=checkout-db message="connection acquired (in use 8/8, waiters 2)"
+2026-10-30T14:06:11.882Z ERROR checkout-api req=9c21d0 pool=checkout-db message="TimeoutError: unable to acquire a connection within 30s (pool size 8, 8 in use, 14 waiters)"
+2026-10-30T14:06:12.090Z WARN  checkout-api req=9c21d0 upstream=payment-gateway status=502 message="upstream checkout-db connection unavailable"
+2026-10-30T14:06:44.105Z ERROR checkout-api req=b14f8a pool=checkout-db message="TimeoutError: unable to acquire a connection within 30s (pool size 8, 8 in use, 19 waiters)"
+2026-10-30T14:07:02.630Z INFO  checkout-api req=c88d51 upstream=recommendation-svc status=200 latency_ms=44
+2026-10-30T14:07:15.772Z ERROR checkout-api req=e3a90b pool=checkout-db message="TimeoutError: unable to acquire a connection within 30s (pool size 8, 8 in use, 26 waiters)"
+2026-10-30T14:07:48.119Z WARN  checkout-api req=f57c22 upstream=payment-gateway status=502 message="upstream checkout-db connection unavailable"
+2026-10-30T14:08:03.664Z ERROR checkout-api req=a19b73 pool=checkout-db message="TimeoutError: unable to acquire a connection within 30s (pool size 8, 8 in use, 31 waiters)"
+2026-10-30T14:08:31.508Z INFO  checkout-api req=d4e2f9 upstream=recommendation-svc status=200 latency_ms=39
+2026-10-30T14:09:17.921Z ERROR checkout-api req=06fb84 pool=checkout-db message="TimeoutError: unable to acquire a connection within 30s (pool size 8, 8 in use, 38 waiters)"
+2026-10-30T14:10:05.338Z WARN  checkout-api req=27ac6e upstream=payment-gateway status=502 message="upstream checkout-db connection unavailable"
+2026-10-30T14:10:52.804Z ERROR checkout-api req=39b1a7 pool=checkout-db message="TimeoutError: unable to acquire a connection within 30s (pool size 8, 8 in use, 44 waiters)"

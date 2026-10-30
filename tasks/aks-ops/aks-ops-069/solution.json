@@ -1,0 +1,14 @@
+{
+  "culprit": "CHG-1042",
+  "reasoning": "First pool-exhaustion timeouts appear at 14:06:11 UTC and the error rate leaves baseline in the 14:05 metrics bucket. changes.json shows CHG-1042 applied at 14:05 UTC — the only checkout-api runtime change before onset — cutting DB_POOL_MAX from 40 to 8, and the live manifest confirms DB_POOL_MAX=8. Pods are ~5h old, so the fleet ran fine for hours after the morning infrastructure maintenance (09:12), which cannot explain a 14:06 onset. The other service's deploy is a different component returning 200s, and the configmap change at 14:40 postdates onset.",
+  "fix": "Roll back CHG-1042 immediately: restore DB_POOL_MAX to 40 on the checkout-api deployment and let the pool drain. If the 8-connection baseline is intentional, re-apply it only after load-testing the connection pool across all six replicas.",
+  "evidence": [
+    "kubectl-logs-checkout-api.txt: first 'unable to acquire a connection within 30s (pool size 8)' at 14:06:11 UTC; pool saturated 8/8 with rising waiters from 14:05",
+    "az-monitor-checkout-errors.csv: error rate 0.0055 at 14:00 -> 0.0772 at 14:05 -> 0.3474 at 14:10, stable baseline before",
+    "changes.json: CHG-1042 at 14:05 UTC changed checkout-api env DB_POOL_MAX 40 -> 8; the 14:40 configmap change is after onset"
+  ],
+  "evidence_files": [
+    "changes.json",
+    "kubectl-logs-checkout-api.txt"
+  ]
+}
