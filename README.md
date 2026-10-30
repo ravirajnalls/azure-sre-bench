@@ -103,3 +103,23 @@ runs; ranked by passed tasks, then mean score.
 | Rank | Agent | Passed | Tasks | Mean score |
 | ---: | --- | ---: | ---: | ---: |
 <!-- /leaderboard -->
+
+## Run an LLM baseline
+
+`agents/llm_agent.py` reads the symptom and every fixture (truncated to 20 KB each),
+sends one prompt to an OpenAI-compatible chat endpoint, and prints the contract JSON
+for the runner to grade. Configure it entirely through the environment — no code
+changes for a new provider:
+
+```bash
+export LLM_BASE_URL="https://<your-endpoint>/v1"   # e.g. an Azure AI Foundry deployment
+export LLM_API_KEY="..."                           # bearer token for that endpoint
+export LLM_MODEL="..."                             # model or deployment name
+
+python -m bench run --agent agents/llm_agent.py --task tasks/aks-networking/aks-networking-001
+```
+
+If the call fails, the credentials are missing, or the reply isn't JSON, the agent
+prints `{}` and exits 0 — the runner records that task as a graded FAIL rather than
+crashing. The mocked-HTTP test (`tests/test_llm_agent.py`) proves the contract JSON
+reaches stdout without a live provider.
