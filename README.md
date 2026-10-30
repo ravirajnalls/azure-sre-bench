@@ -330,6 +330,34 @@ scoped tools:
 | `run_command` | canned read-only output from the task's `_commands.yaml`, when it defines one — never host execution; mutating commands are blocked |
 | `submit_answer` | records the contract JSON that `bench run` grades |
 
+## Run HolmesGPT
+
+`agents/adapters/holmesgpt_adapter.py` benchmarks [HolmesGPT](https://github.com/HolmesGPT/holmesgpt),
+Robusta's open-source SRE agent, on the fixture corpus. Install the `holmes`
+CLI separately (see the HolmesGPT repo for install options) and configure
+through the environment:
+
+```bash
+export HOLMES_MODEL="<model-deployment-name>"        # passed as `holmes ask --model`
+export HOLMES_ALLOWED_TOOLSETS="kubernetes,kubectl"  # optional, passed as --allowed-toolsets
+export HOLMES_TIMEOUT_S=540                          # optional, subprocess bound
+
+python -m bench run --agent agents/adapters/holmesgpt_adapter.py --task aks-identity-008
+```
+
+The adapter passes the symptom to `holmes ask --prompt-file` as the
+investigation prompt and maps the answer into the contract JSON. It deliberately
+**passes its environment through unchanged**: when the task ships
+`fixtures/_commands.yaml`, the runner has already put the simulated CLIs first
+on PATH, so every `kubectl`/`az` call HolmesGPT makes resolves to the `bench/sim`
+shims — and mutating commands (`kubectl delete ...`) are still refused by the
+sim, exactly as for any other agent. The result record documents the run: the
+`holmes version` output, the model, and any toolsets disabled. On any failure it
+prints `{}` and exits 0, graded as a FAIL. The mocked test
+(`tests/test_holmesgpt_adapter.py`) proves the full mapping plus the sim-CLI
+round-trip with a fake `holmes` executable — no HolmesGPT install or API key
+needed.
+
 ## Baseline sweep
 
 One command runs every configured baseline — `naive`, the three adversarial
