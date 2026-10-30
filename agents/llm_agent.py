@@ -93,8 +93,13 @@ def extract_answer(content: str) -> dict:
     return answer if isinstance(answer, dict) else {}
 
 
-def call_llm(messages: list[dict], timeout: int = 120) -> str:
-    """One chat-completion call; returns the assistant message content."""
+def call_llm(messages: list[dict], timeout: int = 120) -> dict:
+    """One chat-completion call; returns the full response payload.
+
+    The caller reads the assistant message out of `choices[0].message` and the
+    token/cost telemetry out of `usage` (issue #112) — both live in the same
+    payload, so one request object serves the answer and its cost.
+    """
     base_url = os.environ["LLM_BASE_URL"].rstrip("/")
     response = requests.post(
         f"{base_url}/chat/completions",
@@ -109,8 +114,50 @@ def call_llm(messages: list[dict], timeout: int = 120) -> str:
         timeout=timeout,
     )
     response.raise_for_status()
-    payload = response.json()
-    return payload["choices"][0]["message"]["content"]
+    return response.json()
+
+
+# Provider field names -> the benchmark's usage keys (issue #112). The
+# OpenAI-compatible convention is `prompt_tokens`/`completion_tokens`; a
+# provider that reports cost natively may use `cost` or `cost_usd`.
+_USAGE_ALIASES = {
+    "input_tokens": ("input_tokens", "prompt_tokens"),
+    "output_tokens": ("output_tokens", "completion_tokens"),
+    "cost_usd": ("cost_usd", "cost"),
+}
+
+
+def usage_from_payload(payload: dict) -> dict | None:
+    """The normalized usage telemetry in a chat-completion payload, or None.
+
+    Only numeric values survive (booleans and strings are dropped), and a
+    payload with no telemetry yields None so the answer carries no empty noise.
+    """
+    raw = payload.get("usage") if isinstance(payload, dict) else None
+    if not isinstance(raw, dict):
+        return None
+    usage: dict = {}
+    for key, aliases in _USAGE_ALIASES.items():
+        for alias in aliases:
+            value = raw.get(alias)
+            if isinstance(value, (int, float)) and not isinstance(value, bool):
+                usage[key] = value
+                break
+    return usage or None
+
+
+def merge_usage(total: dict | None, delta: dict | None) -> dict | None:
+    """Sum one call's usage into a running total (issue #112).
+
+    Multi-call agents (the ReAct loop) accumulate across calls; a None total
+    starts the accumulation and a None delta passes the total through.
+    """
+    if not delta:
+        return total
+    merged = dict(total or {})
+    for key, value in delta.items():
+        merged[key] = merged.get(key, 0) + value
+    return merged
 
 
 def main() -> int:
@@ -121,9 +168,17 @@ def main() -> int:
         {"role": "user", "content": build_user_prompt(entries)},
     ]
     try:
-        answer = extract_answer(call_llm(messages))
+        payload = call_llm(messages)
+        answer = extract_answer(
+            str(payload.get("choices", [{}])[0].get("message", {}).get("content"))
+        )
+        usage = usage_from_payload(payload)
+        if usage is not None:
+            answer["usage"] = usage
     except Exception:  # noqa: BLE001 — any provider failure must degrade to a graded FAIL
         answer = {}  # graded as a FAIL result; never crash the runner
+    if entries:  # files read while building the prompt (issue #112)
+        answer["files_read"] = [rel for rel, _ in entries]
     print(json.dumps(answer))
     return 0
 

@@ -95,6 +95,25 @@ def classify_record(record: dict, rubric_hashes: dict[str, str] | None = None) -
     return STATUS_CURRENT
 
 
+def median(values: list[float]) -> float | None:
+    """Statistical median of a numeric list; None for an empty list.
+
+    Renderers use the None to draw an em dash: an agent that never reported a
+    metric has no median, which is a different fact from a median of zero.
+    """
+    if not values:
+        return None
+    ordered = sorted(values)
+    mid = len(ordered) // 2
+    if len(ordered) % 2:
+        return float(ordered[mid])
+    return (ordered[mid - 1] + ordered[mid]) / 2
+
+
+def is_number(value: object) -> bool:
+    return isinstance(value, (int, float)) and not isinstance(value, bool)
+
+
 def aggregate_run(
     name: str, records: list[dict], rubric_hashes: dict[str, str] | None = None
 ) -> dict:
@@ -133,6 +152,27 @@ def aggregate_run(
         for record in current
         if isinstance(record.get("safety_violations"), list)
     )
+    # Efficiency and cost columns (issue #112), over current-version records
+    # only, like every other ranking number. Each is present-informative:
+    # records without the metric drop out of that metric's numbers, and a run
+    # with no metric-carrying records at all renders an em dash.
+    elapsed = [
+        record["elapsed_s"]
+        for record in current
+        if is_number(record.get("elapsed_s"))
+    ]
+    commands = [
+        record["efficiency"]["commands_run"]
+        for record in current
+        if isinstance(record.get("efficiency"), dict)
+        and is_number(record["efficiency"].get("commands_run"))
+    ]
+    costs = [
+        record["usage"]["cost_usd"]
+        for record in current
+        if isinstance(record.get("usage"), dict)
+        and is_number(record["usage"].get("cost_usd"))
+    ]
     if not records:
         status = STATUS_LEGACY
     elif STATUS_CURRENT in classes:
@@ -148,6 +188,9 @@ def aggregate_run(
         "mean_score": mean_score,
         "mode": "manual" if any(r.get("mode") == "manual" for r in records) else "runner",
         "safety_violations": safety,
+        "median_elapsed_s": median(elapsed),
+        "median_commands": median(commands),
+        "total_cost_usd": sum(costs) if costs else None,
         "status": status,
     }
 
@@ -185,11 +228,26 @@ def rank_rows(
     return rows
 
 
+def _fmt_elapsed(seconds: float | None) -> str:
+    return f"{seconds:.1f}s" if seconds is not None else "—"
+
+
+def _fmt_commands(count: float | None) -> str:
+    # A median of integer counts can be a half (even sample); %g trims the
+    # trailing .0 while keeping the honest .5.
+    return format(count, "g") if count is not None else "—"
+
+
+def _fmt_cost(usd: float | None) -> str:
+    return f"${usd:.4f}" if usd is not None else "—"
+
+
 def markdown_table(rows: list[dict]) -> str:
     """Render ranked rows as a markdown table (headers only when empty)."""
     lines = [
-        "| Rank | Agent | Mode | Status | Passed | Tasks | Mean score | Safety |",
-        "| ---: | --- | --- | --- | ---: | ---: | ---: | ---: |",
+        "| Rank | Agent | Mode | Status | Passed | Tasks | Mean score | Safety"
+        " | Median time | Median cmds | Cost |",
+        "| ---: | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
     ]
     for rank, row in enumerate(rows, start=1):
         lines.append(
@@ -197,7 +255,10 @@ def markdown_table(rows: list[dict]) -> str:
             f" | {row.get('status', STATUS_CURRENT)}"
             f" | {row['passed']}/{row['total']}"
             f" | {row['total']} | {row['mean_score']:.3f}"
-            f" | {row.get('safety_violations', 0)} |"
+            f" | {row.get('safety_violations', 0)}"
+            f" | {_fmt_elapsed(row.get('median_elapsed_s'))}"
+            f" | {_fmt_commands(row.get('median_commands'))}"
+            f" | {_fmt_cost(row.get('total_cost_usd'))} |"
         )
     return "\n".join(lines)
 

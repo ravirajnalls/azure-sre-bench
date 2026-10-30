@@ -29,6 +29,14 @@ ANSWER = {
     "fix": "rotate the secret and redeploy",
 }
 
+# The sorted fixtures of TEST_TASK — the file-read telemetry the agent
+# reports (issue #112). The raw test task has no symptom.md; the runner
+# synthesizes one in the agent's workspace.
+FILES_READ = [
+    "fixtures/app-insights-query.kql",
+    "fixtures/kubectl-get-pods.txt",
+]
+
 
 class _FakeOpenAIHandler(BaseHTTPRequestHandler):
     """Returns one canned chat-completion response."""
@@ -87,7 +95,7 @@ def test_contract_json_reaches_stdout():
         server.shutdown()
 
     assert proc.returncode == 0, proc.stderr
-    assert json.loads(proc.stdout) == ANSWER
+    assert json.loads(proc.stdout) == {**ANSWER, "files_read": FILES_READ}
 
 
 def test_markdown_fences_are_stripped():
@@ -103,7 +111,7 @@ def test_markdown_fences_are_stripped():
         server.shutdown()
 
     assert proc.returncode == 0, proc.stderr
-    assert json.loads(proc.stdout) == ANSWER
+    assert json.loads(proc.stdout) == {**ANSWER, "files_read": FILES_READ}
 
 
 def test_request_carries_model_and_messages(tmp_path):
@@ -146,7 +154,11 @@ def test_request_carries_model_and_messages(tmp_path):
 
 
 def test_missing_env_prints_empty_object_and_exits_zero():
-    """No credentials configured: {} on stdout, exit 0 — a graded FAIL, not a crash."""
+    """No credentials configured: no answer, exit 0 — a graded FAIL, not a crash.
+
+    The file-read telemetry still prints (the fixtures were genuinely read);
+    only the provider-dependent fields are absent.
+    """
     env = {k: v for k, v in os.environ.items() if not k.startswith("LLM_")}
     env["TASK_DIR"] = str(TEST_TASK)
     proc = subprocess.run(
@@ -159,11 +171,11 @@ def test_missing_env_prints_empty_object_and_exits_zero():
     )
 
     assert proc.returncode == 0
-    assert json.loads(proc.stdout) == {}
+    assert json.loads(proc.stdout) == {"files_read": FILES_READ}
 
 
 def test_http_error_prints_empty_object_and_exits_zero():
-    """A 500 from the provider is absorbed: {} on stdout, exit 0."""
+    """A 500 from the provider is absorbed: no answer, exit 0."""
 
     class FailingHandler(_FakeOpenAIHandler):
         def do_POST(self):
@@ -177,7 +189,64 @@ def test_http_error_prints_empty_object_and_exits_zero():
         server.shutdown()
 
     assert proc.returncode == 0
-    assert json.loads(proc.stdout) == {}
+    assert json.loads(proc.stdout) == {"files_read": FILES_READ}
+
+
+def test_usage_from_provider_payload_reaches_stdout():
+    """Token/cost telemetry from the provider payload prints with the answer.
+
+    The OpenAI-compatible convention (`prompt_tokens`/`completion_tokens`) is
+    mapped onto the benchmark's usage keys (issue #112).
+    """
+
+    class UsageHandler(_FakeOpenAIHandler):
+        def _respond(self):
+            body = json.dumps({
+                "choices": [{"message": {"role": "assistant", "content": self.content}}],
+                "usage": {
+                    "prompt_tokens": 100,
+                    "completion_tokens": 30,
+                    "total_tokens": 130,
+                    "cost": 0.002,
+                },
+            }).encode()
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+
+    server = _start_server(UsageHandler)
+    try:
+        proc = _run_agent(server, TEST_TASK)
+    finally:
+        server.shutdown()
+
+    assert proc.returncode == 0, proc.stderr
+    assert json.loads(proc.stdout) == {
+        **ANSWER,
+        "files_read": FILES_READ,
+        "usage": {"input_tokens": 100, "output_tokens": 30, "cost_usd": 0.002},
+    }
+
+
+def test_usage_from_payload_normalizes_and_drops_noise():
+    """Known numeric keys survive under their benchmark names; nothing else does."""
+    assert llm_agent.usage_from_payload(
+        {"usage": {"prompt_tokens": 5, "completion_tokens": 6, "input_tokens": "7"}}
+    ) == {"input_tokens": 5, "output_tokens": 6}
+    assert llm_agent.usage_from_payload({"usage": {"total_tokens": 11}}) is None
+    assert llm_agent.usage_from_payload({"usage": "bogus"}) is None
+    assert llm_agent.usage_from_payload({}) is None
+
+
+def test_merge_usage_accumulates_across_calls():
+    """Multi-call agents sum per-call usage into a running total."""
+    total = llm_agent.merge_usage(None, {"input_tokens": 10, "cost_usd": 0.001})
+    total = llm_agent.merge_usage(total, {"input_tokens": 15, "cost_usd": 0.002})
+    assert total == {"input_tokens": 25, "cost_usd": 0.003}
+    # A call without telemetry leaves the total untouched.
+    assert llm_agent.merge_usage(total, None) == total
 
 
 def test_read_truncated_caps_file_at_20kb(tmp_path):

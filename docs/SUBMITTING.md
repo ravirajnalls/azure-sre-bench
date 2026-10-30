@@ -95,6 +95,25 @@ graded under a different grader version or an older rubric renders **stale**;
 a record written before these fields existed renders **legacy** — both stay
 visible but never blend into a ranking with current-version numbers.
 
+## Efficiency and cost metrics (issue #112)
+
+The leaderboard and site also render **Median time** (median `elapsed_s`),
+**Median cmds** (median `efficiency.commands_run`), and **Cost** (sum of
+`usage.cost_usd`) — each computed over current-version records only, and each
+rendered as an em dash (`—`) when no record in the run reported the metric.
+
+The telemetry channels have different sources:
+
+- `commands_run` — counted by the runner from its own simulated-CLI trace; you
+  report nothing.
+- `usage` — extracted from a `usage` object you print with your answer
+  (`input_tokens`, `output_tokens`, `cost_usd`; numbers only).
+- `files_read` — invisible to the runner, so report it in the answer: either a
+  list of paths (unique entries are counted, so reading one file twice counts
+  once) or a plain positive count. The bundled agents do this: the ReAct agent
+  lists the files its `read_file` tool actually served, the evidence-dumping
+  baseline lists the files it packed into its prompt.
+
 ## What `bench verify` checks
 
 `bench verify results/<your-agent>` re-grades every stored answer with the

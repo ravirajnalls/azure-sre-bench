@@ -13,6 +13,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+import pytest
+
 from bench import GRADER_VERSION
 from bench.site import aggregate, load_results, render_html, task_category
 
@@ -102,7 +104,16 @@ def test_aggregate_one_run(tmp_path: Path):
 
     assert agg["agents"] == ["naive"]
     assert agg["overall"] == [
-        {"agent": "naive", "passed": 0, "total": 2, "mean_score": 0.25, "status": "current"}
+        {
+            "agent": "naive",
+            "passed": 0,
+            "total": 2,
+            "mean_score": 0.25,
+            "median_elapsed_s": None,
+            "median_commands": None,
+            "total_cost_usd": None,
+            "status": "current",
+        }
     ]
     assert [b["category"] for b in agg["by_category"]] == [
         "aks-networking",
@@ -136,6 +147,9 @@ def test_aggregate_many_runs_and_missing_cells(tmp_path: Path):
         "passed": 1,
         "total": 2,
         "mean_score": 0.75,
+        "median_elapsed_s": None,
+        "median_commands": None,
+        "total_cost_usd": None,
         "status": "current",
     }
     assert by_agent["react"]["total"] == 1
@@ -248,7 +262,16 @@ def test_aggregate_marks_stale_and_legacy_cells_and_counts_current_only():
     agg = aggregate(results)
 
     assert agg["overall"] == [
-        {"agent": "mixed", "passed": 1, "total": 1, "mean_score": 1.0, "status": "current"}
+        {
+            "agent": "mixed",
+            "passed": 1,
+            "total": 1,
+            "mean_score": 1.0,
+            "median_elapsed_s": None,
+            "median_commands": None,
+            "total_cost_usd": None,
+            "status": "current",
+        }
     ]
     heatmap = {row["task"]: row["cells"] for row in agg["heatmap"]}
     assert heatmap["monitoring-001"] == ["pass"]
@@ -283,3 +306,50 @@ def test_render_stale_cells_show_stale_label():
     stale = {**record("monitoring-001", 1.0, True), "grader_version": GRADER_VERSION + 9}
     html_text = render_html(aggregate({"a": [stale]}))
     assert "STALE" in html_text
+
+
+# --- efficiency and cost columns (issue #112) ---------------------------------
+
+
+def test_aggregate_and_render_efficiency_metrics():
+    """Overall rows carry median time/commands and total cost; the page renders them."""
+    results = {
+        "rich": [
+            {
+                **record("monitoring-001", 1.0, True),
+                "elapsed_s": 2.0,
+                "efficiency": {"commands_run": 4},
+                "usage": {"cost_usd": 0.02},
+            },
+            {
+                **record("cost-001", 1.0, True),
+                "elapsed_s": 6.0,
+                "efficiency": {"commands_run": 8},
+                "usage": {"cost_usd": 0.05},
+            },
+        ],
+        "sparse": [record("monitoring-001", 1.0, True)],
+    }
+    agg = aggregate(results)
+    by_agent = {row["agent"]: row for row in agg["overall"]}
+    assert by_agent["rich"]["median_elapsed_s"] == 4.0
+    assert by_agent["rich"]["median_commands"] == 6.0
+    assert by_agent["rich"]["total_cost_usd"] == pytest.approx(0.07)
+    assert by_agent["sparse"]["median_elapsed_s"] is None
+
+    html_text = render_html(agg)
+    assert "<td class=\"num\">4.0s</td>" in html_text
+    assert "<td class=\"num\">6</td>" in html_text
+    assert "<td class=\"num\">$0.0700</td>" in html_text
+    # Four em dashes: three in sparse's overall row, plus its missing
+    # cost-001 cell in the by-category table.
+    assert html_text.count('<td class="num none">&mdash;</td>') == 4
+
+
+def test_render_escapes_efficiency_free_rows_without_crashing():
+    """Records predating the schema extension render dashes in every column."""
+    html_text = render_html(
+        aggregate({"legacy-agent": [{"task": "monitoring-001", "score": 1.0, "passed": True}]})
+    )
+    # Three overall dashes plus the agent's by-category cell.
+    assert html_text.count('<td class="num none">&mdash;</td>') == 4

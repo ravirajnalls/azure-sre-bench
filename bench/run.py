@@ -23,7 +23,7 @@ from pathlib import Path
 import yaml
 
 from bench import GRADER_VERSION, RESULT_SCHEMA_VERSION
-from bench.grader import cap_evidence, extract_usage, grade, rubric_sha256
+from bench.grader import cap_evidence, extract_files_read, extract_usage, grade, rubric_sha256
 from bench.heldout import HeldoutKeyError, load_hidden_json, split_of
 from bench.sim import COMMANDS_ENV, COMMANDS_FILENAME, LOG_ENV, LOG_FILENAME, SIM_DIR
 
@@ -254,11 +254,17 @@ def run_task(
     usage = extract_usage(answer)
     if usage is not None:
         record["usage"] = usage
+    # Efficiency metrics (issue #112): the sim-CLI count comes from the
+    # runner's own command trace; the file-read count from the agent's own
+    # accounting (`files_read` in the answer). Either may be absent.
+    efficiency: dict = {}
     if record["commands"]:
-        # Efficiency metrics (issue #112 read this shape): the runner can
-        # derive the sim-CLI count from the trace; file reads need the
-        # agent's own accounting and stay absent until reported.
-        record["efficiency"] = {"commands_run": len(record["commands"])}
+        efficiency["commands_run"] = len(record["commands"])
+    files_read = extract_files_read(answer)
+    if files_read is not None:
+        efficiency["files_read"] = files_read
+    if efficiency:
+        record["efficiency"] = efficiency
 
     out_dir = Path(results_root) / name
     out_dir.mkdir(parents=True, exist_ok=True)
