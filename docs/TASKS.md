@@ -21,6 +21,7 @@
 | aks-identity-011 | Secrets Store CSI volume fails to mount for reports-worker | medium | aks-identity, secrets-store-csi, key-vault, secret-provider-class |
 | aks-identity-034 | Workload identity token missing on new inventory-svc pods after rollout | hard | aks-identity, workload-identity, deployment, rollout |
 | aks-identity-039 | Image pulls fail after the container registry moved to private endpoint | hard | aks-identity, azure-container-registry, private-link, private-dns, image-pull |
+| aks-identity-049 | media-processor gets permission denied writing to its Azure Files volume after the storage hardening change | medium | aks-identity, azure-files, csi-driver, mountoptions, permissions |
 
 ## aks-networking
 

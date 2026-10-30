@@ -1,0 +1,12 @@
+{
+  "root_cause": [
+    ["mountoptions", "mount options", "storageclass mountoptions"],
+    ["uid=0", "uid 0", "gid=0", "root-owned", "file_mode=0755", "0755", "only root can write", "non-root user denied"]
+  ],
+  "fix": [
+    ["uid=1000", "uid 1000", "gid=1000", "file_mode=0777", "file_mode=0775", "dir_mode=0777", "dir_mode=0775", "fsgroup", "fsGroup", "recreate the pvc"]
+  ],
+  "distractors": [
+    ["network rules", "networkruleset", "virtualnetworkrules", "storage firewall", "firewall rules", "iprules", "storage account network", "vnet rules"]
+  ]
+}

@@ -1,0 +1,16 @@
+Name:          media-pvc
+Namespace:     media
+StorageClass:  azure-file-media
+Status:        Bound
+Volume:        pvc-00000000-0000-0000-0000-00000000000f
+Capacity:      100Gi
+Access Modes:  RWO
+Conditions:
+  Type    Status  LastProbeTime                     LastTransitionTime
+  Bound   True    2026-10-29T02:41:03Z              2026-10-29T02:41:03Z
+Events:
+  Type    Reason                 Age   From                         Message
+  ----    ------                 ----  ----                         ----
+  Normal  ExternalProvisioning   24m   persistentvolume-controller  waiting for a volume to be created
+  Normal  ProvisioningSucceeded  24m   file.csi.azure.com_retail-prod-aks-storage-0  Successfully provisioned volume pvc-00000000-0000-0000-0000-00000000000f
+# Provisioning is clean — the volume exists, is bound, and mounts.

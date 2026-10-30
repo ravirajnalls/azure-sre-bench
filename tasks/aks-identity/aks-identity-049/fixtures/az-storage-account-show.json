@@ -1,0 +1,15 @@
+{
+  "name": "retailmediafiles000g",
+  "resourceGroup": "rg-retail-media",
+  "location": "eastus2",
+  "sku": { "name": "Premium_LRS", "tier": "Premium" },
+  "provisioningState": "Succeeded",
+  "networkRuleSet": {
+    "defaultAction": "Allow",
+    "virtualNetworkRules": [],
+    "ipRules": [],
+    "bypass": ["AzureServices"]
+  },
+  "enableHttpsTrafficOnly": true,
+  "requireInfrastructureEncryption": true
+}

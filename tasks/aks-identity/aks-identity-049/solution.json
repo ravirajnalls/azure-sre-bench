@@ -1,0 +1,14 @@
+{
+  "root_cause": "The hardening change added StorageClass mountOptions uid=0, gid=0, file_mode=0755, dir_mode=0755 to azure-file-media (storageclass.yaml:11-15), so every file on the mounted Azure Files share is root-owned and only root can write — while media-processor's pod runs as uid 1000 (deployment.yaml securityContext), its writes to /mnt/media out get Errno 13, and its reads still work because 0755 grants world-read.",
+  "evidence": [
+    "storageclass.yaml: mountOptions pin uid=0, gid=0, file_mode=0755, dir_mode=0755, added in the 2026-10-28 hardening change",
+    "deployment.yaml: securityContext runAsUser 1000 / runAsGroup 1000; the azure-file CSI driver does not apply fsGroup to SMB mounts, so the pod has no write bit",
+    "media-processor.log: writes fail with Errno 13 from job start while reads work — the 0755 mode grants r-x to non-root",
+    "kubectl-describe-pvc.txt: the volume provisions and binds cleanly (ProvisioningSucceeded), ruling out provisioning"
+  ],
+  "fix": "Fix the StorageClass mountOptions to give the workload's uid ownership and write access — uid=1000, gid=1000, file_mode=0777 (or 0775), dir_mode=0777 (or 0775) — then recreate the PVs so the new options are applied at mount time; alternatively drop the uid/gid options entirely and rely on fsGroup where the driver supports it.",
+  "evidence_files": [
+    "storageclass.yaml",
+    "deployment.yaml"
+  ]
+}

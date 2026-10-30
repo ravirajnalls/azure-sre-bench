@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: media-processor
+  namespace: media
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: media-processor
+  template:
+    metadata:
+      labels:
+        app: media-processor
+    spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      containers:
+        - name: media-processor
+          image: retailacr000a.azurecr.io/media-processor:v2026.10.29
+          volumeMounts:
+            - name: media
+              mountPath: /mnt/media
+      volumes:
+        - name: media
+          persistentVolumeClaim:
+            claimName: media-pvc
+# fsGroup is set, but the azure-file CSI driver does not apply fsGroup to
+# SMB mount options — the StorageClass mountOptions win.
