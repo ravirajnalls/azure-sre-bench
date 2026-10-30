@@ -1,0 +1,15 @@
+{
+  "root_cause": "A new Azure Firewall application rule collection (Unapproved-Endpoints) denies egress to *.hcp.eastus2.azmk8s.io on 443, so the konnectivity-agent pods cannot reach the API server tunnel endpoint, they CrashLoop, and every tunnel-proxied streaming verb (logs, exec, attach, port-forward) times out with the 10.240.0.35:10250 dial error reported back to the operator.",
+  "evidence": [
+    "azfw-application-rule-log.kql.csv: repeated Deny from rule Unapproved-Endpoints/block-unapproved-egress for retail-prod-06ab0cfb.hcp.eastus2.azmk8s.io:443 starting 01:30",
+    "konnectivity-agent.log: agent's own egress dial to the API server endpoint on 443 times out and it exits with 'all retries exhausted'",
+    "kubectl-get-pods-kube-system.txt: both konnectivity-agent pods in CrashLoopBackOff since the rule landed; kube-system otherwise healthy",
+    "az-aks-show.json: public FQDN is the hcp.azmk8s.io endpoint the firewall denies, and outboundType userDefinedRouting sends all pod egress through the firewall"
+  ],
+  "fix": "Add an Azure Firewall application rule allowing egress to *.hcp.eastus2.azmk8s.io (or tag AzureKubernetesService for the cluster's region and resource-group) on port 443 in the Unapproved-Endpoints collection's place, then let the konnectivity-agent Deployment restart its pods — logs/exec/attach recover immediately.",
+  "evidence_files": [
+    "azfw-application-rule-log.kql.csv",
+    "konnectivity-agent.log",
+    "az-aks-show.json"
+  ]
+}

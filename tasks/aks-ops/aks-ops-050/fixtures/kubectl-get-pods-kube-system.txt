@@ -1,0 +1,9 @@
+NAME                                   READY   STATUS             RESTARTS       AGE
+cloud-node-manager-7lqxd               1/1     Running            0              12d
+coredns-6b7f9d885d-ks7nv               1/1     Running            0              12d
+coredns-6b7f9d885d-vw2tk               1/1     Running            0              12d
+coredns-autoscaler-5f89c7d8b-6zcqb     1/1     Running            0              12d
+konnectivity-agent-5d8c7f6b4-8k2mn     0/1     CrashLoopBackOff   38 (3m ago)    12d
+konnectivity-agent-5d8c7f6b4-jw9rx     0/1     CrashLoopBackOff   41 (2m ago)    12d
+konnectivity-agent-kube-proxy-2kx9n    1/1     Running            0              12d
+metrics-server-7d6f8c9b5d-h4tlp        2/2     Running            0              12d

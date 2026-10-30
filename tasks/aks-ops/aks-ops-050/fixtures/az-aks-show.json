@@ -1,0 +1,21 @@
+{
+  "id": "/subscriptions/00000000-0000-0000-0000-00000000000a/resourcegroups/rg-retail-prod/providers/Microsoft.ContainerService/managedClusters/retail-prod-aks",
+  "name": "retail-prod-aks",
+  "location": "eastus2",
+  "kubernetesVersion": "1.30.6",
+  "fqdn": "retail-prod-06ab0cfb.hcp.eastus2.azmk8s.io",
+  "privateFqdn": null,
+  "privateCluster": {
+    "enabled": false
+  },
+  "apiServerAccessProfile": {
+    "enablePrivateCluster": false,
+    "authorizedIpRanges": []
+  },
+  "networkProfile": {
+    "outboundType": "userDefinedRouting",
+    "serviceCidr": "10.0.0.0/16",
+    "podCidr": "10.240.0.0/16"
+  },
+  "provisioningState": "Succeeded"
+}

@@ -1,0 +1,10 @@
+# systemctl status kubelet -l  (on node aks-nodeworker-37891234-vmss000009)
+● kubelet.service - Kubernetes Kubelet
+     Loaded: loaded (/usr/lib/systemd/system/kubelet.service; enabled)
+     Active: active (running) since Tue 2026-10-28 00:42:11 UTC; 4h ago
+   Main PID: 2107 (kubelet)
+Oct 28 04:39:12 kubelet[2107]: I1028 04:39:12.201 kubelet.go:2346] "SyncLoop (probe)" status="ready" probe="readiness" pod="checkout/checkout-api-7d9f8c6b5-x2v7q"
+Oct 28 04:40:02 kubelet[2107]: I1028 04:40:02.318 kubelet.go:2346] "SyncLoop (pleg)" — no container runtime errors in the last hour
+Oct 28 04:40:15 kubelet[2107]: W1028 04:40:15.001 kubelet_pods.go:1123] "Container termination grace period exceeded" pod="checkout/old-pod" — recovered
+# kubelet is healthy: ready probes pass, no auth errors, no 10250 errors of
+# its own. kubectl get (API server round-trip) also works from this node.
