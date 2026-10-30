@@ -1,13 +1,14 @@
 {
   "root_cause": [
-    ["federated credential", "federated identity", "fic"],
-    ["subject", "sc://"],
-    ["rename", "platformeng"]
+    ["federated credential", "federated identity", "federated identity credential"],
+    ["subject", "sc://contoso/platform/sc-prod-deploy", "pre-rename project", "old project name"],
+    ["platformeng", "project renamed", "renamed project"]
   ],
   "fix": [
-    [
-      "sc://contoso/platformeng/sc-prod-deploy",
-      "update the subject"
-    ]
+    ["sc://contoso/platformeng/sc-prod-deploy", "update the subject", "federated-credential update"]
+  ],
+  "distractors": [
+    ["contributor", "role assignment", "rbac", "missing contributor"],
+    ["recreate the service connection", "new service connection", "workloadidentityfederation"]
   ]
 }

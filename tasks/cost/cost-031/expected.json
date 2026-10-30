@@ -1,10 +1,14 @@
 {
   "root_cause": [
-    ["unattached", "orphan", "orphaned", "stranded", "left behind", "detached"],
-    ["os disk", "managed disk", "disk"]
+    ["unattached", "orphaned", "stranded", "left behind", "detached"],
+    ["os disk", "managed disk"]
   ],
   "fix": [
-    ["delete", "remove", "purge", "clean up", "cleanup"],
-    ["os disk", "managed disk", "disk"]
+    ["az disk delete", "delete the unattached", "delete the 48", "purge the unattached", "clean up the unattached"],
+    ["os disk", "managed disk", "replace-agents", "delete the detached os disk", "stop accumulating"]
+  ],
+  "distractors": [
+    ["storage account", "stbldagentsart01", "blob storage", "storageaccount"],
+    ["vm sprawl", "more vms", "autoscaling", "virtualmachines"]
   ]
 }

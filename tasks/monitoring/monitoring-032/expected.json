@@ -1,9 +1,12 @@
 {
   "root_cause": [
-    ["avg", "average", "aggregation"],
-    ["threshold"]
+    ["avg(is5xx)", "average", "aggregation", "timeaggregation"],
+    ["threshold of 50", "threshold 50", "count semantics", "bounded by 1.0", "mathematically unsatisfiable"]
   ],
   "fix": [
-    ["count", "countif", "percentage"]
+    ["countif", "count semantics", "percentage", "same units"]
+  ],
+  "distractors": [
+    ["notification path", "action group", "ag-prod-oncall", "receivers"]
   ]
 }

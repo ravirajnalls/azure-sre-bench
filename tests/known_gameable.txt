@@ -29,6 +29,18 @@
 #   blows the 600-char caps and names the nsg distractor, and minimal-dump's
 #   capped dump (app.log sorts first) contains no rubric alternative. Entry
 #   leaves with the audits (#96-#99) like the rest.
+#
+# Rubric audit #99 (2026-10-30, the seven non-AKS tasks): audits landed —
+# grounded distractor groups, decisive specific values, no bare generic or
+# <=4-char alternatives — and fixture-dump/minimal-dump fail all seven. The
+# keyword-soup probe still passes all seven BY CONSTRUCTION: it reads the
+# hidden rubric and emits the union of the rubric's own alternatives (45-194
+# chars per field for these tasks, far under the 600 cap), and the validator
+# forces distractor alternatives to be disjoint from rubric alternatives, so
+# no rubric edit can defeat a probe defined as "the rubric's own keywords".
+# These entries therefore stay until the corpus moves behind the held-out
+# split (encrypted rubrics hide them from the probe, spec OQ2/OQ3) or the
+# gate gains a grader that resists rubric-reading cheats.
 ado-pipelines-030
 aks-identity-008
 aks-identity-009
