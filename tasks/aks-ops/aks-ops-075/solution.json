@@ -14,6 +14,7 @@
     "pl-044"
   ],
   "evidence_files": [
-    "events.json"
+    "events.json",
+    "sources.md"
   ]
 }
