@@ -1,0 +1,20 @@
+id: aks-networking-001
+title: "Pods can't resolve external hostnames"
+category: aks-networking
+difficulty: medium
+tags:
+  - aks
+  - dns
+  - coredns
+  - kubernetes
+  - azure
+symptom: >
+  Since around 09:00 UTC, pods across every namespace fail to resolve
+  external hostnames — checkout calls to api.stripe.com, token refreshes to
+  graph.microsoft.com, and container image pulls from the registry all time
+  out. In-cluster service names still resolve normally, so traffic that stays
+  inside the cluster is healthy. The on-call team already confirmed the nodes
+  themselves can look up external names over SSH, and both CoreDNS pods in
+  kube-system show Running with no restarts. Paged by the
+  egress-dns-failure alert at 09:15 UTC; two payment-retry alerts have
+  fired since.

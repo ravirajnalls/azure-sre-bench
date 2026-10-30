@@ -1,0 +1,9 @@
+{
+  "root_cause": [
+    ["coredns-custom", "coredns custom", "custom configmap", "forward", "forwarder"],
+    ["10.20.1.53"]
+  ],
+  "fix": [
+    ["remove the forward", "remove the forwarding", "delete the override", "remove the custom", "168.63.129.16", "correct upstream", "working upstream", "restore the default"]
+  ]
+}
