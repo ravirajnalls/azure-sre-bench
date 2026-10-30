@@ -381,8 +381,10 @@ python -m bench run --release v0.1 --agent ...  # verifies the corpus matches
                                                 # every result with the release
 ```
 
-A `--release` run refuses to start on any drift: a rubric edited since the
-freeze, a task added or removed, or a grader bump. Pushing a `v*` tag runs
+A `--release` run refuses to start on any drift against the manifest's tasks:
+a rubric edited since the freeze, a manifest task removed, or a grader bump.
+Tasks added to the corpus after a release are unaffected — they belong to the
+next release. Pushing a `v*` tag runs
 `.github/workflows/release.yml`, which re-runs the CI gates, re-verifies the
 manifest against the tagged corpus, and publishes the tarball. Cut a release
 only after rubric-audit work merges — the manifest freezes rubric hashes.

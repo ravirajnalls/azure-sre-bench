@@ -8,6 +8,7 @@ here and in CI, which is the point of freezing.
 from __future__ import annotations
 
 import json
+import shutil
 import sys
 from pathlib import Path
 
@@ -39,7 +40,7 @@ def write_agent(tmp_path: Path, body: str) -> str:
 
 
 def test_committed_v01_manifest_verifies_against_live_corpus():
-    """The frozen release matches the corpus: same tasks, same rubric hashes."""
+    """Every task the frozen release names still verifies: same rubric hashes."""
     manifest = load_release("v0.1", releases_root=REPO_ROOT / "releases")
     problems = verify_release(manifest, tasks_root=REPO_ROOT / "tasks")
     assert problems == []
@@ -71,14 +72,52 @@ def test_verify_release_detects_tampered_hash():
     assert any("rubric_sha256 mismatch" in problem for problem in problems)
 
 
-def test_verify_release_detects_missing_and_extra_tasks():
+def test_verify_release_detects_missing_manifest_task(tmp_path):
+    """A manifest task that disappears from the corpus still fails verification."""
     manifest = build_manifest(tasks_root=REPO_ROOT / "tasks")
-    dropped = manifest["tasks"].pop()
-    manifest["tasks"].append({"id": "ghost-999", "rubric_sha256": None})
+    removed = manifest["tasks"][0]  # stays in the manifest, vanishes from the corpus
+
+    tasks_root = tmp_path / "tasks"
+    shutil.copytree(REPO_ROOT / "tasks", tasks_root)
+    shutil.rmtree(next(tasks_root.rglob(removed["id"])))
+
+    problems = verify_release(manifest, tasks_root=tasks_root)
+    assert f"task in release but missing from corpus: {removed['id']}" in problems
+
+
+def test_verify_release_allows_corpus_growth():
+    """Corpus tasks the manifest does not name are allowed — the subset check.
+
+    The manifest freezes 40 tasks, then one more task lands in the corpus.
+    The new task belongs to the next release, not to this manifest, so v0.1
+    verification still passes without re-freezing: a `--release v0.1` run
+    keeps working while the corpus grows.
+    """
+    manifest = build_manifest(tasks_root=REPO_ROOT / "tasks")
+    grown = manifest["tasks"].pop()  # corpus now holds one task the manifest lacks
 
     problems = verify_release(manifest, tasks_root=REPO_ROOT / "tasks")
-    assert "task in release but missing from corpus: ghost-999" in problems
-    assert f"task in corpus but not in release: {dropped['id']}" in problems
+    assert problems == [], f"unexpected problems: {problems}"
+    assert grown["id"] not in "\n".join(problems)
+
+
+def test_verify_release_detects_edited_rubric(tmp_path):
+    """Editing a manifest task's rubric after the freeze still fails."""
+    tasks_root = tmp_path / "tasks"
+    task_dir = tasks_root / "aks-ops" / "aks-ops-019"
+    shutil.copytree(REPO_ROOT / "tasks" / "aks-ops" / "aks-ops-019", task_dir)
+    manifest = build_manifest(tasks_root=tasks_root)
+
+    rubric = json.loads((task_dir / "expected.json").read_text(encoding="utf-8"))
+    rubric["root_cause"] = [["edited after the freeze"]]
+    (task_dir / "expected.json").write_text(
+        json.dumps(rubric), encoding="utf-8"
+    )
+
+    problems = verify_release(manifest, tasks_root=tasks_root)
+    assert any(
+        "rubric_sha256 mismatch for aks-ops-019" in problem for problem in problems
+    )
 
 
 def test_verify_release_detects_grader_bump():
