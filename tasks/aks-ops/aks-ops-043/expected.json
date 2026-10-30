@@ -1,0 +1,12 @@
+{
+  "root_cause": [
+    ["nodepool requirements", "node pool requirements", "karpenter nodepool", "requirement"],
+    ["sku-family", "skufamily", "nvidia.com/gpu", "incompatible", "no instance type"]
+  ],
+  "fix": [
+    ["aksnodeclass", "gpu nodepool", "gpu sku", "sku-family", "ncasv4", "ncsv3", "n-series", "update the requirements", "requirements to include", "allow gpu", "remove the sku-family restriction"]
+  ],
+  "distractors": [
+    ["quota", "regional vCPUs", "totalRegionalVirtualCPUs", "insufficient capacity"]
+  ]
+}

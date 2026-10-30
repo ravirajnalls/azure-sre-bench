@@ -1,0 +1,41 @@
+apiVersion: karpenter.sh/v1
+kind: NodePool
+metadata:
+  name: general-purpose
+spec:
+  template:
+    metadata:
+      labels:
+        pooling: general
+    spec:
+      nodeClassRef:
+        group: karpenter.azure.com
+        kind: AKSNodeClass
+        name: default
+      requirements:
+        - key: karpenter.sh/capacity-type
+          operator: In
+          values: ["on-demand"]
+        - key: kubernetes.io/arch
+          operator: In
+          values: ["amd64"]
+        - key: karpenter.azure.com/sku-family
+          operator: In
+          values: ["D"]
+      taints: []
+  limits:
+    cpu: 400
+    memory: 1600Gi
+  disruption:
+    consolidationPolicy: WhenEmpty
+    consolidateAfter: 1m
+---
+apiVersion: karpenter.azure.com/v1alpha2
+kind: AKSNodeClass
+metadata:
+  name: default
+spec:
+  imageFamily: Ubuntu2204
+  osDiskSizeGB: 128
+  subnet:
+    name: aks-gpu-prod-node-subnet

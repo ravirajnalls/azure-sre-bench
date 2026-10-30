@@ -1,0 +1,3 @@
+NAME  TYPE  CAPACITY  NODE  NODECLASS  AGE
+
+No resources found in karpenter namespace.

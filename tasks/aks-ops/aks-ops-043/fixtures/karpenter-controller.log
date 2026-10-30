@@ -1,0 +1,8 @@
+2026-10-29T08:14:02.441Z	INFO	controller.nodepool	reconciling NodePool	gp={"name": "general-purpose"}
+2026-10-29T08:14:02.442Z	DEBUG	controller.partitionedqueue	found no pending pods for NodePool	gp={"name": "general-purpose"}
+2026-10-29T08:14:07.913Z	ERROR	controller.podcidr	failed to resolve instance types for pod inference/llm-inference-5d8f9b7c4d-k2vwj	{"commit": "8a4c1f9", "pod": "inference/llm-inference-5d8f9b7c4d-k2vwj", "nodepool": "general-purpose", "error": "incompatible requirements: no instance type satisfies [karpenter.azure.com/sku-family In [D] kubernetes.io/arch In [amd64] karpenter.sh/capacity-type In [on-demand] nvidia.com/gpu 1]"}
+2026-10-29T08:14:07.913Z	WARN	controller.disruption	marking pods unschedulable	gp={"pods": ["inference/llm-inference-5d8f9b7c4d-k2vwj"], "reason": "no instance type satisfies the pod requirements"}
+2026-10-29T08:14:22.100Z	DEBUG	controller.instancetypes	listing compatible instance types for NodePool	gp={"name": "general-purpose", "familyFilter": "D", "count": 0, "offeringGPUs": 0}
+2026-10-29T08:14:22.101Z	ERROR	controller.nodeclaim	could not launch any instance types	gp={"nodepool": "general-purpose", "instanceTypesEvaluated": 0, "error": "incompatible requirements: karpenter.azure.com/sku-family In [D] excludes every instance type that provides nvidia.com/gpu"}
+2026-10-29T08:14:47.335Z	INFO	controller.nodepool	reconciling NodePool	gp={"name": "general-purpose"}
+2026-10-29T08:15:02.988Z	WARN	controller.provisioner	no NodeClaims created: all pending pods failed instance type resolution	gp={"pendingPods": 3, "namespaces": ["inference"]}

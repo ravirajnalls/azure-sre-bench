@@ -1,0 +1,21 @@
+id: aks-ops-043
+canary: 00000000-0000-0000-0000-000000000114  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
+title: Node auto-provisioning creates no nodes while GPU inference pods stay Pending
+category: aks-ops
+difficulty: medium
+tags:
+  - aks-ops
+  - aks
+  - node
+  - auto-provisioning
+  - karpenter
+  - gpu
+  - kubernetes
+symptom: |
+  Since the platform team enabled node auto-provisioning on the aks-gpu-prod
+  cluster, the LLM inference rollout has never come up: every pod in the
+  inference namespace sits Pending, and the controller never provisions a node
+  for them. The existing system node pool is healthy and CPU-only workloads on
+  it are unaffected. Capacity alerts are quiet, the subscription dashboards
+  show nothing abnormal, and no one has touched the cluster configuration
+  since the rollout was created.

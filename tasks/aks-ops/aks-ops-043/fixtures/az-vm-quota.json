@@ -1,0 +1,42 @@
+[
+  {
+    "name": {
+      "value": "standardNCSv3FamilyClusterVirtualCPUs",
+      "localizedValue": "Standard NCSv3 Family vCPUs"
+    },
+    "currentValue": 0,
+    "limit": 24,
+    "unit": "Count",
+    "localName": "standardNCSv3FamilyClusterVirtualCPUs"
+  },
+  {
+    "name": {
+      "value": "standardNCASv4FamilyClusterVirtualCPUs",
+      "localizedValue": "Standard NCASv4 Family vCPUs"
+    },
+    "currentValue": 0,
+    "limit": 48,
+    "unit": "Count",
+    "localName": "standardNCASv4FamilyClusterVirtualCPUs"
+  },
+  {
+    "name": {
+      "value": "standardDDv5FamilyClusterVirtualCPUs",
+      "localizedValue": "Standard DDv5 Family vCPUs"
+    },
+    "currentValue": 16,
+    "limit": 640,
+    "unit": "Count",
+    "localName": "standardDDv5FamilyClusterVirtualCPUs"
+  },
+  {
+    "name": {
+      "value": "totalRegionalVirtualCPUs",
+      "localizedValue": "Total Regional vCPUs"
+    },
+    "currentValue": 16,
+    "limit": 625,
+    "unit": "Count",
+    "localName": "totalRegionalVirtualCPUs"
+  }
+]
