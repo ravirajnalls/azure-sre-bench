@@ -1,0 +1,12 @@
+{
+  "root_cause": [
+    ["azure policy", "gatekeeper", "constraint", "allowed images", "allowedimages"],
+    ["docker.io", "not from an approved registry", "not from an allowed registry", "image registry", "unapproved registry"]
+  ],
+  "fix": [
+    ["acr", "azurecr", "import", "allowed images", "allowedrepo", "approved registry", "allowed registry"]
+  ],
+  "distractors": [
+    ["role assignment", "rbac", "acrpull", "service principal", "forbidden permission"]
+  ]
+}

@@ -1,0 +1,36 @@
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sAzureContainerAllowedImages
+metadata:
+  name: k8sazurev2containerallowedimages
+  annotations:
+    policy.azure.com/assignment-id: 00000000-0000-0000-0000-000000000004
+    policy.azure.com/policy-definition-name: "Kubernetes cluster containers should only use allowed images"
+spec:
+  enforcementAction: deny
+  match:
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Pod"]
+  parameters:
+    allowedRepoRegexes:
+      - "^benchacr0001\\.azurecr\\.io/.+$"
+      - "^benchacr0001\\.azurecr\\.io$"
+      - "^mcr\\.microsoft\\.com/.+$"
+status:
+  auditTimestamp: "2026-10-30T06:30:00Z"
+  violations:
+    - enforcementAction: deny
+      kind: Pod
+      message: 'container image docker.io/contoso/reporting-api:1.4.2 is not from an approved registry'
+      name: reporting-api-7c6d5f4b8d-xq9zt
+      namespace: reporting
+    - enforcementAction: deny
+      kind: Pod
+      message: 'container image docker.io/contoso/reporting-api:1.4.2 is not from an approved registry'
+      name: reporting-api-7c6d5f4b8d-2lmvp
+      namespace: reporting
+    - enforcementAction: deny
+      kind: Pod
+      message: 'container image docker.io/contoso/reporting-api:1.4.2 is not from an approved registry'
+      name: reporting-api-7c6d5f4b8d-4nkhc
+      namespace: reporting

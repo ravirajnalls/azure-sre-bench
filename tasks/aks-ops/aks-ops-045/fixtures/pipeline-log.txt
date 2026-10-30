@@ -1,0 +1,9 @@
+2026-10-30T06:41:22Z  Triggering build for branch release/reporting-api
+2026-10-30T06:41:24Z  docker build -f Dockerfile -t docker.io/contoso/reporting-api:1.4.2 .  -> success
+2026-10-30T06:41:31Z  docker push docker.io/contoso/reporting-api:1.4.2  -> digest sha256:4f9b7c2e11...
+2026-10-30T06:41:33Z  kubectl apply -f manifests/deployment.yaml -n reporting
+2026-10-30T06:41:34Z  Error from server (Forbidden): error when creating "manifests/deployment.yaml": deployments.apps "reporting-api" is forbidden: Admission webhook "validation.gatekeeper.sh" denied the request: [azurepolicy-k8sazurev2containerallowedimages-<id>] Container images for your deployment are not available from the allowed registry: docker.io/contoso/reporting-api:1.4.2. Denied by constraint "k8sazurev2containerallowedimages" assigned by Azure Policy.
+2026-10-30T06:41:34Z  ##[error] Deployment failed. See https://learn.microsoft.com/azure/aks/faq for troubleshooting.
+2026-10-30T06:41:34Z  For more details run: kubectl get k8sazurev2containerallowedimages -o yaml
+2026-10-30T06:41:35Z  ##[error]kubernetes cleanup: job report
+2026-10-30T06:41:35Z  Task finished with exit code 1

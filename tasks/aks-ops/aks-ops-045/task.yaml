@@ -1,0 +1,18 @@
+id: aks-ops-045
+canary: 00000000-0000-0000-0000-000000000114  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
+title: Azure Policy denies deployment with a vague error
+category: aks-ops
+difficulty: medium
+tags:
+  - aks-ops
+  - aks
+  - azure-policy
+  - gatekeeper
+  - kubernetes
+  - deployment
+symptom: |
+  The reporting-api release pipeline fails on kubectl apply: the deployment is
+  rejected by an "admission webhook" with a wall of policy JSON and no
+  human-readable reason, so developers do not know what to change. The image
+  built and pushed successfully, no RBAC or pipeline permissions changed, and
+  the same manifest deployed fine to the staging cluster yesterday.
