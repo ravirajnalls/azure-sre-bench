@@ -1,0 +1,11 @@
+{
+  "root_cause": "Each ml-scorer pod requests 30Gi of memory, but the pool runs Standard_D8s_v5 nodes (32 GiB) with only ~27.6Gi allocatable per node (28278784Ki). No node in any pool can ever fit the pod, so the scheduler rejects all four nodes with Insufficient memory and the cluster autoscaler reports 'pod didn't trigger scale-up: insufficient memory' instead of adding nodes.",
+  "evidence": [
+    "deployment.yaml: ml-scorer containers request cpu 4 and memory 30Gi",
+    "kubectl-describe-pod.txt: FailedScheduling — 0/4 nodes are available: 4 Insufficient memory",
+    "kubectl-describe-node-allocatable.txt: Standard_D8s_v5 nodes show Allocatable memory 28278784Ki (~27.6Gi), below the 30Gi pod request",
+    "cluster-autoscaler-status.txt: ScaleUp NoActivity with log lines 'pod didn't trigger scale-up: 1 insufficient memory'",
+    "kubectl-top-nodes.txt: nodes under 7% memory used — the pods are not Pending because the cluster is full"
+  ],
+  "fix": "Reduce the ml-scorer memory request below the node allocatable (e.g. shard the model across smaller pods), or move the pool to a larger VM SKU (e.g. Standard_D16s_v5) or add a new node pool with bigger nodes so a node can fit the 30Gi pod."
+}

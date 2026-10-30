@@ -1,0 +1,49 @@
+Name:           ml-scorer-667d4b8f9-x2k4t
+Namespace:      ml
+Priority:       0
+Service Account: ml-scorer
+Node:           <none>
+Labels:         app=ml-scorer
+                pod-template-hash=667d4b8f9
+                tier=scoring
+Annotations:    <none>
+Status:         Pending
+IP:
+IPs:            <none>
+Controlled By:  ReplicaSet/ml-scorer-667d4b8f9
+Containers:
+  scorer:
+    Image:      mlprodacr00000001.azurecr.io/ml-scorer:2026.10.30
+    Args:
+      --feature-set=2026.10
+      --shards=2
+    Port:       9102/TCP
+    Host Port:  0/TCP
+    Requests:
+      cpu:        4
+      memory:     30Gi
+    Environment:  <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-xxxxx (ro)
+Conditions:
+  Type        Status
+  PodReady    False
+  PodScheduled False
+Volumes:
+  kube-api-access-xxxxx:
+    Type:       Projected (a projected volume)
+QoS Class:      Burstable
+Node-Selectors: agentpool=npuser
+Tolerations:    node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type     Reason            Age                  From                Message
+  ----     ------            ----                 ----                -------
+  Normal   SuccessfulCreate  71m                  deployment-controller  Created pod: ml-scorer-667d4b8f9-x2k4t
+  Normal   SuccessfulCreate  71m                  deployment-controller  Created pod: ml-scorer-667d4b8f9-8hq7w
+  Normal   SuccessfulCreate  71m                  deployment-controller  Created pod: ml-scorer-667d4b8f9-vt9bm
+  Warning  FailedScheduling  70m (x4 over 2m)    default-scheduler   0/4 nodes are available: 4 Insufficient memory.
+  Warning  FailedScheduling  58m (x12 over 10m)  default-scheduler   0/4 nodes are available: 4 Insufficient memory.
+  Warning  FailedScheduling  34m (x27 over 20m)  default-scheduler   0/4 nodes are available: 4 Insufficient memory.
+  Warning  FailedScheduling  11m (x38 over 26m)  default-scheduler   0/4 nodes are available: 4 Insufficient memory.
+  Warning  FailedScheduling  4m (x19 over 9m)    default-scheduler   0/4 nodes are available: 4 Insufficient memory.

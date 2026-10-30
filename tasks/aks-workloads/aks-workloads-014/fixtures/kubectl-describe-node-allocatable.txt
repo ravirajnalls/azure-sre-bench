@@ -1,0 +1,127 @@
+Name:               aks-npuser-41873229-vmss000000
+Roles:              agent
+Labels:             agentpool=npuser
+                    kubernetes.azure.com/agentpool=npuser
+                    kubernetes.azure.com/scalesetpriority=regular
+                    kubernetes.azure.com/vm-size=Standard_D8s_v5
+                    kubernetes.io/os=linux
+                    node.kubernetes.io/instance-type=Standard_D8s_v5
+Capacity:
+  cpu:                8
+  ephemeral-storage:  129883128Ki
+  hugepages-1Gi:      0
+  hugepages-2Mi:      0
+  memory:             33554432Ki
+  pods:               110
+Allocatable:
+  cpu:                7870m
+  ephemeral-storage:  119803329966
+  hugepages-1Gi:      0
+  hugepages-2Mi:      0
+  memory:             28278784Ki
+  pods:               110
+System Info:
+  OS Image:                  Azure Linux 3.0 (2026.10.01)
+  Kernel Version:            6.6.59.1-1.azl3
+  Container Runtime Version: containerd://1.7.27-1
+Allocated resources:
+  (Total limits may be over 100 percent, i.e., overcommitted guarantees. More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/)
+  Resource           Requests     Limits
+  --------           --------     ------
+  cpu                1300m (16%)  2 (25%)
+  memory             4294Mi (15%)  6144Mi (22%)
+
+Name:               aks-npuser-41873229-vmss000001
+Roles:              agent
+Labels:             agentpool=npuser
+                    kubernetes.azure.com/agentpool=npuser
+                    kubernetes.azure.com/scalesetpriority=regular
+                    kubernetes.azure.com/vm-size=Standard_D8s_v5
+                    kubernetes.io/os=linux
+                    node.kubernetes.io/instance-type=Standard_D8s_v5
+Capacity:
+  cpu:                8
+  ephemeral-storage:  129883128Ki
+  hugepages-1Gi:      0
+  hugepages-2Mi:      0
+  memory:             33554432Ki
+  pods:               110
+Allocatable:
+  cpu:                7870m
+  ephemeral-storage:  119803329966
+  hugepages-1Gi:      0
+  hugepages-2Mi:      0
+  memory:             28278784Ki
+  pods:               110
+System Info:
+  OS Image:                  Azure Linux 3.0 (2026.10.01)
+  Kernel Version:            6.6.59.1-1.azl3
+  Container Runtime Version: containerd://1.7.27-1
+Allocated resources:
+  Resource           Requests     Limits
+  --------           --------     ------
+  cpu                900m (11%)   1500m (19%)
+  memory             3210Mi (11%)  4096Mi (14%)
+
+Name:               aks-npuser-41873229-vmss000002
+Roles:              agent
+Labels:             agentpool=npuser
+                    kubernetes.azure.com/agentpool=npuser
+                    kubernetes.azure.com/scalesetpriority=regular
+                    kubernetes.azure.com/vm-size=Standard_D8s_v5
+                    kubernetes.io/os=linux
+                    node.kubernetes.io/instance-type=Standard_D8s_v5
+Capacity:
+  cpu:                8
+  ephemeral-storage:  129883128Ki
+  hugepages-1Gi:      0
+  hugepages-2Mi:      0
+  memory:             33554432Ki
+  pods:               110
+Allocatable:
+  cpu:                7870m
+  ephemeral-storage:  119803329966
+  hugepages-1Gi:      0
+  hugepages-2Mi:      0
+  memory:             28278784Ki
+  pods:               110
+System Info:
+  OS Image:                  Azure Linux 3.0 (2026.10.01)
+  Kernel Version:            6.6.59.1-1.azl3
+  Container Runtime Version: containerd://1.7.27-1
+Allocated resources:
+  Resource           Requests     Limits
+  --------           --------     ------
+  cpu                1180m (14%)  1900m (24%)
+  memory             2640Mi (9%)  5120Mi (15%)
+
+Name:               aks-systempool-41873229-vmss000000
+Roles:              agent
+Labels:             agentpool=systempool
+                    kubernetes.azure.com/agentpool=systempool
+                    kubernetes.azure.com/vm-size=Standard_D4s_v5
+                    kubernetes.io/os=linux
+                    node.kubernetes.io/instance-type=Standard_D4s_v5
+Capacity:
+  cpu:                4
+  ephemeral-storage:  62390256Ki
+  hugepages-1Gi:      0
+  hugepages-2Mi:      0
+  memory:             16777216Ki
+  pods:               110
+Allocatable:
+  cpu:                3930m
+  ephemeral-storage:  57559704626
+  hugepages-1Gi:      0
+  hugepages-2Mi:      0
+  memory:             13099776Ki
+  pods:               110
+System Info:
+  OS Image:                  Azure Linux 3.0 (2026.10.01)
+  Kernel Version:            6.6.59.1-1.azl3
+  Container Runtime Version: containerd://1.7.27-1
+Allocated resources:
+  Resource           Requests     Limits
+  --------           --------     ------
+  cpu                850m (21%)   900m (22%)
+  memory             1890Mi (14%)  2560Mi (19%)
