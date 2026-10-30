@@ -18,6 +18,7 @@ import sys
 from pathlib import Path
 
 from bench import __version__
+import bench.fixture_leaks  # noqa: F401 — registers the leaks/size checkers (issue #154)
 import bench.fixture_lint  # noqa: F401 — registers the consistency checker (issue #152)
 from bench.export import SUPPORTED_FORMATS
 from bench.heldout import ENCRYPTED_SUFFIX, HeldoutKeyError, load_hidden_json
@@ -272,7 +273,7 @@ def build_parser() -> argparse.ArgumentParser:
 
             lf_parser = sub.add_parser(
                 name,
-                help="lint task fixtures with registered checkers (issue #151)",
+                help="lint task fixtures with registered checkers (issues #151, #152, #154)",
             )
             lf_parser.add_argument(
                 "--check",
@@ -280,7 +281,17 @@ def build_parser() -> argparse.ArgumentParser:
                 default=None,
                 help=(
                     "which checker to run (default: every registered checker; "
-                    "'az' validates canned az JSON fixtures, issue #151)"
+                    "'az' validates canned az JSON fixtures, issue #151; "
+                    "'leaks' and 'size' are error-severity, issue #154)"
+                ),
+            )
+            lf_parser.add_argument(
+                "--max-lines",
+                type=int,
+                default=None,
+                help=(
+                    "size-check override: max lines per fixture file "
+                    "(default 150, issue #154)"
                 ),
             )
             lf_parser.add_argument(
@@ -564,8 +575,15 @@ def main(argv: list[str] | None = None) -> int:
 
             return cmd_sweep(args)
         if args.command == "lint-fixtures":
+            from bench.fixture_leaks import set_max_lines
             from bench.lint_fixtures import cmd_lint_fixtures  # deferred: keeps --help cheap
 
+            if args.max_lines is not None:
+                set_max_lines(args.max_lines)
+                try:
+                    return cmd_lint_fixtures(args)
+                finally:
+                    set_max_lines(None)  # the override is per-invocation
             return cmd_lint_fixtures(args)
         if args.command == "submit":
             return cmd_submit(args)

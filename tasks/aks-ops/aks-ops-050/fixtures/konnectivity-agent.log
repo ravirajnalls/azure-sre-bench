@@ -4,5 +4,5 @@ E1028 02:15:09.140112       1 client.go:778] "Dial to server failed" err="dial t
 E1028 02:16:09.152883       1 client.go:778] "Dial to server failed" err="dial tcp 20.53.10.7:443: connect: connection timed out"
 E1028 02:16:40.160901       1 service.go:120] "Lost connection to apiserver, exiting" err="failed to connect: all retries exhausted"
 # Pod exits and the Deployment restarts it; same timeout on every attempt.
-# NOTE: the timeout is on the agent's OWN egress connection to the API
-# server endpoint on 443, not on kubelet-side 10250 traffic.
+# NOTE: the timeout is on the agent's own connection to the API server
+# endpoint on 443, not on kubelet-side 10250 traffic.

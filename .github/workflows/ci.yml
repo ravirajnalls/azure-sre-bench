@@ -34,6 +34,15 @@ jobs:
             echo "No tasks authored yet — corpus validation activates with the first task."
           fi
 
+      - name: Fixture leak and size lint (issue #154)
+        # `bench lint-fixtures` fails on any fixture that states a rubric
+        # alternative, carries an answer-hint word, or exceeds the line
+        # ceiling. HELDOUT_KEY is optional: a locked rubric skips the leak
+        # scan and still gets the size checks.
+        env:
+          HELDOUT_KEY: ${{ secrets.HELDOUT_KEY }}
+        run: python -m bench lint-fixtures
+
       - name: Task catalog is fresh (issue #42)
         # docs/TASKS.md is committed, so this works on an empty corpus too: a
         # PR that adds or edits tasks without regenerating the catalog fails
