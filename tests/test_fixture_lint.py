@@ -13,6 +13,7 @@ from bench.fixture_lint import (
     lint_task,
     load_ignore,
 )
+from bench.lint_fixtures import CHECKS, run_checks
 
 PLACEHOLDER_SUB = "00000000-0000-0000-0000-000000000001"
 
@@ -63,7 +64,10 @@ def test_consistent_fixtures_produce_no_findings(tmp_path):
     )
     task_dir = task_dir_of(tmp_path / "tasks")
     assert lint_task(task_dir) == []
-    assert main(["lint-fixtures", "--task", task_id, "--tasks-root", str(tmp_path / "tasks")]) == 0
+    assert (
+        main(["lint-fixtures", "--check", "consistency", "--tasks-root", str(tmp_path / "tasks")])
+        == 0
+    )
 
 
 def test_cluster_name_conflict_across_files(tmp_path):
@@ -300,13 +304,17 @@ def test_lint_task_without_fixtures_dir(tmp_path):
     assert lint_task(task_dir) == []
 
 
-def test_unknown_check_is_rejected(tmp_path):
+def test_consistency_check_is_registered():
+    assert "consistency" in CHECKS
+
+
+def test_run_checks_unknown_name_raises(tmp_path):
     with pytest.raises(ValueError, match="unknown check"):
-        lint_task(tmp_path, check="spelling")
+        run_checks(tmp_path, ["spelling"])
 
 
-def test_cli_missing_task_returns_two(tmp_path):
-    assert main(["lint-fixtures", "--task", "ghost-999", "--tasks-root", str(tmp_path)]) == 2
+def test_cli_missing_tasks_root_returns_two(tmp_path):
+    assert main(["lint-fixtures", "--tasks-root", str(tmp_path / "nope")]) == 2
 
 
 def test_cli_reports_findings_and_exit_one(tmp_path):
@@ -317,4 +325,7 @@ def test_cli_reports_findings_and_exit_one(tmp_path):
             "other.json": aks_show("aks-contoso-dev"),
         },
     )
-    assert main(["lint-fixtures", "--tasks-root", str(tmp_path / "tasks")]) == 1
+    assert (
+        main(["lint-fixtures", "--check", "consistency", "--tasks-root", str(tmp_path / "tasks")])
+        == 1
+    )

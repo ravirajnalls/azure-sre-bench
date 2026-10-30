@@ -20,10 +20,8 @@ Conflict semantics, calibrated against the corpus conventions in AGENTS.md:
 
 from __future__ import annotations
 
-import argparse
 import json
 import re
-import sys
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -45,8 +43,6 @@ SINGLETON_CATEGORIES = (
     "vault_name",
 )
 
-CHECKS = ("consistency",)
-
 _VAULT_RE = re.compile(r"https://([a-z0-9][a-z0-9-]*)\.vault\.azure\.net", re.I)
 _SUB_IN_ID_RE = re.compile(r"/subscriptions/([0-9a-fA-F-]{36})")
 _SA_REF_RE = re.compile(r"system:serviceaccount:([^:\s\"']+):([^:\s\"']+)")
@@ -66,7 +62,7 @@ class Fact:
 
 
 @dataclass(frozen=True)
-class Finding:
+class Conflict:
     """A cross-file inconsistency in a task's fixtures."""
 
     task_id: str
@@ -234,7 +230,7 @@ def find_conflicts(facts: list[Fact], ignored: dict[str, set[str]], task_id: str
             f"'{v}' ({', '.join(sorted(set(files)))})" for v, files in sorted(values.items())
         )
         files = tuple(sorted({file for file_list in values.values() for file in file_list}))
-        return Finding(
+        return Conflict(
             task_id=task_id,
             category=category,
             value=", ".join(sorted(values)),
@@ -260,7 +256,7 @@ def find_conflicts(facts: list[Fact], ignored: dict[str, set[str]], task_id: str
         }
         if len(unignored) >= 2:
             findings.append(
-                Finding(
+                Conflict(
                     task_id=task_id,
                     category="namespace",
                     value=f"{entity} -> {', '.join(sorted(unignored))}",
@@ -278,10 +274,8 @@ def find_conflicts(facts: list[Fact], ignored: dict[str, set[str]], task_id: str
     return sorted(findings, key=lambda f: (f.category, f.value))
 
 
-def lint_task(task_dir: Path, check: str = "consistency") -> list[Finding]:
-    """Lint one task directory's fixtures for the requested check."""
-    if check not in CHECKS:
-        raise ValueError(f"unknown check '{check}'; expected one of {CHECKS}")
+def lint_task(task_dir: Path) -> list[Conflict]:
+    """Lint one task directory's fixtures for cross-file consistency."""
     fixtures_dir = task_dir / "fixtures"
     task_id = task_dir.name
     if not fixtures_dir.is_dir():
@@ -300,35 +294,29 @@ def iter_task_dirs(tasks_root: Path) -> list[Path]:
     return sorted(p for p in Path(tasks_root).glob("*/*") if (p / "task.yaml").is_file())
 
 
-def format_findings(findings: list[Finding]) -> str:
-    """Render findings as human-readable lines (empty string when clean)."""
-    return "\n".join(
-        f"  {f.category}: {f.message}" for f in findings
-    )
+def _register() -> None:
+    """Register this module as the `consistency` checker in `bench.lint_fixtures`.
+
+    Lazy import: `bench.lint_fixtures` owns the CLI-facing Finding/severity
+    vocabulary (issue #151 registry); this module only depends on it inside
+    registration, so importing `bench.fixture_lint` standalone stays cheap.
+    """
+    from bench.lint_fixtures import ERROR, Finding, register_check
+
+    @register_check("consistency")
+    def check_consistency(tasks_root: Path) -> list[Finding]:
+        findings: list[Finding] = []
+        for task_dir in iter_task_dirs(tasks_root):
+            for conflict in lint_task(task_dir):
+                findings.append(
+                    Finding(
+                        check="consistency",
+                        path=f"{task_dir.name}/fixtures",
+                        severity=ERROR,
+                        message=f"{conflict.category}: {conflict.message}",
+                    )
+                )
+        return findings
 
 
-def cmd_lint_fixtures(args: argparse.Namespace) -> int:
-    """CLI entry point for `bench lint-fixtures` (issue #152)."""
-    tasks_root = Path(args.tasks_root)
-    if args.task:
-        matches = [d for d in iter_task_dirs(tasks_root) if d.name == args.task]
-        if not matches:
-            print(f"no task '{args.task}' under {tasks_root}/", file=sys.stderr)
-            return 2
-        targets = matches
-    else:
-        targets = iter_task_dirs(tasks_root)
-
-    total = 0
-    for task_dir in targets:
-        findings = lint_task(task_dir, check=args.check)
-        if not findings:
-            continue
-        total += len(findings)
-        print(f"{task_dir.name}: {len(findings)} consistency finding(s)")
-        print(format_findings(findings))
-    if total:
-        print(f"\nbench lint-fixtures: {total} finding(s) across the corpus", file=sys.stderr)
-        return 1
-    print(f"bench lint-fixtures: {len(targets)} task(s) checked, no conflicts")
-    return 0
+_register()
