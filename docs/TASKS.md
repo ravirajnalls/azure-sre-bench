@@ -137,3 +137,4 @@
 | ID | Title | Difficulty | Tags |
 | --- | --- | --- | --- |
 | serverless-065 | Container Apps checkout-api serves stale pricing after a rollout | medium | serverless, container-apps, traffic-splitting, revisions, blue-green |
+| serverless-066 | Azure Functions stops scaling out at peak after the cost-guardrail change | medium | serverless, azure-functions, consumption-plan, scale-out, app-settings |
