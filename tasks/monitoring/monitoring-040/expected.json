@@ -1,0 +1,63 @@
+{
+  "root_cause": [
+    [
+      "daily cap",
+      "daily quota",
+      "dailyquotagb",
+      "workspace capping",
+      "log analytics daily quota",
+      "daily ingestion cap",
+      "daily cap of 5 gb",
+      "the workspace hits its daily cap",
+      "cap reached at 14:00 utc",
+      "the 5 gb workspace cap",
+      "ingestion stops when the daily quota is reached",
+      "daily cap hit every afternoon"
+    ],
+    [
+      "debug logging on payments-api",
+      "payments-api debug logging",
+      "debug log level on payments-api",
+      "payments-api log level",
+      "payments-api verbosity",
+      "log_level=debug on payments-api",
+      "payments-api switched to debug",
+      "payments-api emits debug logs",
+      "noisy debug logging from payments-api",
+      "payments-api logging at debug level",
+      "debug-level logging in payments-api",
+      "payments-api emits debug-level logs"
+    ]
+  ],
+  "fix": [
+    [
+      "payments-api log level back to info",
+      "set payments-api log level to info",
+      "set log_level to information on payments-api",
+      "log level from debug to info on payments-api",
+      "reduce payments-api verbosity",
+      "lower payments-api log level",
+      "payments-api log verbosity back to information",
+      "turn down the debug logging from payments-api",
+      "raise the daily cap",
+      "raise the workspace daily quota",
+      "raise dailyquotagb",
+      "increase dailyquotagb",
+      "raise the daily quota on the log analytics workspace",
+      "add a transformation to drop debug-level rows",
+      "transformation to drop debug rows",
+      "filter debug rows with a workspace transformation",
+      "drop debug-level rows at ingestion",
+      "filter out debug-level records with a data collection rule transformation"
+    ]
+  ],
+  "distractors": [
+    [
+      "ama-logs agent down",
+      "ama-logs daemonset is not running",
+      "azure monitor agent crashed",
+      "ama-logs pods are crashlooping",
+      "the monitoring agent stopped shipping logs"
+    ]
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "root_cause": "Workspace law-prod-eus-0001 hits its daily cap of 5 GB (workspaceCapping.dailyQuotaGb = 5) each afternoon: hourly ingestion on Oct 29 accumulates to exactly 5.00 GB at 14:00 UTC, and the Operation log records a 'daily cap reached' event on Oct 27, 28, and 29 (14:41, 14:07, 14:00:33 UTC) before ingestion is refused until the 00:00 UTC reset. The cap started being hit because debug logging on payments-api floods the workspace: LOG_LEVEL=debug drove 3.15 GB on Oct 29 versus a 0.35 GB Oct 20-26 median (~9x, 63% of all ingestion), exhausting the quota by early afternoon.",
+  "evidence": [
+    "az-monitor-log-analytics-workspace-show.json: workspace law-prod-eus-0001 has workspaceCapping.dailyQuotaGb = 5 (a 5 GB daily cap)",
+    "kql-usage-by-hour.csv: on Oct 29 the hourly bins sum to exactly 5.00 GB at 14:00 UTC; every hour after that is 0.00 GB with a daily-quota-reached note until the midnight reset",
+    "kql-ingestion-by-container.csv: payments-api ingested 3.15 GB versus a 0.35 GB Oct 20-26 median (~9x) and 63% of the day's total; every other container is flat versus its median",
+    "kubectl-get-deploy-payments-api.yaml: the payments-api deployment sets LOG_LEVEL=debug — the noisy log level behind the ~2.8 GB/day jump",
+    "kql-operation-table.csv: 'daily cap reached' administrative events at Oct 27 14:41, Oct 28 14:07, and Oct 29 14:00:33 UTC, each followed by a quota reset at 00:00 UTC — confirming ingestion stops on the cap, not on the agent"
+  ],
+  "fix": "Turn off the debug firehose and give the workspace headroom: set the payments-api log level back to info (removing ~2.8 GB/day of debug noise drops daily volume to roughly 2.2 GB, well under the 5 GB cap). If debug output must be kept, add a transformation to drop debug-level rows from ContainerLogV2 at ingestion, or raise the workspace daily quota (for example dailyQuotaGb to 20) accepting the added ingestion cost.",
+  "evidence_files": [
+    "az-monitor-log-analytics-workspace-show.json",
+    "kql-usage-by-hour.csv",
+    "kql-ingestion-by-container.csv",
+    "kubectl-get-deploy-payments-api.yaml"
+  ]
+}

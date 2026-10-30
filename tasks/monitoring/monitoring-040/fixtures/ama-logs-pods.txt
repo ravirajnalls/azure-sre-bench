@@ -1,0 +1,22 @@
+# kubectl get pods -n kube-system -o wide  (run from ops-bastion, 2026-10-30 08:10 UTC)
+NAME                        READY   STATUS    RESTARTS   AGE   IP             NODE
+ama-logs-2xq8m              2/2     Running   0          31d   10.244.3.19    aks-nodepool1-18245673-vmss000000
+ama-logs-7hk2n              2/2     Running   0          31d   10.244.1.84    aks-nodepool1-18245673-vmss000001
+ama-logs-mdn4p              2/2     Running   0          28d   10.244.5.102   aks-nodepool1-18245673-vmss000002
+ama-logs-vtr6j              2/2     Running   0          28d   10.244.2.41    aks-nodepool1-18245673-vmss000003
+ama-metrics-5d9wz           1/1     Running   0          31d   10.244.3.77    aks-nodepool1-18245673-vmss000000
+ama-metrics-8kq2p           1/1     Running   0          31d   10.244.1.12    aks-nodepool1-18245673-vmss000001
+kube-proxy-4nbqv            1/1     Running   0          31d   10.244.3.5     aks-nodepool1-18245673-vmss000000
+coredns-6f9b8d7c4-k2vnq     1/1     Running   0          31d   10.244.0.18    aks-nodepool1-18245673-vmss000000
+
+# kubectl logs -n kube-system ama-logs-2xq8m -c ama-logs --tail=4
+2026-10-30T08:05:12Z [info] AgentHeartbeat: telemetry streaming healthy
+2026-10-30T08:05:40Z [info] AgentTelemetryStream: 0 dropped records in the last window
+2026-10-30T08:06:01Z [info] AgentConfigHandler: DCR dcr-prod-subs applied, generation 44
+2026-10-30T08:06:22Z [info] AgentHeartbeat: telemetry streaming healthy
+
+# NOC handoff note (2026-10-30 07:55 UTC): dashboards have been blanking every
+# afternoon since Tuesday. The night shift's first theory was "ama-logs agent down",
+# but every pod named ama-logs-* is Running with 0 restarts, no CrashLoopBackOff,
+# and the heartbeats are clean — the agent is healthy and not the problem.
+# Also checked: no CrashLoopBackOff anywhere in kube-system.

@@ -1,0 +1,6 @@
+TimeGenerated,Category,OperationName,OperationStatus,CorrelationId,Message
+2026-10-27T14:41:09Z,Administrative,Data Injection,Daily cap reached,00000000-0000-0000-0000-000000000003,"Daily cap of 5 GB reached for workspace law-prod-eus-0001; data ingestion will stop until the next daily quota reset (00:00 UTC)."
+2026-10-28T14:07:55Z,Administrative,Data Injection,Daily cap reached,00000000-0000-0000-0000-000000000004,"Daily cap of 5 GB reached for workspace law-prod-eus-0001; data ingestion will stop until the next daily quota reset (00:00 UTC)."
+2026-10-29T14:00:33Z,Administrative,Data Injection,Daily cap reached,00000000-0000-0000-0000-000000000005,"Daily cap of 5 GB reached for workspace law-prod-eus-0001; data ingestion will stop until the next daily quota reset (00:00 UTC)."
+2026-10-30T00:00:02Z,Administrative,Data Injection,Quota reset,00000000-0000-0000-0000-000000000006,"Daily quota reset for workspace law-prod-eus-0001; data ingestion resumed."
+2026-10-30T08:12:41Z,Administrative,Data Injection,Quota warning,00000000-0000-0000-0000-000000000007,"Workspace law-prod-eus-0001 has ingested 3.21 GB toward today's 5 GB daily quota."

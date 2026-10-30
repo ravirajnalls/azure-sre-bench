@@ -1,0 +1,24 @@
+{
+  "name": "law-prod-eus-0001",
+  "customerId": "00000000-0000-0000-0000-000000000002",
+  "provisioningState": "Succeeded",
+  "location": "eastus",
+  "sku": {
+    "name": "PerGB2018",
+    "lastSkuUpdate": "2026-01-12T08:22:41.6122643Z"
+  },
+  "retentionInDays": 30,
+  "publicNetworkAccessForIngestion": "Enabled",
+  "publicNetworkAccessForQuery": "Enabled",
+  "workspaceCapping": {
+    "dataInjectionMethod": "Double",
+    "dailyQuotaGb": 5
+  },
+  "createdDate": "2025-11-03T10:04:18.9124471Z",
+  "modifiedDate": "2026-10-20T15:31:07.4421182Z",
+  "features": {
+    "enableLogAccessUsingOnlyResourcePermissions": true,
+    "disableLocalAuth": false
+  },
+  "defaultDataCollectionRuleResourceId": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-observability/providers/Microsoft.Insights/dataCollectionRules/dcr-prod-subs"
+}

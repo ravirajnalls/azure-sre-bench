@@ -1,0 +1,21 @@
+id: monitoring-040
+canary: 00000000-0000-0000-0000-000000000114  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
+title: Container logs and traces stop reaching Log Analytics every afternoon
+category: monitoring
+difficulty: hard
+tags:
+  - monitoring
+  - log-analytics
+  - daily-cap
+  - ingestion
+  - azure-monitor-agent
+  - kql
+symptom: |
+  Since Tuesday, every dashboard backed by our Log Analytics workspace goes
+  blank at around 14:00 UTC and stays blank until shortly after midnight UTC —
+  ContainerLogV2, our app traces, all of it — then fills back in right at
+  midnight. It has now happened three days in a row, always in the early
+  afternoon, and each morning the previous day's rows are there again. The
+  Azure Monitor Agent pods on the AKS clusters were checked first and are all
+  Running with zero restarts, and no ingestion-latency alerts are firing. The
+  blanking windows move a little day to day, so it is not tied to a deploy.
