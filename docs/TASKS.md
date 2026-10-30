@@ -80,6 +80,12 @@
 | --- | --- | --- | --- |
 | cost-031 | Steady storage cost creep in the build agent resource group | easy | cost, azure, storage, managed-disks, automation |
 
+## data
+
+| ID | Title | Difficulty | Tags |
+| --- | --- | --- | --- |
+| data-062 | Cosmos DB 429s on cart-api from one hot partition | medium | data, cosmos-db, partitioning, 429-throttling, ru-consumption |
+
 ## identity
 
 | ID | Title | Difficulty | Tags |

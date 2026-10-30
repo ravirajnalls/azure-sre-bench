@@ -1,0 +1,16 @@
+id: data-062
+canary: 00000000-0000-0000-0000-000000000114  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
+title: Cosmos DB 429s on cart-api from one hot partition
+category: data
+difficulty: medium
+tags:
+  - data
+  - cosmos-db
+  - partitioning
+  - 429-throttling
+  - ru-consumption
+symptom: |
+  cart-api returns bursts of 429 TooManyRequests from Cosmos DB during evening
+  peak, yet the account-wide dashboard shows total RU consumption peaking at
+  roughly 30% of provisioned throughput. Retries mask most of it, but
+  p99 latency on AddToCart is up 4x and customers report abandoned carts.

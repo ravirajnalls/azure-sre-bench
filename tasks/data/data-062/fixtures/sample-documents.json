@@ -1,0 +1,15 @@
+{
+  "sample": [
+    { "id": "ct-8842", "region": "eastus", "customerId": "cu-51184", "itemCount": 3, "updatedAt": "2026-10-29T18:31:58Z" },
+    { "id": "ct-9017", "region": "eastus", "customerId": "cu-52190", "itemCount": 1, "updatedAt": "2026-10-29T18:33:40Z" },
+    { "id": "ct-9052", "region": "westeurope", "customerId": "cu-49002", "itemCount": 5, "updatedAt": "2026-10-29T18:33:41Z" },
+    { "id": "ct-9061", "region": "australiaeast", "customerId": "cu-73011", "itemCount": 2, "updatedAt": "2026-10-29T18:33:42Z" },
+    { "id": "ct-9093", "region": "eastus", "customerId": "cu-55471", "itemCount": 8, "updatedAt": "2026-10-29T18:34:11Z" },
+    { "id": "ct-9110", "region": "westeurope", "customerId": "cu-46320", "itemCount": 4, "updatedAt": "2026-10-29T18:36:58Z" },
+    { "id": "ct-9148", "region": "eastus", "customerId": "cu-58812", "itemCount": 2, "updatedAt": "2026-10-29T18:37:02Z" },
+    { "id": "ct-9203", "region": "eastus", "customerId": "cu-60037", "itemCount": 6, "updatedAt": "2026-10-29T18:39:45Z" },
+    { "id": "ct-9251", "region": "eastus", "customerId": "cu-59228", "itemCount": 3, "updatedAt": "2026-10-29T18:44:02Z" },
+    { "id": "ct-9288", "region": "australiaeast", "customerId": "cu-73109", "itemCount": 1, "updatedAt": "2026-10-29T18:55:44Z" }
+  ],
+  "note": "Sample of 10 documents exported from cartitems at 2026-10-29T19:05Z. Document counts by region at export time: eastus 82%, westeurope 11%, australiaeast 7% — all cart traffic originates from the sale-event storefronts and lands in three logical partitions."
+}
