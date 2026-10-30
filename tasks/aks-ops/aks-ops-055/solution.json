@@ -1,0 +1,15 @@
+{
+  "root_cause": "The cluster autoscaler's nightly scale-down of the spot user pool picks one node at 02:00-04:00 and evicts every pod on it in one pass; two of the three zookeeper replicas are co-located on that node, no PodDisruptionBudget exists in the streaming namespace (kubectl-get-pdb.txt: none), and the pod template sets no cluster-autoscaler.kubernetes.io/safe-to-evict annotation — so the ensemble loses 2 of 3 members simultaneously and quorum falls until the evicted replicas reschedule and rejoin ~40 minutes later.",
+  "evidence": [
+    "cluster-autoscaler.log: at 02:20:06 the autoscaler evicts streaming/zookeeper-1 and streaming/zookeeper-2 together from the one node chosen for removal",
+    "kubectl-get-pdb.txt: no PodDisruptionBudget exists in the streaming namespace, so nothing caps simultaneous zookeeper disruptions",
+    "statefulset.yaml: pod template has no safe-to-evict annotation and no topology rule keeping replicas apart, so two replicas share a removable node",
+    "zookeeper.log: 02:20:12 the remaining replica logs 'only 1 of 3 ensemble members reachable' and exits on quorum loss, recurring 02:00-04:00 on 10/25, 10/22, 10/18"
+  ],
+  "fix": "Add a PodDisruptionBudget (minAvailable: 2) for the zookeeper StatefulSet and set pod template annotations cluster-autoscaler.kubernetes.io/safe-to-evict: \"false\" (plus pod anti-affinity to spread replicas), so the autoscaler cannot evict two replicas at once — it will drain a node that keeps the quorum intact instead.",
+  "evidence_files": [
+    "cluster-autoscaler.log",
+    "kubectl-get-pdb.txt",
+    "statefulset.yaml"
+  ]
+}
