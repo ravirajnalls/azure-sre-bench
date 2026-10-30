@@ -1,0 +1,39 @@
+{
+  "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-payments-01/providers/Microsoft.ContainerService/managedClusters/payments-prod-aks",
+  "name": "payments-prod-aks",
+  "location": "westeurope",
+  "dnsPrefix": "payments-prod-aks",
+  "provisioningState": "Succeeded",
+  "kubernetesVersion": "1.30.4",
+  "fqdn": "payments-prod-aks-00000000.hcp.westeurope.azmk8s.io",
+  "agentPoolProfiles": [
+    {
+      "name": "npsystem",
+      "vmSize": "Standard_D4s_v5",
+      "count": 3,
+      "maxPods": 30,
+      "mode": "System",
+      "osType": "Linux"
+    },
+    {
+      "name": "npworkload",
+      "vmSize": "Standard_D4s_v5",
+      "count": 12,
+      "maxPods": 30,
+      "mode": "User",
+      "osType": "Linux",
+      "vnetSubnetID": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-payments-01/providers/Microsoft.Network/virtualNetworks/payments-vnet/subnets/snet-payments-aks"
+    }
+  ],
+  "networkProfile": {
+    "networkPlugin": "azure",
+    "networkPolicy": "calico",
+    "outboundType": "loadBalancer",
+    "loadBalancerSku": "standard",
+    "serviceCidr": "10.0.0.0/16",
+    "dnsServiceIP": "10.0.0.10"
+  },
+  "podIdentityProfile": {
+    "enabled": false
+  }
+}

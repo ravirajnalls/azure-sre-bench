@@ -1,0 +1,24 @@
+id: networking-074
+canary: 00000000-0000-0000-0000-000000000114  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
+title: Egress-lockdown PR that will cut off the cluster
+category: networking
+difficulty: hard
+tags:
+  - networking
+  - aks
+  - route-table
+  - azure-firewall
+  - egress
+  - terraform
+kind: pre-incident-review
+symptom: |
+  You are the reviewing SRE for the network team's egress-lockdown PR on the
+  payments-prod cluster. The change (applied to the staging twin; snapshots
+  attached) associates a new route table with the cluster's subnet so all
+  subnet traffic takes the hub firewall, renames a subnet variable to match
+  the team naming standard, and touches nothing else. The workloads on the
+  cluster pull images from Azure Container Registry and call Microsoft
+  managed endpoints, and the cluster provisions normally today. Review the
+  proposed change and report anything in it that would cause an incident
+  during or right after the next node-image or cluster upgrade window — with
+  the fix to make before merge.

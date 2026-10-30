@@ -1,0 +1,15 @@
+{
+  "findings": [
+    {
+      "file": "network.tf",
+      "line": 43,
+      "issue": "The new route table's default route (0.0.0.0/0 -> VirtualAppliance 10.0.100.4) hijacks all egress from snet-payments-aks as soon as the association applies: af-payments-egress has only an allow-list for internal tooling domains and corp ranges, with no Azure AKS FQDN rules for mcr.microsoft.com, AzureMonitor, or login/aad endpoints, and the cluster runs outboundType loadBalancer — image pulls and control-plane callbacks will be dropped and nodes will go NotReady.",
+      "fix": "Before merging, add an application rule collection to af-payments-egress with the Azure AKS FQDN tag (mcr.microsoft.com, AzureMonitor, AAD endpoints) for the cluster subnet's source range, or switch the cluster to outboundType userDefinedRouting as part of the lockdown; keep the association change out of the merge until the firewall rules are in place. The variable rename is cosmetic and can ship separately."
+    }
+  ],
+  "evidence_files": [
+    "network.tf",
+    "firewall.tf",
+    "az-aks-show.json"
+  ]
+}
