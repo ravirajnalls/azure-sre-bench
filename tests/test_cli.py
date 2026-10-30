@@ -1,6 +1,7 @@
 """Smoke tests for the scaffold CLI (issue #1).
 
-Full grader/runner/validator tests arrive with issues #2-#4.
+`validate`/`list` are covered in tests/test_tasks.py (issue #2) and `grade`
+in tests/test_grader.py (issue #3); runner tests arrive with issue #4.
 """
 
 import subprocess
@@ -19,4 +20,4 @@ def test_help_via_subprocess():
 
 
 def test_unimplemented_subcommand_exits_nonzero():
-    assert main(["list"]) == 2
+    assert main(["run"]) == 2

@@ -1,0 +1,4 @@
+2026-10-30T08:12:41Z INFO  [nginx-ingress] 10.240.0.18 - "GET /api/orders HTTP/1.1" 503 upstream-connection-failed
+2026-10-30T08:12:42Z INFO  [nginx-ingress] 10.240.0.22 - "GET /api/orders HTTP/1.1" 503 upstream-connection-failed
+2026-10-30T08:12:44Z WARN  [nginx-ingress] upstream orders-api-svc.default.svc.cluster.local: all backends at capacity
+2026-10-30T08:12:45Z INFO  [nginx-ingress] 10.240.0.19 - "GET /api/orders HTTP/1.1" 503 upstream-connection-failed

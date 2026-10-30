@@ -1,7 +1,8 @@
 """Command-line interface for Azure SRE Bench.
 
-Subcommand surface declared in issue #1. `grade` lands with issue #3; the rest
-remain stubs until the loader/runner (issues #2 and #4).
+Issue #1 scaffolded the subcommand surface; `validate` and `list` are live as of
+issue #2 and `grade` as of issue #3. The remaining subcommands land with the
+runner (issue #4) and the reporting layer (issues #40-#42).
 """
 
 from __future__ import annotations
@@ -13,8 +14,11 @@ from pathlib import Path
 
 from bench import __version__
 from bench.grader import grade
+from bench.tasks import load_tasks
 
 SUBCOMMANDS = ("validate", "list", "grade", "run", "site", "leaderboard", "catalog")
+
+IMPLEMENTED = ("validate", "list", "grade")
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -40,12 +44,19 @@ def build_parser() -> argparse.ArgumentParser:
                 help="path to the agent's answer JSON file",
             )
         else:
-            sub.add_parser(name)
+            subparser = sub.add_parser(name)
+            if name in ("validate", "list"):
+                subparser.add_argument(
+                    "root",
+                    nargs="?",
+                    default="tasks",
+                    help="tasks root directory (default: tasks)",
+                )
     return parser
 
 
 def find_task_dir(task_id: str) -> Path:
-    """Locate a task directory by ID under ./tasks (loader arrives with issue #2)."""
+    """Locate a task directory by ID under ./tasks."""
     tasks_root = Path("tasks")
     for candidate in sorted(tasks_root.rglob(task_id)):
         if candidate.is_dir() and (candidate / "expected.json").is_file():
@@ -68,17 +79,47 @@ def cmd_grade(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_validate(root: Path) -> int:
+    results = load_tasks(root)
+    for result in results:
+        if result.errors:
+            print(f"FAIL {result.path}")
+            for reason in result.errors:
+                print(f"  - {reason}")
+    valid = sum(1 for result in results if not result.errors)
+    print(f"{valid}/{len(results)} tasks valid")
+    if not results:
+        print(f"no tasks found under {root}", file=sys.stderr)
+        return 1
+    return 0 if valid == len(results) else 1
+
+
+def cmd_list(root: Path) -> int:
+    results = load_tasks(root)
+    for result in sorted(results, key=lambda item: (item.id, str(item.path))):
+        config: dict = result.config or {}
+        difficulty = config.get("difficulty") or "-"
+        title = config.get("title") or "-"
+        print(f"{result.id}  {difficulty}  {title}")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
     if args.command is None:
         parser.print_help()
         return 0
-    if args.command == "grade":
-        return cmd_grade(args)
+    if args.command in IMPLEMENTED:
+        if args.command == "grade":
+            return cmd_grade(args)
+        root = Path(getattr(args, "root", "tasks"))
+        if args.command == "validate":
+            return cmd_validate(root)
+        return cmd_list(root)
     print(
         f"'bench {args.command}' is not implemented yet; "
-        "see issues #2 and #4 for the planned subcommands.",
+        "see issues #4 and #40-#42 for the planned subcommands.",
         file=sys.stderr,
     )
     return 2

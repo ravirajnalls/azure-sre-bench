@@ -1,0 +1,8 @@
+{
+  "root_cause": "The nginx ingress controller ran out of backend capacity during peak traffic, so upstream requests failed with 503.",
+  "evidence": [
+    "kubectl-logs-ingress.txt: all backends at capacity on orders-api-svc",
+    "az-monitor-metrics.json: ingress p95 latency 6.4s above the 5s alert threshold"
+  ],
+  "fix": "Scale the ingress controller replicas to absorb peak traffic."
+}

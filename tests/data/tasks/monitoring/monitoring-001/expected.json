@@ -1,0 +1,7 @@
+{
+  "root_cause": [
+    ["ingress saturation", "backend capacity", "upstream saturation"],
+    ["peak traffic", "traffic spike"]
+  ],
+  "fix": [["scale the ingress controller", "increase replica count"]]
+}
