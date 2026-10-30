@@ -1,0 +1,4 @@
+# kubectl exec -n notify deploy/notifier -c notifier -- cat /etc/resolv.conf
+search notify.svc.cluster.local svc.cluster.local cluster.local 2mq4vlonwu1u51gnvdgy11o0h.ax-internal.cloudapp.net
+nameserver 10.0.0.10
+options ndots:5

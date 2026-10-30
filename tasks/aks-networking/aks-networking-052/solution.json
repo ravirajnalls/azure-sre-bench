@@ -1,0 +1,14 @@
+{
+  "root_cause": "The notifier pod uses options ndots:5 with four search domains (fixtures/kubectl-exec-cat-resolv-conf.txt, pinned by dnsConfig in fixtures/deployment.yaml). 'api.sendgrid.com' has fewer than 5 dots, so every lookup is first tried with each search suffix appended — NXDOMAIN all four times, A and AAAA (fixtures/coredns-query-log.txt) — before the bare name is asked. That is 8 wasted queries and ~200ms per call, and it drives CoreDNS to its CPU limit with a 17x query spike and a 0.22 cache hit ratio (fixtures/coredns-metrics.csv).",
+  "evidence": [
+    "fixtures/kubectl-exec-cat-resolv-conf.txt: the pod uses options ndots:5 with four search domains — names with fewer than 5 dots are tried with suffixes first",
+    "fixtures/deployment.yaml: dnsConfig pins options ndots value \"5\", so the behavior is configuration, not an accident of the default",
+    "fixtures/coredns-query-log.txt: every notifier lookup (source 10.244.7.19) tries api.sendgrid.com.notify.svc.cluster.local, .svc.cluster.local, .cluster.local, and the Azure node domain — NXDOMAIN each time — before the bare api.sendgrid.com NOERROR",
+    "fixtures/coredns-metrics.csv: DNS query rate jumps from ~310/s to ~5300/s and cache hit ratio falls from 0.91 to 0.22 on the day the namespace move landed, with CoreDNS CPU over its limit — the volume signature of suffixed lookup storms"
+  ],
+  "fix": "Stop the suffix storm for fully-qualified external names: set dnsConfig options ndots: \"2\" (or lower) on the notifier pod, or call the API as a fully-qualified name with a trailing dot ('api.sendgrid.com.') in the client so the resolver skips search domains. Either eliminates the NXDOMAIN attempts; lower ndots is the durable fix because it also fixes every other external hostname the pod resolves.",
+  "evidence_files": [
+    "kubectl-exec-cat-resolv-conf.txt",
+    "coredns-query-log.txt"
+  ]
+}
