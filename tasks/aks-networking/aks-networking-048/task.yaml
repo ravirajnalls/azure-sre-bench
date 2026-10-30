@@ -1,0 +1,18 @@
+id: aks-networking-048
+canary: 00000000-0000-0000-0000-000000000114  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
+title: "App Gateway ingress 502 on healthy pods"
+category: aks-networking
+difficulty: medium
+tags:
+  - aks
+  - application-gateway
+  - agic
+  - health-probe
+  - "502"
+symptom: |
+  After migrating the catalog service to Application Gateway (AGIC), every
+  external request returns 502 while the pods themselves are perfectly Ready —
+  1/1 Running for days, restarts at zero. The catalog app answers in-cluster
+  calls without a hitch. The old internal load balancer path never showed this
+  behavior, nothing changed in the app's code, and the security review of the
+  new path came back clean last week.

@@ -1,0 +1,13 @@
+{
+  "root_cause": "App Gateway's backend health probe for the catalog pool uses the default path / — fixtures/az-network-application-gateway-show-backend-health.json shows default-probe (path /) returning HTTP 404 for both backend addresses. The app serves no route at /: fixtures/catalog.log shows GET / 404 from the health-probe user-agent while GET /healthz returns 200. The ingress (fixtures/ingress.yaml) sets no appgw.ingress.kubernetes.io/health-probe-path annotation, so AGIC left the default probe, both backends are Unhealthy, and the gateway answers 502 to every external request despite Ready pods.",
+  "evidence": [
+    "fixtures/az-network-application-gateway-show-backend-health.json: both catalog backend addresses report httpStatus 404 under the default-probe, whose path is / — UnhealthyHosts by probe, not by connection refusal",
+    "fixtures/catalog.log: the app itself 404s on GET / (the App Gateway health-probe user-agent, source 10.0.5.10) while GET /healthz from the kubelet returns 200 and real API calls return 200 — the app is alive, the probe just aims at a route that doesn't exist",
+    "fixtures/ingress.yaml: the catalog ingress carries no appgw.ingress.kubernetes.io/health-probe-path annotation, so nothing told AGIC where the app's health endpoint lives"
+  ],
+  "fix": "Point the App Gateway probe at the real health endpoint via the AGIC annotation on the catalog ingress — appgw.ingress.kubernetes.io/health-probe-path: \"/healthz\" (and optionally health-probe-statuscode if the app's success code is non-standard) — and re-apply. Backend health should flip both 10.0.2.2x hosts to httpStatus 200, after which the 502s stop.",
+  "evidence_files": [
+    "az-network-application-gateway-show-backend-health.json",
+    "catalog.log"
+  ]
+}
