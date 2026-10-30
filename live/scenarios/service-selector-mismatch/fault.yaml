@@ -1,0 +1,20 @@
+# THE FAULT — applied after the release.
+#
+# The storefront Service still selects the OLD label scheme (tier: web) while
+# the pods now carry tier: frontend (see app.yaml). The selector matches zero
+# pods, the service has no endpoints, and ingress-nginx returns 502 for /shop.
+apiVersion: v1
+kind: Service
+metadata:
+  name: storefront
+  namespace: shop
+  labels:
+    app: storefront
+spec:
+  selector:
+    app: storefront
+    tier: web
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80

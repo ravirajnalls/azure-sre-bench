@@ -1,0 +1,16 @@
+{
+  "root_cause": [
+    ["selector", "label"],
+    ["tier"],
+    ["endpoint", "no endpoints", "does not match", "doesn't match", "mismatch", "stale"]
+  ],
+  "fix": [
+    [
+      "tier: frontend",
+      "tier=frontend",
+      "match the pod labels",
+      "update the selector",
+      "service selector"
+    ]
+  ]
+}

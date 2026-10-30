@@ -1,0 +1,41 @@
+# Read-only investigation identity for the benchmarked agent (issue #126).
+#
+# The agent never mutates the cluster: it may find, list, and watch the
+# namespaced resources it needs for diagnosis — including reading pod logs —
+# and nothing else. Cluster-scoped visibility is intentionally excluded.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: sre-agent
+  namespace: shop
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: sre-agent-readonly
+  namespace: shop
+rules:
+  - apiGroups: ["", "apps", "networking.k8s.io"]
+    resources:
+      - pods
+      - pods/log
+      - services
+      - endpoints
+      - events
+      - deployments
+      - ingresses
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: sre-agent-readonly
+  namespace: shop
+subjects:
+  - kind: ServiceAccount
+    name: sre-agent
+    namespace: shop
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: sre-agent-readonly

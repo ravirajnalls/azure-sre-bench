@@ -1,0 +1,87 @@
+# The release state: pods carry the NEW label scheme (tier: frontend) and the
+# healthy cart workload provides contrast, mirroring aks-networking-002.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: shop
+---
+# Deployment: storefront — affected workload, relabeled by this morning's release.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: storefront
+  namespace: shop
+  labels:
+    app: storefront
+    tier: frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: storefront
+      tier: frontend
+  template:
+    metadata:
+      labels:
+        app: storefront
+        tier: frontend
+    spec:
+      containers:
+        - name: storefront
+          image: nginx:1.27
+          ports:
+            - containerPort: 80
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 2
+            periodSeconds: 5
+---
+# Deployment: cart — healthy companion workload (contrast signal).
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cart
+  namespace: shop
+  labels:
+    app: cart
+    tier: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cart
+      tier: backend
+  template:
+    metadata:
+      labels:
+        app: cart
+        tier: backend
+    spec:
+      containers:
+        - name: cart
+          image: nginx:1.27
+          ports:
+            - containerPort: 80
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 2
+            periodSeconds: 5
+---
+# Service: cart — healthy, keeps its endpoints throughout the incident.
+apiVersion: v1
+kind: Service
+metadata:
+  name: cart
+  namespace: shop
+spec:
+  selector:
+    app: cart
+    tier: backend
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80

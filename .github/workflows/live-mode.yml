@@ -1,0 +1,88 @@
+# Live-mode spike CI (issue #126): runs the service-selector-mismatch scenario
+# end to end on a kind cluster. Path-gated so it only executes when live mode
+# changes — this workflow's first real execution is its own CI run, because the
+# build sandbox has no docker (docs/adr/0001-live-mode.md).
+name: Live mode (kind)
+
+on:
+  pull_request:
+    paths:
+      - "live/**"
+      - ".github/workflows/live-mode.yml"
+  push:
+    branches: [main]
+    paths:
+      - "live/**"
+      - ".github/workflows/live-mode.yml"
+  workflow_dispatch:
+
+jobs:
+  service-selector-mismatch:
+    name: kind scenario — service selector mismatch
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      SCENARIO_DIR: live/scenarios/service-selector-mismatch
+      KIND_NODE_IMAGE: kindest/node:v1.31.2
+      DELETE_CLUSTER: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Lint scenario scripts
+        run: |
+          shellcheck "$SCENARIO_DIR"/*.sh
+          for script in "$SCENARIO_DIR"/*.sh; do
+            bash -n "$script"
+          done
+
+      - name: Offline grading self-test (no cluster needed)
+        run: python3 "$SCENARIO_DIR/grade_diagnosis.py" --self-test
+
+      - name: Install kind and kubectl (setup.sh owns cluster creation)
+        uses: helm/kind-action@v1.13.0
+        with:
+          install_only: true
+
+      - name: Set up scenario — inject fault, mint read-only kubeconfig
+        run: |
+          "$SCENARIO_DIR/setup.sh"
+
+      - name: Agent identity is read-only (mutating verbs forbidden)
+        run: |
+          KC="$SCENARIO_DIR/agent.kubeconfig"
+          kubectl --kubeconfig "$KC" -n shop get pods >/dev/null
+          if kubectl --kubeconfig "$KC" -n shop delete pod --all >/dev/null 2>&1; then
+            echo "ERROR: agent identity allowed a mutating verb" >&2
+            exit 1
+          fi
+          echo "read-only boundary holds"
+
+      - name: Grade a correct diagnosis (must pass)
+        run: |
+          "$SCENARIO_DIR/check.sh" diagnosis --answer "$SCENARIO_DIR/samples/diagnosis-correct.json"
+
+      - name: Grade a wrong diagnosis (must fail)
+        run: |
+          if "$SCENARIO_DIR/check.sh" diagnosis --answer "$SCENARIO_DIR/samples/diagnosis-wrong.json" >/dev/null 2>&1; then
+            echo "ERROR: a wrong diagnosis unexpectedly passed the rubric" >&2
+            exit 1
+          fi
+          echo "wrong diagnosis rejected as expected"
+
+      - name: Remediation with a non-Service patch is refused
+        run: |
+          if "$SCENARIO_DIR/remediate.sh" --patch "$SCENARIO_DIR/samples/patch-bad.yaml" >/dev/null 2>&1; then
+            echo "ERROR: a Deployment patch was accepted by remediate.sh" >&2
+            exit 1
+          fi
+          echo "non-Service patch refused as expected"
+
+      - name: Remediation with a corrected Service restores endpoints
+        run: |
+          "$SCENARIO_DIR/remediate.sh" --patch "$SCENARIO_DIR/samples/patch-good.yaml"
+          "$SCENARIO_DIR/check.sh" remediation
+
+      - name: Teardown (always)
+        if: always()
+        run: |
+          "$SCENARIO_DIR/teardown.sh"
