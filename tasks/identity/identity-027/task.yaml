@@ -1,0 +1,13 @@
+id: identity-027
+title: ADO service connection fails with AADSTS700213
+category: identity
+difficulty: medium
+tags:
+  - identity
+  - ado-pipelines
+  - workload-identity-federation
+  - federated-credential
+symptom: >-
+  After renaming the Azure DevOps project from Platform to PlatformEng, every
+  pipeline using the service connection sc-prod-deploy fails at Azure login with
+  AADSTS700213.

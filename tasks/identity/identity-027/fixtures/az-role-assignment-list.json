@@ -1,0 +1,16 @@
+[
+  {
+    "condition": null,
+    "conditionVersion": null,
+    "createdOn": "2026-07-02T13:07:44.8832102Z",
+    "id": "/subscriptions/00000000-0000-0000-0000-000000000002/resourcegroups/rg-platform-prod/providers/Microsoft.Authorization/roleAssignments/00000000-0000-0000-0000-00000000000F",
+    "name": "00000000-0000-0000-0000-00000000000F",
+    "principalId": "00000000-0000-0000-0000-00000000000C",
+    "principalType": "ServicePrincipal",
+    "roleDefinitionId": "/subscriptions/00000000-0000-0000-0000-000000000002/providers/Microsoft.Authorization/roleDefinitions/00000000-0000-0000-0000-000000000007",
+    "roleDefinitionName": "Contributor",
+    "scope": "/subscriptions/00000000-0000-0000-0000-000000000002/resourcegroups/rg-platform-prod",
+    "type": "Microsoft.Authorization/roleAssignments",
+    "updatedOn": "2026-07-02T13:07:44.8832102Z"
+  }
+]
