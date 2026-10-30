@@ -1,0 +1,10 @@
+{
+  "root_cause": [
+    ["unattached", "orphan", "orphaned", "stranded", "left behind", "detached"],
+    ["os disk", "managed disk", "disk"]
+  ],
+  "fix": [
+    ["delete", "remove", "purge", "clean up", "cleanup"],
+    ["os disk", "managed disk", "disk"]
+  ]
+}

@@ -1,0 +1,41 @@
+[
+  {
+    "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-buildagents/providers/Microsoft.Storage/storageAccounts/stbldagentsart01",
+    "kind": "StorageV2",
+    "location": "westus2",
+    "name": "stbldagentsart01",
+    "provisioningState": "Succeeded",
+    "sku": {
+      "name": "Standard_LRS",
+      "tier": "Standard"
+    },
+    "creationTime": "2024-11-04T09:12:44.021559+00:00",
+    "primaryEndpoints": {
+      "blob": "https://stbldagentsart01.blob.core.windows.net/",
+      "file": "https://stbldagentsart01.file.core.windows.net/",
+      "queue": "https://stbldagentsart01.queue.core.windows.net/",
+      "table": "https://stbldagentsart01.table.core.windows.net/"
+    },
+    "primaryLocation": "westus2",
+    "statusOfPrimary": "available",
+    "allowBlobPublicAccess": false,
+    "minimumTlsVersion": "TLS1_2",
+    "supportsHttpsTrafficOnly": true,
+    "encryption": {
+      "services": {
+        "blob": {
+          "enabled": true
+        },
+        "file": {
+          "enabled": true
+        }
+      },
+      "keySource": "Microsoft.Storage"
+    },
+    "networkRuleSet": {
+      "bypass": "AzureServices",
+      "defaultAction": "Allow"
+    },
+    "type": "Microsoft.Storage/storageAccounts"
+  }
+]

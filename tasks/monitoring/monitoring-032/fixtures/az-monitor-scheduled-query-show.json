@@ -1,0 +1,45 @@
+{
+  "actions": {
+    "actionGroups": [
+      {
+        "actionGroupId": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-prod-01/providers/microsoft.insights/actionGroups/ag-prod-oncall",
+        "webHookProperties": {}
+      }
+    ],
+    "customProperties": {}
+  },
+  "autoMitigate": "Enabled",
+  "checkWorkspaceAlertsStorageConfigured": true,
+  "condition": {
+    "failingPeriods": {
+      "minFailingPeriodsToAlert": 1,
+      "numberOfEvaluationPeriods": 1
+    },
+    "operator": "GreaterThan",
+    "query": "requests\n| where cloud_RoleName == \"api-gateway\"\n| where TimeGenerated > ago(1h)\n| extend is5xx = iff(toint(resultCode) >= 500, 1, 0)\n| summarize avg(is5xx)",
+    "resourceIdColumn": null,
+    "threshold": 50,
+    "timeAggregation": "Average"
+  },
+  "createdWithApiVersion": "2021-08-01",
+  "description": "Pages on-call when api-gateway is returning an unhealthy share of HTTP 5xx responses",
+  "displayName": "High 5xx rate",
+  "enabled": "true",
+  "evaluationFrequency": "PT15M",
+  "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-prod-01/providers/Microsoft.Insights/scheduledQueryRules/high-5xx-rate",
+  "isLegacyLogAnalyticsRule": null,
+  "isLegacyLogResolution": null,
+  "kind": "LogAlert",
+  "location": "eastus",
+  "muteActionsDuration": null,
+  "name": "high-5xx-rate",
+  "overrideQueryTime": null,
+  "scopes": [
+    "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-prod-01/providers/microsoft.operationalinsights/workspaces/log-prod-01"
+  ],
+  "severity": 2,
+  "skipQueryValidation": null,
+  "targetResourceTypes": null,
+  "type": "Microsoft.Insights/scheduledQueryRules",
+  "windowSize": null
+}

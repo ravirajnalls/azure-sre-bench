@@ -1,0 +1,134 @@
+[
+  {
+    "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-buildagents/providers/Microsoft.Compute/virtualMachines/buildagent-01",
+    "vmId": "00000000-0000-0000-0000-00000000000a",
+    "name": "buildagent-01",
+    "type": "Microsoft.Compute/virtualMachines",
+    "location": "westus2",
+    "zones": [
+      "1"
+    ],
+    "tags": {
+      "env": "ci",
+      "owner": "devops"
+    },
+    "hardwareProfile": {
+      "vmSize": "Standard_D2s_v5"
+    },
+    "osProfile": {
+      "computerName": "buildagent-01",
+      "adminUsername": "azureuser"
+    },
+    "storageProfile": {
+      "osDisk": {
+        "name": "buildagent-01_OsDisk_1_a208929905a64bd87dfa43f1d9f7822f",
+        "osType": "Linux",
+        "diskSizeGb": 128,
+        "managedDisk": {
+          "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-buildagents/providers/Microsoft.Compute/disks/buildagent-01_OsDisk_1_a208929905a64bd87dfa43f1d9f7822f"
+        }
+      }
+    },
+    "provisioningState": "Succeeded",
+    "timeCreated": "2026-10-26T22:14:03.622006+00:00"
+  },
+  {
+    "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-buildagents/providers/Microsoft.Compute/virtualMachines/buildagent-02",
+    "vmId": "00000000-0000-0000-0000-00000000000b",
+    "name": "buildagent-02",
+    "type": "Microsoft.Compute/virtualMachines",
+    "location": "westus2",
+    "zones": [
+      "2"
+    ],
+    "tags": {
+      "env": "ci",
+      "owner": "devops"
+    },
+    "hardwareProfile": {
+      "vmSize": "Standard_D2s_v5"
+    },
+    "osProfile": {
+      "computerName": "buildagent-02",
+      "adminUsername": "azureuser"
+    },
+    "storageProfile": {
+      "osDisk": {
+        "name": "buildagent-02_OsDisk_1_f2b045baeb6641b8b7acf1fc222ce452",
+        "osType": "Linux",
+        "diskSizeGb": 128,
+        "managedDisk": {
+          "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-buildagents/providers/Microsoft.Compute/disks/buildagent-02_OsDisk_1_f2b045baeb6641b8b7acf1fc222ce452"
+        }
+      }
+    },
+    "provisioningState": "Succeeded",
+    "timeCreated": "2026-10-26T22:14:03.622006+00:00"
+  },
+  {
+    "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-buildagents/providers/Microsoft.Compute/virtualMachines/buildagent-03",
+    "vmId": "00000000-0000-0000-0000-00000000000c",
+    "name": "buildagent-03",
+    "type": "Microsoft.Compute/virtualMachines",
+    "location": "westus2",
+    "zones": [
+      "3"
+    ],
+    "tags": {
+      "env": "ci",
+      "owner": "devops"
+    },
+    "hardwareProfile": {
+      "vmSize": "Standard_D2s_v5"
+    },
+    "osProfile": {
+      "computerName": "buildagent-03",
+      "adminUsername": "azureuser"
+    },
+    "storageProfile": {
+      "osDisk": {
+        "name": "buildagent-03_OsDisk_1_475aa5b25a89eb44a577590f39bd0baa",
+        "osType": "Linux",
+        "diskSizeGb": 128,
+        "managedDisk": {
+          "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-buildagents/providers/Microsoft.Compute/disks/buildagent-03_OsDisk_1_475aa5b25a89eb44a577590f39bd0baa"
+        }
+      }
+    },
+    "provisioningState": "Succeeded",
+    "timeCreated": "2026-10-26T22:14:03.622006+00:00"
+  },
+  {
+    "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-buildagents/providers/Microsoft.Compute/virtualMachines/buildagent-04",
+    "vmId": "00000000-0000-0000-0000-00000000000d",
+    "name": "buildagent-04",
+    "type": "Microsoft.Compute/virtualMachines",
+    "location": "westus2",
+    "zones": [
+      "1"
+    ],
+    "tags": {
+      "env": "ci",
+      "owner": "devops"
+    },
+    "hardwareProfile": {
+      "vmSize": "Standard_D2s_v5"
+    },
+    "osProfile": {
+      "computerName": "buildagent-04",
+      "adminUsername": "azureuser"
+    },
+    "storageProfile": {
+      "osDisk": {
+        "name": "buildagent-04_OsDisk_1_098d3e75ae4cd11ef3f838fa875e6a55",
+        "osType": "Linux",
+        "diskSizeGb": 128,
+        "managedDisk": {
+          "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-buildagents/providers/Microsoft.Compute/disks/buildagent-04_OsDisk_1_098d3e75ae4cd11ef3f838fa875e6a55"
+        }
+      }
+    },
+    "provisioningState": "Succeeded",
+    "timeCreated": "2026-10-26T22:14:03.622006+00:00"
+  }
+]
