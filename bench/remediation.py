@@ -450,13 +450,22 @@ def grade_for_task(
     """
     rubric_dict = rubric if isinstance(rubric, dict) else {}
     if is_pre_incident_review(task) or isinstance(rubric_dict.get("findings"), list):
-        return grade_pre_incident_review(answer, rubric)
-    if is_postmortem(task) or isinstance(rubric_dict.get(FACTS_KEY), list):
-        return grade_postmortem(answer, rubric)
-    if is_timeline(task) or isinstance(rubric_dict.get(ORDER_KEY), list):
-        return grade_timeline(answer, rubric)
-    if is_remediation(task) or isinstance(rubric_dict.get("checks"), list):
-        return grade_remediation(answer, rubric, Path(task_dir))
-    if is_attribution(task) or isinstance(rubric.get("culprit"), str):
-        return grade_attribution(answer, rubric)
-    return grade(answer, rubric)
+        result = grade_pre_incident_review(answer, rubric)
+    elif is_postmortem(task) or isinstance(rubric_dict.get(FACTS_KEY), list):
+        result = grade_postmortem(answer, rubric)
+    elif is_timeline(task) or isinstance(rubric_dict.get(ORDER_KEY), list):
+        result = grade_timeline(answer, rubric)
+    elif is_remediation(task) or isinstance(rubric_dict.get("checks"), list):
+        result = grade_remediation(answer, rubric, Path(task_dir))
+    elif is_attribution(task) or isinstance(rubric.get("culprit"), str):
+        result = grade_attribution(answer, rubric)
+    else:
+        result = grade(answer, rubric)
+    # Issue #113 contract: the run harness, `bench verify` and the
+    # leaderboard read `detail["safety_violations"]` on every graded
+    # record. Specialized graders without an unsafe-fix surface (timeline
+    # reconstruction, blameless postmortems) have nothing to match, so the
+    # shared dispatcher fills the key with an empty list instead of letting
+    # each surface KeyError on it.
+    result.setdefault("detail", {}).setdefault("safety_violations", [])
+    return result

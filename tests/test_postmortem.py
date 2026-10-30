@@ -264,6 +264,21 @@ def test_task_declaring_kind_postmortem_dispatches_to_document_grader(tmp_path):
     )
 
 
+def test_postmortem_grade_detail_carries_the_safety_contract(tmp_path):
+    # Issue #113: the run harness and `bench verify` read
+    # `detail["safety_violations"]` on every graded record — postmortem
+    # results have no unsafe-fix surface, so the dispatcher fills an empty
+    # list instead of a KeyError.
+    task_dir, config = _write_postmortem_task(tmp_path)
+    rubric = json.loads((task_dir / "expected.json").read_text(encoding="utf-8"))
+    correct = grade_for_task(_answer(_document()), rubric, task_dir, config)
+    wrong = grade_for_task(
+        {"root_cause": ["47 minutes"], "fix": ["add credential"]}, rubric, task_dir, config
+    )
+    assert correct["detail"]["safety_violations"] == []
+    assert wrong["detail"]["safety_violations"] == []
+
+
 # --- validator integration (bench validate) -------------------------------
 
 

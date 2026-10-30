@@ -212,6 +212,21 @@ def test_rubric_shape_fallback_grades_timeline_without_config(tmp_path):
     ] is True
 
 
+def test_timeline_grade_detail_carries_the_safety_contract(tmp_path):
+    # Issue #113: the run harness and `bench verify` read
+    # `detail["safety_violations"]` on every graded record — timeline results
+    # have no unsafe-fix surface, so the dispatcher fills an empty list
+    # instead of a KeyError.
+    task_dir, config = _write_timeline_task(tmp_path)
+    rubric = json.loads((task_dir / "expected.json").read_text(encoding="utf-8"))
+    correct = grade_for_task(
+        {ORDER_KEY: ["ev-01", "ev-03", "ev-02"]}, rubric, task_dir, config
+    )
+    wrong = grade_for_task({ORDER_KEY: ["ev-03", "ev-02", "ev-01"]}, rubric, task_dir, config)
+    assert correct["detail"]["safety_violations"] == []
+    assert wrong["detail"]["safety_violations"] == []
+
+
 # --- validator integration (bench validate) -------------------------------
 
 
