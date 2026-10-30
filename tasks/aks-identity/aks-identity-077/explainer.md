@@ -40,6 +40,16 @@
 - Reciting the timeline without an action item — the postmortem's whole
   point is the follow-up.
 
+## Why the red herring misleads
+
+Every failed request died inside a Key Vault secret operation — the
+pods logged 403s from the identity provider while fetching
+`kv-orders-prod` secrets — which reads exactly like a Key Vault outage
+or a vault access-policy change. But `az key vault show` and the role
+assignments show the vault and its policies untouched; the failing hop
+is the token exchange, and the federated-credential list names a subject
+in a namespace the service account no longer lives in.
+
 ## Root cause
 
 The namespace move changed the service account's identity path while the
@@ -50,6 +60,14 @@ rejecting every exchange. Nothing in the move runbook covered federated
 credentials, and IaC never managed them, so the stale subject survived the
 planned change undetected until the pod's authentication failed for 47
 minutes.
+
+## Fix
+
+Added a second federated credential on `id-orders-api-prod` whose subject
+matches the new service account
+(`system:serviceaccount:orders:orders-api`). The old-namespace entry was
+kept until the following low-traffic window and then removed, so pods
+recovered without a restart and the token exchanges matched again.
 
 ## Prevention
 
