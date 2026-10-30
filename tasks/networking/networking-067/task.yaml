@@ -1,5 +1,5 @@
 id: networking-067
-canary: 00000000-0000-0000-0000-000000000115  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
+canary: 00000000-0000-0000-0000-000000000114  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
 title: "Storage firewall blocks a trusted service"
 category: networking
 difficulty: medium
