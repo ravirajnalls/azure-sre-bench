@@ -1,0 +1,11 @@
+{
+  "root_cause": "The \"High 5xx rate\" scheduled query rule aggregates with avg(is5xx) — a per-request 0/1 flag — over a 1-hour window but is evaluated against a threshold of 50, which is count semantics. The average of a 0/1 column is bounded by 1.0 and can never exceed 50, so the alert condition is mathematically unsatisfiable and the rule can never fire. During the 15-minute spike the 1-hour average was roughly 0.055 while the condition needed a value greater than 50.",
+  "evidence": [
+    "az-monitor-scheduled-query-show.json: condition uses timeAggregation Average with operator GreaterThan and threshold 50, evaluated every 15 minutes over the rule's query",
+    "alert-query.kql: the deployed query extends is5xx = iff(resultCode >= 500, 1, 0) per request and summarizes avg(is5xx) over ago(1h), so the evaluated value is capped at 1.0",
+    "kql-5xx-per-5min.csv: the spike bins at 14:35–14:50 UTC show 402, 511, and 468 server errors against the threshold of 50 — the signal existed but the rule's units could never reach it",
+    "alert-history.json: the AlertsManagementResources query over the incident window returns zero rows, confirming the rule never fired",
+    "az-monitor-action-group-show.json: action group ag-prod-oncall is enabled with all receivers Enabled, ruling out the notification path"
+  ],
+  "fix": "Rewrite the rule so the query's aggregation and the threshold use the same units: either switch to count semantics — e.g. summarize countif(toint(resultCode) >= 500) per bin(TimeGenerated, 5m) against the existing threshold of 50 — or keep an average and express the threshold as a percentage, multiplying avg(is5xx) by 100 and setting the threshold to 0.5 (0.5%)."
+}

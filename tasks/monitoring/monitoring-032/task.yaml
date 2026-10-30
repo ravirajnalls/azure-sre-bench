@@ -1,0 +1,18 @@
+id: monitoring-032
+title: High 5xx rate alert never fires during a 15-minute 5xx spike
+category: monitoring
+difficulty: hard
+tags:
+  - monitoring
+  - azure-monitor
+  - scheduled-query-alert
+  - kql
+  - log-analytics
+symptom: |
+  Earlier today between 14:35 and 14:50 UTC api-gateway had a burst of HTTP 5xx
+  responses — roughly 1,400 failed requests over fifteen minutes before a
+  rollback stopped the bleeding. Users noticed within minutes; the pager did
+  not. The "High 5xx rate" alert on the gateway never fired, and on-call found
+  nothing waiting in the alert history when they looked afterward. The rule
+  exists, is enabled, and has an action group attached, so the notification
+  path looks wired up on paper.
