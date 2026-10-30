@@ -17,6 +17,7 @@
 | --- | --- | --- | --- |
 | aks-identity-008 | Key Vault access from orders-api fails after namespace move | easy | aks-identity, workload-identity, key-vault, federated-credential |
 | aks-identity-009 | Image pulls from acrcontosoprod fail with 401 after cluster recreation | easy | aks-identity, kubelet-identity, acr, imagepullbackoff, role-assignment |
+| aks-identity-010 | SRE on-call group gets Forbidden in payments after Azure RBAC cutover | hard | aks-identity, azure-rbac, entra, kubernetes, rbac |
 | aks-identity-011 | Secrets Store CSI volume fails to mount for reports-worker | medium | aks-identity, secrets-store-csi, key-vault, secret-provider-class |
 
 ## aks-networking
