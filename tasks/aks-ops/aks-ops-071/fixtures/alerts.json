@@ -1,0 +1,85 @@
+{
+  "alerts": [
+    {
+      "alert_id": "ALT-01",
+      "name": "KubeNodeNotReady",
+      "state": "firing",
+      "severity": "warning",
+      "fired_at": "2026-10-30T04:13:02Z",
+      "target": "aks-npapps-28461731-vmss0000a0",
+      "summary": "Node aks-npapps-28461731-vmss0000a0 has been NotReady for more than 60 seconds: kubelet stopped posting node status."
+    },
+    {
+      "alert_id": "ALT-02",
+      "name": "KubeNodeNotReady",
+      "state": "firing",
+      "severity": "warning",
+      "fired_at": "2026-10-30T04:13:20Z",
+      "target": "aks-npapps-28461731-vmss0000a1",
+      "summary": "Node aks-npapps-28461731-vmss0000a1 has been NotReady for more than 60 seconds: kubelet stopped posting node status."
+    },
+    {
+      "alert_id": "ALT-03",
+      "name": "KubeNodeNotReady",
+      "state": "firing",
+      "severity": "warning",
+      "fired_at": "2026-10-30T04:13:41Z",
+      "target": "aks-npapps-28461731-vmss0000a2",
+      "summary": "Node aks-npapps-28461731-vmss0000a2 has been NotReady for more than 60 seconds: kubelet stopped posting node status."
+    },
+    {
+      "alert_id": "ALT-04",
+      "name": "KubePodCrashLooping",
+      "state": "firing",
+      "severity": "warning",
+      "fired_at": "2026-10-30T04:14:40Z",
+      "target": "payments/payments-api-7d9c8b6d5-xq2lt",
+      "summary": "Pod payments-api-7d9c8b6d5-xq2lt is in CrashLoopBackOff after eviction; 4 restarts in the last 10 minutes."
+    },
+    {
+      "alert_id": "ALT-05",
+      "name": "Ingress5xxRate",
+      "state": "firing",
+      "severity": "critical",
+      "fired_at": "2026-10-30T04:15:10Z",
+      "target": "prod-ingress",
+      "summary": "Ingress 5xx rate is 18% over the last 5 minutes (baseline 0.4%); 502s and 504s concentrated on checkout and payments routes."
+    },
+    {
+      "alert_id": "ALT-06",
+      "name": "PVCAttachFailed",
+      "state": "firing",
+      "severity": "warning",
+      "fired_at": "2026-10-30T04:15:48Z",
+      "target": "checkout/checkout-api",
+      "summary": "FailedAttachVolume on rescheduled checkout-api pods: azure disk 'pvc-5f2c1b9a' cannot attach — detach from previous node timed out."
+    },
+    {
+      "alert_id": "ALT-07",
+      "name": "HPAAtMaxReplicas",
+      "state": "firing",
+      "severity": "warning",
+      "fired_at": "2026-10-30T04:16:05Z",
+      "target": "checkout/checkout-api",
+      "summary": "HPA checkout-api pinned at max 12/12 replicas for 10 minutes; 5 pods Pending on unschedulable capacity."
+    },
+    {
+      "alert_id": "ALT-08",
+      "name": "LogAnalyticsIngestionDrop",
+      "state": "firing",
+      "severity": "warning",
+      "fired_at": "2026-10-30T04:16:55Z",
+      "target": "prod-aks-workspace",
+      "summary": "Workspace ingestion rate dropped by 33% versus baseline; ama-logs pods on three nodes have stopped reporting."
+    },
+    {
+      "alert_id": "ALT-09",
+      "name": "ServiceHealthZoneDegraded",
+      "state": "firing",
+      "severity": "critical",
+      "fired_at": "2026-10-30T04:12:11Z",
+      "target": "westeurope",
+      "summary": "Azure Service Health: 'High network latency and VM connectivity degradation — Availability Zone 2 (West Europe)', impact start 04:08 UTC, status Active."
+    }
+  ]
+}

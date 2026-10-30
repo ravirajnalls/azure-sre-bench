@@ -1,0 +1,21 @@
+id: aks-ops-071
+canary: 00000000-0000-0000-0000-000000000114  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
+title: Nine-alert storm on prod AKS after a zone outage
+category: aks-ops
+difficulty: hard
+tags:
+  - aks
+  - kubernetes
+  - alert-triage
+  - availability-zone
+  - service-health
+kind: alert-triage
+symptom: |
+  At 04:12 UTC this morning our prod AKS cluster lit up: nine alerts in six
+  minutes. Three nodes went NotReady, pods started restarting, the ingress
+  error rate jumped to 18% 5xx, volumes stopped attaching to rescheduled
+  pods, one deployment's autoscaler pinned at max replicas, and Log Analytics
+  stopped ingesting from a third of the fleet. Restarting one deployment
+  changed nothing. This has to be one underlying failure — pick the single
+  alert that started it all from the alert list and classify the remaining
+  alerts it explains.

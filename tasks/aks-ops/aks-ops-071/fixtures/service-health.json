@@ -1,0 +1,31 @@
+{
+  "value": [
+    {
+      "name": "6f3d2a1c-westeurope-z2-20261030",
+      "id": "/subscriptions/00000000-0000-0000-0000-000000000001/providers/Microsoft.ResourceHealth/events/6f3d2a1c-westeurope-z2-20261030",
+      "type": "Microsoft.ResourceHealth/events",
+      "properties": {
+        "eventTitle": "High network latency and VM connectivity degradation — Availability Zone 2 (West Europe)",
+        "trackingId": "4K1Z-W8T",
+        "eventType": "Service Issue",
+        "eventSource": "Resource Health",
+        "eventLevel": "Warning",
+        "status": "Active",
+        "summary": "Starting at 04:08 UTC on 30 October 2026, Azure identified degraded network performance affecting virtual machines and managed disks in Availability Zone 2 of the West Europe region. Workloads in Zone 2 may experience intermittent packet loss, elevated VM connectivity latency, and managed-disk attach and detach timeouts. Engineering is engaged; no customer action is required at this time.",
+        "impactStartTime": "2026-10-30T04:08:00Z",
+        "impactMitigationTime": null,
+        "impactedServices": [
+          { "serviceName": "Virtual Machines" },
+          { "serviceName": "Azure Kubernetes Service (AKS)" },
+          { "serviceName": "Managed Disks" }
+        ],
+        "impactedRegions": [
+          {
+            "impactedRegion": "West Europe",
+            "impactedAvailabilityZones": ["Zone 2"]
+          }
+        ]
+      }
+    }
+  ]
+}

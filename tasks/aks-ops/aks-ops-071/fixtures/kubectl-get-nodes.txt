@@ -1,0 +1,12 @@
+NAME                               STATUS      ROLES    AGE   VERSION   INTERNAL-IP    OS-IMAGE                  KERNEL-VERSION    CONTAINER-RUNTIME   ZONE
+aks-npsys-28461731-vmss000000      Ready       system   94d   v1.29.7   10.240.0.4     Ubuntu 22.04.5 LTS        5.15.0-1075-azure containerd://1.7.27  1
+aks-npsys-28461731-vmss000001      Ready       system   94d   v1.29.7   10.240.0.5     Ubuntu 22.04.5 LTS        5.15.0-1075-azure containerd://1.7.27  3
+aks-npapps-28461731-vmss0000a0     NotReady    agent    93d   v1.29.7   10.240.3.20    Ubuntu 22.04.5 LTS        5.15.0-1075-azure containerd://1.7.27  2
+aks-npapps-28461731-vmss0000a1     NotReady    agent    93d   v1.29.7   10.240.3.34    Ubuntu 22.04.5 LTS        5.15.0-1075-azure containerd://1.7.27  2
+aks-npapps-28461731-vmss0000a2     NotReady    agent    92d   v1.29.7   10.240.3.51    Ubuntu 22.04.5 LTS        5.15.0-1075-azure containerd://1.7.27  2
+aks-npapps-28461731-vmss0000a3     Ready       agent    92d   v1.29.7   10.240.3.68    Ubuntu 22.04.5 LTS        5.15.0-1075-azure containerd://1.7.27  1
+aks-npapps-28461731-vmss0000a4     Ready       agent    92d   v1.29.7   10.240.3.77    Ubuntu 22.04.5 LTS        5.15.0-1075-azure containerd://1.7.27  1
+aks-npapps-28461731-vmss0000b0     Ready       agent    93d   v1.29.7   10.240.4.12    Ubuntu 22.04.5 LTS        5.15.0-1075-azure containerd://1.7.27  3
+aks-npapps-28461731-vmss0000b1     Ready       agent    93d   v1.29.7   10.240.4.19    Ubuntu 22.04.5 LTS        5.15.0-1075-azure containerd://1.7.27  3
+aks-npspot-28461731-vmss0000c0     Ready       agent    61d   v1.29.7   10.240.5.8     Ubuntu 22.04.5 LTS        5.15.0-1075-azure containerd://1.7.27  1
+aks-npspot-28461731-vmss0000c1     Ready       agent    61d   v1.29.7   10.240.5.9     Ubuntu 22.04.5 LTS        5.15.0-1075-azure containerd://1.7.27  2
