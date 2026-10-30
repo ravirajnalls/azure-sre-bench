@@ -1,0 +1,43 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: storefront
+  namespace: shop
+  uid: 00000000-0000-0000-0000-000000000001
+  resourceVersion: "8844217"
+  generation: 1
+  creationTimestamp: "2026-08-14T11:02:31Z"
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "8m"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: shop.contoso.example
+      http:
+        paths:
+          - path: /shop
+            pathType: Prefix
+            backend:
+              service:
+                name: storefront
+                port:
+                  number: 80
+          - path: /cart
+            pathType: Prefix
+            backend:
+              service:
+                name: cart
+                port:
+                  number: 80
+          - path: /account
+            pathType: Prefix
+            backend:
+              service:
+                name: account
+                port:
+                  number: 80
+status:
+  loadBalancer:
+    ingress:
+      - ip: 203.0.113.10

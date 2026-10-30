@@ -1,0 +1,17 @@
+id: aks-networking-002
+title: "Ingress returns 502 for /shop after a release"
+category: aks-networking
+difficulty: easy
+tags:
+  - aks
+  - ingress
+  - service-selector
+  - kubernetes
+symptom: >
+  After this morning's release to the shop namespace, /shop on the web
+  storefront returns 502 from the ingress controller for roughly half of
+  requests. All storefront pods show Running and Ready, there are no crash or
+  restart events, and the horizontal pod autoscaler is not throttling. The
+  ingress-nginx error log is filling with 502 entries for the /shop path while
+  /cart and /account on the same ingress class are healthy. Paged by the
+  checkout-availability alert at 09:20 UTC.
