@@ -1,0 +1,16 @@
+{
+  "root_cause": "The private DNS zone privatelink.azurecr.io linked to the cluster VNet has an A record for the registry's login endpoint acrcontosoprod.azurecr.io (10.224.0.10) but is missing the A record for the regional data endpoint acrcontosoprod.eastus.data.azurecr.io. Nodes therefore resolve the data endpoint to its public IP 20.62.130.44, and since public network access was disabled on the registry, the blob/layer downloads hit the public endpoint and are refused with 403 — even though authentication against the privately-resolved login endpoint succeeds.",
+  "evidence": [
+    "kubectl-describe-pod.txt: the failed pull event hits https://acrcontosoprod.eastus.data.azurecr.io/v2/shop/checkout-api/blobs/sha256:... and is refused with 403 Forbidden, public network access disabled for registry acrcontosoprod",
+    "nslookup-from-node.txt: acrcontosoprod.azurecr.io resolves to private 10.224.0.10, but acrcontosoprod.eastus.data.azurecr.io resolves to public 20.62.130.44 — the data endpoint is not covered by the private zone",
+    "az-network-private-dns-record-set-list.json: the privatelink.azurecr.io zone holds an A record only for the login server acrcontosoprod; there is no A record set for acrcontosoprod.eastus.data",
+    "az-acr-show.json: publicNetworkAccess is Disabled while dataEndpointEnabled is true, so every layer download must go through the data endpoint",
+    "az-role-assignment-list-acr.json: the pull identity holds AcrPull on the registry, so image-pull RBAC is correct and not the cause"
+  ],
+  "fix": "Add an A record for the regional data endpoint acrcontosoprod.eastus.data.azurecr.io pointing at the private endpoint's IP 10.224.0.10 in the privatelink.azurecr.io private DNS zone linked to the cluster VNet (or enable the registry's dedicated data-endpoint records for the zone), so layer downloads resolve through private link again; restart the affected pods.",
+  "evidence_files": [
+    "kubectl-describe-pod.txt",
+    "az-network-private-dns-record-set-list.json",
+    "nslookup-from-node.txt"
+  ]
+}

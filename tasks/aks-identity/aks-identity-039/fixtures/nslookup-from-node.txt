@@ -1,0 +1,23 @@
+$ nslookup acrcontosoprod.azurecr.io
+Server:         168.63.129.16
+Address:        168.63.129.16#53
+
+Non-authoritative answer:
+Name:   acrcontosoprod.azurecr.io
+Address: 10.224.0.10
+
+$ nslookup acrcontosoprod.eastus.data.azurecr.io
+Server:         168.63.129.16
+Address:        168.63.129.16#53
+
+Non-authoritative answer:
+Name:   acrcontosoprod.eastus.data.azurecr.io
+Address: 20.62.130.44
+
+$ nslookup acrcontosoprod.eastus.replication.azurecr.io
+;; connection timed out; no servers could be reached
+
+$ kubectl get nodes
+NAME                                STATUS   ROLES   AGE   VERSION
+aks-nodepool1-24187903-vmss0000cz   Ready    agent   63d   v1.30.6
+aks-nodepool1-24187903-vmss0000db   Ready    agent   63d   v1.30.6

@@ -20,6 +20,7 @@
 | aks-identity-010 | SRE on-call group gets Forbidden in payments after Azure RBAC cutover | hard | aks-identity, azure-rbac, entra, kubernetes, rbac |
 | aks-identity-011 | Secrets Store CSI volume fails to mount for reports-worker | medium | aks-identity, secrets-store-csi, key-vault, secret-provider-class |
 | aks-identity-034 | Workload identity token missing on new inventory-svc pods after rollout | hard | aks-identity, workload-identity, deployment, rollout |
+| aks-identity-039 | Image pulls fail after the container registry moved to private endpoint | hard | aks-identity, azure-container-registry, private-link, private-dns, image-pull |
 
 ## aks-networking
 

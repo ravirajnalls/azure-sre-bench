@@ -1,0 +1,19 @@
+id: aks-identity-039
+canary: 00000000-0000-0000-0000-000000000114  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
+title: Image pulls fail after the container registry moved to private endpoint
+category: aks-identity
+difficulty: hard
+tags:
+  - aks-identity
+  - azure-container-registry
+  - private-link
+  - private-dns
+  - image-pull
+symptom: >-
+  After we disabled public network access on the container registry
+  acrcontosoprod this morning, new pods of checkout-api in the shop namespace
+  stopped pulling images. The nodes clearly reach the registry — they resolve
+  acrcontosoprod.azurecr.io to a private IP — but every fresh pull still fails
+  while pods that were running since before the change keep serving fine.
+  The registry's access policy was reviewed this morning and nothing there
+  changed.

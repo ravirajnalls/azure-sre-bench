@@ -1,0 +1,12 @@
+{
+  "root_cause": [
+    ["data endpoint", "data.azurecr.io", "eastus.data.azurecr.io"],
+    ["a record", "dns record", "private dns", "dns zone"]
+  ],
+  "fix": [
+    ["data.azurecr.io", "data endpoint"]
+  ],
+  "distractors": [
+    ["acrpull", "missing acr pull", "acr pull role", "missing role assignment"]
+  ]
+}
