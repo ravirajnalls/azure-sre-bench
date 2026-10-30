@@ -224,6 +224,12 @@ def build_parser() -> argparse.ArgumentParser:
                 default="tasks",
                 help="task discovery root for rubric-hash staleness (default: ./tasks)",
             )
+            leaderboard_parser.add_argument(
+                "--by",
+                choices=["category", "difficulty"],
+                help="print a pass-rate breakdown by category or difficulty "
+                "(issue #165) instead of the ranking",
+            )
         elif name == "site":
             site_parser = sub.add_parser(
                 name, help="build the static leaderboard site from results/"
@@ -510,11 +516,16 @@ def cmd_export(args: argparse.Namespace) -> int:
 
 def cmd_leaderboard(args: argparse.Namespace) -> int:
     """Print the markdown leaderboard table from `--results-root` (issue #41)."""
-    from bench.leaderboard import leaderboard_markdown  # deferred: keeps --help cheap
-
-    print(
-        leaderboard_markdown(Path(args.results_root), Path(args.tasks_root))
+    from bench.leaderboard import (  # deferred: keeps --help cheap
+        breakdown_markdown,
+        leaderboard_markdown,
     )
+
+    if getattr(args, "by", None):
+        # Issue #165: category/difficulty breakdown instead of the ranking.
+        print(breakdown_markdown(Path(args.results_root), Path(args.tasks_root), args.by))
+        return 0
+    print(leaderboard_markdown(Path(args.results_root), Path(args.tasks_root)))
     return 0
 
 

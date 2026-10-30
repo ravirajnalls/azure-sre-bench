@@ -19,15 +19,17 @@ import yaml
 from bench import GRADER_VERSION
 from bench.stats import bootstrap_pass_rate_ci
 from bench.site import (
-    cost_accuracy_points,
-    pareto_frontier,
-    pass_rate,
-    render_cost_chart,
     aggregate,
+    cost_accuracy_points,
     is_open_source,
     load_agent_metadata_map,
     load_explainers,
     load_results,
+    pareto_frontier,
+    pass_rate,
+    render_category_heatmap,
+    render_cost_chart,
+    render_difficulty_chart,
     render_explainer_html,
     render_html,
     render_learn_html,
@@ -792,3 +794,126 @@ def test_render_ci_is_em_dash_without_current_records():
     assert "Pass rate (95% CI)" in page
     assert '<td class="num">&mdash;</td>' in page
 
+
+
+# --- breakdown charts (issue #165) ---------------------------------------------
+
+
+def seed_task(tasks_root: Path, task_id: str, difficulty: str) -> None:
+    """A minimal task.yaml so the difficulty breakdown has something to read."""
+    category, _, _ = task_id.partition("-00")
+    task_dir = tasks_root / category / task_id
+    task_dir.mkdir(parents=True, exist_ok=True)
+    (task_dir / "task.yaml").write_text(
+        f"id: {task_id}\ndifficulty: {difficulty}\n", encoding="utf-8"
+    )
+
+
+def test_aggregate_by_difficulty_groups_and_orders(tmp_path: Path):
+    tasks_root = tmp_path / "tasks"
+    seed_task(tasks_root, "monitoring-001", "hard")
+    seed_task(tasks_root, "monitoring-002", "easy")
+    seed_task(tasks_root, "monitoring-003", "medium")
+    write_run(
+        tmp_path,
+        "naive",
+        [
+            record("monitoring-001", 1.0, True),
+            record("monitoring-002", 0.5, False),
+            record("monitoring-003", 1.0, True),
+        ],
+    )
+    agg = aggregate(load_results(tmp_path), difficulties=task_difficulties(tasks_root))
+    assert [b["difficulty"] for b in agg["by_difficulty"]] == [
+        "easy",
+        "medium",
+        "hard",
+    ]
+    easy = agg["by_difficulty"][0]["agents"]
+    assert easy == [
+        {
+            "agent": "naive",
+            "passed": 0,
+            "total": 1,
+            "mean_score": 0.5,
+            "pass_rate": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "median_elapsed_s": None,
+            "median_commands": None,
+            "total_cost_usd": None,
+        }
+    ]
+
+
+def test_aggregate_by_difficulty_unknown_without_task_yaml(tmp_path: Path):
+    write_run(tmp_path, "naive", [record("monitoring-001", 1.0, True)])
+    agg = aggregate(load_results(tmp_path), difficulties={})
+    assert [b["difficulty"] for b in agg["by_difficulty"]] == ["unknown"]
+
+
+def test_render_category_heatmap_cells_and_labels(tmp_path: Path):
+    write_run(
+        tmp_path,
+        "naive",
+        [
+            record("monitoring-001", 1.0, True),
+            record("monitoring-002", 1.0, True),
+            record("cost-001", 0.0, False),
+        ],
+    )
+    agg = aggregate(load_results(tmp_path))
+    svg = render_category_heatmap(agg)
+    assert '<svg class="chart heat-grid"' in svg
+    assert ">100%</text>" in svg  # monitoring: 2/2
+    assert ">0%</text>" in svg  # cost: 0/1
+    assert "<title>naive: 2/2 passed</title>" in svg
+    assert '<text class="cell-text light"' in svg  # high-rate cells go white
+
+
+def test_render_category_heatmap_empty_is_none():
+    assert render_category_heatmap({"by_category": [], "agents": []}) is None
+
+
+def test_render_difficulty_chart_rows_and_bars(tmp_path: Path):
+    tasks_root = tmp_path / "tasks"
+    seed_task(tasks_root, "monitoring-001", "hard")
+    seed_task(tasks_root, "monitoring-002", "easy")
+    write_run(
+        tmp_path,
+        "naive",
+        [record("monitoring-001", 1.0, True), record("monitoring-002", 0.0, False)],
+    )
+    agg = aggregate(load_results(tmp_path), difficulties=task_difficulties(tasks_root))
+    svg = render_difficulty_chart(agg)
+    assert '<svg class="chart diff-chart"' in svg
+    assert '<rect class="bar bar-easy"' in svg  # easy row has a 0% bar (width 0)
+    assert '<rect class="bar bar-hard"' in svg
+    assert '<rect class="track"' in svg
+    assert "<title>naive: 1/1 passed (hard)</title>" in svg
+
+
+def test_render_difficulty_chart_empty_is_none():
+    assert render_difficulty_chart({"by_difficulty": [], "agents": []}) is None
+
+
+def test_render_html_includes_breakdown_charts(tmp_path: Path):
+    write_run(tmp_path, "naive", [record("monitoring-001", 1.0, True)])
+    page = render_html(aggregate(load_results(tmp_path)))
+    assert "Category &times; agent" in page
+    assert "Difficulty &times; agent" in page
+    assert 'class="chart heat-grid"' in page
+    assert 'class="chart diff-chart"' in page
+
+
+def test_task_category_and_difficulties_importable_from_tasks(tmp_path: Path):
+    # The #165 refactor moved both helpers to bench.tasks; the site module
+    # re-exports them, and the canonical implementations behave the same.
+    from bench import tasks as tasks_module
+
+    assert tasks_module.task_category("aks-networking-001") == "aks-networking"
+    assert tasks_module.task_category("mystery-999") == "other"
+    seed_task(tmp_path / "tasks", "monitoring-001", "easy")
+    assert tasks_module.task_difficulties(tmp_path / "tasks") == {
+        "monitoring-001": "easy"
+    }

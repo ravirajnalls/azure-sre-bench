@@ -73,6 +73,51 @@ CATEGORIES = frozenset(
 
 DIFFICULTIES = frozenset({"easy", "medium", "hard"})
 
+_DIFFICULTY_ORDER = {"easy": 0, "medium": 1, "hard": 2}
+
+
+def difficulty_sort_key(name: str) -> tuple[int, str]:
+    """Presentation order for difficulty labels: easy, medium, hard, then the
+    rest (e.g. `unknown`) alphabetically."""
+    return (_DIFFICULTY_ORDER.get(name, len(_DIFFICULTY_ORDER)), name)
+
+
+def task_category(task_id: str) -> str:
+    """Derive a task's category from its `<category>-<nnn>` id.
+
+    Categories may contain hyphens (e.g. `aks-networking`), so the longest
+    known prefix wins; unknown ids fall back to `other`. Lives here (not in
+    the site module) so the leaderboard breakdowns (issue #165) can share it.
+    """
+    for category in sorted(CATEGORIES, key=len, reverse=True):
+        if task_id.startswith(f"{category}-"):
+            return category
+    return "other"
+
+
+def task_difficulties(tasks_root: Path) -> dict[str, str]:
+    """Map task id -> its `task.yaml` difficulty, for tasks under `tasks_root`.
+
+    Difficulty is public corpus metadata (it survives held-out encryption,
+    which hides only `expected.json`/`solution.json`), so renderers can bake
+    it into breakdowns and filters. A task.yaml missing the field, or
+    unparseable, is skipped — the renderers show that task as unknown rather
+    than lying about it.
+    """
+    difficulties: dict[str, str] = {}
+    for path in sorted(Path(tasks_root).rglob("task.yaml")):
+        try:
+            config = yaml.safe_load(path.read_text(encoding="utf-8"))
+        except (OSError, yaml.YAMLError):
+            continue
+        if not isinstance(config, dict):
+            continue
+        task_id = config.get("id")
+        difficulty = config.get("difficulty")
+        if isinstance(task_id, str) and isinstance(difficulty, str):
+            difficulties[task_id] = difficulty
+    return difficulties
+
 # Fixed canary GUID placed in every task.yaml and the README (issue #114). Its
 # presence in a model's training corpus is the signal that the corpus was seen;
 # removing it from a task is a validator error.

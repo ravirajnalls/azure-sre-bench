@@ -29,7 +29,7 @@ from pathlib import Path
 from bench import GRADER_VERSION
 from bench.heldout import SPLIT_HELDOUT, SPLIT_PUBLIC
 from bench.stats import bootstrap_pass_rate_ci, intervals_overlap_heavily
-from bench.tasks import current_rubric_hashes
+from bench.tasks import current_rubric_hashes, difficulty_sort_key
 
 RESULTS_DIR = Path("results")
 START_MARKER = "<!-- leaderboard -->"
@@ -332,6 +332,67 @@ def leaderboard_markdown(
         sections.append("### Held-out split\n")
         sections.append(markdown_table(rank_rows(heldout, hashes)))
     return "\n".join(sections)
+
+
+def breakdown_markdown(results_root: Path, tasks_root: Path, by: str) -> str:
+    """Markdown pass-rate breakdown by category or difficulty (issue #165).
+
+    One row per group, one column per agent: `passed/total (mean)` over
+    current-version records only — the same math the site's SVG breakdown
+    charts use. An em dash where an agent did not run the group's tasks.
+    """
+    from bench.tasks import task_category, task_difficulties  # deferred: yaml work
+
+    runs = collect_records(results_root)
+    hashes = current_rubric_hashes(tasks_root)
+    difficulties = task_difficulties(tasks_root) if by == "difficulty" else None
+
+    def group_of(task: str) -> str:
+        if by == "difficulty":
+            return difficulties.get(task, "unknown")
+        return task_category(task)
+
+    agents = sorted(runs)
+    tasks = sorted(
+        {str(r.get("task")) for records in runs.values() for r in records if r.get("task")}
+    )
+    # (agent, group) -> [passed, total, score_sum] over current records only.
+    counts: dict[tuple[str, str], list] = {}
+    for name, records in runs.items():
+        for rec in records:
+            if classify_record(rec, hashes) != STATUS_CURRENT:
+                continue
+            score = rec.get("score")
+            group = group_of(str(rec.get("task") or ""))
+            tally = counts.setdefault((name, group), [0, 0, 0.0])
+            tally[0] += bool(rec.get("passed"))
+            tally[1] += 1
+            if is_number(score):
+                tally[2] += score
+
+    # Difficulty rows keep easy/medium/hard order; category rows are alphabetical.
+    # Groups with no current-version records at all drop out entirely — matching
+    # the site's breakdowns, which only render groups someone actually ran.
+    key = difficulty_sort_key if by == "difficulty" else None
+    groups = [
+        group
+        for group in sorted({group_of(t) for t in tasks}, key=key)
+        if any((agent, group) in counts for agent in agents)
+    ]
+
+    lines = [f"| {by.capitalize()} | " + " | ".join(agents) + " |"]
+    lines.append("| --- |" + " --- |" * len(agents))
+    for group in groups:
+        cells = []
+        for agent in agents:
+            tally = counts.get((agent, group))
+            if tally is None:
+                cells.append("—")
+            else:
+                passed, total, score_sum = tally
+                cells.append(f"{passed}/{total} ({score_sum / total:.3f})")
+        lines.append(f"| {group} | " + " | ".join(cells) + " |")
+    return "\n".join(lines)
 
 
 def update_readme(readme_path: Path, table: str) -> None:
