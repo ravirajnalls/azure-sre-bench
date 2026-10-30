@@ -1,0 +1,15 @@
+{
+  "root_cause": [
+    ["federated credential", "federated identity", "fic"],
+    ["subject"],
+    ["namespace", "default", "orders"]
+  ],
+  "fix": [
+    [
+      "system:serviceaccount:orders:orders-api",
+      "subject to orders",
+      "new federated credential",
+      "update the federated"
+    ]
+  ]
+}
