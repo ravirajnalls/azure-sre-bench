@@ -1,0 +1,15 @@
+{
+  "root_cause": "orders now has a namespace-wide PeerAuthentication with mtls.mode: STRICT (fixtures/peerauthentication.yaml). batch-runner lives in the batch namespace, which carries no istio.io/rev injection label (fixtures/kubectl-get-ns-labels.txt), so it has no sidecar and sends plaintext HTTP. The orders sidecar rejects the handshake — 'TLS handshake failed ... wrong version number' from peer 10.240.5.23 (fixtures/istio-proxy-orders.log) — which the client feels as connection resets (fixtures/batch-runner.log). Mesh clients like payments negotiate mTLS and work fine.",
+  "evidence": [
+    "fixtures/peerauthentication.yaml: PeerAuthentication 'default' in orders sets spec.mtls.mode to STRICT for the whole namespace",
+    "fixtures/kubectl-get-ns-labels.txt: batch has no istio.io/rev or istio-injection label — pods there get no sidecar; orders and payments carry istio.io/rev=asm-1-23-5",
+    "fixtures/istio-proxy-orders.log: TLS handshake failures from 10.240.5.23 with 'wrong version number' — plaintext on a TLS listener — while payments at 10.240.3.44 completes TLSv1.3 handshakes",
+    "fixtures/batch-runner.log: connection resets on every POST from 10.240.5.23 to orders:8080, matching the failed handshakes"
+  ],
+  "fix": "Pick one consistent direction: (a) mesh-enable the client — label the batch namespace for injection (istio.io/rev=asm-1-23-5) and restart batch-runner so it gets a sidecar that negotiates mTLS; or (b) relax the policy — set the PeerAuthentication to PERMISSIVE, or keep STRICT and add a portLevelMtls override for port 8080. Do not rewrite the DestinationRule: fixtures/destinationrule.yaml is normal mesh-internal config and never applies to a sidecar-less client.",
+  "evidence_files": [
+    "peerauthentication.yaml",
+    "kubectl-get-ns-labels.txt",
+    "istio-proxy-orders.log"
+  ]
+}

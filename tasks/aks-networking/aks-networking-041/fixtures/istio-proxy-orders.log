@@ -1,0 +1,8 @@
+# kubectl logs -n orders orders-7d4b6c8f5d-kj2xz -c istio-proxy --tail 200 (excerpt)
+2026-10-28T09:14:02.318Z warning envoy connection [C2174] TLS handshake failed: SSL_ERROR_SSL error:0A00010A:SSL routines::wrong version number, peer 10.240.5.23:48214
+2026-10-28T09:14:02.318Z debug   envoy connection [C2174] socket closed: transport handshake failure, local orders-7d4b6c8f5d-kj2xz, remote 10.240.5.23
+2026-10-28T09:14:03.341Z warning envoy connection [C2181] TLS handshake failed: SSL_ERROR_SSL error:0A00010A:SSL routines::wrong version number, peer 10.240.5.23:48220
+2026-10-28T09:14:05.362Z warning envoy connection [C2190] TLS handshake failed: SSL_ERROR_SSL error:0A00010A:SSL routines::wrong version number, peer 10.240.5.23:48231
+2026-10-28T09:14:12.401Z warning envoy connection [C2203] TLS handshake failed: SSL_ERROR_SSL error:0A00010A:SSL routines::wrong version number, peer 10.240.5.23:48244
+2026-10-28T09:14:15.002Z info    envoy connection [C2205] TLS handshake complete: TLSv1.3 TLS_AES_256_GCM_SHA384, peer 10.240.3.44:51122 (payments-7c4d9f6b8c-t2r9p)
+2026-10-28T09:14:16.118Z info    envoy connection [C2207] request complete: GET /healthz 200 from 10.240.3.44 (mesh client, mTLS OK)

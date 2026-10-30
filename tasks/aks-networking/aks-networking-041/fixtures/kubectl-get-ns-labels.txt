@@ -1,0 +1,6 @@
+# kubectl get namespaces --show-labels
+NAME               STATUS   AGE   LABELS
+batch              Active   412d  kubernetes.io/metadata.name=batch
+kube-system        Active   425d  kubernetes.io/metadata.name=kube-system
+orders             Active   412d  istio.io/rev=asm-1-23-5,kubernetes.io/metadata.name=orders
+payments           Active   380d  istio.io/rev=asm-1-23-5,kubernetes.io/metadata.name=payments

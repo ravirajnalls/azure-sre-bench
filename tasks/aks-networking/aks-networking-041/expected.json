@@ -1,0 +1,13 @@
+{
+  "root_cause": [
+    ["peerauthentication", "strict"],
+    ["mtls", "mutual tls"],
+    ["sidecar", "not injected", "plaintext", "non-mesh", "istio-injection"]
+  ],
+  "fix": [
+    ["permissive", "inject sidecar", "sidecar injection", "portlevelmtls", "port-level mtls"]
+  ],
+  "distractors": [
+    ["destinationrule", "tls mode istiomutual mismatch", "client tls configuration"]
+  ]
+}
