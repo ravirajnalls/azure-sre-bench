@@ -21,6 +21,7 @@ from bench.attribution import is_attribution
 from bench.grader import cap_evidence, extract_usage, rubric_sha256
 from bench.heldout import ENCRYPTED_SUFFIX, HeldoutKeyError, load_hidden_json
 from bench.remediation import grade_for_task, is_remediation
+from bench.triage import is_triage
 
 ANSWER_CONTRACT = {
     "root_cause": "str (required) — the specific technical cause of the incident",
@@ -92,6 +93,16 @@ id from the change log), `reasoning` (why that change caused the incident and
 no other change did), and `fix` (the remediation that undoes it).
 """
 
+TRIAGE_BLOCK = """
+
+## Alert triage
+
+This is an alert-triage task: answer with `root_alert` (exactly one alert id
+from fixtures/alerts.json — the one alert whose firing caused all the
+others), `symptom_alerts` (every other active alert the root explains), and
+`reasoning` (why the root caused the rest).
+"""
+
 
 def load_task_prompt(task_dir: Path) -> str:
     """Build the paste-ready prompt from a task directory on disk."""
@@ -111,6 +122,9 @@ def load_task_prompt(task_dir: Path) -> str:
     elif is_attribution(task):
         # Same contract the `bench run` workspace hint gives agents (issue #144).
         prompt += ATTRIBUTION_BLOCK
+    elif is_triage(task):
+        # Same contract the `bench run` workspace hint gives agents (issue #145).
+        prompt += TRIAGE_BLOCK
     return prompt
 
 

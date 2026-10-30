@@ -1,0 +1,16 @@
+NAMESPACE     LAST SEEN   TYPE      REASON                     OBJECT                                        MESSAGE
+checkout      12m         Normal    Scheduled                  pod/checkout-api-6b8f4c9d7-n2kpw              Successfully assigned checkout/checkout-api-6b8f4c9d7-n2kpw to aks-npapps-28461731-vmss0000a3
+payments      4m          Warning   NodeNotReady               node/aks-npapps-28461731-vmss0000a0           Node aks-npapps-28461731-vmss0000a0 status is now: NodeNotReady
+payments      4m          Warning   NodeNotReady               node/aks-npapps-28461731-vmss0000a1           Node aks-npapps-28461731-vmss0000a1 status is now: NodeNotReady
+checkout      4m          Warning   NodeNotReady               node/aks-npapps-28461731-vmss0000a2           Node aks-npapps-28461731-vmss0000a2 status is now: NodeNotReady
+payments      4m          Warning   TaintManagerEviction       pod/payments-api-7d9c8b6d5-xq2lt              Cancelling deletion of Pod payments/payments-api-7d9c8b6d5-xq2lt as it is not present on node
+payments      4m          Warning   Evicted                    pod/payments-api-7d9c8b6d5-xq2lt              The node was not ready: node aks-npapps-28461731-vmss0000a0 NotReady
+checkout      4m          Warning   Evicted                    pod/checkout-api-6b8f4c9d7-n2kpw              The node was not ready: node aks-npapps-28461731-vmss0000a1 NotReady
+kube-system   4m          Warning   Evicted                    pod/ama-logs-fq8l2                            The node was not ready: node aks-npapps-28461731-vmss0000a2 NotReady
+checkout      3m          Warning   FailedAttachVolume         pod/checkout-api-6b8f4c9d7-4tqxm              Multi-Attach error for volume "pvc-5f2c1b9a": Volume is already exclusively attached to one node and can't be attached to another; detach timed out
+checkout      3m          Warning   FailedScheduling           pod/checkout-api-6b8f4c9d7-4tqxm              0/8 nodes are available: 3 node(s) were not ready, 2 node(s) had untolerated taint, 3 Insufficient cpu.
+kube-system   3m          Warning   BackOff                    pod/ama-logs-fq8l2                            Back-off restarting failed container ama-logs
+payments      2m          Warning   BackOff                    pod/payments-api-7d9c8b6d5-xq2lt              Back-off restarting failed container payments-api
+checkout      2m          Warning   Unhealthy                  pod/checkout-api-6b8f4c9d7-n2kpw              Readiness probe failed: connection refused
+checkout      2m          Warning   HPAMaxLengthExceeded       horizontalpodautoscaler/checkout-api          Replicas increased beyond maximum; the autoscaler is pinned at maxReplicas=12
+ingress       1m          Warning   Unhealthy                  pod/ingress-nginx-7f5d8b9c6-lqv4s             Backend checkout-api reported 5xx responses: upstream connect timeouts

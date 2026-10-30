@@ -1,0 +1,19 @@
+{
+  "root_alert": "ALT-09",
+  "symptom_alerts": [
+    "ALT-01",
+    "ALT-02",
+    "ALT-03",
+    "ALT-04",
+    "ALT-05",
+    "ALT-06",
+    "ALT-07",
+    "ALT-08"
+  ],
+  "reasoning": "ALT-09 fired first, at 04:12:11: Azure Service Health already showed Zone 2 network degradation active from 04:08, before any cluster alert. The three NotReady nodes are exactly the app pool's zone-2 nodes, so every other alert is downstream of that degradation: kubelet disconnections and evictions (ALT-01..03, ALT-04), 5xx as traffic rebalanced (ALT-05), disk attach failures matching the Service Health managed-disk symptom (ALT-06), HPA maxed against unschedulable zone-2 capacity (ALT-07), and ama-logs pods dying on the same nodes (ALT-08).",
+  "evidence_files": [
+    "alerts.json",
+    "service-health.json",
+    "kubectl-get-nodes.txt"
+  ]
+}

@@ -23,6 +23,7 @@ import yaml
 
 from bench.attribution import KIND_ATTRIBUTION
 from bench.fixture_lint import LINTIGNORE_FILENAME
+from bench.triage import ALERTS_FILENAME, KIND_TRIAGE, read_alerts
 from bench.grader import normalize, rubric_sha256
 from bench.heldout import (
     ENCRYPTED_SUFFIX,
@@ -624,9 +625,10 @@ def _validate_expected_data(
     """Rubric shape rules, applied to plaintext and decrypted content alike.
 
     Kind-aware: a pre-incident-review rubric grades a `findings` list instead
-    of the diagnosis fields (issue #147) and a change-attribution rubric
-    grades an exact-match `culprit` (issue #144); every other kind keeps the
-    `root_cause`/`fix` requirement. Each kind fails closed on its own
+    of the diagnosis fields (issue #147), a change-attribution rubric
+    grades an exact-match `culprit` (issue #144), and an alert-triage rubric
+    grades an exact-match `root_alert` (issue #145); every other kind keeps
+    the `root_cause`/`fix` requirement. Each kind fails closed on its own
     required shape — a rubric that omits its kind's graded fields can never
     pass.
     """
@@ -636,6 +638,12 @@ def _validate_expected_data(
         errors.extend(_validate_preincident_rubric(data, task_dir))
     elif kind == KIND_POSTMORTEM:
         errors.extend(_validate_postmortem_rubric(data))
+    elif kind == KIND_TRIAGE:
+        # Alert-triage rubrics grade an exact `root_alert` (issue #145);
+        # distractors are rejected outright in _validate_triage_rubric.
+        root_alert = data.get("root_alert")
+        if not (isinstance(root_alert, str) and root_alert.strip()):
+            errors.append("expected.json: 'root_alert' must be a non-empty string")
     elif kind == KIND_ATTRIBUTION:
         culprit = data.get("culprit")
         if not (isinstance(culprit, str) and culprit.strip()):
@@ -724,9 +732,17 @@ def _graded_alternatives(data: dict, kind: str | None) -> list[str]:
 
     Diagnosis/remediation rubrics grade `root_cause`; a pre-incident-review
     rubric (issue #147) grades the `issue` groups of its required findings;
-    a change-attribution rubric (issue #144) grades the exact `culprit`.
+    a change-attribution rubric (issue #144) grades the exact `culprit`; an
+    alert-triage rubric (issue #145) grades the exact `root_alert`.
     Distractor alternatives may not overlap any of them.
     """
+    if kind == KIND_TRIAGE:
+        root_alert = data.get("root_alert")
+        return (
+            [normalize(root_alert)]
+            if isinstance(root_alert, str) and root_alert.strip()
+            else []
+        )
     if kind == KIND_ATTRIBUTION:
         culprit = data.get("culprit")
         return (
@@ -770,6 +786,10 @@ def _validate_distractors(
     distractor must name the wrong cause the fixtures actually suggest).
     """
     if "distractors" not in data:
+        if kind == KIND_TRIAGE:
+            # A triage answer classifies alerts; there is no distractor
+            # channel to define (issue #145).
+            return [], []
         if (
             kind == KIND_POSTMORTEM
             and isinstance(data.get(FORBIDDEN_KEY), list)
@@ -855,10 +875,48 @@ def _validate_attribution_rubric(data: dict, task_dir: Path) -> list[str]:
     return []
 
 
+def _validate_triage_rubric(data: dict, task_dir: Path) -> list[str]:
+    """Grounding rules for an alert-triage rubric (issue #145).
+
+    The root alert must exist in the task's alerts fixture, and that fixture
+    must be well-formed — the grader derives the symptom set from it, so a
+    broken or duplicate-id fixture would grade against a guessed set.
+    Distractor groups are rejected outright: a triage answer has no field
+    for them to scan, so the issue-#94 distractor machinery has no channel
+    here.
+    """
+    errors: list[str] = []
+    if "distractors" in data:
+        errors.append(
+            "expected.json: 'distractors' have no channel in an alert-triage "
+            "answer — the rubric grades 'root_alert' plus the derived symptom "
+            "classification (issue #145)"
+        )
+    root_alert = data.get("root_alert")
+    if not (isinstance(root_alert, str) and root_alert.strip()):
+        return errors
+    ids, duplicates, alert_error = read_alerts(task_dir / "fixtures" / ALERTS_FILENAME)
+    if alert_error:
+        errors.append(f"expected.json: fixtures/{ALERTS_FILENAME} {alert_error}")
+        return errors
+    for duplicate in duplicates:
+        errors.append(
+            f"expected.json: fixtures/{ALERTS_FILENAME} duplicate alert id "
+            f"'{duplicate}'"
+        )
+    if normalize(root_alert) not in {normalize(alert_id) for alert_id in ids}:
+        errors.append(
+            f"expected.json: root_alert '{root_alert}' is not an alert id in "
+            f"fixtures/{ALERTS_FILENAME} — the rubric must name an alert the "
+            "fixture defines (issue #145)"
+        )
+    return errors
+
+
 def _validate_expected(task_dir: Path, config: dict | None) -> tuple[list[str], list[str]]:
     """Plaintext-rubric validation: shape, distractor (#94), and remediation
     kind/checks consistency (issue #110), plus change-attribution grounding
-    (issue #144).
+    (issue #144) and alert-triage grounding (issue #145).
 
     Held-out tasks take the `_validate_heldout_hidden` path instead; the
     distractor and remediation rules run there too, on the decrypted rubric
@@ -879,6 +937,8 @@ def _validate_expected(task_dir: Path, config: dict | None) -> tuple[list[str], 
     errors.extend(distractor_errors)
     if kind == KIND_ATTRIBUTION:
         errors.extend(_validate_attribution_rubric(data, task_dir))
+    if kind == KIND_TRIAGE:
+        errors.extend(_validate_triage_rubric(data, task_dir))
     return errors, distractor_warnings
 
 
@@ -991,6 +1051,8 @@ def _validate_heldout_hidden(
             errors.extend(distractor_errors)
             if kind == KIND_ATTRIBUTION:
                 errors.extend(_validate_attribution_rubric(data, task_dir))
+            if kind == KIND_TRIAGE:
+                errors.extend(_validate_triage_rubric(data, task_dir))
             warnings.extend(distractor_warnings)
         else:
             warnings.extend(_solution_warnings(data, config, task_dir))

@@ -26,6 +26,8 @@ from bench import GRADER_VERSION, RESULT_SCHEMA_VERSION
 from bench.attribution import ANSWER_CONTRACT_BLOCK as ATTRIBUTION_BLOCK
 from bench.attribution import is_attribution
 from bench.fixture_lint import LINTIGNORE_FILENAME
+from bench.triage import ANSWER_CONTRACT_BLOCK as TRIAGE_BLOCK
+from bench.triage import is_triage
 from bench.grader import cap_evidence, extract_files_read, extract_usage, grade, rubric_sha256
 from bench.heldout import HeldoutKeyError, load_hidden_json, split_of
 from bench.preincident import is_pre_incident_review
@@ -133,6 +135,10 @@ def prepare_workspace(task_dir: Path, workspace: Path) -> None:
         # Same agent-facing surface: a change-attribution task (issue #144)
         # must tell agents the culprit/reasoning/fix answer contract.
         symptom_md += ATTRIBUTION_BLOCK
+    elif is_triage(task):
+        # Same agent-facing surface: an alert-triage task (issue #145) must
+        # tell agents the root_alert/symptom_alerts answer contract.
+        symptom_md += TRIAGE_BLOCK
     (Path(workspace) / "symptom.md").write_text(symptom_md, encoding="utf-8")
 
 
