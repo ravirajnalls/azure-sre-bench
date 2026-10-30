@@ -107,9 +107,12 @@ def verify_release(
 ) -> list[str]:
     """Check a live corpus against a release manifest; returns problem strings.
 
-    Empty list = the corpus matches the release: same task set, same grader
-    version, same rubric content. Held-out tasks frozen without a hash (no key
-    at freeze time) are matched by identity only.
+    Empty list = the release is still verifiable: every manifest task exists in
+    the corpus with an unchanged rubric hash and grader version. The manifest
+    task set is a *subset* check — corpus tasks the manifest does not name are
+    allowed to grow in (they belong to the next release), but a manifest task
+    that disappears or drifts fails loudly. Held-out tasks frozen without a
+    hash (no key at freeze time) are matched by identity only.
     """
     from bench.run import discover_tasks  # local: avoid a run<->releases cycle
 
@@ -130,8 +133,9 @@ def verify_release(
     frozen = {task["id"]: task for task in manifest.get("tasks", [])}
     for task_id in sorted(set(frozen) - set(live)):
         problems.append(f"task in release but missing from corpus: {task_id}")
-    for task_id in sorted(set(live) - set(frozen)):
-        problems.append(f"task in corpus but not in release: {task_id}")
+
+    # Tasks in the corpus but not in the manifest are fine: the manifest is a
+    # subset check so the corpus can grow between releases.
 
     for task_id in sorted(set(frozen) & set(live)):
         frozen_hash = frozen[task_id].get("rubric_sha256")

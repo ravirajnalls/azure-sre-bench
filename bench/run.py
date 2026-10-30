@@ -184,10 +184,12 @@ def load_release_checked(
 ) -> tuple[dict, list[dict]]:
     """Load a release manifest and verify the live corpus against it (issue #116).
 
-    Returns `(manifest, frozen_tasks)`. Any drift — a rubric edited since the
-    freeze, a task added or removed, a grader bump — raises `ValueError` with
-    the full problem list: a release run must be reproducible against the
-    frozen corpus or it should not be labeled with the release at all.
+    Returns `(manifest, frozen_tasks)`. Any drift against the manifest's tasks
+    — a rubric edited since the freeze, a manifest task removed, a grader bump
+    — raises `ValueError` with the full problem list. New corpus tasks the
+    manifest does not name are allowed: a release run must stay reproducible
+    against the tasks the manifest froze, while the corpus grows toward the
+    next release.
     """
     manifest = load_release(name)
     problems = verify_release(manifest, tasks_root=tasks_root)
