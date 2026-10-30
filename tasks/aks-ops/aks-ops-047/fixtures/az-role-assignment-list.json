@@ -1,0 +1,18 @@
+[
+  {
+    "name": "Key Vault Crypto User",
+    "principalId": "00000000-0000-0000-0000-000000000006",
+    "principalName": "aks-prod-eu (system-assigned managed identity)",
+    "principalType": "ServicePrincipal",
+    "roleDefinitionName": "Key Vault Crypto User",
+    "scope": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-prod-01/providers/Microsoft.KeyVault/vaults/kv-akskms0002"
+  },
+  {
+    "name": "Key Vault Crypto User",
+    "principalId": "00000000-0000-0000-0000-000000000006",
+    "principalName": "aks-prod-eu (system-assigned managed identity)",
+    "principalType": "ServicePrincipal",
+    "roleDefinitionName": "Key Vault Crypto User",
+    "scope": "/subscriptions/00000000-0000-0000-0000-000000000001"
+  }
+]

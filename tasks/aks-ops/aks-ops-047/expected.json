@@ -1,0 +1,12 @@
+{
+  "root_cause": [
+    ["kms", "azurekeyvaultkms", "key vault kms", "etcd encryption", "kms plugin", "kms provider"],
+    ["disabled", "enabled: false", "key is disabled", "key disabled"]
+  ],
+  "fix": [
+    ["enable the key", "re-enable", "enabled true", "enable the key version", "rotate", "recover"]
+  ],
+  "distractors": [
+    ["rbac", "role assignment", "crypto user", "missing permission", "managed identity"]
+  ]
+}

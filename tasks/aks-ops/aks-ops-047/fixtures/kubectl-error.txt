@@ -1,0 +1,20 @@
+# kubectl get secrets -n reporting  (2026-10-30 07:40 UTC)
+Error from server (InternalError): Internal error occurred: failed to list secrets in namespace reporting: rpc error: code = Internal desc = kms plugin: decrypt failed: azure kms provider: key vault decrypt operation returned Forbidden — key is currently disabled
+
+# kubectl create -f deployment-order-service.yaml  (07:41 UTC)
+Error from server (InternalError): error when creating "deployment-order-service.yaml": secrets "order-service-db" is forbidden: unable to encrypt new secret content: kms plugin: encrypt failed: azure kms provider: key vault encrypt operation returned Forbidden — key is currently disabled
+
+# kubectl get secrets -n default  (07:41 UTC)
+Error from server (InternalError): Internal error occurred: failed to list secrets in namespace default: rpc error: code = Internal desc = kms plugin: decrypt failed: azure kms provider: key vault decrypt operation returned Forbidden — key is currently disabled
+
+# kubectl get pods -n storefront  (07:42 UTC)
+NAME                              READY   STATUS              RESTARTS   AGE
+storefront-web-6c9b7d8f4-mrn2v    1/1     Running             0          6d
+catalog-api-5f7d9c6b8-v6kdr       1/1     Running             0          3d
+order-service-7d94c6f85c-2xkqm    0/1     CreateContainerConfigError   0          4m
+payment-worker-84ff9b6c4d-8jvzn   0/1     CreateContainerConfigError   0          2m
+
+# kubectl get events -n storefront --field-selector type=Warning  (07:43 UTC)
+LAST SEEN   TYPE      REASON                     OBJECT                            MESSAGE
+4m          Warning   FailedMount                pod/order-service-...             MountVolume.SetUp failed for volume "order-service-db" : references secret "order-service-db" which could not be read: internal error
+2m          Warning   FailedMount                pod/payment-worker-...            MountVolume.SetUp failed for volume "payment-worker-secrets" : references secret "payment-worker-secrets" which could not be read: internal error

@@ -1,0 +1,19 @@
+id: aks-ops-047
+canary: 00000000-0000-0000-0000-000000000114  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
+title: Cluster fails secret operations overnight after a Key Vault key change
+category: aks-ops
+difficulty: medium
+tags:
+  - aks-ops
+  - aks
+  - kms
+  - key-vault
+  - etcd-encryption
+  - secrets
+symptom: |
+  Since early this morning, kubectl get secrets fails with an internal error on
+  the aks-prod-eu cluster, and any new pod that references a Secret fails to
+  start. Already-running pods keep working, and no one changed RBAC, the
+  cluster identity, or the deployment manifests overnight. The API server logs
+  point at the KMS plugin, and every restart makes it worse — workloads that
+  restart cannot come up at all.

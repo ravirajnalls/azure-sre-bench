@@ -1,0 +1,22 @@
+{
+  "kid": "https://kv-akskms0002.vault.azure.net/keys/aks-etcd-key/00000000000000000000000000000000",
+  "attributes": {
+    "enabled": false,
+    "created": 1761510000,
+    "updated": 1761809000,
+    "exp": null,
+    "notBefore": null,
+    "recoverableDays": 90,
+    "recoveryLevel": "Recoverable"
+  },
+  "keyOperations": [
+    "encrypt",
+    "decrypt",
+    "sign",
+    "verify"
+  ],
+  "keySize": 3072,
+  "kty": "RSA-HSM",
+  "name": "aks-etcd-key",
+  "vault": "kv-akskms0002"
+}

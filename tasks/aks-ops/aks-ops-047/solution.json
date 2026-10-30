@@ -1,0 +1,15 @@
+{
+  "root_cause": "KMS etcd encryption is enabled on the cluster (securityProfile.azureKeyVaultKms uses key aks-etcd-key in kv-akskms0002), but that key is disabled overnight — attributes.enabled: false. The KMS plugin therefore cannot encrypt or decrypt etcd secret content: secret operations fail with InternalError and pods referencing Secrets cannot start. The vault audit log shows security automation sec-automation-sp disabled the key under policy KV-Key-Rotation-Cleanup-2026, minutes before KMS calls began failing.",
+  "evidence": [
+    "az-aks-show.json: securityProfile.azureKeyVaultKms.enabled is true with keyId pointing at https://kv-akskms0002.vault.azure.net/keys/aks-etcd-key — etcd is encrypted with this key",
+    "az-keyvault-key-show.json: the referenced key aks-etcd-key has attributes.enabled: false (updated overnight), so KMS encrypt/decrypt operations are rejected",
+    "kubectl-error.txt: secret list/create fail with 'kms plugin: decrypt failed ... key is currently disabled' and pods referencing Secrets hit CreateContainerConfigError/FailedMount, while running pods (which need no new secret operations) keep working",
+    "keyvault-audit.csv: a KeyUpdate (Disable key) by sec-automation-sp under policy KV-Key-Rotation-Cleanup-2026 succeeded at 03:12Z, followed immediately by Forbidden KeyDecrypt/KeyEncrypt from aks-prod-eu-kms with error 'key is disabled'",
+    "az-role-assignment-list.json: the cluster's identity holds the required vault crypto role on the vault and at subscription scope — permissions are intact and not the cause"
+  ],
+  "fix": "Restore the key so the KMS plugin works again: re-enable the referenced key version (az keyvault key update --vault-name kv-akskms0002 --name aks-etcd-key --enabled true — the key is Recoverable, so a disabled key is a state change, not data loss). If the automation was rotating, enable the new key version and update the cluster's azureKeyVaultKms keyId to it (az aks update with the kms profile). Then verify kubectl get secrets succeeds and the failed pods start, and exempt the KMS encryption key from the cleanup automation.",
+  "evidence_files": [
+    "az-aks-show.json",
+    "az-keyvault-key-show.json"
+  ]
+}
