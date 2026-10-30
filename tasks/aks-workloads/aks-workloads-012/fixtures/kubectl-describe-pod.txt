@@ -1,0 +1,61 @@
+Name:             catalog-api-7d9f8b6c4-hqk2m
+Namespace:        catalog
+Priority:         2000001000
+Priority Class:   system-cluster-critical
+Service Account:  catalog-api
+Node:             aks-npuser-31214664-vmss000001/10.240.0.35
+Start Time:       Thu, 30 Oct 2026 08:13:40 +0000
+Labels:           app=catalog-api
+                  pod-template-hash=7d9f8b6c4
+Annotations:      <none>
+Status:           Running
+IP:               10.244.2.71
+IPs:
+  IP:  10.244.2.71
+Containers:
+  catalog-api:
+    Container ID:   containerd://b7f1c9a2d5e34f808a1c6d2b9e7f4a3c5d8e2f1b0a9c8d7e6f5a4b3c2d1e0f9a8
+    Image:          catalogprod00001.azurecr.io/catalog-api:v2.7.1
+    Image ID:       catalogprod00001.azurecr.io/catalog-api@sha256:1e4c8f2b9a7d6e3c5b0a8f1d4e7c2b9a6f3d8e1c4b7a0d3f6e9c2b5a8d1f4e7c
+    Port:           8080/TCP
+    Host Port:      0/TCP
+    State:          Running
+      Started:      Thu, 30 Oct 2026 08:22:59 +0000
+    Last State:    Terminated
+      Reason:       Error
+      Exit Code:    143
+      Started:      Thu, 30 Oct 2026 08:22:19 +0000
+      Finished:     Thu, 30 Oct 2026 08:22:59 +0000
+    Ready:          False
+    Restart Count:  38
+    Liveness:       http-get http://:8080/healthz delay=10s timeout=2s period=10s #success=1 #failure=3
+    Environment:
+      CACHE_WARMUP_ON_START:  true
+      CACHE_WARMUP_SOURCES:   products-db.product_skus,top_categories
+      DB_HOST:                products-db.catalog.svc.cluster.local
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-x7k2m (ro)
+Conditions:
+  Type              Status
+  ContainersReady   False
+  Ready             False
+Volumes:
+  kube-api-access-x7k2m:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    ConfigMapOptional:       <nil>
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type     Reason     Age                     From               Message
+  ----     ------     ----                    ----               -------
+  Normal   Scheduled  9m37s                   default-scheduler  Successfully assigned catalog/catalog-api-7d9f8b6c4-hqk2m to aks-npuser-31214664-vmss000001
+  Normal   Pulled     17s (x40 over 9m37s)    kubelet            Container image "catalogprod00001.azurecr.io/catalog-api:v2.7.1" already present on machine
+  Normal   Created    17s (x40 over 9m37s)    kubelet            Created container catalog-api
+  Normal   Started    17s (x40 over 9m37s)    kubelet            Started container catalog-api
+  Warning  Unhealthy  7s (x120 over 9m31s)    kubelet            Liveness probe failed: HTTP probe failed with statuscode: 500
+  Normal   Killing    17s (x38 over 9m31s)    kubelet            Container catalog-api failed liveness probe, will be restarted
