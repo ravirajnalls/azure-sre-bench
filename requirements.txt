@@ -5,3 +5,6 @@ langchain-core>=0.3
 # age-encryption (age-encryption.org/v1) for held-out rubrics (issue #115);
 # keys/ciphertexts stay interoperable with the age CLI
 pyrage>=1.4,<2
+# smolagents adapter (issue #171): ToolCallingAgent with the model routed
+# through LiteLLM (any OpenAI-compatible endpoint via the LLM_* env trio)
+smolagents[litellm]>=1.19,<2

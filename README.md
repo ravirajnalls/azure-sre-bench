@@ -303,6 +303,26 @@ The adapter never talks to a model itself — your runnable does, inside the sam
 tool boundary as the ReAct baseline (only `symptom.md` and `fixtures/` are
 readable). On any failure it prints `{}` and exits 0, graded as a FAIL.
 
+## Run a smolagents agent
+
+`agents/smolagents_adapter.py` wraps a Hugging Face
+[`smolagents`](https://github.com/huggingface/smolagents) `ToolCallingAgent` in
+the same tool boundary as the ReAct baseline — `list_files`, `read_file`,
+`run_command`, and `submit_answer`. By default the agent's model is smolagents'
+`LiteLLMModel` configured from the shared `LLM_BASE_URL` / `LLM_API_KEY` /
+`LLM_MODEL` env trio (LiteLLM routes it as an OpenAI-compatible endpoint):
+
+```bash
+LLM_BASE_URL=... LLM_API_KEY=... LLM_MODEL=... \
+python -m bench run --agent agents/smolagents_adapter.py --task aks-networking-001
+```
+
+`SMOLAGENTS_AGENT_TARGET=module:attribute` swaps in your own factory (the tool
+list in, a ready `ToolCallingAgent` out) —
+[`examples/smolagents_agent.py`](examples/smolagents_agent.py) demonstrates the
+wiring against a scripted fake model (no API key needed). On any failure the
+adapter prints `{}` and exits 0, graded as a FAIL.
+
 ## Run an MCP-capable agent
 
 Any agent that speaks the Model Context Protocol can be benchmarked through the
