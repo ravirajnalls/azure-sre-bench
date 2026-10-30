@@ -1,0 +1,50 @@
+{
+  "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-prod-01/providers/Microsoft.Network/firewallPolicies/azfw-policy-prod-01/ruleCollectionGroups/DefaultApplicationRuleCollectionGroup",
+  "name": "DefaultApplicationRuleCollectionGroup",
+  "type": "Microsoft.Network/firewallPolicies/ruleCollectionGroups",
+  "location": "eastus",
+  "properties": {
+    "priority": 300,
+    "provisioningState": "Succeeded",
+    "ruleCollections": [
+      {
+        "ruleCollectionName": "ProdAllowInternet",
+        "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
+        "priority": 100,
+        "action": "Allow",
+        "rules": [
+          {
+            "name": "AllowMicrosoftManagement",
+            "ruleType": "ApplicationRule",
+            "protocols": [
+              { "protocolType": "Https", "port": 443 }
+            ],
+            "targetFqdns": [
+              "login.microsoftonline.com",
+              "management.azure.com"
+            ],
+            "sourceAddresses": [ "*" ]
+          },
+          {
+            "name": "AllowBlobStorage",
+            "ruleType": "ApplicationRule",
+            "protocols": [
+              { "protocolType": "Https", "port": 443 }
+            ],
+            "targetFqdns": [ "*.blob.core.windows.net" ],
+            "sourceAddresses": [ "*" ]
+          },
+          {
+            "name": "AllowContainerRegistryPrivate",
+            "ruleType": "ApplicationRule",
+            "protocols": [
+              { "protocolType": "Https", "port": 443 }
+            ],
+            "targetFqdns": [ "acrpaymentsprod01.azurecr.io" ],
+            "sourceAddresses": [ "10.20.0.0/16" ]
+          }
+        ]
+      }
+    ]
+  }
+}

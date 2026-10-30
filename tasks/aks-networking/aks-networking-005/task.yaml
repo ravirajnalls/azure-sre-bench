@@ -1,0 +1,19 @@
+id: aks-networking-005
+title: "Egress to the internet fails after firewall rollout"
+category: aks-networking
+difficulty: medium
+tags:
+  - aks
+  - aks-networking
+  - azure-firewall
+  - udr
+  - egress
+symptom: |
+  Two days after the network team moved egress for the payments cluster to
+  Azure Firewall, nodes in the user pool drop to NotReady intermittently and
+  image pulls from the Microsoft Container Registry (MCR) time out on new
+  pods. Outbound calls to management.azure.com and blob storage still
+  succeed, and pod-to-pod traffic inside the cluster is unaffected.
+  Deployments in the payments namespace are stuck in ImagePullBackOff and
+  the auto-repair alert for NotReady nodes has fired four times since 08:00
+  UTC.
