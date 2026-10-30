@@ -1,0 +1,30 @@
+# kubectl get deployment notifier -n notify -o yaml (spec excerpt)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notifier
+  namespace: notify
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: notifier
+  template:
+    metadata:
+      labels:
+        app: notifier
+    spec:
+      containers:
+        - name: notifier
+          image: shopacr0004.azurecr.io/notifier:2.7.1
+          env:
+            - name: SENDGRID_BASE_URL
+              value: https://api.sendgrid.com
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+      dnsConfig:
+        options:
+          - name: ndots
+            value: "5"

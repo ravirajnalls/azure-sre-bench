@@ -1,0 +1,12 @@
+{
+  "root_cause": [
+    ["ndots"],
+    ["search domain", "search suffix", "nxdomain"]
+  ],
+  "fix": [
+    ["ndots", "trailing dot", "dnsconfig", "dns config"]
+  ],
+  "distractors": [
+    ["sendgrid status", "provider outage", "sendgrid outage"]
+  ]
+}

@@ -1,0 +1,11 @@
+# kubectl logs -n kube-system deploy/coredns --tail 60 (CoreDNS log plugin enabled for the forward tier)
+[INFO] 10.244.7.19:43118 - 10241 "A IN api.sendgrid.com.notify.svc.cluster.local. udp 66 false 512" NXDOMAIN qr,aa,rd 148 0.000091210s
+[INFO] 10.244.7.19:43122 - 10242 "AAAA IN api.sendgrid.com.notify.svc.cluster.local. udp 66 false 512" NXDOMAIN qr,aa,rd 148 0.000087412s
+[INFO] 10.244.7.19:43126 - 10243 "A IN api.sendgrid.com.svc.cluster.local. udp 58 false 512" NXDOMAIN qr,aa,rd 148 0.000082113s
+[INFO] 10.244.7.19:43130 - 10244 "AAAA IN api.sendgrid.com.svc.cluster.local. udp 58 false 512" NXDOMAIN qr,aa,rd 148 0.000084005s
+[INFO] 10.244.7.19:43135 - 10245 "A IN api.sendgrid.com.cluster.local. udp 52 false 512" NXDOMAIN qr,aa,rd 148 0.000079882s
+[INFO] 10.244.7.19:43140 - 10246 "AAAA IN api.sendgrid.com.cluster.local. udp 52 false 512" NXDOMAIN qr,aa,rd 148 0.000081224s
+[INFO] 10.244.7.19:43144 - 10247 "A IN api.sendgrid.com.2mq4vlonwu1u51gnvdgy11o0h.ax-internal.cloudapp.net. udp 96 false 512" NXDOMAIN qr,rd 132 0.512401882s
+[INFO] 10.244.7.19:43149 - 10248 "AAAA IN api.sendgrid.com.2mq4vlonwu1u51gnvdgy11o0h.ax-internal.cloudapp.net. udp 96 false 512" NXDOMAIN qr,rd 132 0.498332104s
+[INFO] 10.244.7.19:43154 - 10249 "A IN api.sendgrid.com. udp 33 false 512" NOERROR qr,rd,ra 217 0.038102119s
+[INFO] 10.244.7.19:43158 - 10250 "AAAA IN api.sendgrid.com. udp 33 false 512" NOERROR qr,rd,ra 61 0.036882741s

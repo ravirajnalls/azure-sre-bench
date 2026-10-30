@@ -1,0 +1,16 @@
+{
+  "page": {
+    "id": "hbz2yhsqrvdj",
+    "name": "SendGrid status",
+    "url": "https://status.sendgrid.com"
+  },
+  "status": {
+    "indicator": "none",
+    "description": "All Systems Operational"
+  },
+  "components": [
+    { "name": "Web API (api.sendgrid.com)", "status": "operational" },
+    { "name": "Mail Send API", "status": "operational" },
+    { "name": "SMTP Relay", "status": "operational" }
+  ]
+}

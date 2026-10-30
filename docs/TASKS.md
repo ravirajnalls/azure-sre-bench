@@ -38,6 +38,7 @@
 | aks-networking-041 | Istio STRICT mTLS breaks a non-mesh client | hard | aks, istio, service-mesh, mtls, sidecar |
 | aks-networking-044 | Cilium L7 policy drops one HTTP path | medium | aks, cilium, network-policy, l7, hubble |
 | aks-networking-048 | App Gateway ingress 502 on healthy pods | medium | aks, application-gateway, agic, health-probe, 502 |
+| aks-networking-052 | Slow external calls from ndots | medium | aks, dns, coredns, ndots, resolv-conf |
 
 ## aks-ops
 

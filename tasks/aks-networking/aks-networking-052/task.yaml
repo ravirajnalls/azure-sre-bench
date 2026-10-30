@@ -1,0 +1,18 @@
+id: aks-networking-052
+canary: 00000000-0000-0000-0000-000000000114  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
+title: "Slow external calls from ndots"
+category: aks-networking
+difficulty: medium
+tags:
+  - aks
+  - dns
+  - coredns
+  - ndots
+  - resolv-conf
+symptom: |
+  Since the notifier deployment moved to its new namespace two days ago, every
+  call it makes to api.sendgrid.com adds roughly 200ms of latency, and email
+  sends are crawling. CoreDNS on the cluster is running hot — near its CPU
+  limit and with query rates several times the usual. The mail provider's own
+  status page is green, and the notifier pod itself shows no errors at all,
+  just slow.
