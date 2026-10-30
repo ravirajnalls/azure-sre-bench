@@ -1,9 +1,13 @@
 {
   "root_cause": [
-    ["liveness"],
-    ["warm", "startup", "initialdelay", "initial delay"]
+    ["no startupprobe", "missing startupprobe", "no startup probe", "missing startup probe"],
+    ["liveness probe", "livenessprobe", "initialdelayseconds 10", "killed by the liveness probe", "healthz returns 500"]
   ],
   "fix": [
-    ["startupprobe", "startup probe", "initialdelayseconds", "initial delay seconds"]
+    ["add a startupprobe", "startupprobe", "startup probe", "initialdelayseconds"]
+  ],
+  "distractors": [
+    ["products-db is slow", "products-db", "slow queries", "db latency"],
+    ["oomkilled", "out of memory", "512mi"]
   ]
 }

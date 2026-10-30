@@ -1,10 +1,12 @@
 {
   "root_cause": [
-    ["taint", "tainted", "untolerated taint", "noschedule", "no schedule"],
-    ["toleration", "tolerations", "no toleration", "missing toleration"]
+    ["sku=gpu:noschedule", "untolerated taint", "noschedule taint", "taint sku=gpu"],
+    ["no toleration", "no matching toleration", "missing toleration", "without a toleration"]
   ],
   "fix": [
-    ["toleration", "tolerations"],
-    ["sku", "gpu"]
+    ["add a toleration", "toleration", "tolerations"]
+  ],
+  "distractors": [
+    ["nvidia device plugin", "device plugin", "gpu plugin", "plugin is broken"]
   ]
 }
