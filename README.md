@@ -518,6 +518,37 @@ exits 0, graded as a FAIL. The mocked test (`tests/test_openhands_adapter.py`) p
 the full chain with a fake headless run: no OpenHands install, network, or API key
 needed.
 
+## Run k8sgpt (live mode only)
+
+`agents/adapters/k8sgpt_adapter.py` runs [k8sgpt](https://github.com/k8sgpt-ai/k8sgpt)
+against a **real API server**, so it only runs on [live-mode scenarios](live/README.md)
+(issue #126) — never on the fixture corpus, where the simulated `kubectl` serves
+canned output that a cluster scanner cannot consume. Install the `k8sgpt` CLI
+and an AI backend (`k8sgpt auth add ...`), then point it at the scenario's
+read-only agent kubeconfig:
+
+```bash
+live/scenarios/service-selector-mismatch/setup.sh
+export KUBECONFIG="$PWD/live/scenarios/service-selector-mismatch/agent.kubeconfig"
+
+# The adapter needs no task workspace — it prints the contract JSON:
+python agents/adapters/k8sgpt_adapter.py > /tmp/diagnosis.json
+
+# Grade the diagnosis with the scenario's grader:
+live/scenarios/service-selector-mismatch/check.sh diagnosis --answer /tmp/diagnosis.json
+```
+
+The adapter runs `k8sgpt analyze --explain --output json` and maps the findings
+into the contract JSON: one evidence line per finding (`kind/name: error`), the
+finding texts as the root cause, and the explained `instruction` fields (with
+`reason`/`details` fallbacks for other k8sgpt releases) as the fix. Without
+`KUBECONFIG` it refuses — it prints `{}` and exits 0 rather than scanning an
+unintended default cluster. The result record documents the scan: the
+`k8sgpt version` output, the exact command, and the live-only marker. The
+mocked test (`tests/test_k8sgpt_adapter.py`) proves the mapping and the
+`--explain --output json` invocation with a fake `k8sgpt` executable — no
+install or cluster needed.
+
 ## Baseline sweep
 
 One command runs every configured baseline — `naive`, the three adversarial
