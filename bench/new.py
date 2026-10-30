@@ -69,6 +69,42 @@ Use only placeholder GUIDs of the form 00000000-0000-0000-0000-00000000000X.
 FIXTURE_1_NAME = "kubectl-get-events.txt"
 FIXTURE_2_NAME = "az-resource-show.json"
 
+# Explainer skeleton (issue #149): the six required headings ship pre-filled
+# with <REPLACE-ME> placeholders so a fresh scaffold passes `bench validate`
+# and the contributor fills section by section. AGENTS.md "Explainer" has the
+# filled example.
+EXPLAINER_TEMPLATE = """\
+# {task_id} — explainer
+
+## How to investigate
+
+<REPLACE-ME: the investigation path, fixture by fixture — which file to open
+first, what it shows, what it rules out.>
+
+## Why the red herring misleads
+
+<REPLACE-ME: the plausible-but-wrong signal (e.g. {fixture_2}) and the
+disconfirming evidence that argues it away.>
+
+## Root cause
+
+<REPLACE-ME: the one-sentence diagnosis, with the decisive line from the
+decisive fixture quoted.>
+
+## Fix
+
+<REPLACE-ME: the concrete remediation — the command or config change and why
+it is safe.>
+
+## Prevention
+
+<REPLACE-ME: the guardrail, check, or process change that stops a recurrence.>
+
+## Further reading
+
+<REPLACE-ME: authoritative documentation links for the mechanism involved.>
+"""
+
 
 def next_task_id(tasks_root: Path, category: str) -> str:
     """Return the next free `<category>-<nnn>` id for `category`.
@@ -131,5 +167,11 @@ def scaffold_task(tasks_root: Path, category: str, title: str) -> Path:
     )
     (task_dir / "fixtures" / FIXTURE_2_NAME).write_text(
         FIXTURE_README, encoding="utf-8"
+    )
+    (task_dir / "explainer.md").write_text(
+        EXPLAINER_TEMPLATE.format(
+            task_id=task_id, fixture_2=FIXTURE_2_NAME
+        ),
+        encoding="utf-8",
     )
     return task_dir

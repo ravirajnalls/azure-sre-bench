@@ -31,7 +31,7 @@ from bench.sim import COMMANDS_ENV, COMMANDS_FILENAME, LOG_ENV, LOG_FILENAME, SI
 
 TASKS_DIR = Path("tasks")
 RESULTS_DIR = Path("results")
-HIDDEN_FILES = ("expected.json", "solution.json")
+HIDDEN_FILES = ("expected.json", "solution.json", "explainer.md")
 STDERR_TAIL_BYTES = 2048
 DEFAULT_NAME = "default"
 DEFAULT_TIMEOUT_S = 600
@@ -54,7 +54,10 @@ def prepare_workspace(task_dir: Path, workspace: Path) -> None:
     """Copy only the agent-visible files into the workspace.
 
     The information boundary: `expected.json` and `solution.json` must never be
-    copied where the agent can read them. `_commands.yaml` is excluded too: it
+    copied where the agent can read them. `explainer.md` is hidden too (issue
+    #149): it names the root cause and the red herring outright, so it exists
+    for humans on the Learn page, never in the agent's workspace.
+    `_commands.yaml` is excluded too: it
     configures the simulated CLIs (issue #111) and reaches the agent through
     the shim environment, not as a one-file answer dump in `fixtures/`.
     """

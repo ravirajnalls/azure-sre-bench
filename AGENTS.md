@@ -84,6 +84,26 @@ The symptom describes what on-call sees — alerts, user reports, dashboard move
 and **must not name the root cause**. It should be specific enough to start an
 investigation, never specific enough to end one.
 
+## Explainer (`explainer.md`, issue #149)
+
+Every task may ship an `explainer.md` next to its `task.yaml` — a post-incident
+write-up for humans. It is **never agent evidence**: the runner keeps it out of
+the workspace like `expected.json`/`solution.json`, and the site renders it on
+the spoiler-collapsed Learn page (`bench site` → `site/learn.html`).
+
+- **Optional for task IDs below 041; required from 041 on.** `bench validate`
+  errors on a missing explainer for a task whose backlog number is ≥ 41, and on
+  a malformed one for any task that ships it.
+- **Six required `##` headings**, exactly this spelling:
+  `How to investigate`, `Why the red herring misleads`, `Root cause`, `Fix`,
+  `Prevention`, `Further reading`.
+- **Every `fixtures/<file>` the prose names must exist** — the validator
+  resolves each `fixtures/...` reference and rejects dead links.
+- Read it back with `bench explain --task <task-id>`.
+
+The filled example is `tasks/aks-identity/aks-identity-008/explainer.md`;
+`bench new` scaffolds the six-heading skeleton.
+
 ## Difficulty rubric
 
 Difficulty is objective, declared in `task.yaml` and checked against the reference

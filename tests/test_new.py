@@ -169,3 +169,16 @@ def test_pr_template_mirrors_agents_definition_of_done():
     for expected in ("bench validate", "pytest -q", "bench catalog",
                      "One task per PR", "red herring"):
         assert expected in template
+
+
+# --- explainer scaffold (issue #149) ------------------------------------------
+
+
+def test_scaffold_includes_explainer_skeleton(scaffolded: Path):
+    from bench.tasks import EXPLAINER_REQUIRED_HEADINGS
+
+    explainer = (scaffolded / "explainer.md").read_text(encoding="utf-8")
+    for heading in EXPLAINER_REQUIRED_HEADINGS:
+        assert f"## {heading}" in explainer
+    # The skeleton is valid output for `bench validate` as shipped.
+    assert inspect_task(scaffolded).errors == []

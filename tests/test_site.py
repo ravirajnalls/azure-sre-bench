@@ -21,8 +21,11 @@ from bench.site import (
     aggregate,
     is_open_source,
     load_agent_metadata_map,
+    load_explainers,
     load_results,
+    render_explainer_html,
     render_html,
+    render_learn_html,
     safe_repo_url,
     task_category,
     task_difficulties,
@@ -546,3 +549,115 @@ def test_cli_site_bakes_difficulty_from_tasks_root(tmp_path: Path):
     )
     assert proc.returncode == 0, proc.stderr
     assert 'data-difficulty="medium"' in out.read_text(encoding="utf-8")
+
+
+# --- Learn page (issue #149) --------------------------------------------------
+
+
+def write_task(tmp_path: Path, task_id: str, title: str, explainer: str | None) -> Path:
+    task_dir = tmp_path / "tasks" / "monitoring" / task_id
+    task_dir.mkdir(parents=True)
+    (task_dir / "task.yaml").write_text(
+        f"id: {task_id}\ntitle: \"{title}\"\n", encoding="utf-8"
+    )
+    if explainer is not None:
+        (task_dir / "explainer.md").write_text(explainer, encoding="utf-8")
+    return task_dir
+
+
+EXPLAINER_MD = """\
+# monitoring-001 — explainer
+
+## How to investigate
+
+Read the logs first.
+
+## Why the red herring misleads
+
+Metrics dip predates the incident.
+
+## Root cause
+
+Wrong backend path.
+
+## Fix
+
+Correct it.
+
+## Prevention
+
+Manifest lint.
+
+## Further reading
+
+- docs
+"""
+
+
+def test_load_explainers_reads_title_and_content(tmp_path: Path):
+    write_task(tmp_path, "monitoring-001", "Ingress 502", EXPLAINER_MD)
+    explainers = load_explainers(tmp_path / "tasks")
+    assert list(explainers) == ["monitoring-001"]
+    assert explainers["monitoring-001"]["title"] == "Ingress 502"
+    assert "<h3>How to investigate</h3>" in explainers["monitoring-001"]["html"]
+
+
+def test_load_explainers_skips_tasks_without_one(tmp_path: Path):
+    write_task(tmp_path, "monitoring-001", "Ingress 502", EXPLAINER_MD)
+    write_task(tmp_path, "monitoring-002", "No explainer", None)
+    assert list(load_explainers(tmp_path / "tasks")) == ["monitoring-001"]
+
+
+def test_load_explainers_missing_root_is_empty(tmp_path: Path):
+    assert load_explainers(tmp_path / "nope") == {}
+
+
+def test_learn_page_collapsed_by_default():
+    page = render_learn_html(
+        {"monitoring-001": {"title": "t", "html": "<p>x</p>"}}
+    )
+    assert "<details>" in page
+    assert "<details open" not in page
+
+
+def test_learn_page_escapes_html():
+    page = render_learn_html(
+        {"monitoring-001": {"title": "<script>alert(1)</script>", "html": "<p>x</p>"}}
+    )
+    assert "<script>" not in page
+    assert "&lt;script&gt;" in page
+
+
+def test_render_explainer_html_markdown_subset():
+    html_out = render_explainer_html(
+        "## How to investigate\n\nplain <b>text</b>\n\n- item one\n- item two\n\n```bash\nkubectl <n>\n```"
+    )
+    assert "<h3>How to investigate</h3>" in html_out
+    assert "<p>plain &lt;b&gt;text&lt;/b&gt;</p>" in html_out
+    assert "<li>item one</li>" in html_out
+    assert "<pre><code>" in html_out
+
+
+def test_site_cli_writes_learn_page(tmp_path, capsys):
+    write_task(tmp_path, "monitoring-001", "Ingress 502", EXPLAINER_MD)
+    write_run(tmp_path / "results", "naive", [record("monitoring-001", 1.0, True)])
+    from bench.cli import main
+
+    exit_code = main(
+        [
+            "site",
+            "--results-root",
+            str(tmp_path / "results"),
+            "--tasks-root",
+            str(tmp_path / "tasks"),
+            "--out",
+            str(tmp_path / "out" / "index.html"),
+            "--learn-out",
+            str(tmp_path / "out" / "learn.html"),
+        ]
+    )
+    assert exit_code == 0
+    learn = (tmp_path / "out" / "learn.html").read_text(encoding="utf-8")
+    assert "<details>" in learn
+    assert "monitoring-001" in learn
+    assert "explainer pages" in capsys.readouterr().out

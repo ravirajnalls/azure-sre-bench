@@ -429,3 +429,21 @@ def test_record_without_usage_or_commands_omits_both_keys(tmp_path):
     record = runner.run_task(TEST_TASK, cmd, results_root=tmp_path)
     assert "usage" not in record
     assert "efficiency" not in record
+
+
+def test_workspace_never_contains_explainer(tmp_path):
+    """Issue #149: explainer.md names the root cause, so it is hidden from the
+    agent exactly like expected.json/solution.json."""
+    dest = tmp_path / "tasks" / "monitoring" / "run-test-001"
+    shutil.copytree(TEST_TASK, dest)
+    (dest / "explainer.md").write_text(
+        "# explainer\n## Root cause\nspoiler-giveaway\n", encoding="utf-8"
+    )
+
+    record = runner.run_task(dest, write_agent(tmp_path, LISTING_AGENT), results_root=tmp_path)
+
+    listing = record["answer"]["root_cause"]
+    assert "fixtures" in listing
+    assert "symptom.md" in listing
+    assert "explainer.md" not in listing
+    assert "spoiler-giveaway" not in record["answer"]["evidence"][0]
