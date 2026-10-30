@@ -1,0 +1,7 @@
+# kubectl get pods -n cert-manager -o wide
+NAME                                       READY   STATUS    RESTARTS   AGE     IP             NODE                                 NOMINATED NODE   READINESS GATES
+cert-manager-6d8b7c9f8d-x2kqv              1/1     Running   0          9d      10.244.0.41    aks-nodepool1-00000000-vmss000000    <none>           <none>
+cert-manager-cainjector-7f8d4b65c9-m4n8p   1/1     Running   0          9d      10.244.0.17    aks-nodepool1-00000000-vmss000000    <none>           <none>
+cert-manager-webhook-778f9c8b6d-p9wzs      1/1     Running   0          9d      10.244.0.23    aks-nodepool1-00000000-vmss000000    <none>           <none>
+# kubectl -n cert-manager get events --field-selector type=Warning --since=24h
+# (no output — no warning events in the cert-manager namespace)

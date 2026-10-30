@@ -1,0 +1,30 @@
+# kubectl get clusterissuer letsencrypt-prod -o yaml
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+  labels:
+    app.kubernetes.io/instance: cert-manager
+spec:
+  acme:
+    email: sre@contoso.com
+    preferredChain: ""
+    privateKeySecretRef:
+      name: letsencrypt-prod-account-key
+    server: https://acme-v02.api.letsencrypt.org/directory
+    skipTLSVerify: false
+    solvers:
+      - http01:
+          ingressClassName: nginx
+        selector: {}
+status:
+  acme:
+    lastRegisteredEmail: sre@contoso.com
+    registered: true
+    uri: https://acme-v02.api.letsencrypt.org/acme/acct/884923177
+  conditions:
+    - lastTransitionTime: "2026-07-11T21:10:55Z"
+      message: The ACME account was registered with the ACME server
+      reason: ACMEAccountRegistered
+      status: "True"
+      type: Ready

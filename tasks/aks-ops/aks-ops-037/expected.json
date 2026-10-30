@@ -1,0 +1,15 @@
+{
+  "root_cause": [
+    ["ingressclassname", "ingress class", "ingressclass", "ingress class name", "wrong ingress class", "nonexistent ingress class", "ingress class mismatch", "solver ingress class", "missing ingress class", "ingressclassname points at nginx", "class nginx", "no nginx controller", "nginx class does not exist"],
+    ["webapprouting.kubernetes.azure.com", "webapprouting", "web app routing", "webapprouting controller", "webapprouting add-on", "webapprouting ingress", "webapprouting ingressclass"],
+    ["http-01", "http01", "acme challenge", "acme http-01", "challenge", "http-01 self check", "self check failed", "acme http-01 challenge"],
+    ["solver", "solver ingress", "solver pod", "challenge solver", "solver never receives", "challenge never reaches the solver", "challenge requests never reach the solver"],
+    ["404", "status code 404", "expected 200 got 404", "404 not found", "404 from the webapprouting controller"]
+  ],
+  "fix": [
+    ["webapprouting.kubernetes.azure.com", "webapprouting", "ingressclassname", "ingress class", "ingressclass", "set ingressclassname to webapprouting.kubernetes.azure.com", "update the ingress class", "change the ingress class name to webapprouting.kubernetes.azure.com", "remove the ingressclassname", "delete the ingressclassname field", "point the solver at the webapprouting.kubernetes.azure.com class", "use the webapprouting.kubernetes.azure.com ingress class"]
+  ],
+  "distractors": [
+    ["cert-manager-webhook", "cert-manager-cainjector", "cert-manager crash", "cert-manager down", "cert-manager not running"]
+  ]
+}
