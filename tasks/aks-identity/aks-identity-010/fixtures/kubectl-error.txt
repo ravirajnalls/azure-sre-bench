@@ -1,0 +1,11 @@
+$ kubectl config current-context
+aks-payments-prod
+
+$ kubectl get pods -n payments
+Error from server (Forbidden): pods is forbidden: User: 00000000-0000-0000-0000-000000000004 cannot list resource "pods" in API group "" in the namespace "payments"
+
+$ kubectl get deployments -n payments
+Error from server (Forbidden): deployments.apps is forbidden: User: 00000000-0000-0000-0000-000000000004 cannot list resource "deployments" in API group "apps" in the namespace "payments"
+
+$ kubectl logs -n payments deploy/payments-api
+Error from server (Forbidden): pods "payments-api" is forbidden: User: 00000000-0000-0000-0000-000000000004 cannot get resource "pods" in API group "" in the namespace "payments"

@@ -1,0 +1,32 @@
+[
+  {
+    "canDelegate": false,
+    "condition": null,
+    "conditionVersion": null,
+    "createdOn": "2026-01-19T14:02:10.3318821Z",
+    "id": "/subscriptions/00000000-0000-0000-0000-000000000002/resourcegroups/rg-payments-prod/providers/Microsoft.ContainerService/managedClusters/aks-payments-prod/providers/Microsoft.Authorization/roleAssignments/00000000-0000-0000-0000-000000000007",
+    "name": "00000000-0000-0000-0000-000000000007",
+    "principalId": "00000000-0000-0000-0000-000000000005",
+    "principalType": "Group",
+    "roleDefinitionId": "/subscriptions/00000000-0000-0000-0000-000000000002/providers/Microsoft.Authorization/roleDefinitions/00000000-0000-0000-0000-000000000009",
+    "roleDefinitionName": "Azure Kubernetes Service Cluster User Role",
+    "scope": "/subscriptions/00000000-0000-0000-0000-000000000002/resourcegroups/rg-payments-prod/providers/Microsoft.ContainerService/managedClusters/aks-payments-prod",
+    "type": "Microsoft.Authorization/roleAssignments",
+    "updatedOn": "2026-01-19T14:02:10.3318821Z"
+  },
+  {
+    "canDelegate": false,
+    "condition": null,
+    "conditionVersion": null,
+    "createdOn": "2026-01-19T14:06:44.1024770Z",
+    "id": "/subscriptions/00000000-0000-0000-0000-000000000002/resourcegroups/rg-payments-prod/providers/Microsoft.ContainerService/managedClusters/aks-payments-prod/namespaces/payments/providers/Microsoft.Authorization/roleAssignments/00000000-0000-0000-0000-000000000008",
+    "name": "00000000-0000-0000-0000-000000000008",
+    "principalId": "00000000-0000-0000-0000-000000000006",
+    "principalType": "Group",
+    "roleDefinitionId": "/subscriptions/00000000-0000-0000-0000-000000000002/providers/Microsoft.Authorization/roleDefinitions/00000000-0000-0000-0000-00000000000a",
+    "roleDefinitionName": "Azure Kubernetes Service RBAC Writer",
+    "scope": "/subscriptions/00000000-0000-0000-0000-000000000002/resourcegroups/rg-payments-prod/providers/Microsoft.ContainerService/managedClusters/aks-payments-prod/namespaces/payments",
+    "type": "Microsoft.Authorization/roleAssignments",
+    "updatedOn": "2026-01-19T14:06:44.1024770Z"
+  }
+]

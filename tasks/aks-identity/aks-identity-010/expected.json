@@ -1,0 +1,9 @@
+{
+  "root_cause": [
+    ["azure rbac"],
+    ["role assignment", "no role", "missing role"]
+  ],
+  "fix": [
+    ["azure kubernetes service rbac", "rbac reader", "rbac writer"]
+  ]
+}

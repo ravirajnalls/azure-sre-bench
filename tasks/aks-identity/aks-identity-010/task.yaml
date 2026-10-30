@@ -1,0 +1,17 @@
+id: aks-identity-010
+title: SRE on-call group gets Forbidden in payments after Azure RBAC cutover
+category: aks-identity
+difficulty: hard
+tags:
+  - aks-identity
+  - azure-rbac
+  - entra
+  - kubernetes
+  - rbac
+symptom: >-
+  Members of the grp-sre-oncall Entra group get Forbidden on every kubectl
+  command in the payments namespace of aks-payments-prod — they cannot list
+  pods, deployments, or logs. The cluster cut over to Azure RBAC for
+  Kubernetes last week, and the payments RoleBinding for the group has been
+  double-checked and looks correct. No other team has reported access
+  problems.
