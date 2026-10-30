@@ -1,0 +1,33 @@
+{
+  "emailReceivers": [
+    {
+      "emailAddress": "oncall@pebench.example",
+      "name": "oncall",
+      "status": "Enabled",
+      "useCommonAlertSchema": true
+    }
+  ],
+  "enabled": true,
+  "groupShortName": "ag-prod",
+  "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-prod-01/providers/microsoft.insights/actionGroups/ag-prod-oncall",
+  "location": "global",
+  "name": "ag-prod-oncall",
+  "smsReceivers": [
+    {
+      "countryCode": "1",
+      "name": "primary-oncall",
+      "phoneNumber": "5550000000",
+      "status": "Enabled"
+    }
+  ],
+  "type": "Microsoft.Insights/ActionGroups",
+  "webhookReceivers": [
+    {
+      "identifierUri": "https://hooks.pebench.example/alerts",
+      "name": "ops-webhook",
+      "serviceUri": "https://hooks.pebench.example/alerts",
+      "status": "Enabled",
+      "useCommonAlertSchema": true
+    }
+  ]
+}

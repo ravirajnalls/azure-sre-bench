@@ -1,0 +1,30 @@
+{
+  "tables": [
+    {
+      "columns": [
+        {
+          "name": "AlertId",
+          "type": "string"
+        },
+        {
+          "name": "AlertName",
+          "type": "string"
+        },
+        {
+          "name": "Severity",
+          "type": "string"
+        },
+        {
+          "name": "MonitorCondition",
+          "type": "string"
+        },
+        {
+          "name": "StartDateTime",
+          "type": "datetime"
+        }
+      ],
+      "name": "PrimaryResult",
+      "rows": []
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "root_cause": [
+    ["avg", "average", "aggregation"],
+    ["threshold"]
+  ],
+  "fix": [
+    ["count", "countif", "percentage"]
+  ]
+}

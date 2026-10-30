@@ -1,0 +1,8 @@
+// high-5xx-rate — scheduled query backing the "High 5xx rate" alert
+// Workspace: log-prod-01 · scope: api-gateway (cloud_RoleName)
+// Deployed as the `condition.query` of rule high-5xx-rate; evaluated every 15 min
+requests
+| where cloud_RoleName == "api-gateway"
+| where TimeGenerated > ago(1h)
+| extend is5xx = iff(toint(resultCode) >= 500, 1, 0)
+| summarize avg(is5xx)
