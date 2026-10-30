@@ -1,0 +1,47 @@
+{
+  "value": [
+    {
+      "name": "npsystem",
+      "count": 3,
+      "maxPods": 30,
+      "vmSize": "Standard_D4s_v5",
+      "osType": "Linux",
+      "osSKU": "AzureLinux",
+      "mode": "System",
+      "provisioningState": "Succeeded",
+      "powerState": {
+        "code": "Running"
+      },
+      "orchestratorVersion": "1.30.7",
+      "currentKubernetesVersion": "1.30.7",
+      "nodeImageVersion": "AKSAzureLinux-V202609.0",
+      "networkPlugin": "azure",
+      "enableFIPS": false,
+      "upgradeSettings": {
+        "maxSurge": "33%"
+      }
+    },
+    {
+      "name": "npworkload",
+      "count": 20,
+      "maxPods": 30,
+      "vmSize": "Standard_D4s_v5",
+      "osType": "Linux",
+      "osSKU": "Ubuntu",
+      "mode": "User",
+      "provisioningState": "Succeeded",
+      "powerState": {
+        "code": "Running"
+      },
+      "orchestratorVersion": "1.30.7",
+      "currentKubernetesVersion": "1.30.4",
+      "nodeImageVersion": "AKSUbuntu-202609.0",
+      "networkPlugin": "azure",
+      "vnetSubnetID": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-prod-01/providers/Microsoft.Network/virtualNetworks/orders-vnet/subnets/snet-orders-workload",
+      "enableFIPS": false,
+      "upgradeSettings": {
+        "maxSurge": "100%"
+      }
+    }
+  ]
+}

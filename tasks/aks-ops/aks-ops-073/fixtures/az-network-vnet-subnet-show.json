@@ -1,0 +1,121 @@
+{
+  "name": "snet-orders-workload",
+  "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-prod-01/providers/Microsoft.Network/virtualNetworks/orders-vnet/subnets/snet-orders-workload",
+  "etag": "W/\"00000000-0000-0000-0000-000000000002\"",
+  "provisioningState": "Succeeded",
+  "addressPrefix": "10.240.16.0/25",
+  "resourceGroup": "rg-prod-01",
+  "type": "Microsoft.Network/virtualNetworks/subnets",
+  "ipConfigurations": [
+    {
+      "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-prod-01/providers/Microsoft.Network/networkInterfaces/orders-prod-aks-npworkload-0000000-vmss000000/ipconfig1",
+      "privateIPAddress": "10.240.16.4",
+      "privateIPAllocationMethod": "Dynamic"
+    },
+    {
+      "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-prod-01/providers/Microsoft.Network/networkInterfaces/orders-prod-aks-npworkload-0000000-vmss000001/ipconfig1",
+      "privateIPAddress": "10.240.16.5",
+      "privateIPAllocationMethod": "Dynamic"
+    },
+    {
+      "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-prod-01/providers/Microsoft.Network/networkInterfaces/orders-prod-aks-npworkload-0000000-vmss000002/ipconfig1",
+      "privateIPAddress": "10.240.16.6",
+      "privateIPAllocationMethod": "Dynamic"
+    },
+    {
+      "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-prod-01/providers/Microsoft.Network/networkInterfaces/orders-prod-aks-npworkload-0000000-vmss000003/ipconfig1",
+      "privateIPAddress": "10.240.16.7",
+      "privateIPAllocationMethod": "Dynamic"
+    },
+    {
+      "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-prod-01/providers/Microsoft.Network/networkInterfaces/orders-prod-aks-npworkload-0000000-vmss000004/ipconfig1",
+      "privateIPAddress": "10.240.16.8",
+      "privateIPAllocationMethod": "Dynamic"
+    },
+    {
+      "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-prod-01/providers/Microsoft.Network/networkInterfaces/orders-prod-aks-npworkload-0000000-vmss000005/ipconfig1",
+      "privateIPAddress": "10.240.16.9",
+      "privateIPAllocationMethod": "Dynamic"
+    },
+    {
+      "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-prod-01/providers/Microsoft.Network/networkInterfaces/orders-prod-aks-npworkload-0000000-vmss000006/ipconfig1",
+      "privateIPAddress": "10.240.16.10",
+      "privateIPAllocationMethod": "Dynamic"
+    },
+    {
+      "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-prod-01/providers/Microsoft.Network/networkInterfaces/orders-prod-aks-npworkload-0000000-vmss000007/ipconfig1",
+      "privateIPAddress": "10.240.16.11",
+      "privateIPAllocationMethod": "Dynamic"
+    },
+    {
+      "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-prod-01/providers/Microsoft.Network/networkInterfaces/orders-prod-aks-npworkload-0000000-vmss000008/ipconfig1",
+      "privateIPAddress": "10.240.16.12",
+      "privateIPAllocationMethod": "Dynamic"
+    },
+    {
+      "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-prod-01/providers/Microsoft.Network/networkInterfaces/orders-prod-aks-npworkload-0000000-vmss000009/ipconfig1",
+      "privateIPAddress": "10.240.16.13",
+      "privateIPAllocationMethod": "Dynamic"
+    },
+    {
+      "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-prod-01/providers/Microsoft.Network/networkInterfaces/orders-prod-aks-npworkload-0000000-vmss00000a/ipconfig1",
+      "privateIPAddress": "10.240.16.14",
+      "privateIPAllocationMethod": "Dynamic"
+    },
+    {
+      "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-prod-01/providers/Microsoft.Network/networkInterfaces/orders-prod-aks-npworkload-0000000-vmss00000b/ipconfig1",
+      "privateIPAddress": "10.240.16.15",
+      "privateIPAllocationMethod": "Dynamic"
+    },
+    {
+      "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-prod-01/providers/Microsoft.Network/networkInterfaces/orders-prod-aks-npworkload-0000000-vmss00000c/ipconfig1",
+      "privateIPAddress": "10.240.16.16",
+      "privateIPAllocationMethod": "Dynamic"
+    },
+    {
+      "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-prod-01/providers/Microsoft.Network/networkInterfaces/orders-prod-aks-npworkload-0000000-vmss00000d/ipconfig1",
+      "privateIPAddress": "10.240.16.17",
+      "privateIPAllocationMethod": "Dynamic"
+    },
+    {
+      "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-prod-01/providers/Microsoft.Network/networkInterfaces/orders-prod-aks-npworkload-0000000-vmss00000e/ipconfig1",
+      "privateIPAddress": "10.240.16.18",
+      "privateIPAllocationMethod": "Dynamic"
+    },
+    {
+      "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-prod-01/providers/Microsoft.Network/networkInterfaces/orders-prod-aks-npworkload-0000000-vmss00000f/ipconfig1",
+      "privateIPAddress": "10.240.16.19",
+      "privateIPAllocationMethod": "Dynamic"
+    },
+    {
+      "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-prod-01/providers/Microsoft.Network/networkInterfaces/orders-prod-aks-npworkload-0000000-vmss000010/ipconfig1",
+      "privateIPAddress": "10.240.16.20",
+      "privateIPAllocationMethod": "Dynamic"
+    },
+    {
+      "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-prod-01/providers/Microsoft.Network/networkInterfaces/orders-prod-aks-npworkload-0000000-vmss000011/ipconfig1",
+      "privateIPAddress": "10.240.16.21",
+      "privateIPAllocationMethod": "Dynamic"
+    },
+    {
+      "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-prod-01/providers/Microsoft.Network/networkInterfaces/orders-prod-aks-npworkload-0000000-vmss000012/ipconfig1",
+      "privateIPAddress": "10.240.16.22",
+      "privateIPAllocationMethod": "Dynamic"
+    },
+    {
+      "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-prod-01/providers/Microsoft.Network/networkInterfaces/orders-prod-aks-npworkload-0000000-vmss000013/ipconfig1",
+      "privateIPAddress": "10.240.16.23",
+      "privateIPAllocationMethod": "Dynamic"
+    }
+  ],
+  "delegations": [],
+  "serviceEndpoints": [
+    {
+      "service": "Microsoft.ContainerRegistry",
+      "locations": ["westeurope"]
+    }
+  ],
+  "serviceEndpointPolicies": [],
+  "privateEndpointNetworkPolicies": "Enabled",
+  "privateLinkServiceNetworkPolicies": "Enabled"
+}
