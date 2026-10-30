@@ -1,0 +1,23 @@
+{
+  "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-prod-01/providers/Microsoft.ContainerService/managedClusters/aks-prod-eu",
+  "name": "aks-prod-eu",
+  "location": "westeurope",
+  "kubernetesVersion": "1.30.6",
+  "securityProfile": {
+    "azureKeyVaultKms": {
+      "enabled": true,
+      "keyId": "https://kv-akskms0002.vault.azure.net/keys/aks-etcd-key/00000000000000000000000000000000",
+      "keyVaultNetworkAccess": "Public",
+      "keyVaultResourceId": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-prod-01/providers/Microsoft.KeyVault/vaults/kv-akskms0002"
+    },
+    "defender": {
+      "logAnalyticsWorkspaceResourceId": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-prod-01/providers/microsoft.operationalinsights/workspaces/law-prod-01",
+      "securityMonitoring": {
+        "enabled": true
+      }
+    }
+  },
+  "provisioningState": "Succeeded",
+  "resourceGroup": "rg-prod-01",
+  "type": "Microsoft.ContainerService/managedClusters"
+}

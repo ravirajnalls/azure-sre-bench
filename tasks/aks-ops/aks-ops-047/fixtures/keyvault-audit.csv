@@ -1,0 +1,7 @@
+Time,CallerIPAddress,OperationName,ResultSignature,CorrelationId,RequestUri,Properties
+2026-10-30T03:12:44Z,10.20.4.15,KeyUpdate (Disable key),Success,00000000-0000-0000-0000-000000000008,/keys/aks-etcd-key/update,"{""requestObject"":{""attributes"":{""enabled"":false}},""caller"":""sec-automation-sp"",""policy"":""KV-Key-Rotation-Cleanup-2026""}"
+2026-10-30T03:12:45Z,10.20.4.15,KeyGet,Success,00000000-0000-0000-0000-000000000008,/keys/aks-etcd-key,"{""caller"":""sec-automation-sp""}"
+2026-10-30T03:15:01Z,aks-prod-eu,KeyDecrypt,Forbidden,00000000-0000-0000-0000-000000000009,/keys/aks-etcd-key/decrypt,"{""caller"":""aks-prod-eu-kms"",""error"":""key is disabled""}"
+2026-10-30T03:15:02Z,aks-prod-eu,KeyDecrypt,Forbidden,00000000-0000-0000-0000-00000000000a,/keys/aks-etcd-key/decrypt,"{""caller"":""aks-prod-eu-kms"",""error"":""key is disabled""}"
+2026-10-30T03:15:03Z,aks-prod-eu,KeyEncrypt,Forbidden,00000000-0000-0000-0000-00000000000b,/keys/aks-etcd-key/encrypt,"{""caller"":""aks-prod-eu-kms"",""error"":""key is disabled""}"
+2026-10-30T06:20:11Z,10.20.4.15,KeyUpdate (Disable key),Success,00000000-0000-0000-0000-00000000000c,/keys/app-cache-key/update,"{""requestObject"":{""attributes"":{""enabled"":false}},""caller"":""sec-automation-sp"",""policy"":""KV-Key-Rotation-Cleanup-2026""}"
