@@ -3,6 +3,47 @@
   "name": "aks-prod",
   "location": "eastus",
   "kubernetesVersion": "1.29.7",
+  "dnsPrefix": "aks-prod-eus-01",
+  "agentPoolProfiles": [
+    {
+      "name": "systempool",
+      "count": 1,
+      "vmSize": "Standard_D4ads_v5",
+      "osType": "Linux",
+      "osSKU": "AzureLinux",
+      "mode": "System",
+      "orchestratorVersion": "1.29.7",
+      "currentOrchestratorVersion": "1.29.7",
+      "maxPods": 110,
+      "provisioningState": "Succeeded",
+      "powerState": {
+        "code": "Running"
+      },
+      "upgradeSettings": {
+        "maxSurge": "33%",
+        "nodeSoakDurationInMinutes": 0
+      }
+    },
+    {
+      "name": "apps",
+      "count": 3,
+      "vmSize": "Standard_D4ads_v5",
+      "osType": "Linux",
+      "osSKU": "Ubuntu",
+      "mode": "User",
+      "orchestratorVersion": "1.29.7",
+      "currentOrchestratorVersion": "1.29.7",
+      "maxPods": 110,
+      "provisioningState": "Succeeded",
+      "powerState": {
+        "code": "Running"
+      },
+      "upgradeSettings": {
+        "maxSurge": "1",
+        "nodeSoakDurationInMinutes": 0
+      }
+    }
+  ],
   "networkProfile": {
     "networkPlugin": "azure",
     "networkPluginMode": "overlay",

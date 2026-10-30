@@ -264,6 +264,38 @@ def test_logs_timestamped_line_with_level_passes(tmp_path):
     assert findings_for(root) == []
 
 
+def test_logs_envoy_native_severity_passes_level_check(tmp_path):
+    # istio-proxy logs Envoy's native format: a lowercase severity word right
+    # after the ISO timestamp (issue #156, aks-networking-041).
+    root = log_task(
+        tmp_path,
+        files={
+            "istio-proxy.log": (
+                "2026-10-28T09:14:02.318Z warning envoy connection [C2174] "
+                "TLS handshake failed: wrong version number, peer 10.240.5.23:48214\n"
+                "2026-10-28T09:14:15.002Z info    envoy connection [C2205] "
+                "TLS handshake complete: TLSv1.3\n"
+                "2026-10-28T09:14:16.118Z debug   envoy connection [C2174] "
+                "socket closed: transport handshake failure\n"
+            ),
+        },
+    )
+    assert findings_for(root) == []
+
+
+def test_logs_lowercase_error_in_message_text_still_flagged(tmp_path):
+    # "error" inside the message body is not level evidence — only a severity
+    # word directly after the timestamp counts for the Envoy-style pattern.
+    root = log_task(
+        tmp_path,
+        files={
+            "app.log": "2026-10-30T06:00:12Z SSL routines::error:0A00010A wrong version\n",
+        },
+    )
+    findings = findings_for(root)
+    assert any("no severity level" in f.message for f in findings)
+
+
 def test_logs_ado_pipeline_transcript_is_exempt_from_level_check(tmp_path):
     transcript = (
         "2026-10-30T06:02:10.1173411Z ##[section]Starting: init\n"

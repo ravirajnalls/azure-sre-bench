@@ -274,6 +274,14 @@ LEVEL_RE = re.compile(
     r"\b(INFO|WARN|WARNING|ERROR|ERR|FATAL|CRITICAL|DEBUG|TRACE|NOTICE|LOG)\b"
 )
 
+# Envoy/istio-proxy native format: a lowercase severity word directly after
+# the ISO timestamp, e.g. "2026-10-28T09:14:02.318Z warning envoy connection".
+# Position (right after the timestamp) is the discriminator, so message text
+# that merely contains the word "error" cannot produce false level evidence.
+ENVOY_LEVEL_RE = re.compile(
+    ISO_TS_RE.pattern + r"\s+(info|warning|error|critical|debug|trace)\b"
+)
+
 # Bracketed levels, e.g. ama-logs "2026-10-30T08:05:12Z [info] AgentHeartbeat:".
 BRACKET_LEVEL_RE = re.compile(
     r"\[(info|warning|error|debug|critical|verbose|notice)\]", re.IGNORECASE
@@ -625,6 +633,7 @@ def _has_level_evidence(line: str) -> bool:
         LEVEL_RE.search(line)
         or BRACKET_LEVEL_RE.search(line)
         or FUNCTIONS_HOST_RE.search(line)
+        or ENVOY_LEVEL_RE.search(line)
     )
 
 
