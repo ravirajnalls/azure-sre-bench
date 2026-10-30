@@ -73,3 +73,27 @@ sweep:
       requires_env: [FOUNDRY_ENDPOINT, FOUNDRY_API_KEY, FOUNDRY_MODEL]
       env:
         FOUNDRY_MODEL: gpt-4o
+
+    # Native tool-use baselines (issue #174): the ReAct tool set and step
+    # budget over each provider's native tool-calling API, so Claude and GPT
+    # rows are comparable with the OpenAI-compatible shim. Skipped
+    # (missing-env) until real credentials are approved.
+    - name: native-tool-agent-claude
+      command: python agents/native_tool_agent.py
+      model: claude-sonnet-4-5
+      provider: anthropic
+      framework: native-tools
+      requires_env: [NATIVE_PROVIDER, ANTHROPIC_API_KEY, ANTHROPIC_MODEL]
+      env:
+        NATIVE_PROVIDER: anthropic
+        ANTHROPIC_MODEL: claude-sonnet-4-5
+
+    - name: native-tool-agent-gpt
+      command: python agents/native_tool_agent.py
+      model: gpt-5
+      provider: openai
+      framework: native-tools
+      requires_env: [NATIVE_PROVIDER, OPENAI_API_KEY, OPENAI_MODEL]
+      env:
+        NATIVE_PROVIDER: openai
+        OPENAI_MODEL: gpt-5
