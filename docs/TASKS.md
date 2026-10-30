@@ -41,6 +41,7 @@
 | aks-ops-020 | Cluster autoscaler won't add nodes during Black Friday load | easy | aks-ops, aks, autoscaler, scaling, kubernetes |
 | aks-ops-021 | Node repeatedly NotReady with pod evictions while CPU and memory look healthy | medium | aks-ops, aks, node, kubelet, kubernetes |
 | aks-ops-022 | StatefulSet pod stays Pending while its PVC is Bound | medium | aks-ops, aks, storage, statefulset, kubernetes |
+| aks-ops-023 | payments-api full outage during overnight spot evictions | medium | aks-ops, aks, spot, scheduling, kubernetes |
 | aks-ops-024 | Container logs missing in Log Analytics | medium | aks-ops, aks, monitoring, container-insights, log-analytics |
 | aks-ops-025 | AKS monthly bill doubled while traffic is flat | medium | aks-ops, aks, cost, autoscaling, kubernetes |
 

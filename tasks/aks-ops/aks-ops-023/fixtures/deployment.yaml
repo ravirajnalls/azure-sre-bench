@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payments-api
+  namespace: payments
+  uid: 00000000-0000-0000-0000-000000000004
+  resourceVersion: "9912764"
+  generation: 23
+  creationTimestamp: "2026-05-02T09:41:18Z"
+  annotations:
+    deployment.kubernetes.io/revision: "23"
+    kubernetes.io/change-cause: >-
+      release 2026.10.28: drop node affinity to npuser so the scheduler can
+      bin-pack freely during overnight scale-up
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: payments-api
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: payments-api
+    spec:
+      tolerations:
+        - key: kubernetes.azure.com/scaleSetPriority
+          operator: Equal
+          value: Spot
+          effect: NoSchedule
+      containers:
+        - name: payments-api
+          image: shopacr00000001.azurecr.io/payments-api:2026.10.28
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 3
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 500m
+              memory: 512Mi
+            limits:
+              memory: 1Gi
+      terminationGracePeriodSeconds: 30

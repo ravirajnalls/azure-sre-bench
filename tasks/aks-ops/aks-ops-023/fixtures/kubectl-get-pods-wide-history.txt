@@ -1,0 +1,29 @@
+# Pod placement history — payments namespace, three snapshots from the
+# on-call investigation. Same command run at three points in time:
+#   kubectl get pods -n payments -o wide
+
+## Snapshot 1 — 2026-10-29 01:55:02 UTC (healthy, pre-incident)
+
+NAME                            READY   STATUS    RESTARTS   AGE     IP             NODE                                    NOMINATED NODE   READINESS GATES
+payments-api-66c4d7b8f4-2mrvl   1/1     Running   0          5h2m    10.244.3.12    aks-npspot-00000001-vmss000000          <none>           <none>
+payments-api-66c4d7b8f4-7hskp   1/1     Running   0          5h2m    10.244.3.51    aks-npspot-00000001-vmss000001          <none>           <none>
+payments-api-66c4d7b8f4-kd9zq   1/1     Running   0          5h4m    10.244.3.77    aks-npspot-00000001-vmss000002          <none>           <none>
+payments-api-66c4d7b8f4-xq4tn   1/1     Running   0          5h4m    10.244.3.103   aks-npspot-00000001-vmss000003          <none>           <none>
+
+## Snapshot 2 — 2026-10-29 02:09:37 UTC (mid-outage)
+
+NAME                            READY   STATUS    RESTARTS   AGE   IP       NODE                                    NOMINATED NODE   READINESS GATES
+payments-api-66c4d7b8f4-2mrvl   0/1     Evicted   0          5h2m   <none>         aks-npspot-00000001-vmss000000          <none>           <none>
+payments-api-66c4d7b8f4-7hskp   0/1     Evicted   0          5h2m   <none>         aks-npspot-00000001-vmss000001          <none>           <none>
+payments-api-66c4d7b8f4-kd9zq   0/1     Evicted   0          5h4m   <none>         aks-npspot-00000001-vmss000002          <none>           <none>
+payments-api-66c4d7b8f4-xq4tn   0/1     Evicted   0          5h4m   <none>         aks-npspot-00000001-vmss000003          <none>           <none>
+payments-api-66c4d7b8f4-6v8bj   0/1     Pending   0          4s      <none>         <none>                                  <none>           <none>
+payments-api-66c4d7b8f4-b5rmc   0/1     Pending   0          3s      <none>         <none>                                  <none>           <none>
+
+## Snapshot 3 — 2026-10-29 02:19:44 UTC (recovered)
+
+NAME                            READY   STATUS    RESTARTS   AGE     IP             NODE                                    NOMINATED NODE   READINESS GATES
+payments-api-66c4d7b8f4-6v8bj   1/1     Running   0          10m     10.244.3.134   aks-npspot-00000001-vmss000000          <none>           <none>
+payments-api-66c4d7b8f4-b5rmc   1/1     Running   0          9m      10.244.3.156   aks-npspot-00000001-vmss000001          <none>           <none>
+payments-api-66c4d7b8f4-tz8wd   1/1     Running   0          8m      10.244.3.178   aks-npspot-00000001-vmss000002          <none>           <none>
+payments-api-66c4d7b8f4-wl2hf   1/1     Running   0          6m      10.244.3.190   aks-npspot-00000001-vmss000003          <none>           <none>

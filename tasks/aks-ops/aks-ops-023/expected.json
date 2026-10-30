@@ -1,0 +1,9 @@
+{
+  "root_cause": [
+    ["spot"],
+    ["all replicas", "same pool", "every replica", "tolerat"]
+  ],
+  "fix": [
+    ["affinity", "topology spread", "topologyspreadconstraints", "remove the toleration", "regular pool", "regular node pool", "non-spot"]
+  ]
+}

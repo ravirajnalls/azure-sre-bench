@@ -1,0 +1,11 @@
+{
+  "root_cause": "All payments-api replicas ran on the spot node pool. The deployment tolerates the spot taint (kubernetes.azure.com/scaleSetPriority=Spot:NoSchedule) and, since release 2026.10.28 removed its node affinity to npuser, has no node affinity or topology spread constraint keeping any replica on the regular pool — so the scheduler packed every replica onto npspot nodes. When Azure evicted all four spot VMs around 02:07–02:08 UTC, the entire service went down at once; a PDB could not help because spot evictions are not voluntary disruptions and ignore disruption budgets.",
+  "evidence": [
+    "deployment.yaml: tolerates kubernetes.azure.com/scaleSetPriority=Spot:NoSchedule, and no nodeAffinity or topologySpreadConstraints anywhere in the pod spec",
+    "kubectl-get-pods-wide-history.txt: all four replicas on aks-npspot-...-vmss000000..3 in every snapshot, Evicted at 02:09 and recreated on npspot again",
+    "az-aks-nodepool-list.json: npspot is scaleSetPriority=Spot with scaleSetEvictionPolicy=Delete and the matching NoSchedule taint; npuser and systempool are regular pools",
+    "aks-activity-log.json: four VM deletions on aks-npspot-00000001 between 02:07:41 and 02:08:03 UTC, caller Azure Platform Infrastructure, subStatus Evicted",
+    "kubectl-get-pdb.txt: payments-api PDB shows Allowed disruptions 0 with 4 healthy pods, yet all four were evicted — the red herring that rules out the PDB as a protection"
+  ],
+  "fix": "Keep the workload off spot, or at least spread it: remove the spot toleration (or add nodeAffinity / nodeSelector requiring a regular pool) so payments-api only lands on npuser, and add topologySpreadConstraints so replicas never share a single failure domain; if spot is desired for cost, run a mixed strategy with a minimum number of replicas pinned to the regular pool. Note the PDB cannot prevent spot evictions."
+}
