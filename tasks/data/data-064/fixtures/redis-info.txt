@@ -1,0 +1,37 @@
+# INFO rediscache-session-prod — captured 2026-10-29T10:22:00Z (trimmed to relevant sections)
+# Server
+redis_version:7.2.128
+redis_mode:standalone
+os:Linux 5.15.0 x86_64
+run_id:8f4c2a1b9e6d3c7a5b0f2e4d6a8c0b2d
+# Clients
+connected_clients:148
+cluster_connections:0
+maxclients:10000
+blocked_clients:0
+# Memory
+used_memory:3437869056
+used_memory_human:3.20G
+used_memory_peak_human:3.41G
+maxmemory:8589934592
+maxmemory_human:8.00G
+maxmemory_policy:allkeys-lru
+mem_fragmentation_ratio:1.12
+# Stats
+total_connections_received:88241
+instantaneous_ops_per_sec:8412
+total_net_input_bytes:2198836424
+total_net_output_bytes:884129536
+rejected_connections:0
+evicted_keys:0
+keyspace_hits:31984412
+keyspace_misses:1284770
+latest_fork_usec:412
+# CPU
+used_cpu_sys:118473.204351
+used_cpu_sys_children:89.412077
+used_cpu_user:71284.551022
+# Latency monitor
+latency_latest_event:slow-command
+# Keyspace
+db0:keys=2148731,expires=2104019,avg_ttl=3660000

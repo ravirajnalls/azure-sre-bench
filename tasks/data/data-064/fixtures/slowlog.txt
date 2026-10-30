@@ -1,0 +1,43 @@
+# SLOWLOG GET rediscache-session-prod — captured 2026-10-29T10:22:00Z
+# (redis-cli SLOWLOG GET 25, trimmed to the slowest entries; durations in microseconds)
+1)  1) (integer) 1488321
+    2) (integer) 1793269200
+    3) (integer) 918742
+    4) 1) "KEYS"
+       2) "*"
+2)  1) (integer) 1488320
+    2) (integer) 1793268900
+    3) (integer) 884015
+    4) 1) "KEYS"
+       2) "*"
+3)  1) (integer) 1488316
+    2) (integer) 1793268600
+    3) (integer) 902377
+    4) 1) "KEYS"
+       2) "*"
+4)  1) (integer) 1488309
+    2) (integer) 1793268300
+    3) (integer) 877264
+    4) 1) "KEYS"
+       2) "*"
+5)  1) (integer) 1488301
+    2) (integer) 1793268000
+    3) (integer) 891553
+    4) 1) "KEYS"
+       2) "*"
+6)  1) (integer) 1488290
+    2) (integer) 1793267700
+    3) (integer) 864918
+    4) 1) "KEYS"
+       2) "*"
+7)  1) (integer) 1488277
+    2) (integer) 1793267400
+    3) (integer) 898240
+    4) 1) "KEYS"
+       2) "*"
+8)  1) (integer) 1488261
+    2) (integer) 1793267100
+    3) (integer) 871033
+    4) 1) "KEYS"
+       2) "*"
+# slowlog-log-slower-than: 10000 (10 ms) — every entry above is ~90x the threshold

@@ -1,0 +1,12 @@
+{
+  "root_cause": [
+    ["keys", "keys *", "blocking"],
+    ["inventory", "cache-inventory-job", "observability job", "cron"]
+  ],
+  "fix": [
+    ["scan", "replace keys", "use scan", "cursor"]
+  ],
+  "distractors": [
+    ["maxmemory", "memory pressure", "eviction", "evicted"]
+  ]
+}
