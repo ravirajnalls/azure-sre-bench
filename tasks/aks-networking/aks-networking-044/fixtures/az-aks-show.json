@@ -1,0 +1,17 @@
+{
+  "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-aks-prod/providers/Microsoft.ContainerService/managedClusters/aks-prod",
+  "name": "aks-prod",
+  "location": "eastus",
+  "kubernetesVersion": "1.29.7",
+  "networkProfile": {
+    "networkPlugin": "azure",
+    "networkPluginMode": "overlay",
+    "networkDataplane": "cilium",
+    "networkPolicy": "cilium",
+    "podCidr": "10.244.0.0/16",
+    "serviceCidr": "10.0.0.0/16",
+    "dnsServiceIp": "10.0.0.10",
+    "loadBalancerSku": "standard"
+  },
+  "provisioningState": "Succeeded"
+}

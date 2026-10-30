@@ -1,0 +1,11 @@
+# hubble observe --namespace store --verdict D --last 20 --output compact
+Oct 28 09:41:02.117 store/bff-7f8c6d9b4-m2vqn:41233 -> store/orders-api-6d9b7c5f4-kj8xz:8080 http GET /api/v2/orders VERDICT=DROPPED rule=CiliumNetworkPolicy/store/orders-api-l7
+Oct 28 09:41:02.442 store/bff-7f8c6d9b4-m2vqn:41249 -> store/orders-api-6d9b7c5f4-kj8xz:8080 http GET /api/v2/orders VERDICT=DROPPED rule=CiliumNetworkPolicy/store/orders-api-l7
+Oct 28 09:41:03.009 store/bff-7f8c6d9b4-m2vqn:41260 -> store/orders-api-6d9b7c5f4-kj8xz:8080 http GET /api/v2/orders VERDICT=DROPPED rule=CiliumNetworkPolicy/store/orders-api-l7
+
+# hubble observe --namespace store --last 5 --output compact (same window, all verdicts)
+Oct 28 09:41:02.120 store/bff-7f8c6d9b4-m2vqn:41236 -> store/orders-api-6d9b7c5f4-kj8xz:8080 http GET /api/v1/orders VERDICT=FORWARDED rule=CiliumNetworkPolicy/store/orders-api-l7
+Oct 28 09:41:02.121 store/bff-7f8c6d9b4-m2vqn:41238 -> store/orders-api-6d9b7c5f4-kj8xz:8080 http GET /api/v1/orders/5921 VERDICT=FORWARDED rule=CiliumNetworkPolicy/store/orders-api-l7
+Oct 28 09:41:02.444 store/bff-7f8c6d9b4-m2vqn:41251 -> store/orders-api-6d9b7c5f4-kj8xz:8080 http GET /api/v1/orders VERDICT=FORWARDED rule=CiliumNetworkPolicy/store/orders-api-l7
+Oct 28 09:41:03.011 store/bff-7f8c6d9b4-m2vqn:41262 -> store/orders-api-6d9b7c5f4-kj8xz:8080 http GET /api/v1/orders VERDICT=FORWARDED rule=CiliumNetworkPolicy/store/orders-api-l7
+Oct 28 09:41:03.013 store/payments-9c4d8f6b7-v2r9k:51002 -> store/orders-api-6d9b7c5f4-kj8xz:8080 http GET /healthz VERDICT=FORWARDED rule=CiliumNetworkPolicy/store/orders-api-l7
