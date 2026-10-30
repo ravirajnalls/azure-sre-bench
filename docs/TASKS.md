@@ -36,6 +36,12 @@
 | aks-workloads-012 | catalog-api pods restart every ~40s after a cache warm-up release | easy | aks, aks-workloads, kubernetes, probes, crashloopbackoff |
 | aks-workloads-017 | HPA never scales out while checkout-api pods are CPU-pegged | easy | aks-workloads, aks, kubernetes, hpa, autoscaling, scaling |
 
+## cost
+
+| ID | Title | Difficulty | Tags |
+| --- | --- | --- | --- |
+| cost-031 | Steady storage cost creep in the build agent resource group | easy | cost, azure, storage, managed-disks, automation |
+
 ## key-vault
 
 | ID | Title | Difficulty | Tags |

@@ -1,0 +1,11 @@
+{
+  "root_cause": "The weekly build agent image rollout replaces each VM in rg-buildagents by deleting it with az vm delete and recreating it from a fresh image, but the script never deletes the OS disk the old VM leaves behind. Twelve weekly rollouts since early August have stranded 48 unattached Premium managed disks (four per rollout) — their ~$885 of October spend is what keeps growing the group's storage bill while the four running VMs stay constant.",
+  "evidence": [
+    "cost-by-resource.csv: 52 Microsoft.Compute/disks rows cost $884.63 in October versus $292.99 for the four Microsoft.Compute/virtualMachines and $8.12 for the single storage account",
+    "az-disk-list.json: 48 disks report diskState Unattached with managedBy null, created on a weekly cadence from 2026-08-03 to 2026-10-19; only the 4 current fleet disks are Attached",
+    "cleanup-script.sh: replace-agents.sh runs az vm delete on each replaced build VM and never deletes the detached OS disk",
+    "az-vm-list.json: the fleet is still exactly buildagent-01 through buildagent-04, all running — the VM count never grew",
+    "az-storage-account-list.json: the single artifact storage account is healthy Standard_LRS and costs under $10/month"
+  ],
+  "fix": "Delete the 48 unattached OS disks (for each disk with diskState Unattached: az disk delete --resource-group rg-buildagents --name <disk>, or loop over az disk list --query '[?diskState==\"Unattached\"].name' --output tsv), and change replace-agents.sh to delete the detached OS disk after each az vm delete — or pass --force-deletion — so weekly image rollouts stop accumulating disks."
+}

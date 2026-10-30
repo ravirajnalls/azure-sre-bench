@@ -1,0 +1,16 @@
+id: cost-031
+title: Steady storage cost creep in the build agent resource group
+category: cost
+difficulty: easy
+tags:
+  - cost
+  - azure
+  - storage
+  - managed-disks
+  - automation
+symptom: |
+  Storage spend for rg-buildagents has climbed every week for the last three
+  months even though the CI fleet is still the same four build VMs. Compute
+  charges for the resource group are flat month over month and the build
+  queues show no added run volume. Finance wants to know what is growing
+  before the November invoice lands.
