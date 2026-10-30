@@ -1,0 +1,15 @@
+{
+  "root_cause": "The Karpenter NodePool 'general-purpose' restricts karpenter.azure.com/sku-family to In [D], but the Pending inference pods request nvidia.com/gpu — no D-family instance type provides GPUs, so no instance type can satisfy both the NodePool requirements and the pod's resource requests, and the controller never launches a NodeClaim.",
+  "evidence": [
+    "nodepool.yaml: the only NodePool, 'general-purpose', requires karpenter.azure.com/sku-family In [D] — a CPU-only family — and is the sole candidate for auto-provisioned nodes",
+    "kubectl-describe-pod.txt: llm-inference-5d8f9b7c4d-k2vwj requests nvidia.com/gpu: 1, and the Karpenter Unschedulable events state that the sku-family In [D] requirement excludes every instance type offering nvidia.com/gpu",
+    "karpenter-controller.log: instance-type resolution evaluates 0 compatible instance types — 'incompatible requirements: karpenter.azure.com/sku-family In [D] excludes every instance type that provides nvidia.com/gpu' — and no NodeClaims are created",
+    "kubectl-get-nodeclaims.txt: zero NodeClaims exist, confirming the controller never provisions a node",
+    "az-vm-quota.json: NCSv3 and NCASv4 GPU family vCPU quota is unused (currentValue 0 against limits 24/48), so compute capacity is not the blocker"
+  ],
+  "fix": "Make the NodePool requirements satisfiable for GPU pods: either add a dedicated GPU NodePool (sku-family In [N] — e.g. NCSv3/NCASv4, via the same AKSNodeClass or a GPU-specific one) so pods requesting nvidia.com/gpu launch N-series nodes, or broaden the existing NodePool's karpenter.azure.com/sku-family values to include the N family. Then the pending llm-inference pods will trigger NodeClaims on GPU instances and schedule.",
+  "evidence_files": [
+    "nodepool.yaml",
+    "kubectl-describe-pod.txt"
+  ]
+}
