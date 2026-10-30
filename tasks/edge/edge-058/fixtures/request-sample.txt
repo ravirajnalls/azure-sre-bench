@@ -1,0 +1,15 @@
+# Sample of the failing support-form submission, captured by customer care
+# (browser dev tools, "copy as fetch"). Form: support.contoso.com → POST
+# /api/support/ticket through appgw-prod; the browser shows the 403 page.
+POST https://support.contoso.com/api/support/ticket HTTP/2
+content-type: application/json
+
+{
+  "name": "Dana Whitfield",
+  "email": "dana.whitfield@contoso-partners.example",
+  "subject": "Order 4521 shows wrong total",
+  "description": "Hi - my email is name'123 and I can't sign in. Order 4521's
+  total looks wrong and the '1'='1' discount from the quote isn't applied.
+  Pasted below is what my invoice shows: select the line item for order
+  4521 where it says qty 2 -- the price is doubled."
+}

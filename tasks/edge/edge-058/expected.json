@@ -1,0 +1,12 @@
+{
+  "root_cause": [
+    ["waf", "web application firewall", "owasp"],
+    ["942100", "sql injection", "libinjection", "rule 942100"]
+  ],
+  "fix": [
+    ["exclusion", "exclusion rule", "add an exclusion", "custom rule", "disable rule 942100", "disable the rule", "detection mode", "detection"]
+  ],
+  "distractors": [
+    ["backend pool", "appgw-backend-pool", "unhealthy backend", "backend health probe failed"]
+  ]
+}

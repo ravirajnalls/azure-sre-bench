@@ -1,0 +1,16 @@
+# support-api application log — 2026-10-30 (UTC)
+# GETs are page views through appgw-prod; POST /api/support/ticket creates tickets
+2026-10-30T08:40:12.220Z INFO  [http] GET /support 200 28ms
+2026-10-30T08:41:02.811Z INFO  [http] GET /support 200 25ms
+2026-10-30T08:43:01.644Z INFO  [http] GET /support/kb/2041 200 31ms
+2026-10-30T08:47:12.002Z INFO  [http] GET /support 200 27ms
+2026-10-30T08:52:33.410Z INFO  [http] GET /support/kb/1987 200 30ms
+2026-10-30T08:58:12.877Z INFO  [http] GET /support 200 26ms
+2026-10-30T09:02:41.338Z INFO  [http] GET /support 200 29ms
+2026-10-30T09:07:55.612Z INFO  [http] GET /support/kb/2041 200 32ms
+2026-10-30T09:14:20.190Z INFO  [http] GET /support 200 27ms
+2026-10-30T09:21:38.744Z INFO  [http] GET /support/kb/1987 200 31ms
+2026-10-30T09:29:44.098Z INFO  [http] GET /support 200 28ms
+2026-10-30T09:36:02.551Z INFO  [http] GET /support 200 26ms
+# no POST /api/support/ticket entries in this window — the last recorded
+# ticket creation in this log is 2026-10-25T17:03:11Z (before the weekend)
