@@ -1,0 +1,12 @@
+I1030 14:29:58.113204       1 scraper.go:117] "Scraping pod" pod="shop/checkout-api-7d9f8b6c4-5hx2m" container="checkout-api" node="aks-npuser-31214664-vmss000000"
+I1030 14:29:58.118472       1 scraper.go:141] "Scrape successful" pod="shop/checkout-api-7d9f8b6c4-5hx2m" container="checkout-api" cpuNanoCoreSum=912318000 memoryBytes=429916160 scrapeDuration=41ms
+I1030 14:29:58.121880       1 scraper.go:117] "Scraping pod" pod="shop/checkout-api-7d9f8b6c4-8nvqk" container="checkout-api" node="aks-npuser-31214664-vmss000001"
+I1030 14:29:58.127004       1 scraper.go:141] "Scrape successful" pod="shop/checkout-api-7d9f8b6c4-8nvqk" container="checkout-api" cpuNanoCoreSum=905447000 memoryBytes=414208000 scrapeDuration=38ms
+I1030 14:29:58.130551       1 scraper.go:117] "Scraping pod" pod="shop/checkout-api-7d9f8b6c4-qhj2f" container="checkout-api" node="aks-npuser-31214664-vmss000002"
+I1030 14:29:58.135329       1 scraper.go:141] "Scrape successful" pod="shop/checkout-api-7d9f8b6c4-qhj2f" container="checkout-api" cpuNanoCoreSum=898225000 memoryBytes=421519360 scrapeDuration=40ms
+I1030 14:30:28.122916       1 handler.go:136] "Metric collection cycle complete" duration=59ms podsScraped=11 podsFailed=0
+I1030 14:31:02.418772       1 reststorage.go:167] "Served resource metrics" namespace="shop" pods=5 duration=7ms
+I1030 14:31:28.118442       1 scraper.go:117] "Scraping pod" pod="shop/checkout-api-7d9f8b6c4-5hx2m" container="checkout-api" node="aks-npuser-31214664-vmss000000"
+I1030 14:31:28.123991       1 scraper.go:141] "Scrape successful" pod="shop/checkout-api-7d9f8b6c4-5hx2m" container="checkout-api" cpuNanoCoreSum=908107000 memoryBytes=431316992 scrapeDuration=43ms
+I1030 14:31:28.127608       1 handler.go:136] "Metric collection cycle complete" duration=62ms podsScraped=11 podsFailed=0
+I1030 14:32:28.120184       1 handler.go:136] "Metric collection cycle complete" duration=58ms podsScraped=11 podsFailed=0

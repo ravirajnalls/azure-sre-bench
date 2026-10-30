@@ -1,0 +1,6 @@
+NAME                    REVISION                                        SUSPENDED  READY   MESSAGE
+apps-edge-gateway       main/98f7c2e5a1d40b6c37e2f9ab0c5d81e4a7b3c2f9   False      False   apply failed: 2 errors: failed to create typed patch object (edge/edge-gateway; policy/v1beta1, Kind=PodDisruptionBudget): no matches for kind "PodDisruptionBudget" in version "policy/v1beta1"; failed to create typed patch object (edge/edge-gateway; autoscaling/v2beta2, Kind=HorizontalPodAutoscaler): no matches for kind "HorizontalPodAutoscaler" in version "autoscaling/v2beta2"
+apps-payments-api       main/98f7c2e5a1d40b6c37e2f9ab0c5d81e4a7b3c2f9   False      True    Applied revision main/98f7c2e5a1d40b6c37e2f9ab0c5d81e4a7b3c2f9
+infra-cert-manager      main/98f7c2e5a1d40b6c37e2f9ab0c5d81e4a7b3c2f9   False      True    Applied revision main/98f7c2e5a1d40b6c37e2f9ab0c5d81e4a7b3c2f9
+infra-ingress-nginx     main/98f7c2e5a1d40b6c37e2f9ab0c5d81e4a7b3c2f9   False      True    Applied revision main/98f7c2e5a1d40b6c37e2f9ab0c5d81e4a7b3c2f9
+system-aks-baseline     main/98f7c2e5a1d40b6c37e2f9ab0c5d81e4a7b3c2f9   False      True    Applied revision main/98f7c2e5a1d40b6c37e2f9ab0c5d81e4a7b3c2f9

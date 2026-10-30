@@ -1,0 +1,7 @@
+NAME           READY   STATUS    RESTARTS   AGE   IP             NODE                                NOMINATED NODE   READINESS GATES   LABELS
+billing-api-5f6c7d8b9d-2hqwn   1/1     Running   0          3d    10.244.1.52    aks-nodepool1-00000001-vmss000000   <none>           <none>            app=billing-api,pod-template-hash=5f6c7d8b9d,tier=api
+billing-api-5f6c7d8b9d-7kxjt   1/1     Running   0          3d    10.244.2.19    aks-nodepool1-00000002-vmss000000   <none>           <none>            app=billing-api,pod-template-hash=5f6c7d8b9d,tier=api
+billing-api-5f6c7d8b9d-kp4zm   1/1     Running   0          3d    10.244.0.61    aks-nodepool1-00000003-vmss000000   <none>           <none>            app=billing-api,pod-template-hash=5f6c7d8b9d,tier=api
+postgres-0                     1/1     Running   0          12d   10.244.1.88    aks-nodepool1-00000001-vmss000000   <none>           <none>            app=postgres,apps.kubernetes.io/pod-index=0,controller-revision-hash=postgres-7b45d9c679,statefulset.kubernetes.io/pod-name=postgres-0
+postgres-1                     1/1     Running   0          12d   10.244.2.37    aks-nodepool1-00000002-vmss000000   <none>           <none>            app=postgres,apps.kubernetes.io/pod-index=1,controller-revision-hash=postgres-7b45d9c679,statefulset.kubernetes.io/pod-name=postgres-1
+invoice-scheduler-6b9d8f7c46-x2rvp   1/1   Running   0   3d   10.244.0.24   aks-nodepool1-00000003-vmss000000   <none>           <none>            app=invoice-scheduler,pod-template-hash=6b9d8f7c46

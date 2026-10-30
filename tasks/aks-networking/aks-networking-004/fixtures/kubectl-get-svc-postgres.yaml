@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: "2026-10-18T07:55:12Z"
+  labels:
+    app: postgres
+    app.kubernetes.io/managed-by: postgres-operator
+  name: postgres
+  namespace: billing
+  resourceVersion: "7719044"
+  uid: 00000000-0000-0000-0000-000000000005
+spec:
+  clusterIP: 10.0.169.42
+  clusterIPs:
+  - 10.0.169.42
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: pg
+    port: 5432
+    protocol: TCP
+    targetPort: 5432
+  selector:
+    app: postgres
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

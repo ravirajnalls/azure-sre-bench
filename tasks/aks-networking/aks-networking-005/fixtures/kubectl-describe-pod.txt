@@ -1,0 +1,57 @@
+Name:             payments-api-7d9c4b6f5-qk2lz
+Namespace:        payments
+Priority:         0
+Service Account:  payments-api
+Node:             aks-npuser-31214664-vmss000001/10.20.0.22
+Start Time:       Fri, 30 Oct 2026 08:02:05 +0000
+Labels:           app=payments-api
+                  pod-template-hash=7d9c4b6f5
+Annotations:      <none>
+Status:           Pending
+IP:               10.20.0.31
+Init Containers:
+  istio-init:
+    Container ID:
+    Image:         mcr.microsoft.com/oss/istio/proxyv2:1.22.0
+    Image ID:
+    Port:          15020/TCP
+    Host Port:     0/TCP
+    Command:
+      istio-graphql
+      envoy
+    State:          Waiting
+      Reason:       ImagePullBackOff
+    Ready:          False
+    Restart Count:  0
+    Environment:
+      ISTIO_META_CLUSTER_ID:  aks-prod-eus-01
+Containers:
+  payments-api:
+    Container ID:
+    Image:         acrpaymentsprod01.azurecr.io/payments-api:2.14.3
+    Image ID:
+    Port:          8080/TCP
+    Host Port:     0/TCP
+    State:          Waiting
+      Reason:       PodInitializing
+    Ready:          False
+    Restart Count:  0
+    Requests:
+      cpu:        250m
+      memory:     512Mi
+Conditions:
+  Type              Status
+  Initialized       False
+  Ready             False
+  ContainersReady   False
+  PodScheduled      True
+Events:
+  Type     Reason                  Age                    From                    Message
+  ----     ------                  ----                   ----                    -------
+  Normal   Scheduled               4m3s                   default-scheduler       Successfully assigned payments/payments-api-7d9c4b6f5-qk2lz to aks-npuser-31214664-vmss000001
+  Normal   Pulling                 4m1s                   kubelet                 Pulling image "acrpaymentsprod01.azurecr.io/payments-api:2.14.3"
+  Normal   Pulled                  3m44s                  kubelet                 Successfully pulled image "acrpaymentsprod01.azurecr.io/payments-api:2.14.3" in 16.733s (16.733s including waiting)
+  Normal   Pulling                 3m43s                  kubelet                 Pulling image "mcr.microsoft.com/oss/istio/proxyv2:1.22.0"
+  Warning  Failed                  3m2s (x3 over 3m18s)   kubelet                 Failed to pull image "mcr.microsoft.com/oss/istio/proxyv2:1.22.0": rpc error: code = DeadlineExceeded desc = failed to pull and unpack image "mcr.microsoft.com/oss/istio/proxyv2:1.22.0": failed to resolve reference "mcr.microsoft.com/oss/istio/proxyv2:1.22.0": failed to do request: Head "https://mcr.microsoft.com/v2/oss/istio/proxyv2/manifests/1.22.0": dial tcp 20.220.130.99:443: i/o timeout
+  Warning  BackOff                 2m30s (x6 over 3m12s)  kubelet                 Back-off pulling image "mcr.microsoft.com/oss/istio/proxyv2:1.22.0"
+  Warning  ImagePullBackOff        2m12s (x3 over 3m13s)  kubelet                 Back-off pulling image "mcr.microsoft.com/oss/istio/proxyv2:1.22.0"

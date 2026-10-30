@@ -1,0 +1,53 @@
+# kubectl logs catalog-api-7d9f8b6c4-hqk2m -n catalog --previous --timestamps --tail=100
+2026-10-30 08:22:19.104 UTC [1] INFO  catalog-api v2.7.1 (build 8f3c2a1) starting
+2026-10-30 08:22:19.279 UTC [1] INFO  http server listening on :8080
+2026-10-30 08:22:19.281 UTC [1] INFO  CACHE_WARMUP_ON_START=true — beginning cache warm-up before marking healthy
+2026-10-30 08:22:19.390 UTC [1] INFO  cache warm-up: connecting to products-db:5432 (3,214 skus, 18 top categories)
+2026-10-30 08:22:19.412 UTC [1] INFO  cache warm-up: connected to products-db in 21ms
+2026-10-30 08:22:24.654 UTC [1] INFO  cache warm-up: 3% (96/3214 skus)
+2026-10-30 08:22:29.897 UTC [1] INFO  cache warm-up: 8% (257/3214 skus)
+2026-10-30 08:22:30.204 UTC [1] WARN  GET /healthz 500 — cache warm-up in progress (8%)
+2026-10-30 08:22:35.140 UTC [1] INFO  cache warm-up: 13% (418/3214 skus)
+2026-10-30 08:22:40.383 UTC [1] INFO  cache warm-up: 18% (579/3214 skus)
+2026-10-30 08:22:40.663 UTC [1] WARN  GET /healthz 500 — cache warm-up in progress (18%)
+2026-10-30 08:22:45.626 UTC [1] INFO  cache warm-up: 23% (739/3214 skus)
+2026-10-30 08:22:50.869 UTC [1] INFO  cache warm-up: 28% (900/3214 skus)
+2026-10-30 08:22:50.902 UTC [1] WARN  GET /healthz 500 — cache warm-up in progress (28%)
+2026-10-30 08:22:56.112 UTC [1] INFO  cache warm-up: 33% (1061/3214 skus)
+2026-10-30 08:22:59.310 UTC [1] WARN  SIGTERM received — shutting down, warm-up aborted at 35%
+2026-10-30 08:22:59.326 UTC [1] INFO  exit code 143
+
+# kubectl logs catalog-api-7d9f8b6c4-hqk2m -n catalog --timestamps --tail=100
+2026-10-30 08:22:59.502 UTC [1] INFO  catalog-api v2.7.1 (build 8f3c2a1) starting
+2026-10-30 08:22:59.671 UTC [1] INFO  http server listening on :8080
+2026-10-30 08:22:59.673 UTC [1] INFO  CACHE_WARMUP_ON_START=true — beginning cache warm-up before marking healthy
+2026-10-30 08:22:59.784 UTC [1] INFO  cache warm-up: connecting to products-db:5432 (3,214 skus, 18 top categories)
+2026-10-30 08:22:59.806 UTC [1] INFO  cache warm-up: connected to products-db in 22ms
+2026-10-30 08:23:05.049 UTC [1] INFO  cache warm-up: 3% (96/3214 skus)
+2026-10-30 08:23:09.812 UTC [1] WARN  GET /healthz 500 — cache warm-up in progress (5%)
+2026-10-30 08:23:10.292 UTC [1] INFO  cache warm-up: 8% (257/3214 skus)
+2026-10-30 08:23:15.535 UTC [1] INFO  cache warm-up: 13% (418/3214 skus)
+2026-10-30 08:23:19.938 UTC [1] WARN  GET /healthz 500 — cache warm-up in progress (15%)
+2026-10-30 08:23:20.778 UTC [1] INFO  cache warm-up: 18% (579/3214 skus)
+2026-10-30 08:23:26.021 UTC [1] INFO  cache warm-up: 23% (739/3214 skus)
+2026-10-30 08:23:29.045 UTC [1] WARN  GET /healthz 500 — cache warm-up in progress (25%)
+2026-10-30 08:23:35.714 UTC [1] INFO  cache warm-up: 28% (900/3214 skus)
+
+# kubectl logs catalog-api-7d9f8b6c4-vv7rd -n catalog --timestamps --tail=100
+2026-10-30 08:22:30.887 UTC [1] INFO  catalog-api v2.7.1 (build 8f3c2a1) starting
+2026-10-30 08:22:31.012 UTC [1] INFO  http server listening on :8080
+2026-10-30 08:22:31.014 UTC [1] INFO  CACHE_WARMUP_ON_START=true — beginning cache warm-up before marking healthy
+2026-10-30 08:22:31.126 UTC [1] INFO  cache warm-up: connecting to products-db:5432 (3,214 skus, 18 top categories)
+2026-10-30 08:22:31.141 UTC [1] INFO  cache warm-up: connected to products-db in 15ms
+2026-10-30 08:22:36.380 UTC [1] INFO  cache warm-up: 5% (161/3214 skus)
+2026-10-30 08:22:41.623 UTC [1] INFO  cache warm-up: 10% (322/3214 skus)
+2026-10-30 08:22:41.902 UTC [1] WARN  GET /healthz 500 — cache warm-up in progress (10%)
+2026-10-30 08:22:46.866 UTC [1] INFO  cache warm-up: 15% (483/3214 skus)
+2026-10-30 08:22:51.109 UTC [1] INFO  cache warm-up: 20% (643/3214 skus)
+2026-10-30 08:22:52.117 UTC [1] WARN  GET /healthz 500 — cache warm-up in progress (20%)
+2026-10-30 08:22:56.352 UTC [1] INFO  cache warm-up: 25% (804/3214 skus)
+2026-10-30 08:23:01.595 UTC [1] INFO  cache warm-up: 30% (965/3214 skus)
+2026-10-30 08:23:02.341 UTC [1] WARN  GET /healthz 500 — cache warm-up in progress (30%)
+2026-10-30 08:23:07.838 UTC [1] INFO  cache warm-up: 35% (1126/3214 skus)
+2026-10-30 08:23:10.204 UTC [1] WARN  SIGTERM received — shutting down, warm-up aborted at 37%
+2026-10-30 08:23:10.219 UTC [1] INFO  exit code 143

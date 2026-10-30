@@ -1,0 +1,50 @@
+{
+  "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-prod-01/providers/Microsoft.ContainerService/managedClusters/aks-prod-eus-01",
+  "name": "aks-prod-eus-01",
+  "type": "Microsoft.ContainerService/managedClusters",
+  "location": "eastus",
+  "provisioningState": "Succeeded",
+  "kubernetesVersion": "1.29.4",
+  "dnsPrefix": "aks-prod-eus",
+  "fqdn": "aks-prodeus-00000000-0000-0000-0000-000000000002.hcp.eastus.azmk8s.io",
+  "networkProfile": {
+    "networkPlugin": "azure",
+    "networkPluginMode": null,
+    "networkPolicy": "cilium",
+    "loadBalancerSku": "standard",
+    "outboundType": "userDefinedRouting",
+    "podCidr": null,
+    "serviceCidr": "10.0.0.0/16",
+    "dnsServiceIp": "10.0.0.10",
+    "ipFamilies": ["IPv4"],
+    "networkDataplane": "cilium"
+  },
+  "agentPoolProfiles": [
+    {
+      "name": "systempool",
+      "mode": "System",
+      "vmSize": "Standard_D4ads_v5",
+      "count": 1,
+      "osType": "Linux",
+      "osSKU": "AzureLinux",
+      "vnetSubnetID": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-prod-01/providers/Microsoft.Network/virtualNetworks/vnet-prod-eus-01/subnets/aks-subnet",
+      "maxPods": 110
+    },
+    {
+      "name": "npuser",
+      "mode": "User",
+      "vmSize": "Standard_D8ads_v5",
+      "count": 3,
+      "osType": "Linux",
+      "osSKU": "Ubuntu",
+      "vnetSubnetID": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-prod-01/providers/Microsoft.Network/virtualNetworks/vnet-prod-eus-01/subnets/aks-subnet",
+      "maxPods": 110
+    }
+  ],
+  "autoUpgradeProfile": {
+    "upgradeChannel": "stable"
+  },
+  "powerState": {
+    "code": "Running"
+  }
+}

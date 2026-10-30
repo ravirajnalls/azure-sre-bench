@@ -1,0 +1,15 @@
+{
+  "environmentName": "AzureCloud",
+  "homeTenantId": "00000000-0000-0000-0000-000000000001",
+  "id": "00000000-0000-0000-0000-000000000002",
+  "isDefault": true,
+  "managedByTenants": [],
+  "name": "orders-reports-prod",
+  "state": "Enabled",
+  "tenantDomain": "contoso.example",
+  "tenantId": "00000000-0000-0000-0000-000000000001",
+  "user": {
+    "name": "oncall@contoso.example",
+    "type": "user"
+  }
+}

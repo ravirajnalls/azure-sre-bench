@@ -1,0 +1,17 @@
+id: aks-networking-004
+title: "billing-api can't reach its postgres pod after a security hardening change"
+category: aks-networking
+difficulty: easy
+tags:
+  - aks
+  - networkpolicy
+  - postgres
+  - kubernetes
+symptom: |
+  The platform team applied a namespace-wide security hardening change to the
+  billing namespace about twenty minutes ago. Since then, billing-api throws
+  connection timeouts whenever it tries to reach its postgres backend in the
+  same namespace, and the nightly invoice batch is stuck. Both billing-api and
+  postgres pods show Running and Ready, the postgres service exists, DNS
+  resolves the service name, and postgres logs show no errors. Paged by the
+  invoice-batch-stalled alert at 09:40 UTC.

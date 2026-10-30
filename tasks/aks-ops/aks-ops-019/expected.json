@@ -1,0 +1,8 @@
+{
+  "root_cause": [
+    ["v1beta1", "v2beta2", "deprecated", "removed api"]
+  ],
+  "fix": [
+    ["policy/v1", "autoscaling/v2"]
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "root_cause": "The catalog-api v2.7.1 release added a cache warm-up that takes about 90 seconds, but the only health gate is the liveness probe (initialDelaySeconds 10, periodSeconds 10, failureThreshold 3), which starts checking 10 seconds after start and fails 3 times by ~40s because /healthz keeps returning 500 until warm-up completes. With no startupProbe, the kubelet kills every container before warm-up finishes, so the pods loop in CrashLoopBackOff and never serve traffic.",
+  "evidence": [
+    "deployment.yaml: livenessProbe has initialDelaySeconds 10, periodSeconds 10, failureThreshold 3 and there is no startupProbe",
+    "catalog-api.log: cache warm-up progresses ~5% per 5s and needs ~90s, while SIGTERM arrives ~40s after each start (exit code 143)",
+    "kubectl-describe-pod.txt: Liveness probe failed: HTTP probe failed with statuscode: 500, followed by Killing — container failed liveness probe, will be restarted",
+    "catalog-api.log: warm-up aborts at ~35-40% on every restart, so /healthz never turns healthy"
+  ],
+  "fix": "Add a startupProbe to the catalog-api container (e.g. httpGet /healthz with failureThreshold 30 and periodSeconds 5) so the kubelet waits up to the warm-up window before liveness checks apply; alternatively raise the liveness probe's initialDelaySeconds above the ~90s warm-up duration. Once startup completes, the existing liveness probe takes over and pods stop restarting."
+}

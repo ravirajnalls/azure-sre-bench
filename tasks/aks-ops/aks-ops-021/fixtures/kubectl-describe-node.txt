@@ -1,0 +1,94 @@
+Name:               aks-npuser-27489013-vmss000001
+Roles:              agent
+Labels:             agentpool=npuser
+                    apps.kubernetes.io/config-managed=true
+                    beta.kubernetes.io/arch=amd64
+                    beta.kubernetes.io/instance-type=Standard_D4s_v5
+                    beta.kubernetes.io/os=linux
+                    failure-domain.beta.kubernetes.io/region=eastus
+                    failure-domain.beta.kubernetes.io/zone=eastus-2
+                    kubernetes.azure.com/agentpool=npuser
+                    kubernetes.azure.com/cluster=MC_rg-prod-eus_aks-prod-eus_eastus
+                    kubernetes.io/arch=amd64
+                    kubernetes.io/hostname=aks-npuser-27489013-vmss000001
+                    kubernetes.io/os=linux
+                    node.kubernetes.io/instance-type=Standard_D4s_v5
+                    node.kubernetes.io/windows-build=10.0.20348
+Annotations:        cluster-autoscaler.kubernetes.io/scale-down-disabled=false
+                    nodeinfo.alpha.kubernetes.io/notes=aks default pool
+CreationTimestamp:  Wed, 14 Jan 2026 08:12:04 +0000
+Taints:             node.kubernetes.io/disk-pressure:NoSchedule
+                    node.kubernetes.io/not-ready:NoSchedule
+Unschedulable:      false
+Conditions:
+  Type                 Status    LastHeartbeatTime                 LastTransitionTime                Reason                       Message
+  ----                 ------    -----------------                 ------------------                ------                       -------
+  MemoryPressure       False     Thu, 30 Oct 2026 09:41:02 +0000   Sun, 25 Oct 2026 22:18:44 +0000   KubeletHasSufficientMemory   kubelet has sufficient memory available
+  DiskPressure         True      Thu, 30 Oct 2026 09:41:02 +0000   Thu, 30 Oct 2026 07:52:19 +0000   kubelet has disk pressure    kubelet has disk pressure
+  PIDPressure          False     Thu, 30 Oct 2026 09:41:02 +0000   Sun, 25 Oct 2026 22:18:44 +0000   KubeletHasSufficientPID      kubelet has sufficient PID available
+  Ready                False     Thu, 30 Oct 2026 09:41:02 +0000   Thu, 30 Oct 2026 07:52:19 +0000   KubeletNotReady              kubelet is not ready
+Addresses:
+  InternalIP:  10.240.0.37
+  Hostname:    aks-npuser-27489013-vmss000001
+Capacity:
+  cpu:                4
+  ephemeral-storage:  129879716Ki
+  hugepages-1Gi:      0
+  hugepages-2Mi:      0
+  memory:             16125556Ki
+  pods:               110
+Allocatable:
+  cpu:                3910m
+  ephemeral-storage:  119703845890
+  hugepages-1Gi:      0
+  hugepages-2Mi:      0
+  memory:             15015564Ki
+  pods:               110
+Allocated resources:
+  (Total limits may be over 100 percent, i.e., overcommitted.)
+  Resource           Requests      Limits
+  --------           --------      ------
+  cpu                940m (24%)    1800m (46%)
+  memory             2200Mi (14%)  4400Mi (29%)
+  ephemeral-storage  0 (0%)        0 (0%)
+  hugepages-1Gi      0 (0%)        0 (0%)
+  hugepages-2Mi      0 (0%)        0 (0%)
+System Info:
+  Machine ID:                 9f3c1a2b7d5e4c6081a4f2e6b9d0c3a7
+  System UUID:                00000000-0000-0000-0000-000000000004
+  Boot ID:                    c2e8f4a1b6d34e9f80715c2a4b6e9d13
+  Kernel Version:             5.15.167.4-1
+  OS Image:                   Ubuntu 22.04.5 LTS
+  Operating System:           linux
+  Architecture:               amd64
+  Container Runtime Version:  containerd://1.7.23+azure-1
+  Kubelet Version:            v1.29.7
+  Kube-Proxy Version:         v1.29.7
+Non-terminated Pods:          (11 in total)
+  Namespace                   Name                                             CPU Requests  CPU Limits  Memory Requests  Memory Limits  Age
+  ---------                   ----                                             ------------  ----------  ---------------  -------------  ---
+  kube-system                 azure-cni-network-minion-q8vw2                   100m (2%)     0 (0%)      100Mi (0%)       0 (0%)         289d
+  kube-system                 azure-ip-masq-agent-6zzkq                        100m (2%)     0 (0%)      64Mi (0%)        0 (0%)         289d
+  kube-system                 csi-azuredisk-node-z7hkp                         40m (1%)      0 (0%)      160Mi (1%)       0 (0%)         289d
+  kube-system                 csi-azurefile-node-fq6lz                         40m (1%)      0 (0%)      160Mi (1%)       0 (0%)         289d
+  kube-system                 kube-proxy-m4wst                                 100m (2%)     0 (0%)      0 (0%)           0 (0%)         289d
+  kube-system                 legacy-audit-agent-k7dpr                         20m (0%)      0 (0%)      50Mi (0%)        0 (0%)         78m
+  kube-system                 metrics-server-7cf8d9c66b-2lvns                  0 (0%)        0 (0%)      0 (0%)           0 (0%)         34d
+  payments                    payments-api-6d8f9c7b5-x2k9v                     300m (7%)     600m (15%)  512Mi (3%)       1Gi (6%)       3h
+  payments                    payments-worker-5b7d4c9f88-qm4tr                 250m (6%)     500m (12%)  768Mi (5%)       1536Mi (10%)   3h
+  payments                    payments-sync-74c9d6b8f5-vbn2s                   150m (3%)     300m (7%)   256Mi (1%)       512Mi (3%)     2d
+  payments                    payments-ui-6b6d84c9c7-dp4nt                     120m (3%)     400m (10%)  256Mi (1%)       512Mi (3%)     3h
+Events:
+  Type     Reason                  Age                  From                     Message
+  ----     ------                  ----                 ----                     -------
+  Normal   NodeHasSufficientPID    94m                  kubelet                  Node aks-npuser-27489013-vmss000001 status is now: NodeHasSufficientPID
+  Normal   NodeAllocatableEnforced 94m                  kubelet                  Updated Node Allocatable limit across pods
+  Warning  EvictionThresholdMet    79m                  kubelet                  Attempting to reclaim ephemeral-storage: usage on / exceeds eviction threshold
+  Warning  NodeHasDiskPressure     79m                  kubelet                  Node aks-npuser-27489013-vmss000001 status is now: NodeHasDiskPressure
+  Normal   NodeNotSchedulable      79m                  kubelet                  Node aks-npuser-27489013-vmss000001 status is now: NodeNotSchedulable
+  Warning  EvictionThresholdMet    63m                  kubelet                  Attempting to reclaim ephemeral-storage: usage on / exceeds eviction threshold
+  Normal   NodeNotReady            79m                  kubelet                  Node aks-npuser-27489013-vmss000001 status is now: NodeNotReady
+  Warning  EvictionThresholdMet    47m                  kubelet                  Attempting to reclaim ephemeral-storage: usage on / exceeds eviction threshold
+  Normal   NodeNotReady            52m                  kubelet                  Node aks-npuser-27489013-vmss000001 status is now: NodeNotReady
+  Warning  EvictionThresholdMet    29m                  kubelet                  Attempting to reclaim ephemeral-storage: usage on / exceeds eviction threshold
+  Normal   NodeNotReady            31m                  kubelet                  Node aks-npuser-27489013-vmss000001 status is now: NodeNotReady

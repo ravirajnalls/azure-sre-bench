@@ -1,0 +1,17 @@
+id: aks-ops-021
+title: Node repeatedly NotReady with pod evictions while CPU and memory look healthy
+category: aks-ops
+difficulty: medium
+tags:
+  - aks-ops
+  - aks
+  - node
+  - kubelet
+  - kubernetes
+symptom: |
+  Over the past six hours the node aks-npuser-27489013-vmss000001 has flipped
+  NotReady three times, and each recovery is followed by a wave of pod
+  evictions. The payments namespace on that node keeps redeploying: CI runs
+  fail with pods being killed minutes after they start. The other three nodes
+  in the cluster are fine and CPU and memory dashboards are flat across the
+  board. Nobody has touched the node pool and there is no upgrade in progress.

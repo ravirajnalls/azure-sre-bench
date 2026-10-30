@@ -1,0 +1,44 @@
+Name:             payments-api-6d8f9c7b4-xk2vq
+Namespace:        payments
+Priority:         100
+Service Account:  payments-api
+Node:             aks-nodepool1-19406753-vmss0000c4/10.241.0.62
+Start Time:       Thu, 30 Oct 2026 06:12:04 +0000
+Labels:           app=payments-api
+                  pod-template-hash=6d8f9c7b4
+Annotations:      <none>
+Status:           Pending
+IP:               10.241.1.187
+Containers:
+  payments-api:
+    Container ID:
+    Image:          acrcontosoprod.azurecr.io/payments-api:2.7.1
+    Image ID:
+    Port:           8080/TCP
+    Host Port:      0/TCP
+    State:          Waiting
+      Reason:       ImagePullBackOff
+    Ready:          False
+    Restart Count:  0
+    Environment:
+      KEY_VAULT_NAME:  kv-contoso-prod
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-x7t2n (ro)
+Conditions:
+  Type           Status
+  Initialized    True
+  Ready          False
+  PodsScheduled  True
+Volumes:
+  kube-api-access-x7t2n:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+Events:
+  Type     Reason     Age                  From               Message
+  ----     ------     ----                 ----               -------
+  Normal   Scheduled  13m                  default-scheduler  Successfully assigned payments/payments-api-6d8f9c7b4-xk2vq to aks-nodepool1-19406753-vmss0000c4
+  Normal   Pulling    12m (x4 over 13m)    kubelet            Pulling image "acrcontosoprod.azurecr.io/payments-api:2.7.1"
+  Warning  Failed     12m (x4 over 13m)    kubelet            Failed to pull image "acrcontosoprod.azurecr.io/payments-api:2.7.1": failed to resolve reference "acrcontosoprod.azurecr.io/payments-api:2.7.1": unexpected status 401 Unauthorized: HEAD https://acrcontosoprod.azurecr.io/v2/payments-api/manifests/2.7.1: GET https://acrcontosoprod.azurecr.io/oauth2/token?scope=repository%3Apayments-api%3Apull&service=acrcontosoprod.azurecr.io: unauthorized: authentication required, visit : https://aka.ms/acr/authenticate
+  Warning  Failed     11m (x4 over 13m)    kubelet            Error: ErrImagePull
+  Warning  BackOff    2m34s (x39 over 12m)  kubelet            Back-off pulling image "acrcontosoprod.azurecr.io/payments-api:2.7.1"
+  Normal   NotTriggerScaleUp  13m                 cluster-autoscaler  pod didn't trigger scale-up: 4 node(s) didn't match pod's node affinity/selector

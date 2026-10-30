@@ -1,0 +1,9 @@
+{
+  "root_cause": [
+    ["firewall"],
+    ["mcr.microsoft.com", "fqdn", "azurekubernetesservice"]
+  ],
+  "fix": [
+    ["azurekubernetesservice", "fqdn tag", "allow mcr"]
+  ]
+}

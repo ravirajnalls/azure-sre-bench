@@ -1,0 +1,11 @@
+{
+  "root_cause": "The edge-gateway manifests are pinned to Kubernetes API versions that the upgraded cluster no longer serves: pdb.yaml uses policy/v1beta1 for the PodDisruptionBudget and hpa.yaml uses autoscaling/v2beta2 for the HorizontalPodAutoscaler. Those beta APIs were removed in Kubernetes 1.25 and 1.26 respectively, and the cluster was upgraded to 1.29.7, so the API server rejects the Flux apply with 'no matches for kind' and the edge-gateway manifests can never reconcile. The running pods are unaffected because the objects they need were already created before the upgrade.",
+  "evidence": [
+    "flux-kustomization-status.txt: apps-edge-gateway apply failed — no matches for kind \"PodDisruptionBudget\" in version \"policy/v1beta1\" and no matches for kind \"HorizontalPodAutoscaler\" in version \"autoscaling/v2beta2\", while every other Kustomization reconciles fine",
+    "pdb.yaml: declares apiVersion policy/v1beta1 for the edge-gateway PodDisruptionBudget",
+    "hpa.yaml: declares apiVersion autoscaling/v2beta2 for the edge-gateway HorizontalPodAutoscaler",
+    "kubectl-api-versions.txt: the upgraded API server serves only policy/v1 and autoscaling/v2 — the beta versions are gone",
+    "az-aks-show.json: kubernetesVersion 1.29.7 on both node pools, provisioningState Succeeded — the cluster itself is healthy"
+  ],
+  "fix": "Update the edge-gateway manifests to the API versions the cluster still serves: migrate the PodDisruptionBudget in pdb.yaml from policy/v1beta1 to policy/v1 (minAvailable carries over unchanged) and the HorizontalPodAutoscaler in hpa.yaml from autoscaling/v2beta2 to autoscaling/v2, then commit to the GitOps repo so Flux can reconcile the edge namespace again."
+}

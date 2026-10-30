@@ -1,0 +1,13 @@
+{
+  "root_cause": [
+    ["kubelet"],
+    ["acrpull", "acr pull"]
+  ],
+  "fix": [
+    [
+      "acrpull",
+      "az aks update --attach-acr",
+      "attach-acr"
+    ]
+  ]
+}

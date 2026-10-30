@@ -1,0 +1,9 @@
+{
+  "root_cause": [
+    ["tenantid", "tenant id", "tenant"],
+    ["secretproviderclass", "secret provider class"]
+  ],
+  "fix": [
+    ["tenantid", "tenant id"]
+  ]
+}

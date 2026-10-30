@@ -1,0 +1,22 @@
+Name:                                        checkout-api
+Namespace:                                   shop
+Labels:                                      app.kubernetes.io/managed-by=kustomize
+                                             app.kubernetes.io/part-of=checkout
+Annotations:                                 <none>
+CreationTimestamp:                           Thu, 30 Oct 2026 14:41:02 +0000
+Reference:                                   Deployment/checkout-api
+Metrics:                                     ( current / target )
+  resource cpu on pods  (as a percentage of request):  <unknown> / 70%
+Min replicas:                                3
+Max replicas:                                12
+Deployment pods:                             3 current / 3 desired
+Conditions:
+  Type         Status  Reason            Message
+  ----         ------  ------            -------
+  AbleToScale  True    ReadyForNewScale  recommended size matches current size
+  ScalingActive  False  FailedGetResourceMetric  the HPA was unable to compute the number of replicas it should run: failed to get cpu utilization: missing request for cpu
+Events:
+  Type     Reason                      Age                  From                       Message
+  ----     ------                      ----                 ----                       -------
+  Normal   SuccessfulRescale           38m                  horizontal-pod-autoscaler  New size: 3; reason: All metrics below the target
+  Warning  FailedComputeMetricsReplicas  4m3s (x24 over 22m)  horizontal-pod-autoscaler  failed to compute desired number of replicas based on listed metrics for Deployment shop/checkout-api: invalid metrics (0 out of 1 received), first error is: FailedGetResourceMetric: missing request for cpu

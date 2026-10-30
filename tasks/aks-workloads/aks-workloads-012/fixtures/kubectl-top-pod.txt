@@ -1,0 +1,5 @@
+NAME                              CPU(cores)   CPU(%)   MEMORY(bytes)   MEMORY(%)
+catalog-api-7d9f8b6c4-hqk2m       46m          4%       213Mi           41%
+catalog-api-7d9f8b6c4-vv7rd       39m          3%       197Mi           38%
+orders-api-5c8d7f6b55-x2lmn       9m           1%       88Mi            17%
+web-storefront-6f9d8c544b-k9pqt   24m          2%       144Mi           28%

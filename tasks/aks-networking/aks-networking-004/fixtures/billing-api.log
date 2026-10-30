@@ -1,0 +1,25 @@
+2026-10-30 09:41:02.117 UTC  [billing-api] ERROR InvoiceBatchService flush failed (attempt 1/5)
+org.postgresql.util.PSQLException: Connection to postgres.billing.svc.cluster.local:5432 timed out
+  at org.postgresql.core.v3.ConnectionFactoryImpl.openConnectionImpl(ConnectionFactoryImpl.java:341)
+  at org.postgresql.jdbc.PgConnection.<init>(PgConnection.java:271)
+  at org.postgresql.DriverManager.getConnection(DriverManager.java:320)
+  ... 14 common frames omitted
+  Caused by: java.net.SocketTimeoutException: connect timed out
+2026-10-30 09:41:02.118 UTC  [billing-api] INFO  Retrying invoice batch flush in 5s
+2026-10-30 09:41:07.243 UTC  [billing-api] ERROR InvoiceBatchService flush failed (attempt 2/5)
+org.postgresql.util.PSQLException: Connection to postgres.billing.svc.cluster.local:5432 timed out
+  ... 14 common frames omitted
+  Caused by: java.net.SocketTimeoutException: connect timed out
+2026-10-30 09:41:07.244 UTC  [billing-api] INFO  Retrying invoice batch flush in 5s
+2026-10-30 09:41:12.371 UTC  [billing-api] ERROR InvoiceBatchService flush failed (attempt 3/5)
+org.postgresql.util.PSQLException: Connection to postgres.billing.svc.cluster.local:5432 timed out
+  ... 14 common frames omitted
+  Caused by: java.net.SocketTimeoutException: connect timed out
+2026-10-30 09:41:12.372 UTC  [billing-api] WARN  Invoice batch stalled: 41,203 rows uncommitted
+2026-10-30 09:42:30.556 UTC  [billing-api] INFO  Health probe /healthz OK (no dependencies checked)
+2026-10-30 09:42:31.102 UTC  [billing-api] INFO  DNS resolution ok: postgres.billing.svc.cluster.local -> 10.244.1.88, 10.244.2.37
+2026-10-30 09:42:31.103 UTC  [billing-api] ERROR InvoiceBatchService flush failed (attempt 4/5)
+org.postgresql.util.PSQLException: Connection to postgres.billing.svc.cluster.local:5432 timed out
+  ... 14 common frames omitted
+  Caused by: java.net.SocketTimeoutException: connect timed out
+2026-10-30 09:44:59.820 UTC  [billing-api] ERROR InvoiceBatchService flush failed (attempt 5/5) - giving up, batch parked

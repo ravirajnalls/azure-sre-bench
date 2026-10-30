@@ -1,0 +1,34 @@
+# node-disk-usage.txt
+# Captured on aks-npuser-27489013-vmss000001 on 30 Oct 2026 (~09:35 UTC):
+#   df -h /
+#   sudo du -x -h --max-depth=2 /var 2>/dev/null | sort -rh | head -12
+#   sudo ls -lh /var/log/audit-debug | tail -8
+#   sudo du -x -h --max-depth=2 /var/lib/docker 2>/dev/null | sort -rh | head -4
+
+Filesystem      Size  Used  Avail  Use%  Mounted on
+/dev/sda1       124G  118G  6.1G    95%  /
+
+58G      /var/log/audit-debug
+3.1G     /var/lib/docker
+1.4G     /var/lib/containerd
+412M     /var/log/azure-vnet
+187M     /var/log/azure-clusterconfig
+156M     /var/lib/waagent
+9.5M     /var/log/waagent
+6.2M     /var/lib/kubelet
+1.8M     /var/log/journal
+
+total 58G
+-rw-r--r-- 1 root root 1.7G Oct 30 09:31 audit-debug-2026-10-30-0931.log
+-rw-r--r-- 1 root root 1.7G Oct 30 09:14 audit-debug-2026-10-30-0914.log
+-rw-r--r-- 1 root root 1.7G Oct 30 08:57 audit-debug-2026-10-30-0857.log
+-rw-r--r-- 1 root root 1.7G Oct 30 08:40 audit-debug-2026-10-30-0840.log
+-rw-r--r-- 1 root root 1.7G Oct 30 08:23 audit-debug-2026-10-30-0823.log
+-rw-r--r-- 1 root root 1.7G Oct 30 08:06 audit-debug-2026-10-30-0806.log
+-rw-r--r-- 1 root root 1.7G Oct 30 07:49 audit-debug-2026-10-30-0749.log
+-rw-r--r-- 1 root root 1.7G Oct 30 07:32 audit-debug-2026-10-30-0732.log
+
+1.9G     /var/lib/docker/overlay2
+665M     /var/lib/docker/containers
+540M     /var/lib/docker/image
+29M      /var/lib/docker/volumes

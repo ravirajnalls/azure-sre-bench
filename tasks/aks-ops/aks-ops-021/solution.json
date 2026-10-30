@@ -1,0 +1,11 @@
+{
+  "root_cause": "Disk pressure on node aks-npuser-27489013-vmss000001: the kube-system DaemonSet legacy-audit-agent writes unrotated debug logs to the hostPath /var/log/audit-debug, filling the node's OS disk. The kubelet reports DiskPressure=True, taints the node with node.kubernetes.io/disk-pressure, and evicts pods; the node flaps NotReady as the disk keeps filling.",
+  "evidence": [
+    "kubectl-describe-node.txt: aks-npuser-27489013-vmss000001 has DiskPressure=True, Ready=False, and the node.kubernetes.io/disk-pressure:NoSchedule taint",
+    "node-disk-usage.txt: /var/log/audit-debug holds 58G of dated audit-debug-*.log files with no rotation, pushing the OS volume to 95% used",
+    "kubectl-get-events.txt: kubelet repeatedly evicts payments pods for low ephemeral-storage on that node",
+    "daemonset-legacy-audit-agent.yaml: legacy-audit-agent mounts the hostPath /var/log/audit-debug (DirectoryOrCreate) and runs with DEBUG_LOG_LEVEL=trace and no rotation",
+    "kubectl-top-node.txt: CPU and memory are normal on every node, ruling out compute contention"
+  ],
+  "fix": "Stop the leak at the source: remove the /var/log/audit-debug hostPath mount from the legacy-audit-agent DaemonSet (or ship it with log rotation and a size cap instead of raw trace logging to the node's OS volume). Clean up the accumulated debug logs under /var/log/audit-debug on the affected node to release the disk, then uncordon aks-npuser-27489013-vmss000001 and let the evicted payments pods reschedule."
+}

@@ -1,0 +1,23 @@
+apiVersion: v1
+items:
+- apiVersion: networking.k8s.io/v1
+  kind: NetworkPolicy
+  metadata:
+    annotations:
+      kubernetes.io/change-cause: >-
+        security hardening wave 3: default-deny ingress for the billing
+        namespace, per NS-4b baseline
+    creationTimestamp: "2026-10-30T09:18:44Z"
+    generation: 1
+    name: default-deny-all
+    namespace: billing
+    resourceVersion: "8847103"
+    uid: 00000000-0000-0000-0000-000000000004
+  spec:
+    podSelector: {}
+    policyTypes:
+    - Ingress
+  status: {}
+kind: List
+metadata:
+  resourceVersion: "8847158"
