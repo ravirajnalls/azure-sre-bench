@@ -1,4 +1,4 @@
-# Scheduled ACR purge task (runs in crfinprod via `az acr run`), added 2026-10-20
+# Scheduled ACR cleanup task (runs in crfinprod via `az acr run`), added 2026-10-20
 # as part of the registry hygiene program ("tidy the registry").
 tasks:
   - name: purge-stale-manifests-weekly
