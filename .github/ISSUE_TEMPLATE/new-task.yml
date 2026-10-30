@@ -1,0 +1,108 @@
+name: New task
+description: Propose a benchmark task for Azure SRE Bench
+title: "Task <category>-<nnn> — <one-line symptom>"
+labels: [task]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        One task per issue. The issue captures the design before any code is
+        written; the implementation PR must touch only
+        `tasks/<category>/<task-id>/` and follow
+        [AGENTS.md](AGENTS.md). Note: the task ID backlog number
+        (`<category>-<nnn>`) is **not** the GitHub issue number. Once this
+        issue is approved, run `python -m bench new <category> --title "..."`
+        to scaffold the task folder.
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      description: Task category (folder under tasks/)
+      options:
+        - aks-networking
+        - aks-identity
+        - aks-workloads
+        - aks-ops
+        - networking
+        - identity
+        - app-service
+        - key-vault
+        - ado-pipelines
+        - cost
+        - monitoring
+    validations:
+      required: true
+
+  - type: textarea
+    id: symptom
+    attributes:
+      label: Symptom
+      description: |
+        What on-call sees — alerts, user reports, dashboard movements. It must
+        not name the root cause: specific enough to start an investigation,
+        never specific enough to end one.
+    validations:
+      required: true
+
+  - type: textarea
+    id: root-cause
+    attributes:
+      label: Hidden root cause
+      description: The underlying cause the agent must pin down. Keep it concrete and diagnosable from the fixtures alone.
+    validations:
+      required: true
+
+  - type: textarea
+    id: fixtures
+    attributes:
+      label: Fixtures
+      description: |
+        3–7 files, each under ~150 lines, named after the command or source
+        (`kubectl-describe-pod.txt`, `az-network-nsg-list.json`), never the
+        answer. Names, namespaces, and timestamps must agree across files.
+        Use only placeholder GUIDs (`00000000-0000-0000-0000-00000000000X`) —
+        no real IDs or secrets.
+    validations:
+      required: true
+
+  - type: textarea
+    id: red-herring
+    attributes:
+      label: Red herring
+      description: At least one plausible but healthy signal an investigator would check and rule out. Name the fixture that carries it.
+    validations:
+      required: true
+
+  - type: textarea
+    id: rubric
+    attributes:
+      label: Rubric
+      description: |
+        Keyword groups for `expected.json`:
+        - `root_cause`: `[concept A | alternate phrasing] + [specific detail]`
+        - `fix`: `[acceptable remediation 1 | 2 | 3]`
+
+        Keep groups specific enough that a generic guess fails — the resource
+        and the specific misconfiguration are what earn credit.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: difficulty
+    attributes:
+      label: Difficulty
+      options:
+        - easy
+        - medium
+        - hard
+    validations:
+      required: true
+
+  - type: input
+    id: depends-on
+    attributes:
+      label: Depends on
+      description: Issue numbers this task depends on, if any (e.g. "#42, #44")
+    validations:
+      required: false
