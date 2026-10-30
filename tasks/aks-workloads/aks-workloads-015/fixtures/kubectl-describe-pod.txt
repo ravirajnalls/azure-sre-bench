@@ -1,0 +1,47 @@
+Name:             video-transcoder-66f8d9b7c4-xq2l7
+Namespace:        media
+Priority:         0
+Service Account:  video-transcoder
+Node:             <none>
+Labels:           app=video-transcoder
+                  pod-template-hash=66f8d9b7c4
+Annotations:      <none>
+Status:           Pending
+IP:
+IPs:              <none>
+Controlled By:    ReplicaSet/video-transcoder-66f8d9b7c4
+Containers:
+  transcoder:
+    Image:      mediacr00000001.azurecr.io/video-transcoder:2026.10.29
+    Port:       9102/TCP
+    Host Port:  0/TCP
+    Limits:
+      memory:          4Gi
+      nvidia.com/gpu:  1
+    Requests:
+      cpu:             500m
+      memory:          1Gi
+      nvidia.com/gpu:  1
+    Environment:       <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-hxq7r (ro)
+Conditions:
+  Type        Status
+  PodReady    False
+  Scheduled   False
+Volumes:
+  kube-api-access-hxq7r:
+    Type:        Projected (a volume that contains injected data from multiple sources)
+QoS Class:       Burstable
+Node-Selectors:  kubernetes.azure.com/agentpool=gpu01
+Tolerations:     <none>
+Events:
+  Type     Reason            Age   From               Message
+  ----     ------            ----  ----               -------
+  Normal   SuccessfulCreate  27m   deployment-controller  Created pod: video-transcoder-66f8d9b7c4-xq2l7
+  Normal   SuccessfulCreate  27m   deployment-controller  Created pod: video-transcoder-66f8d9b7c4-k94mv
+  Warning  FailedScheduling  26m   default-scheduler     0/4 nodes are available: 3 node(s) didn't match Pod's node affinity/selector, 1 node(s) had untolerated taint {sku: gpu}. preemption: 0/4 nodes are available: 1 Precondition is not met.
+  Warning  FailedScheduling  26m   default-scheduler     0/4 nodes are available: 3 node(s) didn't match Pod's node affinity/selector, 1 node(s) had untolerated taint {sku: gpu}. preemption: 0/4 nodes are available: 1 Precondition is not met.
+  Warning  FailedScheduling  25m   default-scheduler     0/4 nodes are available: 3 node(s) didn't match Pod's node affinity/selector, 1 node(s) had untolerated taint {sku: gpu}. preemption: 0/4 nodes are available: 1 Precondition is not met.
+  Warning  FailedScheduling  24m   default-scheduler     0/4 nodes are available: 3 node(s) didn't match Pod's node affinity/selector, 1 node(s) had untolerated taint {sku: gpu}. preemption: 0/4 nodes are available: 1 Precondition is not met.
+  Warning  FailedScheduling  21m   default-scheduler     0/4 nodes are available: 3 node(s) didn't match Pod's node affinity/selector, 1 node(s) had untolerated taint {sku: gpu}. preemption: 0/4 nodes are available: 1 Precondition is not met.

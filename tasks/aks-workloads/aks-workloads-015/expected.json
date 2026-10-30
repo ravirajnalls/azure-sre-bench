@@ -1,0 +1,10 @@
+{
+  "root_cause": [
+    ["taint", "tainted", "untolerated taint", "noschedule", "no schedule"],
+    ["toleration", "tolerations", "no toleration", "missing toleration"]
+  ],
+  "fix": [
+    ["toleration", "tolerations"],
+    ["sku", "gpu"]
+  ]
+}

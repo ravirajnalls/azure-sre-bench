@@ -1,0 +1,11 @@
+I1030 07:38:12.483211       1 main.go:166] Starting NVIDIA device plugin
+I1030 07:38:12.483254       1 main.go:172] Loading configuration from /etc/kubernetes/config
+I1030 07:38:12.623891       1 nvml.go:72] Starting NVML library
+I1030 07:38:12.701004       1 nvml.go:88] NVML initialized, driver version 550.54.15, CUDA version 12.4
+I1030 07:38:12.714002       1 plugin.go:64] Retrieved 1 devices: [nvidia.com/gpu/0]
+I1030 07:38:12.714940       1 server.go:47] Starting GRPC server for resource nvidia.com/gpu
+I1030 07:38:12.715301       1 server.go:98] Registered device plugin with Kubelet at aks-gpu01-31214664-vmss000000
+I1030 07:38:12.715860       1 main.go:231] Device plugin setup complete
+I1030 08:38:13.012477       1 server.go:132] Health check: device nvidia.com/gpu/0 marked healthy
+I1030 09:08:13.409921       1 server.go:132] Health check: device nvidia.com/gpu/0 marked healthy
+I1030 09:38:13.807655       1 server.go:132] Health check: device nvidia.com/gpu/0 marked healthy
