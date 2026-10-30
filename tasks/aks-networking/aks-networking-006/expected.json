@@ -5,5 +5,9 @@
   ],
   "fix": [
     ["azure-load-balancer-internal: \"true\"", "azure-load-balancer-internal: true", "correct the annotation"]
+  ],
+  "distractors": [
+    ["nsg", "denyinternetinbound", "aks-nsg"],
+    ["security-scan-finding", "sec-2026-1042", "scan is a false positive"]
   ]
 }

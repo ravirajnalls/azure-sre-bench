@@ -5,5 +5,9 @@
   ],
   "fix": [
     ["remove the forward", "remove the forwarding", "delete the override", "remove the custom", "168.63.129.16", "correct upstream", "working upstream", "restore the default"]
+  ],
+  "distractors": [
+    ["dhcpoptions", "custom dns on the vnet", "vnet dns servers"],
+    ["kube-dns", "nodelocaldns", "node local dns"]
   ]
 }

@@ -140,6 +140,22 @@ def test_soup_answer_passes_its_own_rubric():
     assert graded["score"] == 1.0
 
 
+def test_soup_answer_covers_distractor_groups():
+    """The cheat pastes the whole rubric — distractors included — so a
+    distractored rubric trips its own `named_distractor` trap (issue #94).
+    This is what lets the rubric audits (#96-#99) un-game a task."""
+    rubric = {
+        "root_cause": [["coredns-custom"], ["10.20.1.53"]],
+        "fix": [["remove the forward"]],
+        "distractors": [["dhcpoptions", "vnet dns servers"]],
+    }
+    graded = grade(keyword_soup.soup_answer(rubric), rubric)
+    assert graded["passed"] is False
+    assert any(
+        reason["reason"] == "named_distractor" for reason in graded["detail"]["reasons"]
+    )
+
+
 def test_soup_tolerates_malformed_rubric_entries():
     rubric = {"root_cause": ["not-a-group", None, [1, "fine"], ["ok"]], "fix": None}
     answer = keyword_soup.soup_answer(rubric)

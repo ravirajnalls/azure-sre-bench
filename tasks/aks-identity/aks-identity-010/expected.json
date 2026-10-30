@@ -1,9 +1,21 @@
 {
   "root_cause": [
-    ["azure rbac"],
-    ["role assignment", "no role", "missing role"]
+    ["azure rbac", "enableazurerbac"],
+    [
+      "role assignment",
+      "no role",
+      "missing role",
+      "no azure kubernetes service rbac reader"
+    ]
   ],
   "fix": [
     ["azure kubernetes service rbac", "rbac reader", "rbac writer"]
+  ],
+  "distractors": [
+    [
+      "sre-oncall-payments",
+      "edit the rolebinding",
+      "rolebinding is broken"
+    ]
   ]
 }

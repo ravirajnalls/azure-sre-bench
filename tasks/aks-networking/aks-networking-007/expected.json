@@ -1,7 +1,7 @@
 {
   "root_cause": [
-    ["private dns", "privatelink", "private dns zone"],
-    ["link", "not linked"]
+    ["private dns", "privatelink", "private dns zone", "privatelink.eastus.azmk8s.io"],
+    ["not linked", "vnet link", "virtual network link", "vnet-hub"]
   ],
   "fix": [
     [
@@ -9,7 +9,12 @@
       "vnet link",
       "link the zone",
       "create a virtual network link",
-      "add a vnet link"
+      "add a vnet link",
+      "vnet-hub"
     ]
+  ],
+  "distractors": [
+    ["peer-aks-spoke-to-hub", "vnet peering", "peering broken"],
+    ["resolv.conf", "internal.cloudapp.net", "search domain"]
   ]
 }

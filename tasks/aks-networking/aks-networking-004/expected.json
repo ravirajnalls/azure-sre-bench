@@ -1,10 +1,14 @@
 {
   "root_cause": [
     ["networkpolicy", "network policy", "netpol"],
-    ["deny", "denied", "denies", "blocking", "blocks"]
+    ["deny", "denied", "denies", "blocking", "blocks", "default-deny-all"]
   ],
   "fix": [
-    ["allow", "ingress rule", "allowing ingress"],
+    ["networkpolicy", "ingress rule", "allowing ingress", "allow ingress from billing-api"],
     ["5432"]
+  ],
+  "distractors": [
+    ["postgres service selector", "wrong postgres selector", "selector"],
+    ["postgres-0", "postgres restarting", "postgres crash"]
   ]
 }

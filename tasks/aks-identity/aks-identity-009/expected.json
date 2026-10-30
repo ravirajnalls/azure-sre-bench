@@ -1,7 +1,7 @@
 {
   "root_cause": [
-    ["kubelet"],
-    ["acrpull", "acr pull"]
+    ["kubelet", "kubelet identity", "00000000-0000-0000-0000-00000000000c"],
+    ["acrpull", "acr pull", "00000000-0000-0000-0000-000000000009"]
   ],
   "fix": [
     [
@@ -9,5 +9,9 @@
       "az aks update --attach-acr",
       "attach-acr"
     ]
+  ],
+  "distractors": [
+    ["adminuserenabled", "registry admin credentials", "admin user disabled"],
+    ["imagepullbackoff", "missing image", "tag missing from the registry"]
   ]
 }

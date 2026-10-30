@@ -1,9 +1,13 @@
 {
   "root_cause": [
     ["firewall"],
-    ["mcr.microsoft.com", "fqdn", "azurekubernetesservice"]
+    ["mcr.microsoft.com", "data.mcr.microsoft.com", "fqdn", "azurekubernetesservice"]
   ],
   "fix": [
     ["azurekubernetesservice", "fqdn tag", "allow mcr"]
+  ],
+  "distractors": [
+    ["acrpaymentsprod01", "acr private endpoint", "acr unreachable"],
+    ["istio", "proxyv2", "istio sidecar"]
   ]
 }
