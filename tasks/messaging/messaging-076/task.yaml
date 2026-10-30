@@ -1,0 +1,20 @@
+id: messaging-076
+canary: 00000000-0000-0000-0000-000000000114  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
+title: Order the message-loss incident
+category: messaging
+difficulty: medium
+tags:
+  - messaging
+  - service-bus
+  - timeline
+  - dlq
+  - idempotency
+kind: timeline
+symptom: |
+  This afternoon's orders-consumer deploy caused a message-loss scare on
+  Service Bus: deserialization errors dead-lettered thousands of order
+  events, a rollback and a DLQ resubmission followed, and customers then
+  reported duplicate confirmations. Ten events captured the incident; the
+  merged export is in fixtures/events.json. Reconstruct what actually
+  happened, in the order it happened. Careful: two events share a
+  timestamp — order them by causality, not by tie-breaking luck.

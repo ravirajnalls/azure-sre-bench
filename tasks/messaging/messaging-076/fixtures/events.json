@@ -1,0 +1,64 @@
+{
+  "events": [
+    {
+      "id": "crm-4402",
+      "source": "support",
+      "timestamp": "2026-10-30T14:47:20Z",
+      "summary": "support tickets spike: customers report duplicate order-confirmation emails for orders placed early this afternoon"
+    },
+    {
+      "id": "sb-551",
+      "source": "service-bus",
+      "timestamp": "2026-10-30T14:06:00Z",
+      "summary": "metric: orders-events/$DeadLetterQueue depth crosses 5,000 messages (error count on the main subscription climbing in step)"
+    },
+    {
+      "id": "cd-231",
+      "source": "ci-cd",
+      "timestamp": "2026-10-30T13:58:12Z",
+      "summary": "orders-consumer v2.4.0 deployed: System.Text.Json deserializer bumped to the new contracts package"
+    },
+    {
+      "id": "gh-9918",
+      "source": "github",
+      "timestamp": "2026-10-30T15:30:11Z",
+      "summary": "PR #8842 merged: idempotent consumer — messages deduplicated by message-id before confirmation side effects"
+    },
+    {
+      "id": "pd-77",
+      "source": "pagerduty",
+      "timestamp": "2026-10-30T14:06:01Z",
+      "summary": "P2 alert 'DLQ depth > 5000' fired for namespace orders"
+    },
+    {
+      "id": "job-88",
+      "source": "batch-job",
+      "timestamp": "2026-10-30T14:19:02Z",
+      "summary": "DLQ resubmission job started automatically on deploy completion: replaying 5,813 dead-lettered orders-events messages to the live queue"
+    },
+    {
+      "id": "cd-233",
+      "source": "ci-cd",
+      "timestamp": "2026-10-30T14:19:02Z",
+      "summary": "rollback complete: orders-consumer v2.3.9 pods Ready, the main subscription is being consumed again"
+    },
+    {
+      "id": "app-77",
+      "source": "app-logs",
+      "timestamp": "2026-10-30T14:01:33Z",
+      "summary": "orders-consumer logs: JsonProcessingException storm on subscription orders-events — 'Property shipmentId is missing in payload', 1,412 errors/min"
+    },
+    {
+      "id": "cd-234",
+      "source": "ci-cd",
+      "timestamp": "2026-10-30T16:02:37Z",
+      "summary": "orders-consumer v2.5.0 (idempotent consumer) deployed to production"
+    },
+    {
+      "id": "cd-232",
+      "source": "ci-cd",
+      "timestamp": "2026-10-30T14:12:45Z",
+      "summary": "rollback initiated: orders-consumer v2.3.9 deploy started"
+    }
+  ]
+}

@@ -120,6 +120,7 @@
 | --- | --- | --- | --- |
 | messaging-060 | Service Bus dead-letter queue fills while the main queue drains | medium | messaging, azure, servicebus, dead-letter, queues |
 | messaging-061 | Event Hubs consumer lag keeps growing despite scaling out | medium | messaging, azure, eventhubs, streaming, scaling |
+| messaging-076 | Order the message-loss incident | medium | messaging, service-bus, timeline, dlq, idempotency |
 
 ## monitoring
 
