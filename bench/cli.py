@@ -1,8 +1,8 @@
 """Command-line interface for Azure SRE Bench.
 
 Issue #1 scaffolded the subcommand surface; `validate` and `list` are live as of
-issue #2 and `grade` as of issue #3. The remaining subcommands land with the
-runner (issue #4) and the reporting layer (issues #40-#42).
+issue #2, `grade` as of issue #3, and `run` as of issue #4. The remaining
+subcommands land with the reporting layer (issues #40-#42).
 """
 
 from __future__ import annotations
@@ -18,7 +18,7 @@ from bench.tasks import load_tasks
 
 SUBCOMMANDS = ("validate", "list", "grade", "run", "site", "leaderboard", "catalog")
 
-IMPLEMENTED = ("validate", "list", "grade")
+IMPLEMENTED = ("validate", "list", "grade", "run")
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -42,6 +42,32 @@ def build_parser() -> argparse.ArgumentParser:
                 "--answer",
                 required=True,
                 help="path to the agent's answer JSON file",
+            )
+        elif name == "run":
+            run_parser = sub.add_parser(
+                name, help="run an agent against tasks and record graded results"
+            )
+            run_parser.add_argument(
+                "--agent", required=True, help="agent command string to execute"
+            )
+            target = run_parser.add_mutually_exclusive_group(required=True)
+            target.add_argument("--task", help="task id to run")
+            target.add_argument(
+                "--all", dest="all_tasks", action="store_true", help="run every task"
+            )
+            run_parser.add_argument(
+                "--name", default="default", help="run name under results/ (default)"
+            )
+            run_parser.add_argument(
+                "--timeout",
+                type=int,
+                default=600,
+                help="per-task timeout in seconds (default 600)",
+            )
+            run_parser.add_argument(
+                "--tasks-root",
+                default="tasks",
+                help="task discovery root (default: ./tasks)",
             )
         else:
             subparser = sub.add_parser(name)
@@ -113,13 +139,17 @@ def main(argv: list[str] | None = None) -> int:
     if args.command in IMPLEMENTED:
         if args.command == "grade":
             return cmd_grade(args)
+        if args.command == "run":
+            from bench.run import cmd_run  # deferred: keeps --help cheap
+
+            return cmd_run(args)
         root = Path(getattr(args, "root", "tasks"))
         if args.command == "validate":
             return cmd_validate(root)
         return cmd_list(root)
     print(
         f"'bench {args.command}' is not implemented yet; "
-        "see issues #4 and #40-#42 for the planned subcommands.",
+        "see issues #40-#42 for the planned subcommands.",
         file=sys.stderr,
     )
     return 2

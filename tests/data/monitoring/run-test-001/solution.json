@@ -1,0 +1,8 @@
+{
+  "root_cause": "Expired connection string secret in the probe deployment after a rotation.",
+  "evidence": [
+    "app-insights-query.kql: 401 responses spike on probe-api",
+    "kubectl-get-pods.txt: probe pods Running and healthy (red herring)"
+  ],
+  "fix": "update the connection string"
+}
