@@ -1,9 +1,13 @@
 {
   "root_cause": [
-    ["websites_port", "port"],
-    ["5000"]
+    ["websites_port", "websites port", "app setting"],
+    ["port 5000", "listening on 5000", "still 80", "port 80", "5000"]
   ],
   "fix": [
-    ["websites_port"]
+    ["websites_port", "websites port", "app setting"],
+    ["from 80 to 5000", "to 5000", "5000"]
+  ],
+  "distractors": [
+    ["serverfarm", "asp-quotes-prod", "app service plan", "numberofworkers", "scale out"]
   ]
 }

@@ -1,9 +1,15 @@
 {
   "root_cause": [
-    ["private dns", "privatelink"],
-    ["link", "resolv", "public ip"]
+    ["private dns zone", "privatelink.database.windows.net", "privatelink"],
+    ["virtual network link", "vnet link", "not linked", "missing link"],
+    ["public ip", "20.42.65.92", "resolves publicly"]
   ],
   "fix": [
-    ["link", "virtual network link"]
+    ["virtual network link", "add a vnet link", "link the zone"],
+    ["vnet-app-prod"]
+  ],
+  "distractors": [
+    ["snet-app-integration", "integration subnet", "vnet integration broken", "resync"],
+    ["pe-sql-contoso-prod", "endpoint approval", "private endpoint broken", "re-approve"]
   ]
 }

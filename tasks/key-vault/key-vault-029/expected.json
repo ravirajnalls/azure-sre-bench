@@ -1,9 +1,14 @@
 {
   "root_cause": [
-    ["rbac"],
-    ["access polic"]
+    ["rbac permission model", "enablerbacauthorization", "rbac authorization"],
+    ["no role assignment", "not assigned", "forbiddenbyrbac"]
   ],
   "fix": [
-    ["key vault secrets user", "role assignment"]
+    ["key vault secrets user", "secrets user"],
+    ["kv-reports", "vault scope", "role assignment"]
+  ],
+  "distractors": [
+    ["key vault administrator", "administrator role", "secrets officer", "contributor role"],
+    ["networkacls", "firewall", "ip rules", "publicnetworkaccess"]
   ]
 }
