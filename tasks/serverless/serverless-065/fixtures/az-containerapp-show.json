@@ -1,0 +1,35 @@
+{
+  "id": "/subscriptions/00000000-0000-0000-0000-000000000005/resourceGroups/rg-shop-prod/providers/Microsoft.App/containerApps/checkout-api",
+  "name": "checkout-api",
+  "type": "Microsoft.App/containerApps",
+  "location": "West Europe",
+  "provisioningState": "Succeeded",
+  "latestRevisionName": "checkout-api--sv-3",
+  "latestRevisionFqdn": "checkout-api--sv-3.graydune-8a3f.westeurope.azurecontainerapps.io",
+  "environmentId": "/subscriptions/00000000-0000-0000-0000-000000000005/resourceGroups/rg-shop-prod/providers/Microsoft.App/managedEnvironments/menv-shop-prod",
+  "template": {
+    "revisionSuffix": "sv-3",
+    "containers": [
+      {
+        "name": "checkout-api",
+        "image": "shopacr.azurecr.io/checkout-api:v2.4.1",
+        "resources": { "cpu": 1.0, "memory": "2Gi" },
+        "env": [
+          { "name": "PRICING_VERSION", "value": "2026.10-v2" },
+          { "name": "REDIS_HOST", "value": "rediscache-session-prod.redis.cache.windows.net" }
+        ]
+      }
+    ],
+    "scale": { "minReplicas": 3, "maxReplicas": 12, "rules": [] }
+  },
+  "ingress": {
+    "external": true,
+    "targetPort": 8080,
+    "transport": "auto",
+    "fqdn": "checkout-api.graydune-8a3f.westeurope.azurecontainerapps.io",
+    "traffic": [
+      { "weight": 75, "revisionName": "checkout-api--sv-3", "latestRevisionName": "checkout-api--sv-3", "latestRevision": true },
+      { "weight": 25, "revisionName": "checkout-api--sv-1", "latestRevisionName": "checkout-api--sv-1", "latestRevision": false }
+    ]
+  }
+}

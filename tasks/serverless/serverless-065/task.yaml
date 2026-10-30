@@ -1,0 +1,17 @@
+id: serverless-065
+canary: 00000000-0000-0000-0000-000000000114  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
+title: Container Apps checkout-api serves stale pricing after a rollout
+category: serverless
+difficulty: medium
+tags:
+  - serverless
+  - container-apps
+  - traffic-splitting
+  - revisions
+  - blue-green
+symptom: |
+  Since yesterday's checkout-api rollout, some customers still see the old
+  shipping-fee pricing while others get the new one. The pod images show
+  the new version running everywhere, and `az containerapp revision list`
+  says the new revision is active — yet the split persists across replicas
+  and restarts.

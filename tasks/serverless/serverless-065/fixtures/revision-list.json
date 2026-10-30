@@ -1,0 +1,56 @@
+[
+  {
+    "name": "checkout-api--sv-1",
+    "type": "Microsoft.App/containerApps/revisions",
+    "id": "/subscriptions/00000000-0000-0000-0000-000000000005/resourceGroups/rg-shop-prod/providers/Microsoft.App/containerApps/checkout-api/revisions/checkout-api--sv-1",
+    "createdTime": "2026-10-27T14:03:22+00:00",
+    "lastActiveTime": "2026-10-30T06:00:11+00:00",
+    "active": true,
+    "provisioningState": "Succeeded",
+    "template": {
+      "containers": [
+        {
+          "name": "checkout-api",
+          "image": "shopacr.azurecr.io/checkout-api:v2.3.9"
+        }
+      ]
+    },
+    "trafficWeight": 25
+  },
+  {
+    "name": "checkout-api--sv-2",
+    "type": "Microsoft.App/containerApps/revisions",
+    "id": "/subscriptions/00000000-0000-0000-0000-000000000005/resourceGroups/rg-shop-prod/providers/Microsoft.App/containerApps/checkout-api/revisions/checkout-api--sv-2",
+    "createdTime": "2026-10-29T08:47:05+00:00",
+    "lastActiveTime": "2026-10-29T09:12:40+00:00",
+    "active": false,
+    "provisioningState": "Succeeded",
+    "template": {
+      "containers": [
+        {
+          "name": "checkout-api",
+          "image": "shopacr.azurecr.io/checkout-api:v2.4.0"
+        }
+      ]
+    },
+    "trafficWeight": 0
+  },
+  {
+    "name": "checkout-api--sv-3",
+    "type": "Microsoft.App/containerApps/revisions",
+    "id": "/subscriptions/00000000-0000-0000-0000-000000000005/resourceGroups/rg-shop-prod/providers/Microsoft.App/containerApps/checkout-api/revisions/checkout-api--sv-3",
+    "createdTime": "2026-10-29T09:14:18+00:00",
+    "lastActiveTime": "2026-10-30T06:00:11+00:00",
+    "active": true,
+    "provisioningState": "Succeeded",
+    "template": {
+      "containers": [
+        {
+          "name": "checkout-api",
+          "image": "shopacr.azurecr.io/checkout-api:v2.4.1"
+        }
+      ]
+    },
+    "trafficWeight": 75
+  }
+]

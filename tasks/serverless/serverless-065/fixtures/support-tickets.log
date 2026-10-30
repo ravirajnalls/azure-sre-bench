@@ -1,0 +1,6 @@
+2026-10-30T09:12:07Z TICKET #48112 [checkout] Customer charged 12.99 shipping; other account in same basket cohort charged 8.99. "Refreshed and the fee changed" — same cart, same region, minutes apart.
+2026-10-30T09:31:44Z TICKET #48115 [checkout] Roughly one order in four shows the old shipping fee since yesterday. Support tried "clear your cache" per old runbook — no effect.
+2026-10-30T10:05:19Z TICKET #48122 [checkout] Admin console shows every pod reporting image v2.4.1 and PRICING_VERSION 2026.10-v2, yet old fee amounts keep appearing. Pattern is session-sticky, not load-dependent.
+# ops note: both fee values trace to shippingFee calc — v2.3.9 fee table returns 12.99 for
+# zone B, v2.4.x returns 8.99. The old value only appears for ~1/4 of sessions, and the
+# restarts at 06:00Z did not change the ratio.
