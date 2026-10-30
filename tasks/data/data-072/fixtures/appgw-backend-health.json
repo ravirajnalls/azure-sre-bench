@@ -1,0 +1,53 @@
+{
+  "backendAddressPools": [
+    {
+      "etag": "W/\"00000000-0000-0000-0000-000000000000\"",
+      "name": "api-backend-pool",
+      "properties": {
+        "backendHTTPSettingsCollection": [
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-edge-prod/providers/Microsoft.Network/applicationGateways/appgw-edge-prod/httpListeners/https-listener-443",
+            "name": "https-mtls-settings",
+            "properties": {
+              "port": 443,
+              "protocol": "Https",
+              "authenticationCertificate": {
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-edge-prod/providers/Microsoft.Network/applicationGateways/appgw-edge-prod/authCerts/app-mtls-client"
+              },
+              "probe": {
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-edge-prod/providers/Microsoft.Network/applicationGateways/appgw-edge-prod/probes/https-backend-probe"
+              }
+            },
+            "servers": [
+              {
+                "address": "10.2.0.11",
+                "health": "Unhealthy",
+                "healthProbeLog": "Error: The TLS handshake with the backend server failed. The certificate presented by the client has expired. (CERT_HAS_EXPIRED)"
+              },
+              {
+                "address": "10.2.0.12",
+                "health": "Unhealthy",
+                "healthProbeLog": "Error: The TLS handshake with the backend server failed. The certificate presented by the client has expired. (CERT_HAS_EXPIRED)"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "backendHTTPSettingsCollection": [],
+  "probes": [
+    {
+      "etag": "W/\"00000000-0000-0000-0000-000000000000\"",
+      "name": "https-backend-probe",
+      "properties": {
+        "host": "orders-api.internal",
+        "interval": 30,
+        "path": "/healthz",
+        "protocol": "Https",
+        "timeout": 30,
+        "unhealthyThreshold": 3
+      }
+    }
+  ]
+}

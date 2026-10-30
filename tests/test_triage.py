@@ -27,6 +27,7 @@ from bench.triage import (
 REPO_ROOT = Path(__file__).resolve().parent.parent
 TRIAGE_TASKS = [
     REPO_ROOT / "tasks" / "aks-ops" / "aks-ops-071",
+    REPO_ROOT / "tasks" / "data" / "data-072",
 ]
 
 ALERTS = {

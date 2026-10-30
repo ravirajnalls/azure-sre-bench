@@ -1,0 +1,67 @@
+{
+  "alerts": [
+    {
+      "alert_id": "ALT-01",
+      "name": "Api5xxRateHigh",
+      "state": "firing",
+      "severity": "critical",
+      "fired_at": "2026-10-30T09:19:14Z",
+      "target": "orders-api-prod",
+      "summary": "HTTP 5xx rate for orders-api-prod is 31% over the last 5 minutes (baseline 0.4%); failures cluster on data-tier touching endpoints."
+    },
+    {
+      "alert_id": "ALT-02",
+      "name": "SqlConnectionFailureRateHigh",
+      "state": "firing",
+      "severity": "critical",
+      "fired_at": "2026-10-30T09:18:32Z",
+      "target": "sqldb-orders-prod.database.windows.net",
+      "summary": "Login failure rate on the orders SQL logical server is 100% over the last 3 minutes; clients report TLS handshake errors, not wrong credentials."
+    },
+    {
+      "alert_id": "ALT-03",
+      "name": "RedisTlsHandshakeErrors",
+      "state": "firing",
+      "severity": "critical",
+      "fired_at": "2026-10-30T09:18:05Z",
+      "target": "rediscache-session-prod.redis.cache.windows.net",
+      "summary": "TLS handshake failure rate to the session cache is 100% over the last 3 minutes; every reconnecting client fails before AUTH."
+    },
+    {
+      "alert_id": "ALT-04",
+      "name": "QueueBacklogGrowing",
+      "state": "firing",
+      "severity": "warning",
+      "fired_at": "2026-10-30T09:21:47Z",
+      "target": "orders-checkout-queue-prod",
+      "summary": "Active message count on the checkout queue has grown past 48,000 and is climbing; consumer success rate is near zero since 09:15."
+    },
+    {
+      "alert_id": "ALT-05",
+      "name": "SyntheticEndToEndFailure",
+      "state": "firing",
+      "severity": "warning",
+      "fired_at": "2026-10-30T09:23:02Z",
+      "target": "synthetic-checkout-journey",
+      "summary": "The synthetic checkout journey fails at step 2 of 5 (place order) from all four probe regions since the 09:15 run."
+    },
+    {
+      "alert_id": "ALT-06",
+      "name": "KeyVaultCertificateNearExpiry",
+      "state": "firing",
+      "severity": "warning",
+      "fired_at": "2026-10-23T09:20:15Z",
+      "target": "kv-prod-shared-01/app-mtls-client",
+      "summary": "Certificate app-mtls-client in vault kv-prod-shared-01 is within 7 days of expiry (expires 2026-10-30T09:15:00Z). Alert has fired continuously since 2026-10-23; no renewal has landed."
+    },
+    {
+      "alert_id": "ALT-07",
+      "name": "AppGwBackendUnhealthy",
+      "state": "firing",
+      "severity": "critical",
+      "fired_at": "2026-10-30T09:17:41Z",
+      "target": "appgw-edge-prod/api-backend-pool",
+      "summary": "All 2 servers in backend pool api-backend-pool are unhealthy; HTTPS health probes fail the TLS handshake with the backend."
+    }
+  ]
+}
