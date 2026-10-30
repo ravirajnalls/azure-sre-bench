@@ -1,0 +1,24 @@
+[
+  {
+    "etag": "\"00000000-0000-0000-0000-000000000003\"",
+    "id": "/subscriptions/00000000-0000-0000-0000-000000000002/resourceGroups/rg-aks-prod/providers/Microsoft.Network/privateDnsZones/privatelink.eastus.azmk8s.io/virtualNetworkLinks/vnet-aks-spoke-link",
+    "location": "global",
+    "name": "vnet-aks-spoke-link",
+    "provisioningState": "Succeeded",
+    "registrationEnabled": false,
+    "resolutionPolicy": "Default",
+    "systemData": {
+      "createdBy": "azure-container-networking",
+      "createdByType": "Application",
+      "createdAt": "2026-03-12T14:02:11.000000+00:00",
+      "lastModifiedBy": "azure-container-networking",
+      "lastModifiedByType": "Application",
+      "lastModifiedAt": "2026-03-12T14:02:11.000000+00:00"
+    },
+    "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+    "virtualNetwork": {
+      "id": "/subscriptions/00000000-0000-0000-0000-000000000002/resourceGroups/rg-aks-prod/providers/Microsoft.Network/virtualNetworks/vnet-aks-spoke",
+      "resourceGroup": "rg-aks-prod"
+    }
+  }
+]

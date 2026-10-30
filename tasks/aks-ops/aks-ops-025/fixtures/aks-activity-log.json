@@ -1,0 +1,124 @@
+{
+  "value": [
+    {
+      "eventDataId": "00000000-0000-0000-0000-000000000004",
+      "eventTimestamp": "2025-10-01T09:14:22.874191Z",
+      "submissionTimestamp": "2025-10-01T09:15:41.3181072Z",
+      "category": {
+        "value": "Administrative",
+        "localizedValue": "Administrative"
+      },
+      "operationName": {
+        "value": "Microsoft.ContainerService/managedClusters/agentpools/write",
+        "localizedValue": "Create or Update Agent Pool"
+      },
+      "resourceType": {
+        "value": "Microsoft.ContainerService/managedClusters/agentpools",
+        "localizedValue": "agentpools"
+      },
+      "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-contoso-dev/providers/Microsoft.ContainerService/managedClusters/aks-contoso-dev/agentpools/systempool",
+      "caller": "priya.raman@contoso.com",
+      "status": {
+        "value": "Succeeded",
+        "localizedValue": "Succeeded"
+      },
+      "httpRequest": {
+        "clientIpAddress": "203.0.113.24",
+        "method": "PUT"
+      },
+      "properties": {
+        "requestbody": "{\"location\":\"eastus\",\"name\":\"systempool\",\"properties\":{\"mode\":\"System\",\"vmSize\":\"Standard_D16s_v5\",\"enableAutoScaling\":true,\"minCount\":8,\"maxCount\":12,\"osType\":\"Linux\",\"osSKU\":\"AzureLinux\",\"availabilityZones\":[\"1\",\"2\",\"3\"]}}"
+      }
+    },
+    {
+      "eventDataId": "00000000-0000-0000-0000-000000000003",
+      "eventTimestamp": "2025-06-12T14:02:11.4092234Z",
+      "submissionTimestamp": "2025-06-12T14:03:29.8741102Z",
+      "category": {
+        "value": "Administrative",
+        "localizedValue": "Administrative"
+      },
+      "operationName": {
+        "value": "Microsoft.ContainerService/managedClusters/agentpools/write",
+        "localizedValue": "Create or Update Agent Pool"
+      },
+      "resourceType": {
+        "value": "Microsoft.ContainerService/managedClusters/agentpools",
+        "localizedValue": "agentpools"
+      },
+      "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-contoso-dev/providers/Microsoft.ContainerService/managedClusters/aks-contoso-dev/agentpools/systempool",
+      "caller": "priya.raman@contoso.com",
+      "status": {
+        "value": "Succeeded",
+        "localizedValue": "Succeeded"
+      },
+      "httpRequest": {
+        "clientIpAddress": "203.0.113.24",
+        "method": "PUT"
+      },
+      "properties": {
+        "requestbody": "{\"location\":\"eastus\",\"name\":\"systempool\",\"properties\":{\"mode\":\"System\",\"vmSize\":\"Standard_D4s_v5\",\"enableAutoScaling\":true,\"minCount\":3,\"maxCount\":6,\"osType\":\"Linux\",\"osSKU\":\"AzureLinux\",\"availabilityZones\":[\"1\",\"2\",\"3\"]}}"
+      }
+    },
+    {
+      "eventDataId": "00000000-0000-0000-0000-000000000005",
+      "eventTimestamp": "2025-10-14T08:47:56.2210477Z",
+      "submissionTimestamp": "2025-10-14T08:49:03.1150283Z",
+      "category": {
+        "value": "Administrative",
+        "localizedValue": "Administrative"
+      },
+      "operationName": {
+        "value": "Microsoft.ContainerService/managedClusters/agentpools/write",
+        "localizedValue": "Create or Update Agent Pool"
+      },
+      "resourceType": {
+        "value": "Microsoft.ContainerService/managedClusters/agentpools",
+        "localizedValue": "agentpools"
+      },
+      "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-contoso-dev/providers/Microsoft.ContainerService/managedClusters/aks-contoso-dev/agentpools/npuser",
+      "caller": "ci-runner@contoso.com",
+      "status": {
+        "value": "Succeeded",
+        "localizedValue": "Succeeded"
+      },
+      "httpRequest": {
+        "clientIpAddress": "203.0.113.87",
+        "method": "PUT"
+      },
+      "properties": {
+        "requestbody": "{\"location\":\"eastus\",\"name\":\"npuser\",\"properties\":{\"mode\":\"User\",\"vmSize\":\"Standard_D8s_v5\",\"enableAutoScaling\":true,\"minCount\":3,\"maxCount\":15,\"osType\":\"Linux\",\"osSKU\":\"Ubuntu\",\"availabilityZones\":[\"1\",\"2\",\"3\"]}}"
+      }
+    },
+    {
+      "eventDataId": "00000000-0000-0000-0000-000000000006",
+      "eventTimestamp": "2025-10-21T11:30:05.9981204Z",
+      "submissionTimestamp": "2025-10-21T11:31:12.5540319Z",
+      "category": {
+        "value": "Administrative",
+        "localizedValue": "Administrative"
+      },
+      "operationName": {
+        "value": "Microsoft.Insights/scheduledQueryRules/write",
+        "localizedValue": "Create or Update Scheduled Query Rule"
+      },
+      "resourceType": {
+        "value": "Microsoft.Insights/scheduledQueryRules",
+        "localizedValue": "scheduledQueryRules"
+      },
+      "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-contoso-dev/providers/Microsoft.Insights/scheduledQueryRules/latency-p95-warning",
+      "caller": "daniel.okafor@contoso.com",
+      "status": {
+        "value": "Succeeded",
+        "localizedValue": "Succeeded"
+      },
+      "httpRequest": {
+        "clientIpAddress": "203.0.113.55",
+        "method": "PUT"
+      },
+      "properties": {
+        "message": "Updated alert rule latency-p95-warning with new threshold"
+      }
+    }
+  ]
+}

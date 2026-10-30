@@ -1,0 +1,55 @@
+Name:           profile-svc-66c7d9b4f8-kvx2m
+Namespace:      profiles
+Priority:       0
+Service Account:  profile-svc
+Node:           aks-nppool-10246153-vmss000001/10.224.0.61
+Start Time:     Fri, 30 Oct 2026 08:57:03 +0000
+Labels:         app=profile-svc
+                pod-template-hash=66c7d9b4f8
+Annotations:    <none>
+Status:         Running
+IP:             10.244.3.71
+IPs:
+  IP:  10.244.3.71
+Containers:
+  profile-svc:
+    Container ID:   containerd://8f2c1a4d9b0e3c67a51f2e8b4d7c9013a6f52b8e1c3d7a904b6e2f8a1c3d5e7b
+    Image:          profilesvc.azurecr.io/profile-svc:2.4.0
+    Image ID:       profilesvc.azurecr.io/profile-svc@sha256:1f4e2d3c5b6a7988012f4e2d3c5b6a7988012f4e2d3c5b6a7988012f4e2d3c5b
+    Port:           3000/TCP
+    Host Port:      0/TCP
+    State:          Running
+      Started:      Fri, 30 Oct 2026 08:57:41 +0000
+    Ready:         False
+    Restart Count:  0
+    Environment:
+      LOG_LEVEL:  info
+      PGHOST:     pg-primary.profiles.svc.cluster.local
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-9x2qm (ro)
+Conditions:
+  Type              Status
+  Initialized       True
+  Ready             False
+  ContainersReady   False
+  PodScheduled      True
+QoS Class:         Burstable
+Node-Selectors:    <none>
+Tolerations:       node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                   node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type     Reason     Age    From               Message
+  ----     ------     ----   ----               -------
+  Normal   Scheduled  9m2s   default-scheduler  Successfully assigned profiles/profile-svc-66c7d9b4f8-kvx2m to aks-nppool-10246153-vmss000001
+  Normal   Pulling    9m1s   kubelet            Pulling image "profilesvc.azurecr.io/profile-svc:2.4.0"
+  Normal   Pulled     8m56s  kubelet            Successfully pulled image "profilesvc.azurecr.io/profile-svc:2.4.0" in 4.613s (4.613s including waiting)
+  Normal   Created    8m55s  kubelet            Created container profile-svc
+  Normal   Started    8m55s  kubelet            Started container profile-svc
+  Warning  Unhealthy  8m44s  kubelet            Readiness probe failed: Get "http://10.244.3.71:3000/healthz": dial tcp 10.244.3.71:3000: connect: connection refused
+  Warning  Unhealthy  8m34s  kubelet            Readiness probe failed: Get "http://10.244.3.71:3000/healthz": dial tcp 10.244.3.71:3000: connect: connection refused
+  Warning  Unhealthy  8m24s  kubelet            Readiness probe failed: Get "http://10.244.3.71:3000/healthz": dial tcp 10.244.3.71:3000: connect: connection refused
+  Warning  Unhealthy  8m14s  kubelet            Readiness probe failed: Get "http://10.244.3.71:3000/healthz": dial tcp 10.244.3.71:3000: connect: connection refused
+  Warning  Unhealthy  8m4s   kubelet            Readiness probe failed: Get "http://10.244.3.71:3000/healthz": dial tcp 10.244.3.71:3000: connect: connection refused
+  Warning  Unhealthy  7m54s  kubelet            Readiness probe failed: Get "http://10.244.3.71:3000/healthz": dial tcp 10.244.3.71:3000: connect: connection refused
+  Warning  Unhealthy  7m44s  kubelet            Readiness probe failed: Get "http://10.244.3.71:3000/healthz": dial tcp 10.244.3.71:3000: connect: connection refused
+  Warning  Unhealthy  7m34s  kubelet            Readiness probe failed: Get "http://10.244.3.71:3000/healthz": dial tcp 10.244.3.71:3000: connect: connection refused

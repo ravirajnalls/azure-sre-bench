@@ -1,0 +1,11 @@
+{
+  "root_cause": "The private DNS zone privatelink.eastus.azmk8s.io that backs the cluster's private API FQDN is linked only to the AKS VNet (vnet-aks-spoke); it is not linked to vnet-hub, so the hub DNS resolver cannot resolve the FQDN and kubectl from the jumpbox fails with 'no such host'.",
+  "evidence": [
+    "az-aks-show.json: enablePrivateCluster true with privateFqdn 00000000-0000-0000-0000-000000000006.hcp.eastus.azmk8s.io",
+    "kubectl-error.txt: lookup of the private FQDN on 10.20.0.4:53 returns no such host",
+    "nslookup-from-jumpbox.txt: NXDOMAIN for the private API FQDN while a public name resolves through the same hub resolver",
+    "az-network-private-dns-link-list.json: zone privatelink.eastus.azmk8s.io has a single virtual network link, vnet-aks-spoke-link, pointing only at vnet-aks-spoke",
+    "az-network-vnet-peering-list.json: peering to vnet-hub is Connected (red herring — routing is not the problem)"
+  ],
+  "fix": "Create a virtual network link for the privatelink.eastus.azmk8s.io zone to vnet-hub so the jumpbox resolver can resolve the private API FQDN."
+}

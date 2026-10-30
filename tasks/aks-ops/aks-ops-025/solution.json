@@ -1,0 +1,11 @@
+{
+  "root_cause": "The system node pool (systempool) autoscaler minimum was raised on 2025-10-01 from 3 nodes of Standard_D4s_v5 to a floor of 8 nodes of Standard_D16s_v5. The pool now runs 16-vCPU VMs with minCount 8 while utilization sits near 8% CPU, so the autoscaler never scales down and eight always-on large nodes doubled the cluster's VM spend. The small rise in Log Analytics ingestion is far too small to explain the jump.",
+  "evidence": [
+    "cost-by-meter.csv: systempool meter switched from Standard_D4s_v5 (414.72 USD in September) to Standard_D16s_v5 (4571.14 USD in October) while npuser cost was flat",
+    "az-aks-nodepool-list.json: systempool shows enableAutoScaling with minCount 8 / maxCount 12 on Standard_D16s_v5 and nodeCount 8",
+    "aks-activity-log.json: agentpools/write on systempool on 2025-10-01 with requestbody setting vmSize Standard_D16s_v5, minCount 8, maxCount 12; the previous systempool write (2025-06-12) used Standard_D4s_v5 with minCount 3",
+    "kubectl-top-nodes.txt: all 8 systempool nodes idle at roughly 7-9% CPU and 6% memory — paid capacity that the autoscaler never releases",
+    "log-analytics-ingestion.csv: ingestion grew only about 6% month over month, too small to account for a doubled bill"
+  ],
+  "fix": "Lower the systempool autoscaler minCount back to the original floor of 3 (and/or resize the system pool to a smaller VM such as Standard_D4s_v5) so the autoscaler can scale the system pool down outside peak hours; the eight underutilized Standard_D16s_v5 nodes are what doubled the bill."
+}

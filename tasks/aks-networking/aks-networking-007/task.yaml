@@ -1,0 +1,18 @@
+id: aks-networking-007
+title: "Private cluster API unreachable from the ops jumpbox"
+category: aks-networking
+difficulty: medium
+tags:
+  - aks
+  - private-cluster
+  - private-dns-zone
+  - vnet-peering
+  - dns
+symptom: >-
+  After last night's network change window, kubectl from the ops jumpbox in
+  vnet-hub fails with "no such host" for the cluster's private API FQDN, so
+  on-call cannot manage aks-prod from the hub. Everything works as usual from
+  a maintenance VM inside the AKS VNet, and in-cluster workloads plus
+  dashboards fed by cluster agents are healthy. VNet peering between the hub
+  and the AKS VNet reports Connected from both sides, and there are no node
+  or control-plane alerts.

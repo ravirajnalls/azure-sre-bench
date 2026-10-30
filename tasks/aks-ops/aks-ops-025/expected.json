@@ -1,0 +1,9 @@
+{
+  "root_cause": [
+    ["system pool", "systempool", "nodepool1"],
+    ["mincount", "min count", "d16"]
+  ],
+  "fix": [
+    ["mincount", "min count", "smaller vm", "d4s"]
+  ]
+}
