@@ -1,0 +1,48 @@
+Name:           checkout-api-5c4d8b7f9-xq2lv
+Namespace:      orders
+Priority:       0
+Service Account: default
+Node:           aks-nodepool1-00000003-vmss000000/10.224.0.6
+Start Time:     Thu, 30 Oct 2026 08:41:07 +0000
+Labels:         app=checkout-api
+                pod-template-hash=5c4d8b7f9
+Annotations:    <none>
+Status:         Pending
+IP:
+IPs:            <none>
+Containers:
+  checkout-api:
+    Container ID:
+    Image:          shopacr00000001.azurecr.io/checkout-api:2026.10.30
+    Image ID:
+    Port:           8080/TCP
+    Host Port:      0/TCP
+    State:          Waiting
+      Reason:       ContainerCreating
+    Ready:          False
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access (ro)
+Conditions:
+  Type        Status
+  PodReadyToStartContainers   False
+  PodScheduled                True
+Volumes:
+  kube-api-access:
+    Type:                    Projected (a service account projected volume)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    ConfigMapOptional:       <nil>
+    DownwardAPI:             true
+QoS Class:                   BestEffort
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type     Reason                  Age                    From               Message
+  ----     ------                  ----                   ----               -------
+  Normal   Scheduled               66m                    default-scheduler  Successfully assigned orders/checkout-api-5c4d8b7f9-xq2lv to aks-nodepool1-00000003-vmss000000
+  Normal   Pulling                 66m (x2 over 66m)      kubelet            Pulling image "shopacr00000001.azurecr.io/checkout-api:2026.10.30"
+  Normal   Pulled                  66m (x2 over 66m)      kubelet            Successfully pulled image "shopacr00000001.azurecr.io/checkout-api:2026.10.30" in 1.812s (1.812s including waiting). Image size: 82314591 bytes.
+  Warning  FailedCreatePodSandBox  65m (x118 over 66m)    kubelet            (combined from similar events): Failed to create pod sandbox: rpc error: code = Unknown desc = failed to setup network for sandbox "00000000-0000-0000-0000-00000000000e": add cidr: ip allocation failed: azure-cni: unable to allocate an IP address from subnet "snet-aks-nodes": all IP addresses in the subnet are allocated

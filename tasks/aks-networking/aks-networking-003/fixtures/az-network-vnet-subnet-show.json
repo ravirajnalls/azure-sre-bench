@@ -1,0 +1,21 @@
+{
+  "addressPrefix": "10.224.0.0/24",
+  "delegations": [],
+  "ipConfigurationsCount": 251,
+  "name": "snet-aks-nodes",
+  "natGateway": null,
+  "privateEndpointNetworkPolicies": "Enabled",
+  "privateEndpoints": [],
+  "provisioningState": "Succeeded",
+  "resourceGroup": "rg-orders-prod",
+  "serviceEndpoints": [
+    {
+      "locations": [
+        "uksouth"
+      ],
+      "provisioningState": "Succeeded",
+      "service": "Microsoft.Storage"
+    }
+  ],
+  "type": "Microsoft.Network/virtualNetworks/subnets"
+}
