@@ -1,0 +1,79 @@
+name: Release
+
+# Issue #116: pushing a `v*` tag cuts a release. The workflow runs the same
+# gates as CI (validate, catalog freshness, tests), checks the tagged corpus
+# against its frozen release manifest, then builds the tarball and publishes
+# a GitHub release with it.
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Validate task corpus
+        env:
+          HELDOUT_KEY: ${{ secrets.HELDOUT_KEY }}
+        run: python -m bench validate
+
+      - name: Task catalog is fresh
+        run: |
+          python -m bench catalog
+          git diff --exit-code docs/TASKS.md
+
+      - name: Test suite
+        env:
+          HELDOUT_KEY: ${{ secrets.HELDOUT_KEY }}
+        run: pytest -q
+
+      - name: Release manifest matches the tagged corpus
+        env:
+          HELDOUT_KEY: ${{ secrets.HELDOUT_KEY }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          python - "$RELEASE_TAG" <<'EOF'
+          import sys
+          from bench.releases import load_release, verify_release
+
+          tag = sys.argv[1]
+          manifest = load_release(tag)
+          problems = verify_release(manifest, tasks_root="tasks")
+          if problems:
+              print(f"release {tag} does not match the corpus:")
+              for problem in problems:
+                  print(f"  - {problem}")
+              sys.exit(1)
+          print(f"release {tag}: {len(manifest['tasks'])} tasks, rubric hashes verified")
+          EOF
+
+      - name: Build tarball
+        run: |
+          mkdir -p dist
+          git archive --format=tar.gz \
+            --prefix="azure-sre-bench-${RELEASE_TAG}/" \
+            -o "dist/azure-sre-bench-${RELEASE_TAG}.tar.gz" \
+            "${RELEASE_TAG}"
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          gh release create "$RELEASE_TAG" dist/*.tar.gz \
+            --title "$RELEASE_TAG" --verify-tag --generate-notes

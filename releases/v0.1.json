@@ -1,0 +1,291 @@
+{
+  "manifest_version": 1,
+  "version": "0.1",
+  "tag": "v0.1",
+  "created": "2026-10-30",
+  "commit": "3da17745d3ba5b2bf9ab37a79407d7633efd4b9c",
+  "grader_version": 1,
+  "result_schema_version": 1,
+  "tasks": [
+    {
+      "id": "ado-pipelines-030",
+      "category": "ado-pipelines",
+      "difficulty": "easy",
+      "split": "public",
+      "rubric_sha256": "947ae7230ca5149713357ee65198d8b16432eed4ece3ca224d2849a75c46a196"
+    },
+    {
+      "id": "aks-identity-008",
+      "category": "aks-identity",
+      "difficulty": "easy",
+      "split": "public",
+      "rubric_sha256": "f1bd80455148a54a941f836a61875a995c89981f82d803152ddbaff757aa2387"
+    },
+    {
+      "id": "aks-identity-009",
+      "category": "aks-identity",
+      "difficulty": "medium",
+      "split": "public",
+      "rubric_sha256": "f9e3366c44531a4d6352bedd87fcebcdf3b9b4bb3040e494421e93a827310b22"
+    },
+    {
+      "id": "aks-identity-010",
+      "category": "aks-identity",
+      "difficulty": "hard",
+      "split": "public",
+      "rubric_sha256": "da93d4012afe3e0a1b63a6addfd1703501732378d9553fa79d565716ff22ba23"
+    },
+    {
+      "id": "aks-identity-011",
+      "category": "aks-identity",
+      "difficulty": "medium",
+      "split": "public",
+      "rubric_sha256": "315fd03057fcb56e65b2f3842f733170936f88624c2657f2a8f06e080060774c"
+    },
+    {
+      "id": "aks-identity-034",
+      "category": "aks-identity",
+      "difficulty": "hard",
+      "split": "public",
+      "rubric_sha256": "5c2e041998ac29b08d9f057b253a39e0caf9e2c62235c122eb49873ee52d61db"
+    },
+    {
+      "id": "aks-identity-039",
+      "category": "aks-identity",
+      "difficulty": "hard",
+      "split": "public",
+      "rubric_sha256": "29ac6e7dbca8efaa991e020d046cbe3e8ca1891b4f00e5908841b9184cdc7a73"
+    },
+    {
+      "id": "aks-networking-001",
+      "category": "aks-networking",
+      "difficulty": "medium",
+      "split": "public",
+      "rubric_sha256": "08a9a94a0cde5f2e3715d51859bc640ea0bd926b88db780a5fe1e646dfbe2e10"
+    },
+    {
+      "id": "aks-networking-002",
+      "category": "aks-networking",
+      "difficulty": "medium",
+      "split": "public",
+      "rubric_sha256": "2b999311bec36bf56a5a1c9d439b6c47814a9aa01b4d53160dd6f984fa33e32f"
+    },
+    {
+      "id": "aks-networking-003",
+      "category": "aks-networking",
+      "difficulty": "medium",
+      "split": "public",
+      "rubric_sha256": "f0ca81540e2bb3e201e7c81ced5f2dd1a949494ee2b8692d0b507070d2ff817d"
+    },
+    {
+      "id": "aks-networking-004",
+      "category": "aks-networking",
+      "difficulty": "easy",
+      "split": "public",
+      "rubric_sha256": "997c63a724b4b520fe2ffbaccd394b0330a7be08efbe67e45de32d25720501ae"
+    },
+    {
+      "id": "aks-networking-005",
+      "category": "aks-networking",
+      "difficulty": "medium",
+      "split": "public",
+      "rubric_sha256": "99eb1032c79d7e808889cf3fc6ec57443f21f71bb96f03584cd3ddd496733de5"
+    },
+    {
+      "id": "aks-networking-006",
+      "category": "aks-networking",
+      "difficulty": "easy",
+      "split": "public",
+      "rubric_sha256": "b1a80445105e77846158809304a49834fda1a4eeb09aa46e71984e055aadbebc"
+    },
+    {
+      "id": "aks-networking-007",
+      "category": "aks-networking",
+      "difficulty": "medium",
+      "split": "public",
+      "rubric_sha256": "143b69f6fe42751d73beeb239aeddacd6f62fa1c95b02504e6cf9669d4301b8f"
+    },
+    {
+      "id": "aks-networking-033",
+      "category": "aks-networking",
+      "difficulty": "hard",
+      "split": "public",
+      "rubric_sha256": "7c9aa6c8f4a5c25d0ff26a6ffac677ac96656b6cde0bf13a99f2d035b3bf7dc6"
+    },
+    {
+      "id": "aks-networking-038",
+      "category": "aks-networking",
+      "difficulty": "hard",
+      "split": "public",
+      "rubric_sha256": "59aab578e1836f6a47450f29a70edc268711fc337b43546614f307ff2bb116c2"
+    },
+    {
+      "id": "aks-ops-018",
+      "category": "aks-ops",
+      "difficulty": "medium",
+      "split": "public",
+      "rubric_sha256": "2ebd821338f5e94bd223c4c148644ead7551676967210f0f687079fdfa2ff54a"
+    },
+    {
+      "id": "aks-ops-019",
+      "category": "aks-ops",
+      "difficulty": "easy",
+      "split": "public",
+      "rubric_sha256": "04a3bc90baccfe8a523024a770589a2e5272fa92ebf29a3027b01a8806efe238"
+    },
+    {
+      "id": "aks-ops-020",
+      "category": "aks-ops",
+      "difficulty": "easy",
+      "split": "public",
+      "rubric_sha256": "76608cbe51921659800c3fcd34011e442de40fa4dc6889b10f05b3c0d16c595d"
+    },
+    {
+      "id": "aks-ops-021",
+      "category": "aks-ops",
+      "difficulty": "medium",
+      "split": "public",
+      "rubric_sha256": "f0cbf9e7334b464c13ec6b39287236045c6709af6f48acb47db31d03538ee2da"
+    },
+    {
+      "id": "aks-ops-022",
+      "category": "aks-ops",
+      "difficulty": "medium",
+      "split": "public",
+      "rubric_sha256": "de48719918a7a1b032ead44a19de1d196889c28b501a93f4565dadfdbc8a2b99"
+    },
+    {
+      "id": "aks-ops-023",
+      "category": "aks-ops",
+      "difficulty": "medium",
+      "split": "public",
+      "rubric_sha256": "5eca9e6f0453cde02b18b28d16a77da551cf48ff0589b69cbad1b094c4de4fbc"
+    },
+    {
+      "id": "aks-ops-024",
+      "category": "aks-ops",
+      "difficulty": "medium",
+      "split": "public",
+      "rubric_sha256": "d8e3421ba19f8693538227d5f901763363198cf5c1feef974b879986d383bcd3"
+    },
+    {
+      "id": "aks-ops-025",
+      "category": "aks-ops",
+      "difficulty": "medium",
+      "split": "public",
+      "rubric_sha256": "c360e9ead95bb6317c8f4dc92e2d45fe6f286859879f5d511edf0209848ecb39"
+    },
+    {
+      "id": "aks-ops-026",
+      "category": "aks-ops",
+      "difficulty": "hard",
+      "split": "public",
+      "rubric_sha256": "e393398b7fb887f7ef09c7c812a1d5b1ca4f675237957630c70d6be115e2100e"
+    },
+    {
+      "id": "aks-ops-037",
+      "category": "aks-ops",
+      "difficulty": "hard",
+      "split": "public",
+      "rubric_sha256": "4009c06126937edff78081e6cf9e55ffbd0e2e1f866097744e981203c54e37b5"
+    },
+    {
+      "id": "aks-workloads-012",
+      "category": "aks-workloads",
+      "difficulty": "medium",
+      "split": "public",
+      "rubric_sha256": "d7135ca3fbde2e54aea74e4c6f23e79cb4ffb6c898062c43bf7ab73e4523120c"
+    },
+    {
+      "id": "aks-workloads-013",
+      "category": "aks-workloads",
+      "difficulty": "easy",
+      "split": "public",
+      "rubric_sha256": "04e986ed5b2d9b0a877902000c74854cbcc26229601331229ddf65457f44a594"
+    },
+    {
+      "id": "aks-workloads-014",
+      "category": "aks-workloads",
+      "difficulty": "medium",
+      "split": "public",
+      "rubric_sha256": "b289313b519b0ae09cfe19300a7530a545c2fff4b2f3e0830fbd80b729def9a4"
+    },
+    {
+      "id": "aks-workloads-015",
+      "category": "aks-workloads",
+      "difficulty": "easy",
+      "split": "public",
+      "rubric_sha256": "9adf474d9aa9af46068649b95808200937bee0d9cb7c27ccf0d713d58c87e3c5"
+    },
+    {
+      "id": "aks-workloads-016",
+      "category": "aks-workloads",
+      "difficulty": "medium",
+      "split": "public",
+      "rubric_sha256": "b074aea1e5abddc1e9cae01e1b56133547a179d2b7a9360e4338915b8eef0854"
+    },
+    {
+      "id": "aks-workloads-017",
+      "category": "aks-workloads",
+      "difficulty": "medium",
+      "split": "public",
+      "rubric_sha256": "b5925d3f5ff3617d0a1a3f808859a41cb1e34eebd25caa266b923c1568dce2e2"
+    },
+    {
+      "id": "aks-workloads-018",
+      "category": "aks-workloads",
+      "difficulty": "hard",
+      "split": "public",
+      "rubric_sha256": "d289e0165e9ca20774006b483b94e8c3d6826d8909d6c07a7152e43d5efbcc18"
+    },
+    {
+      "id": "app-service-028",
+      "category": "app-service",
+      "difficulty": "medium",
+      "split": "public",
+      "rubric_sha256": "06122acebc3fdfa34f585ae4827c94d7f2cb8d87adebedfb10379ab3221e4c90"
+    },
+    {
+      "id": "cost-031",
+      "category": "cost",
+      "difficulty": "easy",
+      "split": "public",
+      "rubric_sha256": "4788d225b2d37359d39ccdf48eb955168e18694778ec7a9c1d46dc043f76c0c6"
+    },
+    {
+      "id": "identity-027",
+      "category": "identity",
+      "difficulty": "medium",
+      "split": "public",
+      "rubric_sha256": "6c4f8ef474f0a816628cbb67d22fd7d27363150eff1c929de59186fab7caf961"
+    },
+    {
+      "id": "key-vault-029",
+      "category": "key-vault",
+      "difficulty": "easy",
+      "split": "public",
+      "rubric_sha256": "c8b9cc82a20833b3b0b40d2ad3ad820fe783f22708f4a4d4d11e50ca0f9b8933"
+    },
+    {
+      "id": "monitoring-032",
+      "category": "monitoring",
+      "difficulty": "hard",
+      "split": "public",
+      "rubric_sha256": "27ccee49dfde260642981537f1c85b8bedb1102660c2d0be070f7a837184cbd7"
+    },
+    {
+      "id": "monitoring-040",
+      "category": "monitoring",
+      "difficulty": "hard",
+      "split": "public",
+      "rubric_sha256": "9aa9b7e25dcfc2dafb3988f2be7fab8c93f4fc84fcea1afe4137e53a035ef28d"
+    },
+    {
+      "id": "networking-026",
+      "category": "networking",
+      "difficulty": "medium",
+      "split": "public",
+      "rubric_sha256": "e765be70c9dd43fdb90a631bc35c4bf8e6bb5afd41b2bc21ec2c27eb3ed31316"
+    }
+  ]
+}

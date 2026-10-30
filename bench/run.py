@@ -25,6 +25,7 @@ import yaml
 from bench import GRADER_VERSION, RESULT_SCHEMA_VERSION
 from bench.grader import cap_evidence, extract_files_read, extract_usage, grade, rubric_sha256
 from bench.heldout import HeldoutKeyError, load_hidden_json, split_of
+from bench.releases import load_release, verify_release
 from bench.remediation import grade_for_task, is_remediation
 from bench.sim import COMMANDS_ENV, COMMANDS_FILENAME, LOG_ENV, LOG_FILENAME, SIM_DIR
 
@@ -175,12 +176,33 @@ def _load_rubric(task_dir: Path, task: dict) -> dict:
     return _load_json(task_dir / "expected.json")
 
 
+def load_release_checked(
+    name: str, tasks_root: Path | str = "tasks"
+) -> tuple[dict, list[dict]]:
+    """Load a release manifest and verify the live corpus against it (issue #116).
+
+    Returns `(manifest, frozen_tasks)`. Any drift — a rubric edited since the
+    freeze, a task added or removed, a grader bump — raises `ValueError` with
+    the full problem list: a release run must be reproducible against the
+    frozen corpus or it should not be labeled with the release at all.
+    """
+    manifest = load_release(name)
+    problems = verify_release(manifest, tasks_root=tasks_root)
+    if problems:
+        detail = "\n".join(f"  - {problem}" for problem in problems)
+        raise ValueError(
+            f"corpus does not match release {name!r} ({len(problems)} problem(s)):\n{detail}"
+        )
+    return manifest, manifest.get("tasks", [])
+
+
 def run_task(
     task_dir: Path,
     agent_command: str,
     name: str = DEFAULT_NAME,
     timeout: int = DEFAULT_TIMEOUT_S,
     results_root: Path | None = None,
+    release: str | None = None,
 ) -> dict:
     """Run one agent against one task and write `results/<name>/<task-id>.json`."""
     results_root = Path(results_root or RESULTS_DIR)
@@ -265,6 +287,10 @@ def run_task(
     usage = extract_usage(answer)
     if usage is not None:
         record["usage"] = usage
+    # Issue #116: a `bench run --release` run stamps the release name so
+    # leaderboard versions can group results by the corpus they scored.
+    if release is not None:
+        record["release"] = release
     # Efficiency metrics (issue #112): the sim-CLI count comes from the
     # runner's own command trace; the file-read count from the agent's own
     # accounting (`files_read` in the answer). Either may be absent.
@@ -293,6 +319,7 @@ def run_tasks(
     name: str = DEFAULT_NAME,
     timeout: int = DEFAULT_TIMEOUT_S,
     results_root: Path | None = None,
+    release: str | None = None,
 ) -> int:
     """Run a sequence of tasks, printing per-task lines and a final summary."""
     results_root = Path(results_root or RESULTS_DIR)
@@ -300,7 +327,9 @@ def run_tasks(
     skipped = 0
     for task_dir in task_dirs:
         try:
-            record = run_task(task_dir, agent_command, name, timeout, results_root)
+            record = run_task(
+                task_dir, agent_command, name, timeout, results_root, release
+            )
         except HeldoutKeyError as exc:
             # A held-out task without HELDOUT_KEY cannot be graded; skipping
             # keeps key-less contributors running their public tasks (issue #115).
@@ -341,4 +370,17 @@ def cmd_run(args: argparse.Namespace) -> int:
     if not args.all_tasks and args.task is None:
         print("Specify --task <id> or --all.", file=sys.stderr)
         return 2
-    return run_tasks(task_dirs, args.agent, args.name, args.timeout)
+    release_name = getattr(args, "release", None)
+    if release_name is not None:
+        # Issue #116: a release run must be reproducible against the frozen
+        # corpus. Verify before the first task executes; refuse to label a
+        # drifted corpus with the release.
+        try:
+            manifest, _frozen = load_release_checked(release_name, args.tasks_root)
+        except (FileNotFoundError, ValueError) as exc:
+            print(f"Release check failed: {exc}", file=sys.stderr)
+            return 2
+        frozen_ids = {task["id"] for task in manifest["tasks"]}
+        task_dirs = [d for d in task_dirs if str(load_task(d).get("id")) in frozen_ids]
+        print(f"Release {release_name}: {len(frozen_ids)} tasks in manifest")
+    return run_tasks(task_dirs, args.agent, args.name, args.timeout, release=release_name)

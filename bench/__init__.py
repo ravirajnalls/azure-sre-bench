@@ -26,6 +26,12 @@ renders `stale` (graded under a different version or an older rubric) or
 
 __version__ = "0.1.0"
 
+#: Frozen-release version (issue #116). Names the release manifest in
+#: `releases/` that `bench run --release` validates against — the corpus a
+#: leaderboard version refers to. Distinct from `__version__`, which tracks
+#: the package itself; see CHANGELOG.md.
+BENCH_VERSION = "0.1"
+
 #: Grading-semantics version (issue #95). Bump on any change to how answers
 #: are scored: matching rules, length caps, distractor handling, judge mode.
 GRADER_VERSION = 1
