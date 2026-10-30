@@ -1,0 +1,17 @@
+id: aks-identity-034
+canary: 00000000-0000-0000-0000-000000000114  # Canaries are DO NOT REMOVE — training-corpus canary (see README, License section).
+title: Workload identity token missing on new inventory-svc pods after rollout
+category: aks-identity
+difficulty: hard
+tags:
+  - aks-identity
+  - workload-identity
+  - deployment
+  - rollout
+symptom: >-
+  After this morning's 08:14 UTC deploy of inventory-svc, 2 of its 5 pods in the
+  inventory namespace fail every Key Vault call with an authentication error and
+  are crash-looping; the other 3 pods keep serving normally. All 5 pods run the
+  same image (inventoryacr.azurecr.io/inventory-svc:1.42.0), Key Vault reports
+  healthy, and nothing in the service account, managed identity, or federated
+  credentials was changed.

@@ -1,0 +1,61 @@
+Name:             inventory-svc-c5f8d2b4e-9lzkd
+Namespace:        inventory
+Priority:         0
+Service Account:  inventory-svc
+Node:             aks-nodepool1-11829476-vmss000003/10.240.0.35
+Start Time:       Thu, 30 Oct 2026 07:41:12 +0000
+Labels:           app=inventory-svc
+                  pod-template-hash=c5f8d2b4e
+Annotations:      <none>
+Status:           Running
+IP:               10.244.2.19
+Containers:
+  inventory-svc:
+    Container ID:   containerd://8f4c1a2d9b7e3a6c0d5e4f3b2a1c0d9e8f7a6b5c4d3e2f1a0b9c8d7e6f5a4b3c
+    Image:          inventoryacr.azurecr.io/inventory-svc:1.42.0
+    Image ID:       inventoryacr.azurecr.io/inventory-svc@sha256:7c1e4f9a2b8d3e6f0a5c4b3d2e1f0a9b8c7d6e5f4a3b2c1d0e9f8a7b6c5d4e3f
+    Port:           8080/TCP
+    Host Port:      0/TCP
+    State:          Waiting
+      Reason:       CrashLoopBackOff
+    Last State:     Terminated
+      Reason:       Error
+      Exit Code:    1
+      Started:      Thu, 30 Oct 2026 08:31:04 +0000
+      Finished:     Thu, 30 Oct 2026 08:31:39 +0000
+    Ready:          False
+    Restart Count:  14
+    Environment:
+      KEY_VAULT_URI:            https://kv-inventory-prod.vault.azure.net/
+      ASPNETCORE_ENVIRONMENT:   Production
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-9x2kp (ro)
+Conditions:
+  Type              Status
+  Initialized       True
+  Ready             False
+  ContainersReady   False
+  PodScheduled      True
+Volumes:
+  kube-api-access-9x2kp:
+    Type:                    Projected (serviceaccounttoken or bound service account token)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    ConfigMapOptional:       <nil>
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type     Reason     Age                    From               Message
+  ----     ------     ----                   ----               -------
+  Normal   Scheduled  47m                    default-scheduler  Successfully assigned inventory/inventory-svc-c5f8d2b4e-9lzkd to aks-nodepool1-11829476-vmss000003
+  Normal   Pulled     46m                    kubelet            Container image "inventoryacr.azurecr.io/inventory-svc:1.42.0" already present on machine
+  Normal   Created    46m                    kubelet            Created container inventory-svc
+  Normal   Started    46m                    kubelet            Started container inventory-svc
+  Normal   Pulled     44m                    kubelet            Container image "inventoryacr.azurecr.io/inventory-svc:1.42.0" already present on machine
+  Normal   Created    44m                    kubelet            Created container inventory-svc
+  Normal   Started    44m                    kubelet            Started container inventory-svc
+  Normal   Killing    42m                    kubelet            Container inventory-svc failed liveness probe, will be restarted
+  Warning  BackOff    3m32s (x41 over 44m)   kubelet            Back-off restarting failed container

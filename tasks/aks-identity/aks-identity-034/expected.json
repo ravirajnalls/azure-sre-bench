@@ -1,0 +1,13 @@
+{
+  "root_cause": [
+    ["azure.workload.identity/use"],
+    ["pod template", "spec.template.metadata.labels", "deployment metadata", "new replicaset", "new pods"],
+    ["webhook", "token injection", "not injected", "no token", "injects"]
+  ],
+  "fix": [
+    ["spec.template.metadata.labels", "pod template label", "pod template"]
+  ],
+  "distractors": [
+    ["federated-credential", "federated credential", "federatedidentitycredentials"]
+  ]
+}

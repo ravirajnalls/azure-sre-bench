@@ -1,0 +1,57 @@
+Name:             inventory-svc-7d9f4b6c8c-wq2xn
+Namespace:        inventory
+Priority:         0
+Service Account:  inventory-svc
+Node:             aks-nodepool1-11829476-vmss000002/10.240.0.24
+Start Time:       Thu, 24 Oct 2026 09:12:40 +0000
+Labels:           app=inventory-svc
+                  azure.workload.identity/use=true
+                  pod-template-hash=7d9f4b6c8c
+Annotations:      <none>
+Status:           Running
+IP:               10.244.0.44
+Containers:
+  inventory-svc:
+    Container ID:   containerd://2b9e7c4a1d8f3e6b0c5a4d3e2f1b0a9c8d7e6f5a4b3c2d1e0f9a8b7c6d5e4f3a
+    Image:          inventoryacr.azurecr.io/inventory-svc:1.42.0
+    Image ID:       inventoryacr.azurecr.io/inventory-svc@sha256:7c1e4f9a2b8d3e6f0a5c4b3d2e1f0a9b8c7d6e5f4a3b2c1d0e9f8a7b6c5d4e3f
+    Port:           8080/TCP
+    Host Port:      0/TCP
+    State:          Running
+      Started:      Thu, 30 Oct 2026 06:58:21 +0000
+    Ready:          True
+    Restart Count:  0
+    Environment:
+      KEY_VAULT_URI:                 https://kv-inventory-prod.vault.azure.net/
+      ASPNETCORE_ENVIRONMENT:        Production
+      AZURE_CLIENT_ID:               00000000-0000-0000-0000-000000000003
+      AZURE_TENANT_ID:               00000000-0000-0000-0000-000000000001
+      AZURE_FEDERATED_TOKEN_FILE:    /var/run/secrets/azure/tokens/azure-identity-token
+      AZURE_AUTHORITY_HOST:          https://login.microsoftonline.com/
+    Mounts:
+      /var/run/secrets/azure/tokens from azure-wi-token (ro)
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-9x2kp (ro)
+Conditions:
+  Type              Status
+  Initialized       True
+  Ready             True
+  ContainersReady   True
+  PodScheduled      True
+Volumes:
+  azure-wi-token:
+    Type:                    Projected (serviceaccounttoken or bound service account token)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    ConfigMapOptional:       <nil>
+    DownwardAPI:             true
+  kube-api-access-9x2kp:
+    Type:                    Projected (serviceaccounttoken or bound service account token)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    ConfigMapOptional:       <nil>
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:                      <none>

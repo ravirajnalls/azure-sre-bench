@@ -12,11 +12,21 @@
 # keyword-soup still passes 32/32: the longest rubric soup is 199 chars, far
 # under the 600 cap, so the length cap cannot beat it. Shrinking this list to
 # empty is the rubric audits' job (#96-#99).
+#
+# New-task entries (the #92 gate requires an entry whenever a probe passes):
+# - aks-identity-034 (issue #103): keyword-soup only. Its rubric soup is ~240
+#   chars (under the cap), and a distractor can never catch a soup — the
+#   validator forbids distractor/root_cause overlap, so a soup consists only
+#   of rubric alternatives. Both dump probes score 0 on it: the red-herring
+#   fixture (az-identity-federated-credential-list.json) sorts first
+#   alphabetically, so their dump blames the distractor. Entry leaves with
+#   the audits (#96-#99) like the rest.
 ado-pipelines-030
 aks-identity-008
 aks-identity-009
 aks-identity-010
 aks-identity-011
+aks-identity-034
 aks-networking-001
 aks-networking-002
 aks-networking-003
