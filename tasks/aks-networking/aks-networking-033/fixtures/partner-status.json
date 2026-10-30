@@ -1,0 +1,24 @@
+{
+  "page": "https://payments-partner.fabrikambank.example/status",
+  "fetchedAt": "2026-10-28T15:05:00Z",
+  "overallStatus": "operational",
+  "components": [
+    {
+      "name": "Settlement API",
+      "status": "operational",
+      "uptime90d": "99.98%"
+    },
+    {
+      "name": "Webhook Gateway",
+      "status": "operational",
+      "uptime90d": "99.97%"
+    },
+    {
+      "name": "Sandbox Environment",
+      "status": "operational",
+      "uptime90d": "99.91%"
+    }
+  ],
+  "activeIncidents": [],
+  "summary": "All systems operational. No partner outage in effect; the last degraded-performance incident was closed 41 days ago."
+}

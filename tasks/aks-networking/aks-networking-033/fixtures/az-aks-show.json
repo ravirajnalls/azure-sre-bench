@@ -1,0 +1,59 @@
+{
+  "agentPoolProfiles": [
+    {
+      "count": 24,
+      "enableAutoScaling": false,
+      "mode": "System",
+      "name": "nodepool1",
+      "nodeImageVersion": "AKSUbuntu-2204gen2containerd-202610.02.0",
+      "orchestratorVersion": "1.29.7",
+      "osDiskSizeGB": 128,
+      "osType": "Linux",
+      "vmSize": "Standard_D8s_v5",
+      "vnetSubnetId": "/subscriptions/00000000-0000-0000-0000-000000000002/resourceGroups/rg-aks-prod/providers/Microsoft.Network/virtualNetworks/vnet-aks-spoke/subnets/snp-nodepool1"
+    }
+  ],
+  "dnsPrefix": "aks-prod",
+  "id": "/subscriptions/00000000-0000-0000-0000-000000000002/resourceGroups/rg-aks-prod/providers/Microsoft.ContainerService/managedClusters/aks-prod",
+  "identity": {
+    "principalId": "00000000-0000-0000-0000-000000000005",
+    "tenantId": "00000000-0000-0000-0000-000000000001",
+    "type": "SystemAssigned"
+  },
+  "kubernetesVersion": "1.29.7",
+  "location": "eastus",
+  "maxAgentPools": 10,
+  "name": "aks-prod",
+  "networkProfile": {
+    "dnsServiceIp": "10.240.0.10",
+    "dockerBridgeCidr": "172.17.0.1/16",
+    "loadBalancerSku": "standard",
+    "networkPlugin": "azure",
+    "networkPolicy": "calico",
+    "outboundType": "loadBalancer",
+    "podCidr": "10.241.0.0/16",
+    "serviceCidr": "10.240.0.0/16"
+  },
+  "nodeResourceGroup": "MC_rg-aks-prod_aks-prod_eastus",
+  "provisioningState": "Succeeded",
+  "resourceGroup": "rg-aks-prod",
+  "loadBalancerProfile": {
+    "allocatedOutboundPorts": 0,
+    "effectiveOutboundIPs": [
+      {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000002/resourceGroups/MC_rg-aks-prod_aks-prod_eastus/providers/Microsoft.Network/publicIPAddresses/aks-prod-outbound-1"
+      }
+    ],
+    "enableMultipleStandardLoadBalancers": false,
+    "idleTimeoutInMinutes": 4,
+    "managedOutboundIPs": {
+      "count": 1
+    },
+    "outboundIPPrefixes": {
+      "publicIPPrefixes": []
+    },
+    "outboundIPs": {
+      "publicIPs": []
+    }
+  }
+}

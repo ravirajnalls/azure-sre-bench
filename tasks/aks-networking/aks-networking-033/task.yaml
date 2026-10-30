@@ -1,0 +1,18 @@
+id: aks-networking-033
+canary: 00000000-0000-0000-0000-000000000114  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
+title: "Intermittent timeouts from payments-api to the partner settlement API"
+category: aks-networking
+difficulty: hard
+tags:
+  - aks
+  - snat
+  - outbound-connectivity
+  - load-balancer
+  - nat-gateway
+symptom: |-
+  During the evening peak (14:00-15:00 UTC) the payments-api pods report
+  intermittent connection timeouts — roughly 5% of requests — when calling the
+  partner settlement API at payments-partner.fabrikambank.example. Everything
+  else looks healthy: order latency is unchanged, no pods are restarting, and
+  the partner's status page shows all systems operational with no incidents.
+  The timeouts only appear during peak traffic and clear once traffic drops.

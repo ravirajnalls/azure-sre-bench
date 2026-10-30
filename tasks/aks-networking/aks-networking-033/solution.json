@@ -1,0 +1,18 @@
+{
+  "root_cause": "The payments-api HTTP client has no connection reuse, so every partner call opens a new outbound connection; with 24 nodes sharing a single outbound IP and allocatedOutboundPorts at the default, the outbound load balancer's SNAT pool reaches port exhaustion during peak connection churn.",
+  "evidence": [
+    "kql-snat-connection-count.csv: SNATConnectionCount State=Failed spikes from single digits to 700+ only within the 14:00-15:00 UTC peak window",
+    "az-aks-show.json: loadBalancerProfile has one managed outbound IP and allocatedOutboundPorts 0 (the default 1024 SNAT ports per node), while nodepool1 runs 24 nodes",
+    "kubectl-get-nodes.txt: all 24 nodes of nodepool1 are Ready — the node fleet shares that single outbound IP",
+    "app-config.yaml: the partner-settlement client sets keep-alive: false, so every partner call opens a fresh outbound connection",
+    "partner-status.json: the partner reports all systems operational with no active incidents — the outage theory is ruled out",
+    "payments-api.log: connect timeouts (not latency) at ~5% of partner calls during the same peak window"
+  ],
+  "fix": "Configure an Azure NAT gateway as the cluster's outbound path (or increase allocated outbound ports and add outbound IP addresses), and enable HTTP keep-alive with connection pooling in the payments-api client so outbound connections are reused.",
+  "evidence_files": [
+    "kql-snat-connection-count.csv",
+    "az-aks-show.json",
+    "kubectl-get-nodes.txt",
+    "app-config.yaml"
+  ]
+}

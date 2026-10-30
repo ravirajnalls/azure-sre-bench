@@ -1,0 +1,26 @@
+# payments-api — production HTTP client configuration
+# Source: apps/payments-api/src/main/resources/http-client.yaml (v3.14.2)
+
+client:
+  partner-settlement:
+    base-url: https://payments-partner.fabrikambank.example:443
+    connect-timeout: 10s
+    request-timeout: 30s
+    connection:
+      # Every request opens a fresh TCP connection; the partner asked us to
+      # reuse connections, tracked in PAY-2291 (not yet scheduled).
+      keep-alive: false
+      max-connections-per-route: 4
+      idle-connection-ttl: 0s
+    retry:
+      max-attempts: 2
+      backoff: 200ms
+
+  ledger:
+    base-url: https://ledger.internal.svc.cluster.local:8443
+    connect-timeout: 5s
+    request-timeout: 15s
+    connection:
+      keep-alive: true
+      max-connections-per-route: 16
+      idle-connection-ttl: 90s
