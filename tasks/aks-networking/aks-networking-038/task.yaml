@@ -1,0 +1,21 @@
+id: aks-networking-038
+canary: 00000000-0000-0000-0000-000000000114  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
+title: "New node pool can't reach Azure SQL"
+category: aks-networking
+difficulty: hard
+tags:
+  - aks
+  - azure-sql
+  - vnet-rule
+  - service-endpoint
+  - subnet
+symptom: |
+  Yesterday we added a second node pool, pool2, to aks-prod to absorb a new
+  deployment of the ledger-api pods. Since the pods landed there, ledger-api
+  on pool2 cannot open connections to the sql-ledger Azure SQL server: the
+  app logs show "Client with IP address ... is not allowed to access the
+  server" (error 40615) and every request times out. The exact same pods,
+  same image and connection string, scheduled on pool1 work fine. Azure's
+  NSG audit for the cluster subnets came back clean, nobody has touched the
+  firewall in weeks, and kubectl shows all ledger-api pods Running on both
+  pools — the failures are purely this SQL connection.

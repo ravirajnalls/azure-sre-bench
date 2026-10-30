@@ -1,0 +1,30 @@
+{
+  "root_cause": [
+    [
+      "snet-aks-pool2",
+      "pool2 subnet",
+      "new pool's subnet",
+      "pool2's subnet"
+    ],
+    [
+      "vnet rule",
+      "virtual network rule",
+      "service endpoint"
+    ]
+  ],
+  "fix": [
+    [
+      "vnet rule",
+      "virtual network rule",
+      "service endpoint",
+      "private endpoint"
+    ]
+  ],
+  "distractors": [
+    [
+      "network security group",
+      "security rule",
+      "nsg"
+    ]
+  ]
+}

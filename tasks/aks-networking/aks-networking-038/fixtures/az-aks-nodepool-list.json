@@ -1,0 +1,40 @@
+{
+  "value": [
+    {
+      "name": "nodepool1",
+      "count": 3,
+      "enableAutoScaling": true,
+      "maxCount": 6,
+      "minCount": 3,
+      "mode": "System",
+      "nodeImageVersion": "AKSUbuntu-2204gen2containerd-202610.02.0",
+      "orchestratorVersion": "1.29.7",
+      "osDiskSizeGB": 128,
+      "osType": "Linux",
+      "powerState": {
+        "code": "Running"
+      },
+      "provisioningState": "Succeeded",
+      "vmSize": "Standard_D4s_v5",
+      "vnetSubnetId": "/subscriptions/00000000-0000-0000-0000-000000000002/resourceGroups/rg-aks-prod/providers/Microsoft.Network/virtualNetworks/vnet-aks-spoke/subnets/snet-aks-pool1"
+    },
+    {
+      "name": "pool2",
+      "count": 3,
+      "enableAutoScaling": true,
+      "maxCount": 8,
+      "minCount": 2,
+      "mode": "User",
+      "nodeImageVersion": "AKSUbuntu-2204gen2containerd-202610.02.0",
+      "orchestratorVersion": "1.29.7",
+      "osDiskSizeGB": 128,
+      "osType": "Linux",
+      "powerState": {
+        "code": "Running"
+      },
+      "provisioningState": "Succeeded",
+      "vmSize": "Standard_D4s_v5",
+      "vnetSubnetId": "/subscriptions/00000000-0000-0000-0000-000000000002/resourceGroups/rg-aks-prod/providers/Microsoft.Network/virtualNetworks/vnet-aks-spoke/subnets/snet-aks-pool2"
+    }
+  ]
+}

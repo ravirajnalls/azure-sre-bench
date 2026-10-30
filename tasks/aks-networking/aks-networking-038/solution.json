@@ -1,0 +1,17 @@
+{
+  "root_cause": "pool2's pods run in the new subnet snet-aks-pool2 (10.240.2.0/24), but the sql-ledger server's virtual network rules cover only snet-aks-pool1 (rule allow-snet-aks-pool1) and snet-aks-pool2 has no Microsoft.Sql service endpoint, so connections from pool2 pod IPs such as 10.240.2.15 are rejected by the server's access controls with error 40615 while pool1 pods still connect.",
+  "evidence": [
+    "az-aks-nodepool-list.json: pool2's vnetSubnetId points to snet-aks-pool2 while nodepool1 uses snet-aks-pool1",
+    "az-sql-server-vnet-rule-list.json: the sql-ledger server has exactly one virtual network rule, allow-snet-aks-pool1, covering only the pool1 subnet",
+    "az-network-vnet-subnet-show-pool2.json: snet-aks-pool2 has an empty serviceEndpoints list — no Microsoft.Sql service endpoint (red herring checked: the attached nsg-aks-spoke allows outbound 1433)",
+    "app.log: 40615 'Client with IP address 10.240.2.15 is not allowed to access the server' — a pool2 pod IP, blocked by the server's vnet rules despite the NSG being permissive",
+    "kubectl-get-pods-wide.txt: pool2 pods Running at 10.240.2.x addresses with connection-failure restarts; pool1 pods at 10.240.1.x are stable — the pods themselves are healthy"
+  ],
+  "fix": "Give the pool2 subnet access to the sql-ledger server: add a virtual network rule for snet-aks-pool2 on the sql-ledger server (requires the Microsoft.Sql service endpoint on the subnet, which az-network-vnet-subnet-show-pool2.json shows is missing — enable it first), or move the database behind a private endpoint reachable from the whole vnet-aks-spoke.",
+  "evidence_files": [
+    "az-aks-nodepool-list.json",
+    "az-sql-server-vnet-rule-list.json",
+    "az-network-vnet-subnet-show-pool2.json",
+    "app.log"
+  ]
+}

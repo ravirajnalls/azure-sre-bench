@@ -1,0 +1,21 @@
+{
+  "addressPrefix": "10.240.2.0/24",
+  "delegations": [],
+  "etag": "W/\"00000000-0000-0000-0000-000000000004\"",
+  "id": "/subscriptions/00000000-0000-0000-0000-000000000002/resourceGroups/rg-aks-prod/providers/Microsoft.Network/virtualNetworks/vnet-aks-spoke/subnets/snet-aks-pool2",
+  "ipConfigurations": [],
+  "name": "snet-aks-pool2",
+  "natGateway": null,
+  "networkSecurityGroup": {
+    "id": "/subscriptions/00000000-0000-0000-0000-000000000002/resourceGroups/rg-aks-prod/providers/Microsoft.Network/networkSecurityGroups/nsg-aks-spoke"
+  },
+  "privateEndpointNetworkPolicies": "Enabled",
+  "privateLinkServiceNetworkPolicies": "Enabled",
+  "provisioningState": "Succeeded",
+  "resourceGroup": "rg-aks-prod",
+  "routeTable": {
+    "id": "/subscriptions/00000000-0000-0000-0000-000000000002/resourceGroups/rg-aks-prod/providers/Microsoft.Network/routeTables/rt-aks-spoke"
+  },
+  "serviceEndpoints": [],
+  "type": "Microsoft.Network/virtualNetworks/subnets"
+}

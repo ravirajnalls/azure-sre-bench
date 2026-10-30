@@ -1,0 +1,8 @@
+2026-10-29 14:02:11.342 UTC INFO ledger-api.dbsql Pool created: server=sql-ledger.database.windows.net,1433 database=ledger user=ledger_app driver=ODBC Driver 18 for SQL Server
+2026-10-29 14:02:11.588 UTC ERROR ledger-api.dbsql Cannot open server 'sql-ledger' requested by the login. Client with IP address '10.240.2.15' is not allowed to access the server. To enable access, use the Azure portal or run sp_set_firewall_rule on the master database. (error code 40615, severity 14)
+2026-10-29 14:02:11.640 UTC WARN ledger-api.http GET /ledger/summary 500 in 182ms — DB unavailable, retrying
+2026-10-29 14:02:16.651 UTC ERROR ledger-api.dbsql Cannot open server 'sql-ledger' requested by the login. Client with IP address '10.240.2.15' is not allowed to access the server. (error code 40615, severity 14)
+2026-10-29 14:02:21.662 UTC ERROR ledger-api.dbsql Cannot open server 'sql-ledger' requested by the login. Client with IP address '10.240.2.15' is not allowed to access the server. (error code 40615, severity 14)
+2026-10-29 14:02:26.680 UTC WARN ledger-api.http GET /ledger/summary 500 in 204ms — DB unavailable, retrying
+2026-10-29 14:02:31.692 UTC ERROR ledger-api.dbsql Cannot open server 'sql-ledger' requested by the login. Client with IP address '10.240.2.15' is not allowed to access the server. (error code 40615, severity 14)
+2026-10-29 14:02:36.705 UTC ERROR ledger-api.dbsql login retry exhausted, backing off 30s

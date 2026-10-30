@@ -1,0 +1,65 @@
+{
+  "name": "nsg-aks-spoke",
+  "id": "/subscriptions/00000000-0000-0000-0000-000000000002/resourceGroups/rg-aks-prod/providers/Microsoft.Network/networkSecurityGroups/nsg-aks-spoke",
+  "location": "eastus",
+  "provisioningState": "Succeeded",
+  "resourceGroup": "rg-aks-prod",
+  "type": "Microsoft.Network/networkSecurityGroups",
+  "securityRules": [
+    {
+      "id": "/subscriptions/00000000-0000-0000-0000-000000000002/resourceGroups/rg-aks-prod/providers/Microsoft.Network/networkSecurityGroups/nsg-aks-spoke/securityRules/allow-outbound-sql",
+      "name": "allow-outbound-sql",
+      "access": "Allow",
+      "description": "Allow pods to reach Azure SQL over TDS 1433",
+      "destinationAddressPrefixes": [],
+      "destinationApplicationSecurityGroups": [],
+      "destinationPortRange": "1433",
+      "destinationPortRanges": [],
+      "destinationAddressPrefix": "Sql.Eastus",
+      "direction": "Outbound",
+      "priority": 200,
+      "protocol": "Tcp",
+      "provisioningState": "Succeeded",
+      "sourceAddressPrefix": "VirtualNetwork",
+      "sourceAddressPrefixes": [],
+      "sourcePortRange": "*",
+      "sourcePortRanges": []
+    },
+    {
+      "id": "/subscriptions/00000000-0000-0000-0000-000000000002/resourceGroups/rg-aks-prod/providers/Microsoft.Network/networkSecurityGroups/nsg-aks-spoke/securityRules/allow-outbound-virtualnetwork",
+      "name": "allow-outbound-virtualnetwork",
+      "access": "Allow",
+      "description": "Default workload egress inside the spoke",
+      "destinationAddressPrefix": "VirtualNetwork",
+      "destinationPortRange": "*",
+      "direction": "Outbound",
+      "priority": 300,
+      "protocol": "*",
+      "provisioningState": "Succeeded",
+      "sourceAddressPrefix": "VirtualNetwork",
+      "sourcePortRange": "*"
+    },
+    {
+      "id": "/subscriptions/00000000-0000-0000-0000-000000000002/resourceGroups/rg-aks-prod/providers/Microsoft.Network/networkSecurityGroups/nsg-aks-spoke/securityRules/allow-outbound-internet",
+      "name": "allow-outbound-internet",
+      "access": "Allow",
+      "description": "Default egress for image pulls and package mirrors",
+      "destinationAddressPrefix": "Internet",
+      "destinationPortRange": "*",
+      "direction": "Outbound",
+      "priority": 400,
+      "protocol": "*",
+      "provisioningState": "Succeeded",
+      "sourceAddressPrefix": "*",
+      "sourcePortRange": "*"
+    }
+  ],
+  "subnets": [
+    {
+      "id": "/subscriptions/00000000-0000-0000-0000-000000000002/resourceGroups/rg-aks-prod/providers/Microsoft.Network/virtualNetworks/vnet-aks-spoke/subnets/snet-aks-pool1"
+    },
+    {
+      "id": "/subscriptions/00000000-0000-0000-0000-000000000002/resourceGroups/rg-aks-prod/providers/Microsoft.Network/virtualNetworks/vnet-aks-spoke/subnets/snet-aks-pool2"
+    }
+  ]
+}
