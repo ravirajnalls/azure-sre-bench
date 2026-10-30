@@ -1,0 +1,20 @@
+id: aks-ops-051
+canary: 00000000-0000-0000-0000-000000000114  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
+title: Deploys from the new self-hosted agent pool time out reaching the API server
+category: aks-ops
+difficulty: medium
+tags:
+  - aks-ops
+  - api-server-authorized-ip-ranges
+  - nat-gateway
+  - azure-devops
+  - networking
+symptom: |
+  Every deployment from the new self-hosted Azure DevOps agent pool
+  (retail-deploy-agents, stood up last week behind its own NAT gateway)
+  fails with "dial tcp ... i/o timeout" against the retail-prod-aks API
+  server. The identical pipeline run from a developer laptop over the VPN
+  succeeds, kubectl works from the VPN, and the service connection used by
+  the pipeline validates cleanly. The cluster was not touched in the
+  change window, and the pipeline worked from the old shared pool this
+  time yesterday.

@@ -1,0 +1,50 @@
+{
+  "id": "/subscriptions/00000000-0000-0000-0000-00000000000a/resourcegroups/rg-retail-prod/providers/Microsoft.ContainerService/managedClusters/retail-prod-aks",
+  "name": "retail-prod-aks",
+  "type": "Microsoft.ContainerService/managedClusters",
+  "location": "eastus2",
+  "fqdn": "retail-prod-06ab0cfb.hcp.eastus2.azmk8s.io",
+  "dnsPrefix": "retail-prod-06ab0cfb",
+  "kubernetesVersion": "1.29.7",
+  "provisioningState": "Succeeded",
+  "sku": {
+    "name": "Basic",
+    "tier": "Standard"
+  },
+  "agentPoolProfiles": [
+    {
+      "name": "pool-sys",
+      "count": 2,
+      "vmSize": "Standard_D4s_v5",
+      "mode": "System",
+      "zones": ["1", "2", "3"],
+      "vnetSubnetId": "/subscriptions/00000000-0000-0000-0000-00000000000a/resourceGroups/rg-retail-prod/providers/Microsoft.Network/virtualNetworks/vnet-retail-prod/subnets/snet-aks",
+      "provisioningState": "Succeeded"
+    },
+    {
+      "name": "pool-app",
+      "count": 5,
+      "vmSize": "Standard_D8s_v5",
+      "mode": "User",
+      "zones": ["1", "2", "3"],
+      "vnetSubnetId": "/subscriptions/00000000-0000-0000-0000-00000000000a/resourceGroups/rg-retail-prod/providers/Microsoft.Network/virtualNetworks/vnet-retail-prod/subnets/snet-aks",
+      "provisioningState": "Succeeded"
+    }
+  ],
+  "networkProfile": {
+    "networkPlugin": "azure",
+    "networkPluginMode": null,
+    "networkPolicy": "calico",
+    "serviceCidr": "10.240.0.0/16",
+    "dnsServiceIp": "10.240.0.10",
+    "loadBalancerSku": "standard",
+    "outboundType": "loadBalancer"
+  },
+  "apiServerAccessProfile": {
+    "enablePrivateCluster": false,
+    "authorizedIpRanges": [
+      "203.0.113.10/32",
+      "198.51.100.0/24"
+    ]
+  }
+}

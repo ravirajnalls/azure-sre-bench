@@ -1,0 +1,13 @@
+{
+  "name": "pip-natgw-agents",
+  "resourceGroup": "rg-agent-egress",
+  "location": "eastus2",
+  "publicIpAllocationMethod": "Static",
+  "ipAddress": "192.0.2.55",
+  "publicIPPrefix": null,
+  "natGateway": {
+    "name": "natgw-agents",
+    "id": "/subscriptions/00000000-0000-0000-0000-00000000000a/resourceGroups/rg-agent-egress/providers/Microsoft.Network/natGateways/natgw-agents"
+  },
+  "provisioningState": "Succeeded"
+}
