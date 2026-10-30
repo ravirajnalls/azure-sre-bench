@@ -5,5 +5,8 @@
   ],
   "fix": [
     ["waitforfirstconsumer", "wait for first consumer"]
+  ],
+  "distractors": [
+    ["insufficient resources", "memory pressure", "memory"]
   ]
 }

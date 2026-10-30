@@ -6,5 +6,8 @@
   ],
   "fix": [
     ["tier: frontend", "tier=frontend", "match the pod labels", "update the selector"]
+  ],
+  "distractors": [
+    ["nginx", "ingress controller", "ingress-nginx", "no live upstreams"]
   ]
 }

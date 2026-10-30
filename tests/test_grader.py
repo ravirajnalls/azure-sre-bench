@@ -243,6 +243,93 @@ def test_normalize():
     assert normalize("  Mixed\tCASE\nText  ") == "mixed case text"
 
 
+# --- Distractor groups (issue #94) -------------------------------------------
+
+DISTRACTOR_RUBRIC = {
+    **RUBRIC,
+    "distractors": [["missing role assignment", "rbac misconfiguration"]],
+}
+
+
+def test_distractor_match_fails_task_with_named_reason():
+    answer = full_answer()
+    answer["root_cause"] = (
+        "A missing role assignment for the federated credential subject "
+        "in the namespace."
+    )
+    result = grade(answer, DISTRACTOR_RUBRIC)
+    assert result["passed"] is False
+    # Distractors cost no score: every rubric group still matched.
+    assert result["score"] == 1.0
+    assert result["detail"]["reasons"] == [
+        {
+            "reason": "named_distractor",
+            "field": "root_cause",
+            "matched": "missing role assignment",
+            "group": 0,
+        }
+    ]
+
+
+def test_answer_that_never_names_the_distractor_passes():
+    result = grade(full_answer(), DISTRACTOR_RUBRIC)
+    assert result["passed"] is True
+    assert result["detail"]["reasons"] == []
+
+
+def test_fix_never_triggers_a_distractor():
+    # The issue scopes distractor matching to the root_cause text: a fix may
+    # legitimately mention restoring the distractor's component.
+    answer = full_answer()
+    answer["fix"] += " Also create the missing role assignment for the service account."
+    result = grade(answer, DISTRACTOR_RUBRIC)
+    assert result["passed"] is True
+    assert result["detail"]["reasons"] == []
+
+
+def test_evidence_never_triggers_a_distractor():
+    answer = full_answer()
+    answer["evidence"] = ["az-role-assignment-list.json: no missing role assignment found"]
+    result = grade(answer, DISTRACTOR_RUBRIC)
+    assert result["passed"] is True
+
+
+def test_each_matched_distractor_group_reports_one_reason():
+    rubric = {
+        **RUBRIC,
+        "distractors": [["rbac misconfiguration"], ["dns resolution failure"]],
+    }
+    answer = full_answer()
+    answer["root_cause"] = (
+        "A dns resolution failure and an rbac misconfiguration hit the "
+        "federated credential subject in the namespace."
+    )
+    result = grade(answer, rubric)
+    assert result["detail"]["reasons"] == [
+        {"reason": "named_distractor", "field": "root_cause", "matched": "rbac misconfiguration", "group": 0},
+        {"reason": "named_distractor", "field": "root_cause", "matched": "dns resolution failure", "group": 1},
+    ]
+
+
+def test_malformed_distractors_are_ignored_like_absent():
+    clean = grade(full_answer(), RUBRIC)
+    for bad in ("nope", 42, [], ["flat"], [["ok", 5]], [[""]], [[None]]):
+        result = grade(full_answer(), {**RUBRIC, "distractors": bad})
+        assert result["passed"] is True
+        assert result["detail"]["reasons"] == []
+    assert grader.distractor_groups({"distractors": bad}) == []
+    assert clean == grade(full_answer(), RUBRIC)
+
+
+def test_distractor_reasons_coexist_with_answer_too_long():
+    answer = full_answer()
+    answer["root_cause"] = "missing role assignment " * 80  # over the 600-char cap
+    result = grade(answer, DISTRACTOR_RUBRIC)
+    reason_kinds = [reason["reason"] for reason in result["detail"]["reasons"]]
+    assert reason_kinds == ["answer_too_long", "named_distractor"]
+    assert result["passed"] is False
+
+
 # --- CLI: `bench grade --task <id> --answer answer.json` ---
 
 

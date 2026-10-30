@@ -3,5 +3,6 @@
     ["ingress saturation", "backend capacity", "upstream saturation"],
     ["peak traffic", "traffic spike"]
   ],
-  "fix": [["scale the ingress controller", "increase replica count"]]
+  "fix": [["scale the ingress controller", "increase replica count"]],
+  "distractors": [["appgw", "application gateway"]]
 }

@@ -11,5 +11,8 @@
       "new federated credential",
       "update the federated"
     ]
+  ],
+  "distractors": [
+    ["missing Key Vault Secrets User role", "key vault secrets user", "rbac misconfiguration"]
   ]
 }
