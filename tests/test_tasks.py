@@ -1,7 +1,13 @@
-"""Unit tests for the task loader and validator (issue #2).
+"""Unit tests for the task loader and validator (issue #2), plus the per-task
+integrity checks from issue #5.
 
-Each test copies the valid fixture task from ``tests/data/`` into a tmp dir and
-breaks exactly one rule, so every validation rule is exercised in isolation.
+Each loader test copies the valid fixture task from ``tests/data/`` into a tmp
+dir and breaks exactly one rule, so every validation rule is exercised in
+isolation. The integrity tests at the bottom are parametrized over every task
+discovered in the real ``tasks/`` tree and enforce the benchmark's integrity
+invariants: validity, solvability, non-triviality, and no symptom leaks. With
+no tasks authored yet they report an empty parameter set and activate
+automatically as task folders land.
 """
 
 from __future__ import annotations
@@ -13,8 +19,11 @@ import subprocess
 import sys
 from pathlib import Path
 
+import pytest
 import yaml
 
+from bench.grader import grade
+from bench.run import run_task
 from bench.tasks import inspect_task, load_tasks
 
 DATA_TASKS = Path(__file__).parent / "data" / "tasks"
@@ -356,3 +365,82 @@ def test_list_on_empty_root_is_quiet_success(tmp_path: Path):
     proc = run_cli("list", "tasks", cwd=tmp_path)
     assert proc.returncode == 0
     assert proc.stdout == ""
+
+# --- Per-task integrity checks (issue #5) ------------------------------------
+#
+# Parametrized over every task discovered in the real `tasks/` tree. These are
+# the CI-enforced invariants from AGENTS.md: every task validates clean, its
+# reference solution passes its own rubric, the naive guessing agent fails it,
+# and the symptom alone does not give the root cause away.
+
+TASKS_ROOT = Path(__file__).resolve().parent.parent / "tasks"
+NAIVE_AGENT_CMD = (
+    f"{sys.executable} {Path(__file__).resolve().parent.parent / 'agents' / 'naive.py'}"
+)
+
+
+def _discovered_task_dirs() -> list[Path]:
+    if not TASKS_ROOT.is_dir():
+        return []
+    return sorted(
+        path for path in TASKS_ROOT.glob("*/*") if (path / "task.yaml").is_file()
+    )
+
+
+def _task_label(task_dir: Path) -> str:
+    """Unique, readable parametrize id: <category>/<task-id>."""
+    return f"{task_dir.parent.name}/{task_dir.name}"
+
+
+def _load_json_file(path: Path) -> dict:
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+@pytest.mark.parametrize("task_dir", _discovered_task_dirs(), ids=_task_label)
+def test_task_validates_clean(task_dir: Path):
+    """Integrity invariant: `validate(task) == []`."""
+    result = inspect_task(task_dir)
+    assert result.errors == [], (
+        f"{_task_label(task_dir)} failed validation:\n"
+        + "\n".join(f"  - {error}" for error in result.errors)
+    )
+
+
+@pytest.mark.parametrize("task_dir", _discovered_task_dirs(), ids=_task_label)
+def test_reference_solution_passes_own_task(task_dir: Path):
+    """Integrity invariant (solvability): solution.json scores passed == True."""
+    result = grade(
+        _load_json_file(task_dir / "solution.json"),
+        _load_json_file(task_dir / "expected.json"),
+    )
+    assert result["passed"], (
+        f"reference solution for {_task_label(task_dir)} does not pass its own "
+        f"rubric (score={result['score']}):\n{json.dumps(result['detail'], indent=2)}"
+    )
+
+
+@pytest.mark.parametrize("task_dir", _discovered_task_dirs(), ids=_task_label)
+def test_naive_agent_does_not_pass(task_dir: Path, tmp_path: Path):
+    """Integrity invariant (non-triviality): the naive guess agent must fail."""
+    record = run_task(
+        task_dir, NAIVE_AGENT_CMD, name="naive-check", results_root=tmp_path
+    )
+    assert not record["passed"], (
+        f"naive agent PASSED {_task_label(task_dir)} (score={record['score']}) — "
+        f"the rubric is guessable:\n{json.dumps(record['detail'], indent=2)}"
+    )
+
+
+@pytest.mark.parametrize("task_dir", _discovered_task_dirs(), ids=_task_label)
+def test_symptom_does_not_leak_root_cause(task_dir: Path):
+    """Integrity invariant (no leaks): the symptom alone must not match every
+    root_cause group."""
+    config = yaml.safe_load((task_dir / "task.yaml").read_text(encoding="utf-8"))
+    rubric = _load_json_file(task_dir / "expected.json")
+    result = grade({"root_cause": str(config.get("symptom", ""))}, rubric)
+    entries = result["detail"]["root_cause"]
+    matched = [entry["matched"] for entry in entries if entry["matched"] is not None]
+    assert len(matched) < len(entries), (
+        f"symptom of {_task_label(task_dir)} matches every root_cause group "
+        f"({matched}) — it names the answer"
+    )
