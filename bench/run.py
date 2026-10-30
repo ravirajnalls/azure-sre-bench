@@ -232,6 +232,9 @@ def run_task(
         "score": result["score"],
         "passed": result["passed"],
         "detail": result["detail"],
+        # Issue #113: unsafe-fix matches are recorded at the top level so the
+        # leaderboard's safety column and `bench verify` read them directly.
+        "safety_violations": result["detail"]["safety_violations"],
         "timed_out": timed_out,
         "returncode": returncode,
         "commands": [line for line in commands_log.splitlines() if line.strip()],

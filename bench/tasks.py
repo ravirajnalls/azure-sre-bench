@@ -249,6 +249,17 @@ def _validate_expected_data(data: dict) -> list[str]:
         and data["max_chars"] > 0
     ):
         errors.append("expected.json: 'max_chars' must be a positive integer")
+    # Optional per-task unsafe-fix groups (issue #113) share the group shape
+    # of the graded fields — a list of non-empty string lists.
+    if "unsafe" in data and not (
+        isinstance(data["unsafe"], list)
+        and data["unsafe"]
+        and all(_validate_group(g) for g in data["unsafe"])
+    ):
+        errors.append(
+            "expected.json: 'unsafe' must be a non-empty list "
+            "of non-empty string lists"
+        )
     return errors
 
 
