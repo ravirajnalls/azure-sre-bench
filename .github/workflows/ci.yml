@@ -70,3 +70,25 @@ jobs:
         # az step above this surfaces fixture problems without blocking
         # merges. Issue #155 owns promoting fixture checks to blocking.
         run: python -m bench lint-fixtures --check logs
+
+  # K8s fixture lint (issue #150): report invalid Kubernetes resources per
+  # task. Separate job because it needs the kubernetes-validate schema
+  # package; k8s findings are warning-severity, so it is warning-only by
+  # construction like the az step above.
+  lint-fixtures:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        # kubernetes-validate ships the offline kubernetes-json-schema
+        # schemas the check validates against; not in requirements.txt
+        # because only this check needs them.
+        run: pip install -r requirements.txt kubernetes-validate
+
+      - name: K8s fixture lint (warning-only, issue #150)
+        run: python -m bench lint-fixtures --check k8s

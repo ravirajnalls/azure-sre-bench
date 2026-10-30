@@ -72,6 +72,9 @@ def prepare_workspace(task_dir: Path, workspace: Path) -> None:
         shutil.copytree(
             fixtures_src,
             Path(workspace) / "fixtures",
+            # `.lintignore` (issue #150) allowlists fixtures that are
+            # intentionally invalid; reading it would tell the agent which
+            # files are the planted faults.
             ignore=shutil.ignore_patterns(COMMANDS_FILENAME, LINTIGNORE_FILENAME),
         )
     task = load_task(task_dir)

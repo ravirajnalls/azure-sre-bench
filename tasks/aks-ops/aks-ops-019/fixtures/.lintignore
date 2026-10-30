@@ -1,0 +1,6 @@
+# Intentionally removed-API fixtures (issue #150): the incident is an upgrade
+# to Kubernetes 1.29 dropping the pre-1.26 autoscaling/v2beta2 HPA and
+# pre-1.25 policy/v1beta1 PodDisruptionBudget APIs. Invalid against the
+# task's stated cluster version on purpose — the whole point of the task.
+hpa.yaml
+pdb.yaml
