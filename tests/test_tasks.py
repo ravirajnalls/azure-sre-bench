@@ -23,6 +23,7 @@ import pytest
 import yaml
 
 from bench.attribution import KIND_ATTRIBUTION
+from bench.triage import KIND_TRIAGE
 from bench.grader import grade, normalize
 from bench.heldout import SPLIT_HELDOUT, heldout_key, load_hidden_json, split_of
 from bench.remediation import grade_for_task
@@ -736,6 +737,17 @@ def test_symptom_does_not_leak_root_cause(task_dir: Path):
         ), (
             f"symptom of {_task_label(task_dir)} contains the culprit change id "
             f"'{culprit}' — it names the answer"
+        )
+        return
+    if kind == KIND_TRIAGE:
+        root_alert = rubric.get("root_alert")
+        assert not (
+            isinstance(root_alert, str)
+            and root_alert.strip()
+            and normalize(root_alert) in normalize(symptom_text)
+        ), (
+            f"symptom of {_task_label(task_dir)} contains the root alert id "
+            f"'{root_alert}' — it names the answer"
         )
         return
     if not (isinstance(rubric.get("root_cause"), list) and rubric["root_cause"]):

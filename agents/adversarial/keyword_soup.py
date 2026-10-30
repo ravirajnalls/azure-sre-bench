@@ -57,8 +57,11 @@ def soup_answer(rubric: dict) -> dict:
 
     New kinds self-trap the same way: a change-attribution rubric (#144) gets
     its `culprit` copied verbatim but its decoy changes pasted into
-    `reasoning`, tripping the distractor check. The check is additive: on
-    diagnosis rubrics the answer is byte-for-byte what it was.
+    `reasoning`, tripping the distractor check. An alert-triage rubric
+    (#145) gets its `root_alert` copied verbatim, but the id spray needs the
+    alerts fixture this probe never reads, so classification stays empty and
+    the 0.8 gate fails the answer. The checks are additive: on diagnosis
+    rubrics the answer is byte-for-byte what it was.
     """
     answer = {
         "root_cause": soup(
@@ -70,6 +73,9 @@ def soup_answer(rubric: dict) -> dict:
     if isinstance(rubric.get("culprit"), str):  # change-attribution rubric (#144)
         answer["culprit"] = rubric["culprit"]
         answer["reasoning"] = soup(rubric.get("distractors"))
+    if isinstance(rubric.get("root_alert"), str):  # alert-triage rubric (#145)
+        answer["root_alert"] = rubric["root_alert"]
+        answer["symptom_alerts"] = []
     return answer
 
 

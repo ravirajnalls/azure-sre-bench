@@ -329,6 +329,43 @@ Rubric shape (`expected.json`):
   patterns exactly like a diagnosis fix, and the over-cap rule applies to
   `reasoning` too. The `culprit` field is never length-capped — it is one id.
 
+## Alert-triage tasks (issue #145)
+
+A task may declare `kind: alert-triage` in `task.yaml`. The rubric names one
+exact answer — `root_alert`, the id of the one alert whose firing caused all
+the others — and the grader derives the rest from the task's alerts fixture
+(`fixtures/alerts.json`): every other firing alert is a **true symptom** the
+answer must classify.
+
+Rubric shape (`expected.json`):
+
+```json
+{ "root_alert": "ALT-09", "max_chars": 600 }
+```
+
+- `root_alert` must be a non-empty string and **must be an id the alerts
+  fixture defines** (validator-enforced); the fixture itself must be
+  well-formed, with no duplicate alert ids — the grader derives the symptom
+  set from it and would otherwise grade against a guessed set.
+- The answer contract is `root_alert` + `symptom_alerts` (list of alert ids)
+  + optional `reasoning`. Score is `(root_component + classification_fraction) / 2`.
+- `root_alert` is exact-match after normalization and must not also appear in
+  `symptom_alerts` (reason `root_classified_as_symptom`); a self-contradictory
+  answer forfeits the root component too.
+- The classification fraction counts hits minus mislabels over the true
+  symptom count: a label equal to the claimed root, or one the fixture never
+  defines (`unknown_ids`), subtracts. Passing requires the correct root and
+  a fraction of at least 0.8 (`symptom_fraction_below_threshold` otherwise) —
+  small storms tolerate no misses, large ones forgive one.
+- Listing every alert is the volume attack, not coverage: the mislabels
+  subtract into failure, which is also what the fixture-dump adversarial
+  probe (agents/adversarial/fixture_dump.py) does automatically.
+- Distractor groups have **no channel** here: a triage answer classifies
+  alerts, it does not name wrong causes, so `distractors` in a triage rubric
+  is a validator error — the alert list itself is the distractor surface.
+- `reasoning` is optional content-wise but length-capped; triage has no fix
+  channel, so the result record's `safety_violations` is always empty.
+
 ## Reference answer (`solution.json`)
 
 The reference answer must score `passed == true` on its own task when run through the

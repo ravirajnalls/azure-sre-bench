@@ -49,6 +49,7 @@ from bench.preincident import (
     grade_pre_incident_review,
     is_pre_incident_review,
 )
+from bench.triage import KIND_TRIAGE, grade_triage, is_triage
 from bench.safety import find_violations, global_rules, rubric_unsafe_rules
 from bench.timeline import KIND_TIMELINE, ORDER_KEY, grade_timeline, is_timeline
 
@@ -61,6 +62,7 @@ KINDS = (
     KIND_PRE_INCIDENT_REVIEW,
     KIND_POSTMORTEM,
     KIND_TIMELINE,
+    KIND_TRIAGE,
 )
 
 # The answer's patch map: {fixture path: full new file content}.
@@ -435,18 +437,18 @@ def grade_for_task(
     Every surface that grades an answer against a task (`bench run`, `bench
     grade`, `bench submit`, `bench verify`, the solvability invariant) calls
     this rather than `bench.grader.grade` directly, so remediation tasks run
-    their patch checks everywhere, change-attribution (issue #144) and
-    pre-incident-review tasks run their own graders, and diagnosis tasks
-    keep the plain grader.
+    their patch checks everywhere, change-attribution (issue #144),
+    pre-incident-review, and alert-triage (issue #145) tasks run their own
+    graders, and diagnosis tasks keep the plain grader.
 
     A rubric that declares `checks` triggers remediation grading, a
-    `culprit` string triggers attribution grading, a `findings` list
-    triggers pre-incident grading, a `required_facts` list triggers postmortem
-    grading, and an `order` list triggers timeline grading even when the task
-    config is missing or unmarked (manual submits, unit tests): silently
-    skipping a kind's half of the contract would inflate the score. The
-    validator keeps repo tasks consistent — a kind and its rubric shape ship
-    together.
+    `culprit` string triggers attribution grading, a `root_alert` string
+    triggers triage grading, a `findings` list triggers pre-incident
+    grading, a `required_facts` list triggers postmortem grading, and an
+    `order` list triggers timeline grading even when the task config is
+    missing or unmarked (manual submits, unit tests): silently skipping a
+    kind's half of the contract would inflate the score. The validator
+    keeps repo tasks consistent — a kind and its rubric shape ship together.
     """
     rubric_dict = rubric if isinstance(rubric, dict) else {}
     if is_pre_incident_review(task) or isinstance(rubric_dict.get("findings"), list):
@@ -457,6 +459,8 @@ def grade_for_task(
         result = grade_timeline(answer, rubric)
     elif is_remediation(task) or isinstance(rubric_dict.get("checks"), list):
         result = grade_remediation(answer, rubric, Path(task_dir))
+    elif is_triage(task) or isinstance(rubric.get("root_alert"), str):
+        result = grade_triage(answer, rubric, Path(task_dir))
     elif is_attribution(task) or isinstance(rubric.get("culprit"), str):
         result = grade_attribution(answer, rubric)
     else:

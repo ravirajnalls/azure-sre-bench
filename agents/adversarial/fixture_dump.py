@@ -36,12 +36,41 @@ def fixture_texts(fixtures_dir: Path) -> list[str]:
     return texts
 
 
+def alert_ids(texts: list[str]) -> list[str]:
+    """Every alert_id value in fixture text that parses as JSON (issue #145).
+
+    The dump sprays every id it can find as a symptom — the volume attack
+    the triage grader subtracts into failure. Duplicates collapse: the
+    grader dedupes anyway.
+    """
+    ids: list[str] = []
+    for text in texts:
+        try:
+            data = json.loads(text)
+        except ValueError:
+            continue
+        stack = [data]
+        while stack:
+            node = stack.pop()
+            if isinstance(node, dict):
+                for key, value in node.items():
+                    if key == "alert_id" and isinstance(value, str) and value.strip():
+                        if value.strip() not in ids:
+                            ids.append(value.strip())
+                    else:
+                        stack.append(value)
+            elif isinstance(node, list):
+                stack.extend(node)
+    return ids
+
+
 def dump_answer(fixtures_dir: Path) -> dict:
     """Contract-shaped answer that dumps raw fixture text into every field.
 
     The field set is a superset: the extra keys feed the change-attribution
-    kind (issue #144) and are ignored by the diagnosis grader, so the dump is
-    the all-fields attack on every answer shape at once.
+    kind (issue #144) and alert-triage kind (issue #145) and are ignored by
+    the diagnosis grader, so the dump is the all-fields attack on every
+    answer shape at once.
     """
     texts = fixture_texts(fixtures_dir)
     blob = "\n".join(texts)
@@ -51,6 +80,8 @@ def dump_answer(fixtures_dir: Path) -> dict:
         "fix": blob,
         "culprit": blob,  # attribution half (#144): a blob is never one exact id
         "reasoning": blob,  # and trips the distractor check on decoy mentions
+        "root_alert": blob,  # triage half (#145): a blob is never one exact id
+        "symptom_alerts": alert_ids(texts),  # the id spray the grader subtracts
     }
 
 

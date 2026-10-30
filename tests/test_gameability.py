@@ -21,6 +21,7 @@ which the leaderboard and site renderers exclude.
 
 from __future__ import annotations
 
+import json
 import sys
 from pathlib import Path
 
@@ -29,6 +30,7 @@ import pytest
 from agents.adversarial import fixture_dump, keyword_soup, minimal_dump
 from bench import run as runner
 from bench.grader import grade
+from bench.remediation import grade_for_task
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 TASKS_ROOT = REPO_ROOT / "tasks"
@@ -190,6 +192,8 @@ def test_fixture_dump_missing_fixtures_dir_yields_empty_answer(tmp_path: Path):
         "fix": "",
         "culprit": "",
         "reasoning": "",
+        "root_alert": "",
+        "symptom_alerts": [],
     }
 
 
@@ -208,3 +212,42 @@ def test_minimal_dump_stays_under_future_caps(tmp_path: Path):
         len(item) <= minimal_dump.EVIDENCE_ITEM_MAX_CHARS
         for item in answer["evidence"]
     )
+
+
+# --- alert-triage probes (issue #145) -------------------------------------------------
+
+
+def _triage_task(tmp_path: Path) -> Path:
+    """A minimal alert-triage task dir for probe grading."""
+    task_dir = tmp_path / "tasks" / "aks-ops" / "triage-sample"
+    fixtures = task_dir / "fixtures"
+    fixtures.mkdir(parents=True)
+    (fixtures / "alerts.json").write_text(
+        json.dumps({"alerts": [{"alert_id": f"ALT-0{index}"} for index in range(1, 5)]}),
+        encoding="utf-8",
+    )
+    (task_dir / "expected.json").write_text(
+        json.dumps({"root_alert": "ALT-01"}), encoding="utf-8"
+    )
+    return task_dir
+
+
+def test_soup_copied_root_still_fails_triage(tmp_path: Path):
+    """Copying the rubric's root_alert is the rubric-read cheat; without the
+    alerts fixture the spray is empty and the 0.8 gate fails the answer."""
+    rubric = {"root_alert": "ALT-01"}
+    answer = keyword_soup.soup_answer(rubric)
+    assert answer["root_alert"] == "ALT-01"
+    assert answer["symptom_alerts"] == []
+    result = grade_for_task(answer, rubric, _triage_task(tmp_path), None)
+    assert result["passed"] is False
+
+
+def test_fixture_dump_spray_fails_triage(tmp_path: Path):
+    """The dump sprays every alert id it finds as a symptom — the volume
+    attack the triage grader subtracts into failure."""
+    task_dir = _triage_task(tmp_path)
+    rubric = json.loads((task_dir / "expected.json").read_text(encoding="utf-8"))
+    answer = fixture_dump.dump_answer(task_dir / "fixtures")
+    result = grade_for_task(answer, rubric, task_dir, None)
+    assert result["passed"] is False
