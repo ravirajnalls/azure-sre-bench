@@ -1,0 +1,11 @@
+{
+  "root_cause": "The ledger-internal Service annotation is misspelled: it reads service.beta.kubernetes.io/azure-load-balancer-internal-only instead of service.beta.kubernetes.io/azure-load-balancer-internal, so AKS never treats the service as internal and provisioned it on the public load balancer.",
+  "evidence": [
+    "service.yaml: annotation service.beta.kubernetes.io/azure-load-balancer-internal-only: \"true\" (the recognized key is azure-load-balancer-internal)",
+    "kubectl-get-svc.txt: ledger-internal is type LoadBalancer with a public EXTERNAL-IP 20.162.44.128",
+    "az-network-lb-list.json: the public load balancer kubernetes owns frontend IP 20.162.44.128 and the internal load balancer kubernetes-internal has no frontend for ledger-internal",
+    "security-scan-finding.json: SEC-2026-1042 flags public IP 20.162.44.128 against finance/ledger-internal",
+    "nsg-rules.json: inbound security rules allow only VNet traffic and deny the internet (red herring - the NSG is not how the service became public)"
+  ],
+  "fix": "Correct the annotation to service.beta.kubernetes.io/azure-load-balancer-internal: \"true\" so the service reconciles onto the internal load balancer and the public IP is released."
+}
