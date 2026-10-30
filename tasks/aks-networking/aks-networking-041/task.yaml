@@ -1,0 +1,20 @@
+id: aks-networking-041
+canary: 00000000-0000-0000-0000-000000000114  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
+title: "Istio STRICT mTLS breaks a non-mesh client"
+category: aks-networking
+difficulty: hard
+tags:
+  - aks
+  - istio
+  - service-mesh
+  - mtls
+  - sidecar
+symptom: |
+  Last night the platform team finished the Istio add-on rollout on aks-prod and
+  applied a new namespace-wide security policy to the orders namespace. Since
+  then every nightly run of the legacy batch-runner job dies with "connection
+  reset by peer" the moment it posts to the orders service — the same call it
+  has made every night for a year. Traffic from the payments service to orders
+  is completely healthy, orders itself serves every request it receives, and
+  the batch namespace was left untouched by the rollout because those pods
+  predate the mesh program.

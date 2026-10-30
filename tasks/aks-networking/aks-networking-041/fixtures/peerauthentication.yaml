@@ -1,0 +1,12 @@
+# kubectl get peerauthentication -n orders -o yaml
+apiVersion: security.istio.io/v1
+kind: PeerAuthentication
+metadata:
+  name: default
+  namespace: orders
+  labels:
+    app.kubernetes.io/managed-by: platform-team
+    app.kubernetes.io/part-of: istio-rollout-2026-10
+spec:
+  mtls:
+    mode: STRICT

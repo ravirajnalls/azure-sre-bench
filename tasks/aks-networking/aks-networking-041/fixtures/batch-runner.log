@@ -1,0 +1,8 @@
+2026-10-28T09:13:58Z [INFO] batch-runner job nightly-3841 starting, target orders.orders.svc.cluster.local:8080
+2026-10-28T09:14:02Z [ERROR] order client: Post "http://orders.orders.svc.cluster.local:8080/api/v1/submit": read: connection reset by peer (attempt 1/5)
+2026-10-28T09:14:03Z [ERROR] order client: Post "http://orders.orders.svc.cluster.local:8080/api/v1/submit": read: connection reset by peer (attempt 2/5)
+2026-10-28T09:14:05Z [ERROR] order client: Post "http://orders.orders.svc.cluster.local:8080/api/v1/submit": read: connection reset by peer (attempt 3/5)
+2026-10-28T09:14:08Z [ERROR] order client: Post "http://orders.orders.svc.cluster.local:8080/api/v1/submit": read: connection reset by peer (attempt 4/5)
+2026-10-28T09:14:12Z [ERROR] order client: Post "http://orders.orders.svc.cluster.local:8080/api/v1/submit": read: connection reset by peer (attempt 5/5)
+2026-10-28T09:14:12Z [FATAL] batch nightly-3841 aborted: order submission failed after 5 attempts
+2026-10-28T09:14:20Z [INFO] batch-runner pod batch-runner-6c8f9d7b-x7q2p (10.240.5.23) namespace=batch local-dns OK, redis OK
