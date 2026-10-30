@@ -1,0 +1,20 @@
+id: networking-026
+title: "App Service can't reach SQL after public access disabled"
+category: networking
+difficulty: medium
+tags:
+  - networking
+  - azure
+  - app-service
+  - private-endpoint
+  - private-dns
+symptom: |
+  After public network access was disabled on the Azure SQL server
+  sql-contoso-prod as part of a security hardening pass, the App Service
+  app-portal can no longer reach its database: every request that touches
+  SQL fails immediately with a connection error, while static content and
+  health probes keep working. The web app is VNet-integrated to
+  vnet-app-prod and the integration page shows the connection healthy, so
+  the network team says routing was already verified. Restarting the app
+  and swapping slots did not change anything. Paged by the
+  portal-db-connectivity alert at 04:20 UTC.

@@ -1,0 +1,42 @@
+{
+  "id": "/subscriptions/00000000-0000-0000-0000-000000000003/resourceGroups/rg-sql-prod/providers/Microsoft.Network/privateEndpoints/pe-sql-contoso-prod",
+  "name": "pe-sql-contoso-prod",
+  "type": "Microsoft.Network/privateEndpoints",
+  "location": "eastus",
+  "resourceGroup": "rg-sql-prod",
+  "subnet": {
+    "id": "/subscriptions/00000000-0000-0000-0000-000000000003/resourceGroups/rg-sql-prod/providers/Microsoft.Network/virtualNetworks/vnet-sql-prod/subnets/snet-pe",
+    "resourceGroup": "rg-sql-prod"
+  },
+  "ipConfigurations": [
+    {
+      "name": "peipc-sql-001",
+      "groupId": "sqlServer",
+      "memberName": "sqlServer",
+      "privateIPAddress": "10.60.1.5",
+      "privateIPAllocationMethod": "Dynamic"
+    }
+  ],
+  "customDnsConfigs": [
+    {
+      "name": "sql-contoso-prod.database.windows.net",
+      "ipAddresses": ["10.60.1.5"]
+    }
+  ],
+  "privateLinkServiceConnections": [
+    {
+      "id": "/subscriptions/00000000-0000-0000-0000-000000000003/resourceGroups/rg-sql-prod/providers/Microsoft.Network/privateEndpoints/pe-sql-contoso-prod/privateLinkServiceConnections/plc-sql-contoso-prod",
+      "name": "plc-sql-contoso-prod",
+      "type": "Microsoft.Network/privateEndpoints/privateLinkServiceConnections",
+      "privateLinkServiceId": "/subscriptions/00000000-0000-0000-0000-000000000003/resourceGroups/rg-sql-prod/providers/Microsoft.Sql/servers/sql-contoso-prod",
+      "groupIds": ["sqlServer"],
+      "provisioningState": "Succeeded",
+      "privateLinkServiceConnectionState": {
+        "status": "Approved",
+        "description": "Auto-approved",
+        "actionsRequired": "None"
+      }
+    }
+  ],
+  "provisioningState": "Succeeded"
+}
