@@ -1,0 +1,12 @@
+{
+  "root_cause": [
+    ["health probe", "health check"],
+    ["/health", "404", "probe path", "/healthz", "healthz"]
+  ],
+  "fix": [
+    ["/healthz", "healthz", "update the probe path", "fix the probe path", "change the probe path", "probe path to /healthz"]
+  ],
+  "distractors": [
+    ["web application firewall", "waf-policy-prod", "bot protection", "waf blocked the request", "blocked by firewall"]
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "root_cause": "The origin group og-www-prod probes the origin at HTTPS /health, but the replatformed origin serves health at /healthz. Every health probe gets 404, so the origin is marked unhealthy and Front Door returns 503 instead of forwarding requests.",
+  "evidence": [
+    "az-afd-origin-group-show.json: og-www-prod healthProbeSettings probe at Https /health every 120s",
+    "afd-health-probe-log.kql.csv: every probe to www-origin.contoso-apps.com /health returns 404 with Result OriginError",
+    "origin-access-log.txt: the origin answers GET /health 404 for AzureFrontDoor-HealthProbe while GET /healthz 200 from azure-cluster-probe succeeds",
+    "az-afd-route-show.json: route-www is enabled and points at og-www-prod — routing itself is intact (confirms the outage is origin health, not routing)",
+    "waf-log.kql.csv: WAF blocks are 403s on scanner noise from unrelated IPs — not the 503 path (red herring)"
+  ],
+  "fix": "Update the origin group's health probe path from /health to /healthz so the probe matches the replatformed origin's health endpoint, the probe returns 200, and the origin is marked healthy again.",
+  "evidence_files": [
+    "az-afd-origin-group-show.json",
+    "afd-health-probe-log.kql.csv"
+  ]
+}

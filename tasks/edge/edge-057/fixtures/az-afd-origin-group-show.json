@@ -1,0 +1,22 @@
+{
+  "id": "/subscriptions/00000000-0000-0000-0000-000000000002/resourceGroups/rg-web-prod/providers/Microsoft.Cdn/profiles/afd-www-prod/originGroups/og-www-prod",
+  "name": "og-www-prod",
+  "type": "Microsoft.Cdn/profiles/originGroups",
+  "location": "Global",
+  "resourceGroup": "rg-web-prod",
+  "profileName": "afd-www-prod",
+  "healthProbeSettings": {
+    "probePath": "/health",
+    "probeProtocol": "Https",
+    "probeIntervalInSeconds": 120,
+    "probeRequestType": "GET"
+  },
+  "loadBalancingSettings": {
+    "additionalLatencyInMilliseconds": 50,
+    "sampleSize": 4,
+    "successfulSamplesRequired": 2
+  },
+  "sessionAffinityState": "Disabled",
+  "deploymentStatus": "Succeeded",
+  "provisioningState": "Succeeded"
+}

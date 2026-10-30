@@ -1,0 +1,10 @@
+TimeGenerated,TrackingReference,HostName,PolicyName,RuleName,Action,ClientIp,HttpMethod,RequestUri,HttpStatus,DetailsMessage
+2026-10-30T04:05:41.3301000Z,00000000-0000-0000-0000-000000000003,www.contoso.com,waf-policy-prod,BotProtection,Block,203.0.113.77,GET,/wp-login.php,403,Request matched bot protection rule
+2026-10-30T04:06:12.8817000Z,00000000-0000-0000-0000-000000000003,www.contoso.com,waf-policy-prod,BotProtection,Block,203.0.113.77,GET,/admin/config,403,Request matched bot protection rule
+2026-10-30T04:08:57.1142000Z,00000000-0000-0000-0000-000000000003,www.contoso.com,waf-policy-prod,932130,Block,198.51.100.24,POST,/api/search,403,SQL and shell injection attack detected
+2026-10-30T04:14:33.5069000Z,00000000-0000-0000-0000-000000000003,www.contoso.com,waf-policy-prod,BotProtection,Block,203.0.113.77,GET,/wp-admin/setup-config.php,403,Request matched bot protection rule
+2026-10-30T04:22:09.7741000Z,00000000-0000-0000-0000-000000000003,www.contoso.com,waf-policy-prod,942110,Log,203.0.113.19,GET,/products?q=1%27%20AND%20%271,200,SQL injection sequence detected in query string (log-only match)
+2026-10-30T04:31:48.0025000Z,00000000-0000-0000-0000-000000000003,www.contoso.com,waf-policy-prod,BotProtection,Block,203.0.113.77,GET,/.env,403,Request matched bot protection rule
+2026-10-30T04:44:21.3380000Z,00000000-0000-0000-0000-000000000003,www.contoso.com,waf-policy-prod,BotProtection,Block,203.0.113.77,GET,/xmlrpc.php,403,Request matched bot protection rule
+2026-10-30T05:02:55.9106000Z,00000000-0000-0000-0000-000000000003,www.contoso.com,waf-policy-prod,BotProtection,Block,203.0.113.77,GET,/wp-login.php,403,Request matched bot protection rule
+2026-10-30T05:11:04.2273000Z,00000000-0000-0000-0000-000000000003,www.contoso.com,waf-policy-prod,932130,Block,198.51.100.24,POST,/api/search,403,SQL and shell injection attack detected

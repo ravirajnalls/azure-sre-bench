@@ -1,0 +1,26 @@
+{
+  "id": "/subscriptions/00000000-0000-0000-0000-000000000002/resourceGroups/rg-web-prod/providers/Microsoft.Cdn/profiles/afd-www-prod/afdRoutes/route-www",
+  "name": "route-www",
+  "type": "Microsoft.Cdn/profiles/afdRoutes",
+  "location": "Global",
+  "resourceGroup": "rg-web-prod",
+  "profileName": "afd-www-prod",
+  "originGroup": {
+    "id": "/subscriptions/00000000-0000-0000-0000-000000000002/resourceGroups/rg-web-prod/providers/Microsoft.Cdn/profiles/afd-www-prod/originGroups/og-www-prod"
+  },
+  "originPath": null,
+  "ruleSets": [],
+  "supportedProtocols": ["Http", "Https"],
+  "patternsToMatch": ["www.contoso.com/*"],
+  "compressionSettings": {
+    "contentTypesToCompress": ["text/html", "text/css", "application/javascript"],
+    "isCompressionEnabled": true
+  },
+  "queryStringCachingBehavior": "IgnoreQueryString",
+  "forwardingProtocol": "HttpsOnly",
+  "linkToDefaultDomain": "Enabled",
+  "httpsRedirect": "Enabled",
+  "enabledState": "Enabled",
+  "deploymentStatus": "Succeeded",
+  "provisioningState": "Succeeded"
+}

@@ -1,0 +1,21 @@
+id: edge-057
+canary: 00000000-0000-0000-0000-000000000114  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
+title: "Front Door marks the origin unhealthy"
+category: edge
+difficulty: medium
+tags:
+  - edge
+  - azure
+  - front-door
+  - health-probe
+  - origin
+symptom: |
+  Since the web team replatformed www.contoso.com onto the new origin
+  last night, Front Door has been returning 503 "service unavailable" for
+  most requests. Browsing directly to the origin site works — pages load
+  fine when we resolve past the CDN. Front Door's dashboard shows the
+  origin group with 0% healthy backends, but the origin's own CPU and
+  memory are idle and its local monitoring shows a clean bill of health.
+  The replatform was supposed to be invisible to the CDN — same
+  infrastructure, just new app servers behind the same hostname.
+  Paged by the afd-origin-unhealthy alert at 06:05 UTC.
