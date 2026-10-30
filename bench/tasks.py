@@ -36,6 +36,14 @@ CATEGORIES = frozenset(
 
 DIFFICULTIES = frozenset({"easy", "medium", "hard"})
 
+# Fixed canary GUID placed in every task.yaml and the README (issue #114). Its
+# presence in a model's training corpus is the signal that the corpus was seen;
+# removing it from a task is a validator error.
+CANARY_GUID = "00000000-0000-0000-0000-000000000114"
+CANARY_COMMENT = (
+    "Canary for training-corpus detection — DO NOT REMOVE (see README, License section)."
+)
+
 MIN_FIXTURES = 2
 MAX_FIXTURES = 10
 
@@ -91,6 +99,14 @@ def _validate_config(config: dict, task_dir: Path) -> list[str]:
     if difficulty is not None and difficulty not in DIFFICULTIES:
         errors.append(
             f"task.yaml: difficulty must be one of {sorted(DIFFICULTIES)}, got '{difficulty}'"
+        )
+
+    canary = config.get("canary")
+    if canary != CANARY_GUID:
+        errors.append(
+            f"task.yaml: missing or incorrect canary (must be 'canary: {CANARY_GUID}' "
+            "with the DO NOT REMOVE comment — training-corpus canary, issue #114, "
+            "see README License section)"
         )
 
     tags = config.get("tags")

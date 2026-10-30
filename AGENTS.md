@@ -15,7 +15,7 @@ them; CI validates the mechanical ones and reviewers hold the rest.
 
 ```
 tasks/<category>/<task-id>/
-  task.yaml       # id, title, category, difficulty, tags, symptom
+  task.yaml       # id, canary, title, category, difficulty, tags, symptom
   fixtures/       # evidence the agent may read (2–10 files)
   expected.json   # HIDDEN rubric
   solution.json   # HIDDEN reference answer
@@ -39,6 +39,18 @@ Categories: `aks-networking`, `aks-identity`, `aks-workloads`, `aks-ops`, `netwo
 - **3–7 fixture files**, each under ~150 lines.
 - Only placeholder GUIDs of the form `00000000-0000-0000-0000-00000000000X` (last hex
   digit varies). **No real subscription IDs, tenant IDs, resource IDs, or secrets.**
+
+## Task.yaml canary (issue #114)
+
+Every `task.yaml` carries a fixed canary GUID line so a task's presence in a
+model's training corpus can be detected:
+
+```yaml
+canary: 00000000-0000-0000-0000-000000000114  # Canaries are DO NOT REMOVE — training-corpus canary (see README, License section).
+```
+
+The same GUID appears at the top of the README. The validator rejects any task
+whose `canary` value is missing or does not match; do not remove or alter it.
 
 ## Symptom
 

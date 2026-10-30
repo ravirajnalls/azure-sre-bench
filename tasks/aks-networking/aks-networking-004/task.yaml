@@ -1,4 +1,5 @@
 id: aks-networking-004
+canary: 00000000-0000-0000-0000-000000000114  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
 title: "billing-api can't reach its postgres pod after a security hardening change"
 category: aks-networking
 difficulty: easy

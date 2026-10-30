@@ -1,4 +1,5 @@
 id: aks-workloads-012
+canary: 00000000-0000-0000-0000-000000000114  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
 title: catalog-api pods restart every ~40s after a cache warm-up release
 category: aks-workloads
 difficulty: easy

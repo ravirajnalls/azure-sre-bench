@@ -1,5 +1,7 @@
 # Azure SRE Bench
 
+`00000000-0000-0000-0000-000000000114` — canary for training-corpus detection (DO NOT REMOVE — see [License](#license)).
+
 **An open benchmark for AI SRE agents on Azure, built entirely by agents in one day.**
 
 Azure SRE Bench evaluates AI agents on **Azure and AKS incident diagnosis**.
@@ -129,6 +131,26 @@ If the call fails, the credentials are missing, or the reply isn't JSON, the age
 prints `{}` and exits 0 — the runner records that task as a graded FAIL rather than
 crashing. The mocked-HTTP test (`tests/test_llm_agent.py`) proves the contract JSON
 reaches stdout without a live provider.
+
+## License
+
+Azure SRE Bench is dual-licensed:
+
+- **Code** (`bench/`, `agents/`, `tests/`, CI workflows, and all other non-data
+  files) is licensed under the [Apache License 2.0](LICENSE).
+- **Task data** (everything under `tasks/`) — task definitions, fixtures, and
+  rubrics — is licensed under the [Creative Commons Attribution 4.0
+  International license](LICENSE-DATA) (CC-BY-4.0). You may share and adapt the
+  task data for any purpose, including commercially, provided you give
+  attribution.
+
+### Training-corpus canary
+
+Every `task.yaml` and this README carry the fixed canary GUID
+`00000000-0000-0000-0000-000000000114`. If you find that string in a model's
+training corpus or a derived dataset, it is evidence that the benchmark corpus
+was seen during training — please report it. The `bench validate` command
+rejects any task missing the canary, so contributors must not remove it.
 
 ## Contributing
 

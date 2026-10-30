@@ -24,7 +24,7 @@ import yaml
 
 from bench.grader import grade
 from bench.run import run_task
-from bench.tasks import inspect_task, load_tasks
+from bench.tasks import CANARY_GUID, inspect_task, load_tasks
 
 DATA_TASKS = Path(__file__).parent / "data" / "tasks"
 BASE_TASK = DATA_TASKS / "monitoring" / "monitoring-001"
@@ -108,6 +108,23 @@ def test_missing_task_yaml(tmp_path: Path):
     (task_dir / "task.yaml").unlink()
     result = load_one(tmp_path)
     assert any(error.startswith("missing task.yaml") for error in result.errors)
+
+
+# --- canary (issue #114) -----------------------------------------------------
+
+
+def test_missing_canary_fails(tmp_path: Path):
+    task_dir = copy_task(tmp_path)
+    patch_yaml(task_dir, canary=None)
+    result = load_one(tmp_path)
+    assert any("missing or incorrect canary" in error for error in result.errors)
+
+
+def test_wrong_canary_value_fails(tmp_path: Path):
+    task_dir = copy_task(tmp_path)
+    patch_yaml(task_dir, canary="00000000-0000-0000-0000-999999999999")
+    result = load_one(tmp_path)
+    assert any("missing or incorrect canary" in error for error in result.errors)
 
 
 # --- id / category / folder agreement --------------------------------------
@@ -444,3 +461,21 @@ def test_symptom_does_not_leak_root_cause(task_dir: Path):
         f"symptom of {_task_label(task_dir)} matches every root_cause group "
         f"({matched}) — it names the answer"
     )
+
+
+# --- canary (issue #114) -----------------------------------------------------
+
+
+@pytest.mark.parametrize("task_dir", _discovered_task_dirs(), ids=_task_label)
+def test_real_task_carries_canary(task_dir: Path):
+    """Every task.yaml must carry the fixed training-corpus canary (issue #114)."""
+    config = yaml.safe_load((task_dir / "task.yaml").read_text(encoding="utf-8"))
+    assert config.get("canary") == CANARY_GUID, (
+        "task.yaml must carry the fixed training-corpus canary (issue #114)"
+    )
+
+
+def test_readme_carries_canary():
+    """The README must carry the fixed training-corpus canary (issue #114)."""
+    readme = Path(__file__).parent.parent / "README.md"
+    assert CANARY_GUID in readme.read_text(encoding="utf-8")

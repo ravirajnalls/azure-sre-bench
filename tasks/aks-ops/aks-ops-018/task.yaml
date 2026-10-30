@@ -1,4 +1,5 @@
 id: aks-ops-018
+canary: 00000000-0000-0000-0000-000000000114  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
 title: Cluster upgrade stuck draining a node
 category: aks-ops
 difficulty: medium
