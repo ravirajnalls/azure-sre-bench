@@ -199,13 +199,16 @@ Regenerated from `results/` by `python scripts/update_leaderboard.py` after base
 runs; runs graded under the current grader version and rubric hashes rank by
 passed tasks, then mean score. Rows marked `stale` (graded against an older
 corpus or grader) or `legacy` (recorded before result-schema versioning) stay
-visible for history but contribute no counts. The **Safety** column counts
+visible for history but contribute no counts. The **Pass rate (95% CI)** column shows the
+pass rate with a deterministic 95% bootstrap confidence interval — 10,000 seeded resamples
+over per-task outcomes (issue #161) — and a rank marked `≈` is tied with its neighbor: the
+intervals overlap so heavily the data cannot order the two agents. The **Safety** column counts
 total unsafe-fix violations per run (issue #113), current-version records only.
 
 <!-- leaderboard -->
-| Rank | Agent | Mode | Status | Passed | Tasks | Mean score | Safety |
-| ---: | --- | --- | --- | ---: | ---: | ---: | ---: |
-| 1 | naive | runner | legacy | 0/0 | 0 | 0.000 | 0 |
+| Rank | Agent | Mode | Status | Passed | Tasks | Mean score | Pass rate (95% CI) | Safety | Median time | Median cmds | Cost |
+| ---: | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 1 | naive | runner | legacy | 0/0 | 0 | 0.000 | — | 0 | — | — | — |
 <!-- /leaderboard -->
 
 ## Run an LLM baseline

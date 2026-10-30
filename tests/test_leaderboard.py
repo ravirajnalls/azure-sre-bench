@@ -225,10 +225,10 @@ def test_markdown_table_has_status_column():
     rows = rank_rows({"naive": [versioned("t1")]})
     table = markdown_table(rows)
     assert table.splitlines()[0] == (
-        "| Rank | Agent | Mode | Status | Passed | Tasks | Mean score | Safety"
-        " | Median time | Median cmds | Cost |"
+        "| Rank | Agent | Mode | Status | Passed | Tasks | Mean score | Pass rate (95% CI)"
+        " | Safety | Median time | Median cmds | Cost |"
     )
-    assert "| 1 | naive | runner | current | 1/1 | 1 | 1.000 | 0 | — | — | — |" in table
+    assert "| 1 | naive | runner | current | 1/1 | 1 | 1.000 | 100.0% (100.0–100.0) | 0 | — | — | — |" in table
 
 
 def test_leaderboard_markdown_renders_mixed_version_results(tmp_path):
@@ -279,15 +279,15 @@ def test_leaderboard_markdown_renders_mixed_version_results(tmp_path):
     table = leaderboard_markdown(results, tasks_root)
     lines = table.splitlines()
     assert (
-        "| 1 | new-agent | runner | current | 1/1 | 1 | 1.000 | 0 | — | — | — |"
+        "| 1 | new-agent | runner | current | 1/1 | 1 | 1.000 | 100.0% (100.0–100.0) | 0 | — | — | — |"
         in lines
     )
     assert (
-        "| 2 | mid-agent | runner | stale | 0/0 | 0 | 0.000 | 0 | — | — | — |"
+        "| 2 | mid-agent | runner | stale | 0/0 | 0 | 0.000 | — | 0 | — | — | — |"
         in lines
     )
     assert (
-        "| 3 | old-agent | runner | legacy | 0/0 | 0 | 0.000 | 0 | — | — | — |"
+        "| 3 | old-agent | runner | legacy | 0/0 | 0 | 0.000 | — | 0 | — | — | — |"
         in lines
     )
 
@@ -351,5 +351,65 @@ def test_markdown_table_renders_efficiency_values():
         aggregate_run("sparse", [versioned("t1")]),
     ]
     table = markdown_table(rows)
-    assert "| 1 | rich | runner | current | 2/2 | 2 | 1.000 | 0 | 1.5s | 3.5 | $0.0123 |" in table
-    assert "| 2 | sparse | runner | current | 1/1 | 1 | 1.000 | 0 | — | — | — |" in table
+    assert "| 1 | rich | runner | current | 2/2 | 2 | 1.000 | 100.0% (100.0–100.0) | 0 | 1.5s | 3.5 | $0.0123 |" in table
+    assert "| 2 | sparse | runner | current | 1/1 | 1 | 1.000 | 100.0% (100.0–100.0) | 0 | — | — | — |" in table
+
+
+# --- pass-rate bootstrap CI (issue #161) -------------------------------------
+
+
+def test_aggregate_run_ci_is_exact_for_all_pass_runs():
+    row = aggregate_run("agent", [versioned("t1"), versioned("t2"), versioned("t3")])
+    assert row["pass_rate"] == 1.0
+    assert (row["ci_low"], row["ci_high"]) == (1.0, 1.0)
+    assert row["tied"] is False
+
+
+def test_aggregate_run_ci_absent_without_current_records():
+    # No current-version records → no rate, no interval: the em-dash cell is
+    # a different fact from a 0% rate with a tight interval.
+    rows = rank_rows({"legacy": [record("t1", 1.0, True)], "empty": []})
+    assert all(row["pass_rate"] is None and row["ci_low"] is None for row in rows)
+
+
+def test_rank_rows_marks_heavy_overlaps_as_tied():
+    runs = {
+        "alpha": [versioned(f"t{i}") for i in range(3)],
+        "beta": [versioned(f"t{i}") for i in range(3)],
+        "gamma": [
+            versioned("t1"),
+            versioned("t2", passed=False, score=0.0),
+            versioned("t3", passed=False, score=0.0),
+        ],
+    }
+    by_name = {row["name"]: row for row in rank_rows(runs)}
+    # alpha and beta both sit at 3/3 with degenerate intervals — mutual
+    # containment, so the tie is marked on both. gamma's point (1/3) falls
+    # outside their interval, so it stays untied.
+    assert by_name["alpha"]["tied"] and by_name["beta"]["tied"]
+    assert not by_name["gamma"]["tied"]
+
+
+def test_rank_rows_does_not_tie_separated_intervals():
+    runs = {
+        "alpha": [versioned(f"t{i}") for i in range(4)],
+        "delta": [versioned(f"t{i}", passed=False, score=0.0) for i in range(4)],
+    }
+    assert not any(row["tied"] for row in rank_rows(runs))
+
+
+def test_markdown_table_renders_ci_column_and_tie_marker():
+    runs = {
+        "alpha": [versioned(f"t{i}") for i in range(3)],
+        "beta": [versioned(f"t{i}") for i in range(3)],
+    }
+    table = markdown_table(rank_rows(runs))
+    assert "Pass rate (95% CI)" in table.splitlines()[0]
+    assert "100.0% (100.0–100.0)" in table
+    assert "| 1≈ | alpha |" in table
+    assert "| 2≈ | beta |" in table
+
+
+def test_markdown_table_ci_is_em_dash_without_current_records():
+    table = markdown_table(rank_rows({"legacy": [record("t1", 1.0, True)]}))
+    assert "| 1 | legacy | runner | legacy | 0/0 | 0 | 0.000 | — |" in table

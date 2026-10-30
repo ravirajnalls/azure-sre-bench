@@ -17,6 +17,7 @@ import pytest
 import yaml
 
 from bench import GRADER_VERSION
+from bench.stats import bootstrap_pass_rate_ci
 from bench.site import (
     cost_accuracy_points,
     pareto_frontier,
@@ -126,6 +127,9 @@ def test_aggregate_one_run(tmp_path: Path):
             "passed": 0,
             "total": 2,
             "mean_score": 0.25,
+            "pass_rate": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
             "median_elapsed_s": None,
             "median_commands": None,
             "total_cost_usd": None,
@@ -166,6 +170,9 @@ def test_aggregate_many_runs_and_missing_cells(tmp_path: Path):
         "passed": 1,
         "total": 2,
         "mean_score": 0.75,
+        "pass_rate": 0.5,
+        "ci_low": 0.0,
+        "ci_high": 1.0,
         "median_elapsed_s": None,
         "median_commands": None,
         "total_cost_usd": None,
@@ -288,6 +295,9 @@ def test_aggregate_marks_stale_and_legacy_cells_and_counts_current_only():
             "passed": 1,
             "total": 1,
             "mean_score": 1.0,
+            "pass_rate": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
             "median_elapsed_s": None,
             "median_commands": None,
             "total_cost_usd": None,
@@ -760,3 +770,25 @@ def test_render_html_renders_cost_section(tmp_path: Path):
 def test_render_html_empty_results_has_no_chart():
     page = render_html(aggregate(load_results(Path("/nonexistent"))))
     assert "Cost vs accuracy" not in page
+# --- pass-rate CI column (issue #161) ----------------------------------------
+
+
+def test_render_overall_shows_pass_rate_ci():
+    # The point rate renders with the same deterministic interval
+    # `bench.leaderboard` shows; all-pass runs have the degenerate exact one.
+    agg = aggregate(
+        {"naive": [record("t1", 1.0, True), record("t2", 1.0, True), record("t3", 0.0, False)]}
+    )
+    low, high = bootstrap_pass_rate_ci([True, True, False])
+    expected = f"{2 / 3 * 100:.1f}% ({low * 100:.1f}&ndash;{high * 100:.1f})"
+    page = render_html(agg)
+    assert "Pass rate (95% CI)" in page
+    assert expected in page
+
+
+def test_render_ci_is_em_dash_without_current_records():
+    agg = aggregate({"naive": [{"task": "t1", "score": 1.0, "passed": True}]})
+    page = render_html(agg)
+    assert "Pass rate (95% CI)" in page
+    assert '<td class="num">&mdash;</td>' in page
+
