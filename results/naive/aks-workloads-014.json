@@ -1,0 +1,58 @@
+{
+  "task": "aks-workloads-014",
+  "elapsed_s": 0.021,
+  "answer": {
+    "root_cause": "transient platform issue",
+    "evidence": [],
+    "fix": "restart and monitor"
+  },
+  "stderr_tail": "",
+  "score": 0.0,
+  "passed": false,
+  "detail": {
+    "root_cause": [
+      {
+        "group": [
+          "memory request",
+          "30gi",
+          "pod requests 30",
+          "pod's request",
+          "requests 30"
+        ],
+        "matched": null
+      },
+      {
+        "group": [
+          "allocatable",
+          "larger than",
+          "exceeds",
+          "no node can fit",
+          "doesn't fit",
+          "too large for any node",
+          "bigger than any node"
+        ],
+        "matched": null
+      }
+    ],
+    "fix": [
+      {
+        "group": [
+          "reduce the memory request",
+          "lower the request",
+          "lower the memory request",
+          "reduce the request",
+          "lower memory request",
+          "reduce memory request",
+          "larger vm",
+          "bigger node",
+          "larger node sku",
+          "new node pool",
+          "bigger node pool"
+        ],
+        "matched": null
+      }
+    ]
+  },
+  "timed_out": false,
+  "returncode": 0
+}

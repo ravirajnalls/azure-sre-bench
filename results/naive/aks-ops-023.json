@@ -1,0 +1,47 @@
+{
+  "task": "aks-ops-023",
+  "elapsed_s": 0.023,
+  "answer": {
+    "root_cause": "transient platform issue",
+    "evidence": [],
+    "fix": "restart and monitor"
+  },
+  "stderr_tail": "",
+  "score": 0.0,
+  "passed": false,
+  "detail": {
+    "root_cause": [
+      {
+        "group": [
+          "spot"
+        ],
+        "matched": null
+      },
+      {
+        "group": [
+          "all replicas",
+          "same pool",
+          "every replica",
+          "tolerat"
+        ],
+        "matched": null
+      }
+    ],
+    "fix": [
+      {
+        "group": [
+          "affinity",
+          "topology spread",
+          "topologyspreadconstraints",
+          "remove the toleration",
+          "regular pool",
+          "regular node pool",
+          "non-spot"
+        ],
+        "matched": null
+      }
+    ]
+  },
+  "timed_out": false,
+  "returncode": 0
+}

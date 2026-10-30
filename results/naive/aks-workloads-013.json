@@ -1,0 +1,44 @@
+{
+  "task": "aks-workloads-013",
+  "elapsed_s": 0.026,
+  "answer": {
+    "root_cause": "transient platform issue",
+    "evidence": [],
+    "fix": "restart and monitor"
+  },
+  "stderr_tail": "",
+  "score": 0.0,
+  "passed": false,
+  "detail": {
+    "root_cause": [
+      {
+        "group": [
+          "oom",
+          "out of memory",
+          "137"
+        ],
+        "matched": null
+      },
+      {
+        "group": [
+          "limit",
+          "xmx",
+          "heap"
+        ],
+        "matched": null
+      }
+    ],
+    "fix": [
+      {
+        "group": [
+          "memory limit",
+          "xmx",
+          "heap"
+        ],
+        "matched": null
+      }
+    ]
+  },
+  "timed_out": false,
+  "returncode": 0
+}

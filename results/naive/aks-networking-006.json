@@ -1,0 +1,43 @@
+{
+  "task": "aks-networking-006",
+  "elapsed_s": 0.021,
+  "answer": {
+    "root_cause": "transient platform issue",
+    "evidence": [],
+    "fix": "restart and monitor"
+  },
+  "stderr_tail": "",
+  "score": 0.0,
+  "passed": false,
+  "detail": {
+    "root_cause": [
+      {
+        "group": [
+          "annotation"
+        ],
+        "matched": null
+      },
+      {
+        "group": [
+          "azure-load-balancer-internal",
+          "internal-only",
+          "misspelled",
+          "typo"
+        ],
+        "matched": null
+      }
+    ],
+    "fix": [
+      {
+        "group": [
+          "azure-load-balancer-internal: \"true\"",
+          "azure-load-balancer-internal: true",
+          "correct the annotation"
+        ],
+        "matched": null
+      }
+    ]
+  },
+  "timed_out": false,
+  "returncode": 0
+}

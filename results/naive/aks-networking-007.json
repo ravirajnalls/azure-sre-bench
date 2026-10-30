@@ -1,0 +1,45 @@
+{
+  "task": "aks-networking-007",
+  "elapsed_s": 0.021,
+  "answer": {
+    "root_cause": "transient platform issue",
+    "evidence": [],
+    "fix": "restart and monitor"
+  },
+  "stderr_tail": "",
+  "score": 0.0,
+  "passed": false,
+  "detail": {
+    "root_cause": [
+      {
+        "group": [
+          "private dns",
+          "privatelink",
+          "private dns zone"
+        ],
+        "matched": null
+      },
+      {
+        "group": [
+          "link",
+          "not linked"
+        ],
+        "matched": null
+      }
+    ],
+    "fix": [
+      {
+        "group": [
+          "virtual network link",
+          "vnet link",
+          "link the zone",
+          "create a virtual network link",
+          "add a vnet link"
+        ],
+        "matched": null
+      }
+    ]
+  },
+  "timed_out": false,
+  "returncode": 0
+}

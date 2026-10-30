@@ -1,0 +1,57 @@
+{
+  "task": "cost-031",
+  "elapsed_s": 0.019,
+  "answer": {
+    "root_cause": "transient platform issue",
+    "evidence": [],
+    "fix": "restart and monitor"
+  },
+  "stderr_tail": "",
+  "score": 0.0,
+  "passed": false,
+  "detail": {
+    "root_cause": [
+      {
+        "group": [
+          "unattached",
+          "orphan",
+          "orphaned",
+          "stranded",
+          "left behind",
+          "detached"
+        ],
+        "matched": null
+      },
+      {
+        "group": [
+          "os disk",
+          "managed disk",
+          "disk"
+        ],
+        "matched": null
+      }
+    ],
+    "fix": [
+      {
+        "group": [
+          "delete",
+          "remove",
+          "purge",
+          "clean up",
+          "cleanup"
+        ],
+        "matched": null
+      },
+      {
+        "group": [
+          "os disk",
+          "managed disk",
+          "disk"
+        ],
+        "matched": null
+      }
+    ]
+  },
+  "timed_out": false,
+  "returncode": 0
+}

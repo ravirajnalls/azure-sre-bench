@@ -1,0 +1,45 @@
+{
+  "task": "aks-ops-018",
+  "elapsed_s": 0.02,
+  "answer": {
+    "root_cause": "transient platform issue",
+    "evidence": [],
+    "fix": "restart and monitor"
+  },
+  "stderr_tail": "",
+  "score": 0.0,
+  "passed": false,
+  "detail": {
+    "root_cause": [
+      {
+        "group": [
+          "pdb",
+          "poddisruptionbudget",
+          "disruption budget"
+        ],
+        "matched": null
+      },
+      {
+        "group": [
+          "minavailable",
+          "allowed disruptions",
+          "0"
+        ],
+        "matched": null
+      }
+    ],
+    "fix": [
+      {
+        "group": [
+          "maxunavailable",
+          "minavailable: 1",
+          "increase replicas",
+          "scale"
+        ],
+        "matched": null
+      }
+    ]
+  },
+  "timed_out": false,
+  "returncode": 0
+}

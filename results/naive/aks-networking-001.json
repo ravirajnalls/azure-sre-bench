@@ -1,0 +1,49 @@
+{
+  "task": "aks-networking-001",
+  "elapsed_s": 0.022,
+  "answer": {
+    "root_cause": "transient platform issue",
+    "evidence": [],
+    "fix": "restart and monitor"
+  },
+  "stderr_tail": "",
+  "score": 0.0,
+  "passed": false,
+  "detail": {
+    "root_cause": [
+      {
+        "group": [
+          "coredns-custom",
+          "coredns custom",
+          "custom configmap",
+          "forward",
+          "forwarder"
+        ],
+        "matched": null
+      },
+      {
+        "group": [
+          "10.20.1.53"
+        ],
+        "matched": null
+      }
+    ],
+    "fix": [
+      {
+        "group": [
+          "remove the forward",
+          "remove the forwarding",
+          "delete the override",
+          "remove the custom",
+          "168.63.129.16",
+          "correct upstream",
+          "working upstream",
+          "restore the default"
+        ],
+        "matched": null
+      }
+    ]
+  },
+  "timed_out": false,
+  "returncode": 0
+}

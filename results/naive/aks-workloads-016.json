@@ -1,0 +1,39 @@
+{
+  "task": "aks-workloads-016",
+  "elapsed_s": 0.027,
+  "answer": {
+    "root_cause": "transient platform issue",
+    "evidence": [],
+    "fix": "restart and monitor"
+  },
+  "stderr_tail": "",
+  "score": 0.0,
+  "passed": false,
+  "detail": {
+    "root_cause": [
+      {
+        "group": [
+          "readiness"
+        ],
+        "matched": null
+      },
+      {
+        "group": [
+          "3000",
+          "port"
+        ],
+        "matched": null
+      }
+    ],
+    "fix": [
+      {
+        "group": [
+          "8080"
+        ],
+        "matched": null
+      }
+    ]
+  },
+  "timed_out": false,
+  "returncode": 0
+}

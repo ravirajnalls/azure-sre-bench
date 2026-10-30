@@ -1,0 +1,42 @@
+{
+  "task": "monitoring-032",
+  "elapsed_s": 0.027,
+  "answer": {
+    "root_cause": "transient platform issue",
+    "evidence": [],
+    "fix": "restart and monitor"
+  },
+  "stderr_tail": "",
+  "score": 0.0,
+  "passed": false,
+  "detail": {
+    "root_cause": [
+      {
+        "group": [
+          "avg",
+          "average",
+          "aggregation"
+        ],
+        "matched": null
+      },
+      {
+        "group": [
+          "threshold"
+        ],
+        "matched": null
+      }
+    ],
+    "fix": [
+      {
+        "group": [
+          "count",
+          "countif",
+          "percentage"
+        ],
+        "matched": null
+      }
+    ]
+  },
+  "timed_out": false,
+  "returncode": 0
+}

@@ -1,0 +1,44 @@
+{
+  "task": "aks-workloads-012",
+  "elapsed_s": 0.021,
+  "answer": {
+    "root_cause": "transient platform issue",
+    "evidence": [],
+    "fix": "restart and monitor"
+  },
+  "stderr_tail": "",
+  "score": 0.0,
+  "passed": false,
+  "detail": {
+    "root_cause": [
+      {
+        "group": [
+          "liveness"
+        ],
+        "matched": null
+      },
+      {
+        "group": [
+          "warm",
+          "startup",
+          "initialdelay",
+          "initial delay"
+        ],
+        "matched": null
+      }
+    ],
+    "fix": [
+      {
+        "group": [
+          "startupprobe",
+          "startup probe",
+          "initialdelayseconds",
+          "initial delay seconds"
+        ],
+        "matched": null
+      }
+    ]
+  },
+  "timed_out": false,
+  "returncode": 0
+}
