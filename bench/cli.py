@@ -70,6 +70,15 @@ def build_parser() -> argparse.ArgumentParser:
                 default="tasks",
                 help="task discovery root (default: ./tasks)",
             )
+        elif name == "leaderboard":
+            leaderboard_parser = sub.add_parser(
+                name, help="print the markdown leaderboard from results/"
+            )
+            leaderboard_parser.add_argument(
+                "--results-root",
+                default="results",
+                help="results root directory (default: ./results)",
+            )
         else:
             subparser = sub.add_parser(name)
             if name in ("validate", "list", "catalog"):
@@ -134,6 +143,14 @@ def cmd_list(root: Path) -> int:
         difficulty = config.get("difficulty") or "-"
         title = config.get("title") or "-"
         print(f"{result.id}  {difficulty}  {title}")
+    return 0
+
+
+def cmd_leaderboard(args: argparse.Namespace) -> int:
+    """Print the markdown leaderboard table from `--results-root` (issue #41)."""
+    from bench.leaderboard import leaderboard_markdown  # deferred: keeps --help cheap
+
+    print(leaderboard_markdown(Path(getattr(args, "results_root", "results"))))
     return 0
 
 

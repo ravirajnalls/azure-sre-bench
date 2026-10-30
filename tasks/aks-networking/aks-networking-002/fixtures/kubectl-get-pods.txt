@@ -1,0 +1,7 @@
+NAME                          READY   STATUS    RESTARTS   AGE   IP            NODE                                NOMINATED NODE   READINESS GATES
+storefront-5d8f7c9b4-2xkqp    1/1     Running   0          34m   10.244.0.31   aks-nodepool1-00000001-vmss000000   <none>           <none>
+storefront-5d8f7c9b4-7mnzq    1/1     Running   0          33m   10.244.1.44   aks-nodepool1-00000002-vmss000000   <none>           <none>
+storefront-5d8f7c9b4-kpv8r    1/1     Running   0          32m   10.244.2.58   aks-nodepool1-00000003-vmss000000   <none>           <none>
+cart-7b6d4f9c85-wts2j         1/1     Running   0          5d    10.244.0.17   aks-nodepool1-00000001-vmss000000   <none>           <none>
+cart-7b6d4f9c85-xh4lm         1/1     Running   0          5d    10.244.2.9    aks-nodepool1-00000003-vmss000000   <none>           <none>
+account-84cf6d7b9f-qr3st      1/1     Running   0          5d    10.244.1.18   aks-nodepool1-00000002-vmss000000   <none>           <none>

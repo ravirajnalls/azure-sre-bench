@@ -1,0 +1,9 @@
+{
+  "root_cause": [
+    ["zone", "topology", "node affinity", "node-affinity"],
+    ["immediate", "volumebindingmode", "volume binding mode", "eastus-3"]
+  ],
+  "fix": [
+    ["waitforfirstconsumer", "wait for first consumer"]
+  ]
+}

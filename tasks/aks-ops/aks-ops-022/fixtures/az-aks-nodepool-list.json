@@ -1,0 +1,41 @@
+{
+  "apiVersion": "2024-03-02",
+  "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-prod-01/providers/Microsoft.ContainerService/managedClusters/aks-prod-eus-01",
+  "name": "aks-prod-eus-01",
+  "type": "Microsoft.ContainerService/managedClusters",
+  "location": "eastus",
+  "value": [
+    {
+      "name": "systempool",
+      "mode": "System",
+      "nodeCount": 1,
+      "vmSize": "Standard_D4ads_v5",
+      "osType": "Linux",
+      "osSKU": "AzureLinux",
+      "availabilityZones": [
+        "1",
+        "2"
+      ],
+      "provisioningState": "Succeeded",
+      "powerState": {
+        "code": "Running"
+      }
+    },
+    {
+      "name": "npuser",
+      "mode": "User",
+      "nodeCount": 3,
+      "vmSize": "Standard_D8ads_v5",
+      "osType": "Linux",
+      "osSKU": "Ubuntu",
+      "availabilityZones": [
+        "1",
+        "2"
+      ],
+      "provisioningState": "Succeeded",
+      "powerState": {
+        "code": "Running"
+      }
+    }
+  ]
+}

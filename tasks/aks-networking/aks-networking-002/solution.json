@@ -1,0 +1,11 @@
+{
+  "root_cause": "The service selector still uses tier: web while the new pod template labels are tier: frontend, so the storefront service does not match any pods and has no endpoints.",
+  "evidence": [
+    "service.yaml: selector app=storefront,tier=web",
+    "deployment.yaml: pod template labels app=storefront,tier=frontend",
+    "kubectl-get-endpoints.txt: storefront shows <none> while cart and account have endpoints",
+    "ingress-nginx-controller.log: repeated 'No live upstreams' for shop-storefront-80",
+    "kubectl-get-pods.txt: all storefront pods Running and Ready (red herring)"
+  ],
+  "fix": "Update the service selector to tier: frontend so it matches the pod labels and the service regains endpoints."
+}

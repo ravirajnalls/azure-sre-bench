@@ -1,0 +1,5 @@
+NAME                              STATUS   ROLES   AGE   VERSION   ZONE
+aks-systempool-31214664-vmss000000   Ready    agent   47d   v1.30.6   eastus-1
+aks-npuser-31214664-vmss000000       Ready    agent   31d   v1.30.6   eastus-1
+aks-npuser-31214664-vmss000001       Ready    agent   31d   v1.30.6   eastus-1
+aks-npuser-31214664-vmss000002       Ready    agent   29d   v1.30.6   eastus-2

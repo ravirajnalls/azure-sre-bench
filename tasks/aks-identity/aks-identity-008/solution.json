@@ -1,0 +1,10 @@
+{
+  "root_cause": "The federated identity credential on the user-assigned identity still pins the subject to the old namespace: system:serviceaccount:default:orders-api. After the move to namespace orders the pod presents system:serviceaccount:orders:orders-api, which matches no federated identity credential, so the Key Vault token exchange fails with AADSTS70021.",
+  "evidence": [
+    "az-identity-federated-credential-list.json: subject is system:serviceaccount:default:orders-api (old namespace) with the correct issuer",
+    "kubectl-logs-orders-api.txt: AADSTS70021 presented assertion subject 'system:serviceaccount:orders:orders-api'",
+    "kubectl-get-sa-orders-api.yaml: client-id annotation is correct for identity id-orders-api-prod",
+    "az-role-assignment-list.json: Key Vault Secrets User role is correctly assigned to the identity on kv-orders-prod, ruling out RBAC"
+  ],
+  "fix": "Update the federated identity credential subject to system:serviceaccount:orders:orders-api (or add a new federated credential for the orders namespace service account)."
+}

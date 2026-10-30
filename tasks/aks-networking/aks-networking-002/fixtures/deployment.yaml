@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: storefront
+  namespace: shop
+  uid: 00000000-0000-0000-0000-000000000003
+  resourceVersion: "8843991"
+  generation: 14
+  creationTimestamp: "2026-08-14T11:03:07Z"
+  annotations:
+    deployment.kubernetes.io/revision: "14"
+    kubernetes.io/change-cause: >-
+      release 2026.10.30: restructure pod labels so tier reflects the
+      frontend tier naming from the service-catalog migration
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: storefront
+      tier: frontend
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: storefront
+        tier: frontend
+    spec:
+      containers:
+        - name: storefront
+          image: shopacr00000001.azurecr.io/storefront:2026.10.30
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 3
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              memory: 256Mi
+      terminationGracePeriodSeconds: 30

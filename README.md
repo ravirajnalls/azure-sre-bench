@@ -93,3 +93,13 @@ a FAIL result, not a crash.
   group matches.
 - Synonyms live in the same group so alternative phrasings score; groups stay specific
   enough that a generic guess scores zero. Evidence alone never earns `fix` credit.
+
+## Leaderboard
+
+Regenerated from `results/` by `python scripts/update_leaderboard.py` after baseline
+runs; ranked by passed tasks, then mean score.
+
+<!-- leaderboard -->
+| Rank | Agent | Passed | Tasks | Mean score |
+| ---: | --- | ---: | ---: | ---: |
+<!-- /leaderboard -->

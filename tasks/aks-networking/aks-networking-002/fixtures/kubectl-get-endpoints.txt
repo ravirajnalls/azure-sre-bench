@@ -1,0 +1,4 @@
+NAME         ENDPOINTS                             AGE
+account      10.244.1.18:8080                      5d
+cart         10.244.0.17:8080,10.244.2.9:8080      5d
+storefront   <none>                                5d

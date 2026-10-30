@@ -1,0 +1,26 @@
+-------------------------------------------------------------------------------
+NGINX Ingress controller
+  Release:       v1.11.2
+  Build:         git-4d3aa0c4
+  Repository:    https://github.com/kubernetes/ingress-nginx
+  nginx version: nginx/1.25.5
+-------------------------------------------------------------------------------
+
+W1030 09:20:41.318542       7 upstream.go:265] "No live upstreams while handling request" host="shop.contoso.example" upstream="shop-storefront-80"
+W1030 09:20:41.319102       7 upstream.go:265] "No live upstreams while handling request" host="shop.contoso.example" upstream="shop-storefront-80"
+W1030 09:20:41.319788       7 controller.go:1813] "Serving request with no upstream available" host="shop.contoso.example" path="/shop"
+I1030 09:20:41.320455       7 event.go:298] Event(v1.ObjectReference{Kind:"Ingress", Namespace:"shop", Name:"storefront", UID:"00000000-0000-0000-0000-000000000001", ResourceVersion:"8844217"}): type: 'Normal' reason: 'Sync' Scheduled sync for rule shop.contoso.example
+W1030 09:20:42.114633       7 upstream.go:265] "No live upstreams while handling request" host="shop.contoso.example" upstream="shop-storefront-80"
+W1030 09:20:42.667204       7 upstream.go:265] "No live upstreams while handling request" host="shop.contoso.example" upstream="shop-storefront-80"
+I1030 09:20:42.998011       7 backend.go:145] "Obtained upstream endpoints" upstream="shop-cart-80" endpoints="[10.244.0.17:8080,10.244.2.9:8080]"
+203.0.113.44 - - [30/Oct/2026:09:20:41 +0000] "GET /shop HTTP/2.0" 502 559 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36" 412 0.001 [shop-storefront-80] [] - - - 0 0 0 0 0 0
+203.0.113.44 - - [30/Oct/2026:09:20:42 +0000] "GET /cart/api/v1/items HTTP/2.0" 200 1831 "-" "shop-ios/14.2" 831 0.034 [shop-cart-80] [10.244.0.17:8080] 10.244.0.17:8080 0.033 0.034 - 0 0 0 0 0 0
+W1030 09:20:43.220491       7 upstream.go:265] "No live upstreams while handling request" host="shop.contoso.example" upstream="shop-storefront-80"
+203.0.113.51 - - [30/Oct/2026:09:20:43 +0000] "GET /shop HTTP/2.0" 502 559 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" 409 0.001 [shop-storefront-80] [] - - - 0 0 0 0 0 0
+203.0.113.51 - - [30/Oct/2026:09:20:44 +0000] "GET /account/api/profile HTTP/2.0" 200 942 "-" "shop-android/9.1" 622 0.021 [shop-account-80] [10.244.1.18:8080] 10.244.1.18:8080 0.020 0.021 - 0 0 0 0 0 0
+W1030 09:20:45.771333       7 upstream.go:265] "No live upstreams while handling request" host="shop.contoso.example" upstream="shop-storefront-80"
+W1030 09:20:46.004218       7 upstream.go:265] "No live upstreams while handling request" host="shop.contoso.example" upstream="shop-storefront-80"
+203.0.113.44 - - [30/Oct/2026:09:20:46 +0000] "GET /shop/assets/app.9f3c21.js HTTP/2.0" 502 559 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36" 405 0.001 [shop-storefront-80] [] - - - 0 0 0 0 0 0
+203.0.113.67 - - [30/Oct/2026:09:20:47 +0000] "POST /cart/api/v1/checkout HTTP/2.0" 200 512 "https://shop.contoso.example/shop" "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5)" 1204 0.061 [shop-cart-80] [10.244.2.9:8080] 10.244.2.9:8080 0.060 0.061 - 0 0 0 0 0 0
+W1030 09:20:48.339872       7 upstream.go:265] "No live upstreams while handling request" host="shop.contoso.example" upstream="shop-storefront-80"
+203.0.113.51 - - [30/Oct/2026:09:20:48 +0000] "GET /shop HTTP/2.0" 502 559 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" 410 0.001 [shop-storefront-80] [] - - - 0 0 0 0 0 0

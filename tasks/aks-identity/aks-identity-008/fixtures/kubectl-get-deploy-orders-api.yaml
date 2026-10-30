@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders-api
+  namespace: orders
+  uid: 00000000-0000-0000-0000-00000000000a
+  resourceVersion: "487219"
+  generation: 1
+  creationTimestamp: "2026-10-29T22:14:07Z"
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+    kubectl.kubernetes.io/change-cause: "Move orders-api from namespace default to orders (PR ORD-2914)"
+  labels:
+    app: orders-api
+    app.kubernetes.io/part-of: orders
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: orders-api
+  template:
+    metadata:
+      labels:
+        app: orders-api
+        azure.workload.identity/use: "true"
+    spec:
+      serviceAccountName: orders-api
+      containers:
+        - name: orders-api
+          image: ordersprodacr.azurecr.io/orders-api:1.42.0
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          env:
+            - name: KEY_VAULT_NAME
+              value: kv-orders-prod
+            - name: ASPNETCORE_URLS
+              value: http://+:8080
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
+  status:
+    replicas: 3
+    readyReplicas: 3
+    availableReplicas: 3
+    conditions:
+      - type: Available
+        status: "True"
+        lastUpdateTime: "2026-10-29T22:16:44Z"
+        lastTransitionTime: "2026-10-29T22:16:44Z"
+        reason: MinimumReplicasAvailable
+        message: Deployment has minimum availability.
+      - type: Progressing
+        status: "True"
+        lastUpdateTime: "2026-10-29T22:16:44Z"
+        lastTransitionTime: "2026-10-29T22:14:07Z"
+        reason: NewReplicaSetAvailable
+        message: ReplicaSet "orders-api-7f6d9c8b5" has successfully progressed.

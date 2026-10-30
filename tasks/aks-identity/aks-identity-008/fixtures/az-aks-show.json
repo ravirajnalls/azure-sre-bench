@@ -1,0 +1,51 @@
+{
+  "aadProfile": {
+    "enableAzureRbac": false,
+    "managed": true
+  },
+  "agentPoolProfiles": [
+    {
+      "count": 3,
+      "enableAutoScaling": true,
+      "maxCount": 6,
+      "minCount": 3,
+      "mode": "System",
+      "name": "nodepool1",
+      "nodeImageVersion": "AKSUbuntu-2204gen2containerd-202610.02.0",
+      "orchestratorVersion": "1.29.7",
+      "osDiskSizeGB": 128,
+      "osType": "Linux",
+      "vmSize": "Standard_D4s_v5"
+    }
+  ],
+  "azurePortalFQDN": "aks-orders-prod-portal.uksouth.cx.ext.azure.com",
+  "dnsPrefix": "aks-orders-prod",
+  "fqdn": "aks-orders-prod.uksouth.cloudapp.azure.com",
+  "id": "/subscriptions/00000000-0000-0000-0000-000000000002/resourcegroups/rg-orders-prod/providers/Microsoft.ContainerService/managedClusters/aks-orders-prod",
+  "identity": {
+    "principalId": "00000000-0000-0000-0000-00000000000c",
+    "tenantId": "00000000-0000-0000-0000-000000000001",
+    "type": "SystemAssigned"
+  },
+  "kubernetesVersion": "1.29.7",
+  "location": "uksouth",
+  "maxAgentPools": 10,
+  "name": "aks-orders-prod",
+  "networkProfile": {
+    "networkPlugin": "azure",
+    "networkPolicy": "calico",
+    "serviceCidr": "10.240.0.0/16"
+  },
+  "oidcIssuerProfile": {
+    "enabled": true,
+    "issuerUrl": "https://oidcprod.uksouth.oic.azure.com/00000000-0000-0000-0000-000000000006/"
+  },
+  "provisioningState": "Succeeded",
+  "resourceGroup": "rg-orders-prod",
+  "securityProfile": {
+    "workloadIdentity": {
+      "enabled": true
+    }
+  },
+  "type": "Microsoft.ContainerService/managedClusters"
+}
