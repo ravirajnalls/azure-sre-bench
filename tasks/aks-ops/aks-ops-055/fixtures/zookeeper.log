@@ -1,0 +1,9 @@
+[2026-10-27 02:20:07,114] INFO zookeeper-0: Received connection request
+[2026-10-27 02:20:09,412] WARN zookeeper-0: Cannot open channel to 2 election election port 3888: connection refused
+[2026-10-27 02:20:09,415] WARN zookeeper-0: Cannot open channel to 3 election election port 3888: connection refused
+[2026-10-27 02:20:12,883] ERROR zookeeper-0: Quorum peer state not in sync — only 1 of 3 ensemble members reachable
+[2026-10-27 02:20:12,884] FATAL zookeeper-0: Exiting due to loss of quorum (lookForLeader)
+[2026-10-27 02:25:31,102] INFO zookeeper-0: latency avg 0 ms — data volume healthy
+# Ensemble inoperative ~40 minutes until the evicted replicas rescheduled
+# and rejoined; the same pattern recurred on 10/25, 10/22, and 10/18, always
+# between 02:00 and 04:00.

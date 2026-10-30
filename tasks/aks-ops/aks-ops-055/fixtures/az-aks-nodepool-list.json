@@ -1,0 +1,22 @@
+[
+  {
+    "name": "nodepool1",
+    "mode": "System",
+    "vmSize": "Standard_D4s_v5",
+    "count": 3,
+    "priority": "Regular",
+    "scaleDownMode": "Delete"
+  },
+  {
+    "name": "userpool",
+    "mode": "User",
+    "vmSize": "Standard_D4s_v5",
+    "count": 6,
+    "priority": "Regular",
+    "scaleDownMode": "Delete",
+    "scaleSetPriority": "Spot",
+    "clusterAutoscalerEnabled": true,
+    "minCount": 3,
+    "maxCount": 10
+  }
+]

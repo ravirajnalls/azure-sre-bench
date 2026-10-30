@@ -1,0 +1,4 @@
+# kubectl get poddisruptionbudgets -A
+NAMESPACE     NAME                                  MIN AVAILABLE   ALLOWED DISRUPTIONS   AGE
+default       webhook-pdb                           1               0                     90d
+kube-system   kube-dns                              2               1                     90d

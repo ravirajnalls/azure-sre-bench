@@ -1,0 +1,12 @@
+I1027 02:14:01.201       1 scale_down.go:1032] No unusable nodes detected for aks-userpool-37891234-vmss (usage 0.42)
+I1027 02:20:05.488       1 scale_down.go:1240] Best option to remove: aks-userpool-37891234-vmss00000c
+I1027 02:20:05.490       1 scale_down.go:1245] Node aks-userpool-37891234-vmss00000c is not needed (utilization 0.31) — draining
+I1027 02:20:06.112       1 autoscaler.go:553] Evicting pod streaming/zookeeper-1
+I1027 02:20:06.115       1 autoscaler.go:553] Evicting pod streaming/zookeeper-2
+I1027 02:20:06.118       1 scale_down.go:1544] Deleting node aks-userpool-37891234-vmss00000c
+I1027 02:20:11.331       1 scale_down.go:1032] No unusable nodes detected for aks-userpool-37891234-vmss (usage 0.38)
+# Two zookeeper replicas were co-located on the one node chosen for removal;
+# both were evicted simultaneously at 02:20:06.
+I1028 02:15:44.902       1 scale_down.go:1245] Node aks-userpool-37891234-vmss00000a is not needed (utilization 0.27) — draining
+I1028 02:15:45.001       1 autoscaler.go:553] Evicting pod streaming/zookeeper-0
+I1028 02:15:45.004       1 autoscaler.go:553] Evicting pod streaming/kafka-consumer-7

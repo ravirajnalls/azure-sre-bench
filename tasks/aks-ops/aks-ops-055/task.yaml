@@ -1,0 +1,18 @@
+id: aks-ops-055
+canary: 00000000-0000-0000-0000-000000000114  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
+title: Zookeeper ensemble loses quorum a few times a week, always overnight
+category: aks-ops
+difficulty: hard
+tags:
+  - aks-ops
+  - statefulset
+  - cluster-autoscaler
+  - poddisruptionbudget
+  - quorum
+symptom: |
+  The 3-replica zookeeper StatefulSet in the streaming namespace drops
+  quorum two or three times a week; downstream Kafka consumers stall each
+  time. Every incident lands between 02:00 and 04:00 UTC and self-heals
+  after roughly 40 minutes when the replicas rejoin on their own. Storage
+  metrics look normal and no one deploys overnight, so the team has
+  started suspecting the disks.
