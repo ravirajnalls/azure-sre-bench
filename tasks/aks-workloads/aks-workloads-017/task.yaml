@@ -1,0 +1,17 @@
+id: aks-workloads-017
+title: HPA never scales out while checkout-api pods are CPU-pegged
+category: aks-workloads
+difficulty: easy
+tags:
+  - aks-workloads
+  - aks
+  - kubernetes
+  - hpa
+  - autoscaling
+  - scaling
+symptom: |
+  During the flash sale the checkout-api pods are pegged at or near 100% CPU
+  and checkout p99 latency is climbing, but the HorizontalPodAutoscaler has
+  been sitting at minReplicas for the last twenty minutes and has not added a
+  single replica. Nodes in the cluster show plenty of spare capacity, and the
+  metrics dashboards show live utilization data flowing for every pod.

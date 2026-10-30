@@ -1,0 +1,6 @@
+NAME                              CPU(cores)   MEMORY(bytes)
+checkout-api-7d9f8b6c4-5hx2m     912m         410Mi
+checkout-api-7d9f8b6c4-8nvqk     905m         395Mi
+checkout-api-7d9f8b6c4-qhj2f     898m         402Mi
+orders-api-5c9d47b8f2-m2w7p      74m          288Mi
+orders-api-5c9d47b8f2-t6zkl      71m          291Mi

@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: checkout-api
+  namespace: shop
+  labels:
+    app.kubernetes.io/name: checkout-api
+    app.kubernetes.io/part-of: checkout
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: checkout-api
+  template:
+    metadata:
+      labels:
+        app: checkout-api
+    spec:
+      serviceAccountName: checkout-api
+      containers:
+        - name: checkout-api
+          image: checkoutprod0000.azurecr.io/checkout-api:v1.14.2
+          ports:
+            - name: http
+              containerPort: 8080
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: prod
+            - name: ORDER_SERVICE_URL
+              value: http://orders-api.shop.svc.cluster.local:8080
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          terminationMessagePolicy: FallbackToLogsOnError

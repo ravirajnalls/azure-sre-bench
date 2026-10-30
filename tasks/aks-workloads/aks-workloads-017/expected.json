@@ -1,0 +1,9 @@
+{
+  "root_cause": [
+    ["request"],
+    ["cpu"]
+  ],
+  "fix": [
+    ["resources.requests", "cpu request", "requests.cpu", "set requests"]
+  ]
+}
