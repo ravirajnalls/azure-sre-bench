@@ -23,6 +23,8 @@ from pathlib import Path
 import yaml
 
 from bench import GRADER_VERSION, RESULT_SCHEMA_VERSION
+from bench.attribution import ANSWER_CONTRACT_BLOCK as ATTRIBUTION_BLOCK
+from bench.attribution import is_attribution
 from bench.fixture_lint import LINTIGNORE_FILENAME
 from bench.grader import cap_evidence, extract_files_read, extract_usage, grade, rubric_sha256
 from bench.heldout import HeldoutKeyError, load_hidden_json, split_of
@@ -99,6 +101,10 @@ def prepare_workspace(task_dir: Path, workspace: Path) -> None:
             "your answer, mapping `fixtures/<file>` paths to the full new file "
             "content that implements your fix.\n"
         )
+    elif is_attribution(task):
+        # Same agent-facing surface: a change-attribution task (issue #144)
+        # must tell agents the culprit/reasoning/fix answer contract.
+        symptom_md += ATTRIBUTION_BLOCK
     (Path(workspace) / "symptom.md").write_text(symptom_md, encoding="utf-8")
 
 

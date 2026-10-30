@@ -1,0 +1,56 @@
+{
+  "window": "2026-10-28T00:00:00Z/2026-10-30T15:00:00Z",
+  "environment": "prod (AKS checkout cluster, eastus2)",
+  "changes": [
+    {
+      "id": "CHG-1007",
+      "applied_at": "2026-10-28T10:14:00Z",
+      "service": "checkout-api",
+      "title": "Raise HPA min replicas for checkout-api",
+      "actor": "m.okafor@contoso.com",
+      "source": "PR #8841 (helm values)",
+      "diff": "hpa.minReplicas: 4 -> 6",
+      "notes": "Capacity headroom ahead of the weekend sale."
+    },
+    {
+      "id": "CHG-0991",
+      "applied_at": "2026-10-29T16:20:00Z",
+      "service": "recommendation-svc",
+      "title": "Deploy recommendation-svc 1.8.3",
+      "actor": "deploy-bot@contoso.com",
+      "source": "deploy pipeline rec-svc/cd-2231",
+      "diff": "image: registry.contoso.com/recs/recommendation-svc:1.8.2 -> 1.8.3",
+      "notes": "Routine patch release; rollback tag kept."
+    },
+    {
+      "id": "CHG-1038",
+      "applied_at": "2026-10-30T09:12:00Z",
+      "service": "infra/nodepool-apps",
+      "title": "Complete node-image upgrade on apps pool",
+      "actor": "infra-bot@contoso.com",
+      "source": "az aks nodepool upgrade (runbook RB-112)",
+      "diff": "nodeImageVersion: AKSUbuntu-2204gen2containerd-202610.03.0 -> 202610.14.0",
+      "notes": "Cordoned and drained one node at a time; no workload config touched."
+    },
+    {
+      "id": "CHG-1042",
+      "applied_at": "2026-10-30T14:05:00Z",
+      "service": "checkout-api",
+      "title": "Sync checkout-api env with the platform defaults",
+      "actor": "sre-bot@contoso.com",
+      "source": "deploy pipeline checkout/cd-3120",
+      "diff": "env DB_POOL_MAX: 40 -> 8 (drift cleanup to match the platform baseline)",
+      "notes": "Config-drift remediation; only the pool variable changed."
+    },
+    {
+      "id": "CHG-1043",
+      "applied_at": "2026-10-30T14:40:00Z",
+      "service": "checkout-api",
+      "title": "Enable express-checkout flag for 10% of sessions",
+      "actor": "p.iyer@contoso.com",
+      "source": "kubectl apply configmap/checkout-flags",
+      "diff": "configmap checkout-flags: express_checkout.percent 0 -> 10",
+      "notes": "Rolled out while the incident channel was already open."
+    }
+  ]
+}

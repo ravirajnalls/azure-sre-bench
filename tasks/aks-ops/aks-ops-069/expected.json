@@ -1,0 +1,39 @@
+{
+  "culprit": "CHG-1042",
+  "fix": [
+    [
+      "roll back CHG-1042",
+      "revert CHG-1042",
+      "roll back the env change",
+      "revert the env change",
+      "roll back the config change",
+      "revert the config change",
+      "restore db_pool_max",
+      "restore the previous env"
+    ],
+    [
+      "db_pool_max",
+      "pool max",
+      "pool size",
+      "connection pool",
+      "pool limit"
+    ]
+  ],
+  "distractors": [
+    [
+      "CHG-0991",
+      "recommendation-svc 1.8.3"
+    ],
+    [
+      "CHG-1038",
+      "node-image upgrade",
+      "apps pool"
+    ],
+    [
+      "CHG-1043",
+      "express checkout",
+      "checkout-flags"
+    ]
+  ],
+  "max_chars": 600
+}

@@ -250,6 +250,42 @@ Check shape (`expected.json`):
   malformed check is a validator error, and the grader fails it closed with reason
   `check_invalid` — it is never silently skipped.
 
+## Change-attribution tasks (issue #144)
+
+A task may declare `kind: change-attribution` in `task.yaml` (absent means
+`diagnosis`). Instead of a graded `root_cause`, the rubric names the exact
+answer: `culprit` — the change id that caused the incident. The grader keeps
+the keyword-group `fix` half and drops the concept-group diagnosis half.
+
+Rubric shape (`expected.json`):
+
+```json
+{
+  "culprit": "CHG-1042",
+  "fix": [["roll back CHG-1042", "revert the env change"], ["db_pool_max"]],
+  "distractors": [["CHG-0991", "recommendation-svc 1.8.3"]]
+}
+```
+
+- `culprit` must be a non-empty string and **must appear in a fixture** — it
+  names a change the change-log evidence actually shows (validator-enforced).
+- The answer contract is `culprit` + `reasoning` + `fix`. `culprit` is
+  exact-match after normalization; naming several change ids at once fails
+  with reason `multiple_culprits` — hedging across the change log is not
+  attribution.
+- `reasoning` carries the mechanism. It is length-capped like every graded
+  field and is scanned for **distractor matches** (issue #94 semantics): the
+  rubric's distractor groups name the wrong changes, and naming one in the
+  `reasoning` fails the task. Argue rule-outs by mechanism and timeline
+  ("the fleet ran clean for four hours after it"), not by re-naming decoy
+  ids. `fix` and `evidence` never trigger a distractor, and a distractor
+  match costs no score, only `passed`.
+- A distractor alternative must never overlap the `culprit` (validator rejects
+  substring overlap in either direction).
+- The `fix` field is a fix channel (issue #113): it is scanned for unsafe
+  patterns exactly like a diagnosis fix, and the over-cap rule applies to
+  `reasoning` too. The `culprit` field is never length-capped — it is one id.
+
 ## Reference answer (`solution.json`)
 
 The reference answer must score `passed == true` on its own task when run through the

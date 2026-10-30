@@ -22,7 +22,8 @@ from pathlib import Path
 import pytest
 import yaml
 
-from bench.grader import grade
+from bench.attribution import KIND_ATTRIBUTION
+from bench.grader import grade, normalize
 from bench.heldout import SPLIT_HELDOUT, heldout_key, load_hidden_json, split_of
 from bench.remediation import grade_for_task
 from bench.run import run_task
@@ -719,15 +720,30 @@ def test_naive_agent_does_not_pass(task_dir: Path, tmp_path: Path):
 @pytest.mark.parametrize("task_dir", _discovered_task_dirs(), ids=_task_label)
 def test_symptom_does_not_leak_root_cause(task_dir: Path):
     """Integrity invariant (no leaks): the symptom alone must not match every
-    root_cause group."""
+    root_cause group — nor name the exact-match answer on change-attribution
+    tasks (issue #144): a symptom that contains the culprit change id hands
+    over the answer verbatim."""
     config = _config_of(task_dir)
+    symptom_text = str(config.get("symptom", ""))
+    kind = config.get("kind") if isinstance(config, dict) else None
     _, rubric = _load_rubric_pair(task_dir)
+    if kind == KIND_ATTRIBUTION:
+        culprit = rubric.get("culprit")
+        assert not (
+            isinstance(culprit, str)
+            and culprit.strip()
+            and normalize(culprit) in normalize(symptom_text)
+        ), (
+            f"symptom of {_task_label(task_dir)} contains the culprit change id "
+            f"'{culprit}' — it names the answer"
+        )
+        return
     if not (isinstance(rubric.get("root_cause"), list) and rubric["root_cause"]):
         # Non-diagnosis kinds (timeline, postmortem, pre-incident review) grade
         # different contracts with no root_cause groups to leak; their own
         # contract tests cover the equivalent check.
         pytest.skip("rubric has no root_cause groups (non-diagnosis kind)")
-    result = grade({"root_cause": str(config.get("symptom", ""))}, rubric)
+    result = grade({"root_cause": symptom_text}, rubric)
     entries = result["detail"]["root_cause"]
     matched = [entry["matched"] for entry in entries if entry["matched"] is not None]
     assert len(matched) < len(entries), (

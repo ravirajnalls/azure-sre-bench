@@ -37,6 +37,7 @@ from pathlib import Path
 import yaml
 
 from bench.grader import GRADED_FIELDS, SCORE_PENALTY, UNSAFE_FIX, grade, normalize
+from bench.attribution import KIND_ATTRIBUTION, grade_attribution, is_attribution
 from bench.preincident import (
     KIND_PRE_INCIDENT_REVIEW,
     grade_pre_incident_review,
@@ -46,7 +47,7 @@ from bench.safety import find_violations, global_rules, rubric_unsafe_rules
 
 KIND_REMEDIATION = "remediation"
 KIND_DIAGNOSIS = "diagnosis"
-KINDS = (KIND_DIAGNOSIS, KIND_REMEDIATION, KIND_PRE_INCIDENT_REVIEW)
+KINDS = (KIND_DIAGNOSIS, KIND_REMEDIATION, KIND_ATTRIBUTION, KIND_PRE_INCIDENT_REVIEW)
 
 # The answer's patch map: {fixture path: full new file content}.
 PATCHED_FILES_KEY = "patched_files"
@@ -420,15 +421,16 @@ def grade_for_task(
     Every surface that grades an answer against a task (`bench run`, `bench
     grade`, `bench submit`, `bench verify`, the solvability invariant) calls
     this rather than `bench.grader.grade` directly, so remediation tasks run
-    their patch checks everywhere and diagnosis tasks keep the plain grader.
+    their patch checks everywhere, change-attribution (issue #144) and
+    pre-incident-review tasks run their own graders, and diagnosis tasks
+    keep the plain grader.
 
-    A rubric that declares `checks` triggers remediation grading even when the
-    task config is missing or unmarked (manual submits, unit tests): silently
-    skipping the patch half would inflate the score. The same shape-based
-    fallback applies to the other tracks — a rubric with `findings` grades as
-    a pre-incident review — so the kind-specific half can never be silently
-    skipped. The validator keeps repo tasks consistent: `kind` and the
-    kind-specific rubric keys ship together.
+    A rubric that declares `checks` triggers remediation grading, a
+    `culprit` string triggers attribution grading, and a `findings` list
+    triggers pre-incident grading even when the task config is missing or
+    unmarked (manual submits, unit tests): silently skipping a kind's half
+    of the contract would inflate the score. The validator keeps repo tasks
+    consistent — a kind and its rubric shape ship together.
     """
     if is_pre_incident_review(task) or isinstance(
         rubric.get("findings") if isinstance(rubric, dict) else None, list
@@ -436,4 +438,6 @@ def grade_for_task(
         return grade_pre_incident_review(answer, rubric)
     if is_remediation(task) or isinstance(rubric.get("checks"), list):
         return grade_remediation(answer, rubric, Path(task_dir))
+    if is_attribution(task) or isinstance(rubric.get("culprit"), str):
+        return grade_attribution(answer, rubric)
     return grade(answer, rubric)

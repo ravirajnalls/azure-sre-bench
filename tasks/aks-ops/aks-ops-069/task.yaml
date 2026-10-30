@@ -1,0 +1,22 @@
+id: aks-ops-069
+canary: 00000000-0000-0000-0000-000000000114  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
+title: Checkout API error rate jumped minutes after a deploy
+category: aks-ops
+difficulty: medium
+tags:
+  - aks
+  - kubernetes
+  - change-attribution
+  - connection-pool
+  - incident-timeline
+kind: change-attribution
+symptom: |
+  Around 14:10 UTC today the checkout error rate on the prod AKS cluster jumped
+  from under 1% to roughly 35% and has stayed there. Callers report 502s, but
+  the checkout-api pods are all Running with zero restarts and the deployment
+  never flapped. Several changes shipped in the last few days: some node-pool
+  infrastructure work finished this morning, a recommendation service got an
+  image deploy yesterday afternoon, and there were a couple of checkout-api
+  config changes today — one of them landed while the incident channel was
+  already open. Nothing in the cluster looks crashed. We need to know exactly
+  which change caused this before we roll anything back.

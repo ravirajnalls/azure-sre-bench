@@ -21,6 +21,7 @@ from pathlib import Path
 
 import yaml
 
+from bench.attribution import KIND_ATTRIBUTION
 from bench.grader import normalize, rubric_sha256
 from bench.heldout import (
     ENCRYPTED_SUFFIX,
@@ -496,17 +497,36 @@ def _validate_expected_data(
     """Rubric shape rules, applied to plaintext and decrypted content alike.
 
     Kind-aware: a pre-incident-review rubric grades a `findings` list instead
-    of the diagnosis fields (issue #147); every other kind keeps the
-    `root_cause`/`fix` requirement.
+    of the diagnosis fields (issue #147) and a change-attribution rubric
+    grades an exact-match `culprit` (issue #144); every other kind keeps the
+    `root_cause`/`fix` requirement. Each kind fails closed on its own
+    required shape — a rubric that omits its kind's graded fields can never
+    pass.
     """
     kind = config.get("kind") if isinstance(config, dict) else None
     errors: list[str] = []
     if kind == KIND_PRE_INCIDENT_REVIEW:
         errors.extend(_validate_preincident_rubric(data, task_dir))
+    elif kind == KIND_ATTRIBUTION:
+        culprit = data.get("culprit")
+        if not (isinstance(culprit, str) and culprit.strip()):
+            errors.append("expected.json: 'culprit' must be a non-empty string")
+        fix = data.get("fix")
+        if not (
+            isinstance(fix, list) and fix and all(_validate_group(g) for g in fix)
+        ):
+            errors.append(
+                "expected.json: 'fix' must be a non-empty list "
+                "of non-empty string lists"
+            )
     else:
         for rubric_field in ("root_cause", "fix"):
             value = data.get(rubric_field)
-            if not (isinstance(value, list) and value and all(_validate_group(g) for g in value)):
+            if not (
+                isinstance(value, list)
+                and value
+                and all(_validate_group(g) for g in value)
+            ):
                 errors.append(
                     f"expected.json: '{rubric_field}' must be a non-empty list "
                     "of non-empty string lists"
@@ -572,9 +592,17 @@ def _graded_alternatives(data: dict, kind: str | None) -> list[str]:
     """Normalized alternatives of the kind's graded concept groups.
 
     Diagnosis/remediation rubrics grade `root_cause`; a pre-incident-review
-    rubric (issue #147) grades the `issue` groups of its required findings.
-    Distractor alternatives may not overlap either.
+    rubric (issue #147) grades the `issue` groups of its required findings;
+    a change-attribution rubric (issue #144) grades the exact `culprit`.
+    Distractor alternatives may not overlap any of them.
     """
+    if kind == KIND_ATTRIBUTION:
+        culprit = data.get("culprit")
+        return (
+            [normalize(culprit)]
+            if isinstance(culprit, str) and culprit.strip()
+            else []
+        )
     source = data.get("root_cause", [])
     if kind == KIND_PRE_INCIDENT_REVIEW:
         source = [
@@ -600,10 +628,13 @@ def _validate_distractors(
 
     Errors: a present `distractors` key must be a non-empty list of non-empty
     string lists, and a distractor alternative may not overlap a graded
-    alternative — checked as substring overlap in either direction, because a
-    distractor containing (or contained in) a graded alternative drags correct
-    answers into the trap. Warnings: a task that defines no distractor group
-    at all (every task must distractor its red-herring fixture), and a
+    alternative — root_cause groups on diagnosis/remediation tasks, the
+    findings' `issue` groups on pre-incident review, or the `culprit` on
+    change-attribution tasks (issue #144) — checked as substring overlap in
+    either direction, because a distractor containing (or contained in) a
+    graded value drags correct answers into the trap. Warnings: a task that
+    defines no distractor group at all (every task must distractor its
+    red-herring fixture), and a
     distractor group with no alternative appearing in any fixture (a
     distractor must name the wrong cause the fixtures actually suggest).
     """
@@ -625,16 +656,21 @@ def _validate_distractors(
             "non-empty string lists"
         ], []
 
-    root_alternatives = _graded_alternatives(data, kind)
+    graded_values = _graded_alternatives(data, kind)
+    graded_label = (
+        "the rubric culprit"
+        if kind == KIND_ATTRIBUTION
+        else "root_cause group alternative"
+    )
     errors: list[str] = []
     for group in distractors:
         for alternative in group:
             distractor_text = normalize(alternative)
-            for root_text in root_alternatives:
-                if distractor_text in root_text or root_text in distractor_text:
+            for graded_text in graded_values:
+                if distractor_text in graded_text or graded_text in distractor_text:
                     errors.append(
                         f"expected.json: distractor alternative '{alternative}' overlaps "
-                        f"root_cause group alternative '{root_text}' — a distractor "
+                        f"{graded_label} '{graded_text}' — a distractor "
                         "must name the wrong cause, never the graded one"
                     )
 
@@ -658,9 +694,31 @@ def _validate_distractors(
     return errors, warnings
 
 
+def _validate_attribution_rubric(data: dict, task_dir: Path) -> list[str]:
+    """Grounding rules for a change-attribution rubric (issue #144).
+
+    The culprit must exist in the change-log evidence: its id has to appear in
+    some fixture, or the rubric grades an answer key the evidence never
+    shows. Fixture-less tasks skip the check here — `_validate_fixtures`
+    already reports the structural problem.
+    """
+    culprit = data.get("culprit")
+    if not (isinstance(culprit, str) and culprit.strip()):
+        return []
+    texts = _fixture_texts(task_dir)
+    if texts and not any(normalize(culprit) in text for text in texts):
+        return [
+            f"expected.json: culprit '{culprit}' does not appear in any fixture "
+            "— it must name a change present in the change-log evidence "
+            "(issue #144)"
+        ]
+    return []
+
+
 def _validate_expected(task_dir: Path, config: dict | None) -> tuple[list[str], list[str]]:
     """Plaintext-rubric validation: shape, distractor (#94), and remediation
-    kind/checks consistency (issue #110).
+    kind/checks consistency (issue #110), plus change-attribution grounding
+    (issue #144).
 
     Held-out tasks take the `_validate_heldout_hidden` path instead; the
     distractor and remediation rules run there too, on the decrypted rubric
@@ -675,11 +733,13 @@ def _validate_expected(task_dir: Path, config: dict | None) -> tuple[list[str], 
         return [f"expected.json does not parse: {exc}"], []
     if not isinstance(data, dict):
         return ["expected.json must contain a JSON object"], []
+    kind = config.get("kind") if isinstance(config, dict) else None
     errors = _validate_expected_data(data, task_dir, config)
-    distractor_errors, distractor_warnings = _validate_distractors(
-        data, task_dir, config.get("kind") if isinstance(config, dict) else None
-    )
-    return errors + distractor_errors, distractor_warnings
+    distractor_errors, distractor_warnings = _validate_distractors(data, task_dir, kind)
+    errors.extend(distractor_errors)
+    if kind == KIND_ATTRIBUTION:
+        errors.extend(_validate_attribution_rubric(data, task_dir))
+    return errors, distractor_warnings
 
 
 def _load_solution(task_dir: Path) -> tuple[dict | None, list[str]]:
@@ -783,11 +843,14 @@ def _validate_heldout_hidden(
             errors.append(f"{name}{ENCRYPTED_SUFFIX} must decrypt to a JSON object")
             continue
         if name == "expected.json":
+            kind = config.get("kind") if isinstance(config, dict) else None
             errors.extend(_validate_expected_data(data, task_dir, config))
             distractor_errors, distractor_warnings = _validate_distractors(
-                data, task_dir, config.get("kind") if isinstance(config, dict) else None
+                data, task_dir, kind
             )
             errors.extend(distractor_errors)
+            if kind == KIND_ATTRIBUTION:
+                errors.extend(_validate_attribution_rubric(data, task_dir))
             warnings.extend(distractor_warnings)
         else:
             warnings.extend(_solution_warnings(data, config, task_dir))

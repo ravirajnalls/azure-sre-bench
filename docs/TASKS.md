@@ -56,6 +56,7 @@
 | aks-ops-043 | Node auto-provisioning creates no nodes while GPU inference pods stay Pending | medium | aks-ops, aks, node, auto-provisioning, karpenter, gpu, kubernetes |
 | aks-ops-045 | Azure Policy denies deployment with a vague error | medium | aks-ops, aks, azure-policy, gatekeeper, kubernetes, deployment |
 | aks-ops-050 | kubectl logs and exec time out on every pod while get and apply work | hard | aks-ops, konnectivity, azure-firewall, egress, kubernetes |
+| aks-ops-069 | Checkout API error rate jumped minutes after a deploy | medium | aks, kubernetes, change-attribution, connection-pool, incident-timeline |
 
 ## aks-workloads
 
