@@ -6,7 +6,7 @@ The symptom is a scheduling dead-end: GPU pods are Pending and node
 auto-provisioning never reacts. Start with the pod itself —
 `fixtures/kubectl-describe-pod.txt` shows `llm-inference-5d8f9b7c4d-k2vwj`
 requesting `nvidia.com/gpu: 1`, and, crucially, the events are not the usual
-"insufficient quota" flavor: the Karpenter `Unschedulable` events say the
+"insufficient quota" flavor: the Karpenter `FailedScheduling` events say the
 NodePool's requirements *exclude all instance types* that offer GPUs, and name
 the offender — `karpenter.azure.com/sku-family In [D]`.
 

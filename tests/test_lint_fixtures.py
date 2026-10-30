@@ -149,3 +149,239 @@ def test_cli_exits_zero_when_only_warnings(task_tree: Path, capsys) -> None:
 def test_cli_rejects_unknown_check(task_tree: Path) -> None:
     with pytest.raises(SystemExit):
         main(["lint-fixtures", "--check", "nonexistent", "--tasks-root", str(task_tree)])
+
+
+# ---------------------------------------------------------------------------
+# logs check (issue #153): timestamps and log realism
+# ---------------------------------------------------------------------------
+
+from datetime import timedelta  # noqa: E402  (grouped with the logs tests)
+
+from bench.lint_fixtures import (  # noqa: E402
+    INCIDENT_WINDOW,
+    WARNING,
+    check_logs,
+    is_log_file,
+    parse_age_token,
+    parse_iso_timestamp,
+)
+
+
+def log_task(root: Path, task_id: str = "monitoring-041", files: dict | None = None) -> Path:
+    """Scaffold a minimal task directory with the given fixture files."""
+    fixtures = root / task_id / "fixtures"
+    fixtures.mkdir(parents=True, exist_ok=True)
+    (root / task_id / "task.yaml").write_text(f"id: {task_id}\n")
+    for name, content in (files or {}).items():
+        (fixtures / name).write_text(content)
+    return root
+
+
+def findings_for(tasks_root: Path) -> list[Finding]:
+    return check_logs(tasks_root)
+
+
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        ("2026-10-30T06:00:12.481Z INFO", "2026-10-30 06:00:12.481000+00:00"),
+        ("2026-10-30T06:00:12Z", "2026-10-30 06:00:12+00:00"),
+        # KQL emits seven fractional digits.
+        ("2026-10-20T00:00:00.0000000Z,49231", "2026-10-20 00:00:00+00:00"),
+        # PostgreSQL-style space separator and UTC zone name.
+        ("2026-10-30 09:41:02.117 UTC [1023] LOG:", "2026-10-30 09:41:02.117000+00:00"),
+        ("2026-10-30 05:57:33Z", "2026-10-30 05:57:33+00:00"),
+        ("2026-10-30T06:00:00+02:00 event", "2026-10-30 04:00:00+00:00"),
+    ],
+)
+def test_logs_parse_iso_timestamp_accepts_corpus_formats(text, expected):
+    assert str(parse_iso_timestamp(text)) == expected
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "no timestamp here",
+        "2026-13-40T25:00:00Z",  # plausible shape, impossible date
+        "2026-02-30T00:00:00Z",  # February 30
+    ],
+)
+def test_logs_parse_iso_timestamp_rejects_invalid(text):
+    assert parse_iso_timestamp(text) is None
+
+
+@pytest.mark.parametrize(
+    ("text", "expected_seconds"),
+    [
+        ("13m", 780),
+        ("2m34s", 154),
+        ("6d2h", 6 * 86400 + 7200),
+        ("3h", 3 * 3600),
+        ("8000ms", 8),
+        ("45s", 45),
+        ("2y", 2 * 365 * 86400),
+    ],
+)
+def test_logs_parse_age_token(text, expected_seconds):
+    age = parse_age_token(text)
+    assert age is not None
+    assert age.total_seconds() == expected_seconds
+
+
+@pytest.mark.parametrize("text", ["", "12x", "soon", "2m34"])
+def test_logs_parse_age_token_rejects_invalid(text):
+    # "2m34" (missing unit) is not something kubectl prints.
+    assert parse_age_token(text) is None
+
+
+def test_logs_is_log_file():
+    assert is_log_file("kubectl-logs-orders-api.txt")
+    assert is_log_file("billing-api.log")
+    assert is_log_file("pipeline-log.txt")
+    assert not is_log_file("kubectl-get-pods.txt")
+    assert not is_log_file("kubectl-describe-pod.txt")
+
+
+def test_logs_timestamped_line_without_level_is_flagged(tmp_path):
+    root = log_task(
+        tmp_path,
+        files={"kubectl-logs-app.txt": "2026-10-30T06:00:12Z doing things\n"},
+    )
+    findings = findings_for(root)
+    assert any("no severity level" in f.message for f in findings)
+    assert all(f.severity == WARNING for f in findings)
+
+
+def test_logs_timestamped_line_with_level_passes(tmp_path):
+    root = log_task(
+        tmp_path,
+        files={
+            "kubectl-logs-app.txt": "2026-10-30T06:00:12Z INFO doing things\n",
+            "app.log": "2026-10-30 06:00:12.1 UTC [1] ERROR kaput\n",
+            "ama-logs.txt": "2026-10-30T06:00:12Z [info] heartbeat ok\n",
+        },
+    )
+    assert findings_for(root) == []
+
+
+def test_logs_ado_pipeline_transcript_is_exempt_from_level_check(tmp_path):
+    transcript = (
+        "2026-10-30T06:02:10.1173411Z ##[section]Starting: init\n"
+        "2026-10-30T06:02:10.4420981Z Agent name: ubuntu-latest-agent-03\n"
+        "2026-10-30T06:02:11.6093333Z ##[command]terraform init\n"
+    )
+    root = log_task(tmp_path, files={"pipeline-log.txt": transcript})
+    assert findings_for(root) == []
+
+
+def test_logs_kql_result_csv_never_needs_a_level(tmp_path):
+    csv = "TimeGenerated,request_count\n2026-10-30T14:00:00Z,4790\n"
+    root = log_task(tmp_path, files={"kql-5xx.csv": csv})
+    assert findings_for(root) == []
+
+
+def test_logs_out_of_order_timestamps_within_a_stream_are_flagged(tmp_path):
+    log = (
+        "2026-10-30T06:00:12Z INFO first\n"
+        "2026-10-30T06:00:10Z INFO goes backwards\n"
+    )
+    root = log_task(tmp_path, files={"kubectl-logs-app.txt": log})
+    assert any("not monotonic" in f.message for f in findings_for(root))
+
+
+def test_logs_stream_break_resets_ordering_baseline(tmp_path):
+    log = (
+        "# kubectl logs pod-a\n"
+        "2026-10-30T06:01:00Z INFO later\n"
+        "# kubectl logs pod-b\n"
+        "2026-10-30T06:00:00Z INFO earlier but a different stream\n"
+    )
+    root = log_task(tmp_path, files={"kubectl-logs-app.txt": log})
+    assert findings_for(root) == []
+
+
+def test_logs_event_times_a_year_apart_across_files_are_flagged(tmp_path):
+    files = {
+        "kubectl-logs-app.txt": "2026-10-30T06:00:12Z INFO now\n",
+        "kubectl-logs-app-old.txt": "2025-10-30T06:00:12Z INFO a year ago\n",
+    }
+    root = log_task(tmp_path, files=files)
+    assert any("incident window" in f.message for f in findings_for(root))
+
+
+def test_logs_event_times_within_the_window_pass(tmp_path):
+    days_back = (INCIDENT_WINDOW - timedelta(hours=1)).days
+    files = {
+        "kubectl-logs-app.txt": "2026-10-30T06:00:12Z INFO a\n",
+        "kubectl-logs-old.txt": (
+            f"2026-10-{30 - days_back:02d}T06:00:12Z INFO b\n"
+        ),
+    }
+    root = log_task(tmp_path, files=files)
+    assert findings_for(root) == []
+
+
+def test_logs_midnight_bins_are_excluded_from_the_window(tmp_path):
+    csv = "TimeBin,RowCount\n" + "".join(
+        f"2026-09-{day:02d}T00:00:00.0000000Z,{day}\n" for day in range(1, 29)
+    )
+    root = log_task(tmp_path, files={"kql-daily-count.csv": csv})
+    assert findings_for(root) == []
+
+
+def test_logs_describe_events_with_fake_reason_are_flagged(tmp_path):
+    events = (
+        "Events:\n"
+        "  Type     Reason     Age                From\n"
+        "  ----     ------     ----               ----\n"
+        "  Normal   TotallyMadeUp   13m   kubelet   Made-up reason\n"
+        "  Warning  FailedScheduling   12m   scheduler   0/4 nodes available\n"
+    )
+    root = log_task(tmp_path, files={"kubectl-describe-pod.txt": events})
+    messages = [f.message for f in findings_for(root)]
+    assert any("unknown Kubernetes event reason 'TotallyMadeUp'" in m for m in messages)
+    assert not any("FailedScheduling" in m for m in messages)
+
+
+def test_logs_get_events_with_bad_age_is_flagged(tmp_path):
+    events = (
+        "NAMESPACE   LAST SEEN   TYPE      REASON        OBJECT      MESSAGE\n"
+        "payments    soon-ish    Warning   Evicted       pod/x-1     Node was low\n"
+        "payments    29m         Warning   Evicted       pod/x-2     Node was low\n"
+    )
+    root = log_task(tmp_path, files={"kubectl-get-events.txt": events})
+    assert any(
+        "unparseable kubectl event age 'soon-ish'" in f.message
+        for f in findings_for(root)
+    )
+
+
+def test_logs_unparseable_iso_timestamp_is_flagged(tmp_path):
+    root = log_task(
+        tmp_path,
+        files={"kubectl-logs-app.txt": "2026-13-40T25:00:00Z INFO nonsense\n"},
+    )
+    assert any("unparseable ISO 8601" in f.message for f in findings_for(root))
+
+
+def test_logs_clean_corpus_cli_exits_zero(tmp_path, capsys):
+    root = log_task(
+        tmp_path,
+        files={"kubectl-logs-app.txt": "2026-10-30T06:00:12Z INFO fine\n"},
+    )
+    assert main(["lint-fixtures", "--check", "logs", "--tasks-root", str(root)]) == 0
+    # print_report emits nothing when there is nothing to report.
+    assert capsys.readouterr().out == ""
+
+
+def test_logs_warning_findings_keep_cli_exit_zero(tmp_path, capsys):
+    # Warnings surface in the report but do not fail the run (issue #153:
+    # warning-only in CI; issue #155 owns promoting checks to blocking).
+    root = log_task(
+        tmp_path,
+        files={"kubectl-logs-app.txt": "2026-10-30T06:00:12Z no level\n"},
+    )
+    assert main(["lint-fixtures", "--check", "logs", "--tasks-root", str(root)]) == 0
+    out = capsys.readouterr().out
+    assert "WARNING" in out
+    assert "logs: 1 fixture finding(s), 1 warning(s), 0 skipped, 0 error(s)" in out
