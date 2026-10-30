@@ -1,0 +1,18 @@
+id: aks-ops-019
+title: Deployments broke after cluster upgrade
+category: aks-ops
+difficulty: easy
+tags:
+  - aks-ops
+  - aks
+  - kubernetes
+  - gitops
+  - flux
+  - upgrade
+symptom: |
+  After last night's AKS upgrade, Flux can no longer reconcile the
+  edge-gateway manifests — every sync of the apps-edge-gateway Kustomization
+  fails, so no configuration changes can be rolled out to the edge namespace.
+  The edge-gateway pods that were running before the upgrade are still up and
+  serving traffic. Every other app in the cluster is reconciling normally and
+  the cluster itself reports healthy.

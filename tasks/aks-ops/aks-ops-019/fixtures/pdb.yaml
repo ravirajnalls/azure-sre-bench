@@ -1,0 +1,13 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: edge-gateway
+  namespace: edge
+  labels:
+    app.kubernetes.io/name: edge-gateway
+    app.kubernetes.io/part-of: edge
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: edge-gateway
