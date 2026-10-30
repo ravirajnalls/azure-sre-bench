@@ -1,0 +1,22 @@
+# Disruption budgets in the payments namespace — checked during the outage
+# review because the dashboard flagged evictions.
+#   kubectl get pdb -n payments
+#   kubectl describe pdb payments-api -n payments   (excerpt, STATUS section)
+
+NAME                 MIN AVAILABLE   MAX UNAVAILABLE   ALLOWED DISRUPTIONS   AGE
+payments-api         3               N/A               0                     173d
+redis-cache          1               N/A               0                     173d
+
+## kubectl describe pdb payments-api -n payments (excerpt)
+
+Name:             payments-api
+Namespace:        payments
+Min available:    3
+Selector:         matchLabels=app=payments-api
+Status:
+    Allowed disruptions:  0
+    Current healthy:      4
+    Desired healthy:      3
+    Disrupted pods:       0
+    Total pods:           4
+Events:                   <none>

@@ -1,0 +1,141 @@
+[
+  {
+    "eventDataId": "00000000-0000-0000-0000-000000000006",
+    "eventCategory": "Administrative",
+    "timestamp": "2026-10-29T02:07:41.1283941Z",
+    "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-prod-01/providers/Microsoft.ContainerService/managedClusters/aks-prod-eus-02/agentPools/npspot/virtualMachineScaleSets/aks-npspot-00000001/virtualMachines/0",
+    "operationName": {
+      "value": "Microsoft.Compute/virtualMachineScaleSets/virtualMachines/delete",
+      "localizedValue": "Delete Virtual Machine Scale Set VM"
+    },
+    "category": {
+      "value": "Administrative",
+      "localizedValue": "Administrative"
+    },
+    "caller": "Azure Platform Infrastructure",
+    "status": {
+      "value": "Succeeded",
+      "localizedValue": "Succeeded"
+    },
+    "subStatus": {
+      "value": "Evicted",
+      "localizedValue": "Evicted"
+    },
+    "properties": {
+      "statusCode": "Succeeded",
+      "serviceRequestId": "00000000-0000-0000-0000-000000000007",
+      "message": "Virtual machine was evicted because the capacity was needed elsewhere.",
+      "spot": true
+    }
+  },
+  {
+    "eventDataId": "00000000-0000-0000-0000-000000000008",
+    "eventCategory": "Administrative",
+    "timestamp": "2026-10-29T02:07:48.3140227Z",
+    "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-prod-01/providers/Microsoft.ContainerService/managedClusters/aks-prod-eus-02/agentPools/npspot/virtualMachineScaleSets/aks-npspot-00000001/virtualMachines/1",
+    "operationName": {
+      "value": "Microsoft.Compute/virtualMachineScaleSets/virtualMachines/delete",
+      "localizedValue": "Delete Virtual Machine Scale Set VM"
+    },
+    "category": {
+      "value": "Administrative",
+      "localizedValue": "Administrative"
+    },
+    "caller": "Azure Platform Infrastructure",
+    "status": {
+      "value": "Succeeded",
+      "localizedValue": "Succeeded"
+    },
+    "subStatus": {
+      "value": "Evicted",
+      "localizedValue": "Evicted"
+    },
+    "properties": {
+      "statusCode": "Succeeded",
+      "serviceRequestId": "00000000-0000-0000-0000-000000000009",
+      "message": "Virtual machine was evicted because the capacity was needed elsewhere.",
+      "spot": true
+    }
+  },
+  {
+    "eventDataId": "00000000-0000-0000-0000-00000000000a",
+    "eventCategory": "Administrative",
+    "timestamp": "2026-10-29T02:07:55.9027714Z",
+    "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-prod-01/providers/Microsoft.ContainerService/managedClusters/aks-prod-eus-02/agentPools/npspot/virtualMachineScaleSets/aks-npspot-00000001/virtualMachines/2",
+    "operationName": {
+      "value": "Microsoft.Compute/virtualMachineScaleSets/virtualMachines/delete",
+      "localizedValue": "Delete Virtual Machine Scale Set VM"
+    },
+    "category": {
+      "value": "Administrative",
+      "localizedValue": "Administrative"
+    },
+    "caller": "Azure Platform Infrastructure",
+    "status": {
+      "value": "Succeeded",
+      "localizedValue": "Succeeded"
+    },
+    "subStatus": {
+      "value": "Evicted",
+      "localizedValue": "Evicted"
+    },
+    "properties": {
+      "statusCode": "Succeeded",
+      "serviceRequestId": "00000000-0000-0000-0000-00000000000b",
+      "message": "Virtual machine was evicted because the capacity was needed elsewhere.",
+      "spot": true
+    }
+  },
+  {
+    "eventDataId": "00000000-0000-0000-0000-00000000000c",
+    "eventCategory": "Administrative",
+    "timestamp": "2026-10-29T02:08:03.4451903Z",
+    "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-prod-01/providers/Microsoft.ContainerService/managedClusters/aks-prod-eus-02/agentPools/npspot/virtualMachineScaleSets/aks-npspot-00000001/virtualMachines/3",
+    "operationName": {
+      "value": "Microsoft.Compute/virtualMachineScaleSets/virtualMachines/delete",
+      "localizedValue": "Delete Virtual Machine Scale Set VM"
+    },
+    "category": {
+      "value": "Administrative",
+      "localizedValue": "Administrative"
+    },
+    "caller": "Azure Platform Infrastructure",
+    "status": {
+      "value": "Succeeded",
+      "localizedValue": "Succeeded"
+    },
+    "subStatus": {
+      "value": "Evicted",
+      "localizedValue": "Evicted"
+    },
+    "properties": {
+      "statusCode": "Succeeded",
+      "serviceRequestId": "00000000-0000-0000-0000-00000000000d",
+      "message": "Virtual machine was evicted because the capacity was needed elsewhere.",
+      "spot": true
+    }
+  },
+  {
+    "eventDataId": "00000000-0000-0000-0000-00000000000e",
+    "eventCategory": "Administrative",
+    "timestamp": "2026-10-29T02:08:12.2206585Z",
+    "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-prod-01/providers/Microsoft.ContainerService/managedClusters/aks-prod-eus-02/agentPools/npspot/virtualMachineScaleSets/aks-npspot-00000001/virtualMachines/0",
+    "operationName": {
+      "value": "Microsoft.Compute/virtualMachineScaleSets/virtualMachines/write",
+      "localizedValue": "Create or Update Virtual Machine Scale Set VM"
+    },
+    "category": {
+      "value": "Administrative",
+      "localizedValue": "Administrative"
+    },
+    "caller": "00000000-0000-0000-0000-00000000000f",
+    "status": {
+      "value": "Succeeded",
+      "localizedValue": "Succeeded"
+    },
+    "properties": {
+      "statusCode": "Succeeded",
+      "message": "Virtual machine re-created by the scale set after eviction."
+    }
+  }
+]

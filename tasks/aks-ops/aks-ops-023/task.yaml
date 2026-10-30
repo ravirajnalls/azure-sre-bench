@@ -1,0 +1,16 @@
+id: aks-ops-023
+title: payments-api full outage during overnight spot evictions
+category: aks-ops
+difficulty: medium
+tags:
+  - aks-ops
+  - aks
+  - spot
+  - scheduling
+  - kubernetes
+symptom: |
+  payments-api returned 5xx for every request between 02:07 and 02:13 UTC last
+  night — a full six-minute outage — before recovering on its own. Azure
+  Advisor shows spot eviction events in the cluster at that time. The
+  deployment was not changed and no rollouts or config changes shipped that
+  day.
