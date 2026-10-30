@@ -16,5 +16,5 @@ mountOptions:
   - mfsymlinks
   - cache=strict
   - noserverino
-# Hardening change 2026-10-28: mountOptions added "for least privilege" —
-# the storage team copied the defaults from an old wiki page.
+# Hardening change 2026-10-28: the option block below was added "for least
+# privilege" — the storage team copied the defaults from an old wiki page.
