@@ -131,6 +131,41 @@ If the call fails, the credentials are missing, or the reply isn't JSON, the age
 prints `{}` and exits 0 — the runner records that task as a graded FAIL rather than
 crashing. The mocked-HTTP test (`tests/test_llm_agent.py`) proves the contract JSON
 reaches stdout without a live provider.
+## Run the Azure AI Foundry baseline
+
+`agents/foundry_agent.py` speaks the **Foundry Agents API** instead of raw chat
+completions: it creates an agent (your model deployment plus the SRE instructions
+and two investigation tools), opens a thread with the symptom, and drives a run —
+polling it and feeding tool results back via `submit_tool_outputs` — until the
+assistant message carries the contract JSON. Same investigation loop as the ReAct
+baseline, so the leaderboard compares the two surfaces on the same model:
+
+```bash
+export FOUNDRY_ENDPOINT="https://<resource>.services.ai.azure.com/api/projects/<project>"
+export FOUNDRY_MODEL="<model-deployment-name>"
+export FOUNDRY_API_KEY="..."                  # optional — omit to use Entra ID
+
+python -m bench run --agent agents/foundry_agent.py --task tasks/aks-networking/aks-networking-001
+```
+
+**Auth (pick one):**
+
+- **API key** — set `FOUNDRY_API_KEY` to a project API key (sent as the `api-key`
+  header). No RBAC role needed.
+- **Entra ID** — leave `FOUNDRY_API_KEY` unset and install `azure-identity`; the
+  agent acquires a token with `DefaultAzureCredential` for the
+  `https://ai.azure.com/.default` scope. Grant the caller a project data-plane
+  role such as **Azure AI Project Owner** (or any role including agent
+  read/action permissions).
+
+Optional: `FOUNDRY_API_VERSION` (default `2025-05-01`) and
+`FOUNDRY_POLL_INTERVAL_SECONDS` (default `1`). Credentials are never logged —
+keys and tokens exist only inside request headers. As with every baseline, any
+failure (missing config, unreachable project, non-JSON reply) prints `{}` and
+exits 0, which the runner records as a graded FAIL rather than a crash. The
+mocked-HTTP test (`tests/test_foundry_agent.py`) proves the full
+agent → thread → run → tool round-trip against a fake Foundry project without
+any Azure credentials.
 
 ## License
 
