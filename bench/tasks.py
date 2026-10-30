@@ -32,6 +32,11 @@ from bench.heldout import (
     heldout_key,
     split_of,
 )
+from bench.preincident import (
+    FINDINGS_KEY,
+    KIND_PRE_INCIDENT_REVIEW,
+    MAX_FINDINGS,
+)
 from bench.remediation import (
     CHECK_KEYS,
     CHECK_OPS,
@@ -398,18 +403,69 @@ def _validate_explainer(task_dir: Path, task_id: str) -> list[str]:
     return errors
 
 
+def _validate_preincident_rubric(data: dict, task_dir: Path) -> list[str]:
+    """Shape rules for a pre-incident-review rubric's `findings` (issue #147).
+
+    Each required finding pins the reviewed file (which must exist under
+    `fixtures/`), a positive 1-based line, and non-empty `issue` groups.
+    """
+    findings = data.get(FINDINGS_KEY)
+    if not (
+        isinstance(findings, list)
+        and findings
+        and all(isinstance(finding, dict) for finding in findings)
+    ):
+        return [
+            f"expected.json: '{FINDINGS_KEY}' must be a non-empty list of "
+            f"finding objects ({'{file, line, issue}'})"
+        ]
+    errors: list[str] = []
+    if len(findings) > MAX_FINDINGS:
+        errors.append(
+            f"expected.json: '{FINDINGS_KEY}' declares {len(findings)} required "
+            f"findings; at most {MAX_FINDINGS} (the answer contract's cap) is sane"
+        )
+    for index, finding in enumerate(findings):
+        label = f"expected.json: {FINDINGS_KEY}[{index}]"
+        file_name = finding.get("file")
+        if not (isinstance(file_name, str) and file_name.strip()):
+            errors.append(f"{label}: 'file' must be a non-empty string")
+        elif not (task_dir / "fixtures" / file_name).is_file():
+            errors.append(f"{label}: file '{file_name}' not found in fixtures/")
+        line = finding.get("line")
+        if not (
+            isinstance(line, int) and not isinstance(line, bool) and line >= 1
+        ):
+            errors.append(f"{label}: 'line' must be a positive integer (1-based)")
+        issue = finding.get("issue")
+        if not (isinstance(issue, list) and issue and all(_validate_group(g) for g in issue)):
+            errors.append(
+                f"{label}: 'issue' must be a non-empty list of non-empty string lists"
+            )
+    return errors
+
+
 def _validate_expected_data(
     data: dict, task_dir: Path, config: dict | None = None
 ) -> list[str]:
-    """Rubric shape rules, applied to plaintext and decrypted content alike."""
-    errors = []
-    for rubric_field in ("root_cause", "fix"):
-        value = data.get(rubric_field)
-        if not (isinstance(value, list) and value and all(_validate_group(g) for g in value)):
-            errors.append(
-                f"expected.json: '{rubric_field}' must be a non-empty list "
-                "of non-empty string lists"
-            )
+    """Rubric shape rules, applied to plaintext and decrypted content alike.
+
+    Kind-aware: a pre-incident-review rubric grades a `findings` list instead
+    of the diagnosis fields (issue #147); every other kind keeps the
+    `root_cause`/`fix` requirement.
+    """
+    kind = config.get("kind") if isinstance(config, dict) else None
+    errors: list[str] = []
+    if kind == KIND_PRE_INCIDENT_REVIEW:
+        errors.extend(_validate_preincident_rubric(data, task_dir))
+    else:
+        for rubric_field in ("root_cause", "fix"):
+            value = data.get(rubric_field)
+            if not (isinstance(value, list) and value and all(_validate_group(g) for g in value)):
+                errors.append(
+                    f"expected.json: '{rubric_field}' must be a non-empty list "
+                    "of non-empty string lists"
+                )
     # The grader falls back to its default when max_chars is malformed
     # (defensive at runtime); here it is an authoring error worth flagging.
     if "max_chars" in data and not (
@@ -431,8 +487,8 @@ def _validate_expected_data(
         )
 
     # Remediation checks (issue #110): only remediation tasks may declare them,
-    # and every remediation task must declare at least one.
-    kind = config.get("kind") if isinstance(config, dict) else None
+    # and every remediation task must declare at least one. The `kind` was
+    # resolved above for the kind-aware rubric branches.
     checks = data.get("checks")
     if kind == KIND_REMEDIATION:
         if not (isinstance(checks, list) and checks):
@@ -467,12 +523,38 @@ def _fixture_texts(task_dir: Path) -> list[str]:
     return texts
 
 
-def _validate_distractors(data: dict, task_dir: Path) -> tuple[list[str], list[str]]:
+def _graded_alternatives(data: dict, kind: str | None) -> list[str]:
+    """Normalized alternatives of the kind's graded concept groups.
+
+    Diagnosis/remediation rubrics grade `root_cause`; a pre-incident-review
+    rubric (issue #147) grades the `issue` groups of its required findings.
+    Distractor alternatives may not overlap either.
+    """
+    source = data.get("root_cause", [])
+    if kind == KIND_PRE_INCIDENT_REVIEW:
+        source = [
+            group
+            for finding in data.get(FINDINGS_KEY, [])
+            if isinstance(finding, dict) and isinstance(finding.get("issue"), list)
+            for group in finding["issue"]
+        ]
+    return [
+        normalize(alternative)
+        for group in source
+        if isinstance(group, list)
+        for alternative in group
+        if isinstance(alternative, str) and alternative.strip()
+    ]
+
+
+def _validate_distractors(
+    data: dict, task_dir: Path, kind: str | None = None
+) -> tuple[list[str], list[str]]:
     """Distractor-group rules (issue #94): mechanical schema as errors,
     corpus-quality judgment as warnings.
 
     Errors: a present `distractors` key must be a non-empty list of non-empty
-    string lists, and a distractor alternative may not overlap a root_cause
+    string lists, and a distractor alternative may not overlap a graded
     alternative — checked as substring overlap in either direction, because a
     distractor containing (or contained in) a graded alternative drags correct
     answers into the trap. Warnings: a task that defines no distractor group
@@ -498,13 +580,7 @@ def _validate_distractors(data: dict, task_dir: Path) -> tuple[list[str], list[s
             "non-empty string lists"
         ], []
 
-    root_alternatives = [
-        normalize(alternative)
-        for group in data.get("root_cause", [])
-        if isinstance(group, list)
-        for alternative in group
-        if isinstance(alternative, str) and alternative.strip()
-    ]
+    root_alternatives = _graded_alternatives(data, kind)
     errors: list[str] = []
     for group in distractors:
         for alternative in group:
@@ -555,7 +631,9 @@ def _validate_expected(task_dir: Path, config: dict | None) -> tuple[list[str], 
     if not isinstance(data, dict):
         return ["expected.json must contain a JSON object"], []
     errors = _validate_expected_data(data, task_dir, config)
-    distractor_errors, distractor_warnings = _validate_distractors(data, task_dir)
+    distractor_errors, distractor_warnings = _validate_distractors(
+        data, task_dir, config.get("kind") if isinstance(config, dict) else None
+    )
     return errors + distractor_errors, distractor_warnings
 
 
@@ -662,7 +740,7 @@ def _validate_heldout_hidden(
         if name == "expected.json":
             errors.extend(_validate_expected_data(data, task_dir, config))
             distractor_errors, distractor_warnings = _validate_distractors(
-                data, task_dir
+                data, task_dir, config.get("kind") if isinstance(config, dict) else None
             )
             errors.extend(distractor_errors)
             warnings.extend(distractor_warnings)

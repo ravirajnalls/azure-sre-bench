@@ -37,11 +37,16 @@ from pathlib import Path
 import yaml
 
 from bench.grader import GRADED_FIELDS, SCORE_PENALTY, UNSAFE_FIX, grade, normalize
+from bench.preincident import (
+    KIND_PRE_INCIDENT_REVIEW,
+    grade_pre_incident_review,
+    is_pre_incident_review,
+)
 from bench.safety import find_violations, global_rules, rubric_unsafe_rules
 
 KIND_REMEDIATION = "remediation"
 KIND_DIAGNOSIS = "diagnosis"
-KINDS = (KIND_DIAGNOSIS, KIND_REMEDIATION)
+KINDS = (KIND_DIAGNOSIS, KIND_REMEDIATION, KIND_PRE_INCIDENT_REVIEW)
 
 # The answer's patch map: {fixture path: full new file content}.
 PATCHED_FILES_KEY = "patched_files"
@@ -419,9 +424,16 @@ def grade_for_task(
 
     A rubric that declares `checks` triggers remediation grading even when the
     task config is missing or unmarked (manual submits, unit tests): silently
-    skipping the patch half would inflate the score. The validator keeps repo
-    tasks consistent — `kind: remediation` and `checks` ship together.
+    skipping the patch half would inflate the score. The same shape-based
+    fallback applies to the other tracks — a rubric with `findings` grades as
+    a pre-incident review — so the kind-specific half can never be silently
+    skipped. The validator keeps repo tasks consistent: `kind` and the
+    kind-specific rubric keys ship together.
     """
+    if is_pre_incident_review(task) or isinstance(
+        rubric.get("findings") if isinstance(rubric, dict) else None, list
+    ):
+        return grade_pre_incident_review(answer, rubric)
     if is_remediation(task) or isinstance(rubric.get("checks"), list):
         return grade_remediation(answer, rubric, Path(task_dir))
     return grade(answer, rubric)
