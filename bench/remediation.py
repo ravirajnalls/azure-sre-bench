@@ -38,6 +38,12 @@ import yaml
 
 from bench.grader import GRADED_FIELDS, SCORE_PENALTY, UNSAFE_FIX, grade, normalize
 from bench.attribution import KIND_ATTRIBUTION, grade_attribution, is_attribution
+from bench.postmortem import (
+    FACTS_KEY,
+    KIND_POSTMORTEM,
+    grade_postmortem,
+    is_postmortem,
+)
 from bench.preincident import (
     KIND_PRE_INCIDENT_REVIEW,
     grade_pre_incident_review,
@@ -47,7 +53,13 @@ from bench.safety import find_violations, global_rules, rubric_unsafe_rules
 
 KIND_REMEDIATION = "remediation"
 KIND_DIAGNOSIS = "diagnosis"
-KINDS = (KIND_DIAGNOSIS, KIND_REMEDIATION, KIND_ATTRIBUTION, KIND_PRE_INCIDENT_REVIEW)
+KINDS = (
+    KIND_DIAGNOSIS,
+    KIND_REMEDIATION,
+    KIND_ATTRIBUTION,
+    KIND_PRE_INCIDENT_REVIEW,
+    KIND_POSTMORTEM,
+)
 
 # The answer's patch map: {fixture path: full new file content}.
 PATCHED_FILES_KEY = "patched_files"
@@ -426,17 +438,19 @@ def grade_for_task(
     keep the plain grader.
 
     A rubric that declares `checks` triggers remediation grading, a
-    `culprit` string triggers attribution grading, and a `findings` list
-    triggers pre-incident grading even when the task config is missing or
-    unmarked (manual submits, unit tests): silently skipping a kind's half
-    of the contract would inflate the score. The validator keeps repo tasks
+    `culprit` string triggers attribution grading, a `findings` list
+    triggers pre-incident grading, and a `required_facts` list triggers
+    postmortem grading even when the task config is missing or unmarked
+    (manual submits, unit tests): silently skipping a kind's half of the
+    contract would inflate the score. The validator keeps repo tasks
     consistent — a kind and its rubric shape ship together.
     """
-    if is_pre_incident_review(task) or isinstance(
-        rubric.get("findings") if isinstance(rubric, dict) else None, list
-    ):
+    rubric_dict = rubric if isinstance(rubric, dict) else {}
+    if is_pre_incident_review(task) or isinstance(rubric_dict.get("findings"), list):
         return grade_pre_incident_review(answer, rubric)
-    if is_remediation(task) or isinstance(rubric.get("checks"), list):
+    if is_postmortem(task) or isinstance(rubric_dict.get(FACTS_KEY), list):
+        return grade_postmortem(answer, rubric)
+    if is_remediation(task) or isinstance(rubric_dict.get("checks"), list):
         return grade_remediation(answer, rubric, Path(task_dir))
     if is_attribution(task) or isinstance(rubric.get("culprit"), str):
         return grade_attribution(answer, rubric)

@@ -38,6 +38,13 @@ from bench.preincident import (
     KIND_PRE_INCIDENT_REVIEW,
     MAX_FINDINGS,
 )
+from bench.postmortem import (
+    FACTS_KEY,
+    FORBIDDEN_KEY,
+    KIND_POSTMORTEM,
+    rubric_facts,
+    rubric_forbidden,
+)
 from bench.remediation import (
     CHECK_KEYS,
     CHECK_OPS,
@@ -491,6 +498,32 @@ def _validate_preincident_rubric(data: dict, task_dir: Path) -> list[str]:
     return errors
 
 
+def _validate_postmortem_rubric(data: dict) -> list[str]:
+    """Shape rules for a postmortem rubric (issue #148).
+
+    `required_facts` is mandatory: a non-empty list of facts, each fact a
+    non-empty list of keyword groups (the diagnosis grader's group shape,
+    one level nested). `forbidden_claims` is optional, but when present it
+    must be a non-empty list of keyword groups — a malformed entry would be
+    silently ignored by the grader and let a blameworthy claim pass.
+    """
+    errors: list[str] = []
+    if not rubric_facts(data):
+        errors.append(
+            f"expected.json: '{FACTS_KEY}' must be a non-empty list of facts, "
+            "each fact a list of non-empty string groups"
+        )
+    raw_forbidden = (
+        data.get(FORBIDDEN_KEY) if isinstance(data, dict) else None
+    )
+    if raw_forbidden is not None and not rubric_forbidden(data):
+        errors.append(
+            f"expected.json: '{FORBIDDEN_KEY}' must be a list of non-empty "
+            "string groups"
+        )
+    return errors
+
+
 def _validate_expected_data(
     data: dict, task_dir: Path, config: dict | None = None
 ) -> list[str]:
@@ -507,6 +540,8 @@ def _validate_expected_data(
     errors: list[str] = []
     if kind == KIND_PRE_INCIDENT_REVIEW:
         errors.extend(_validate_preincident_rubric(data, task_dir))
+    elif kind == KIND_POSTMORTEM:
+        errors.extend(_validate_postmortem_rubric(data))
     elif kind == KIND_ATTRIBUTION:
         culprit = data.get("culprit")
         if not (isinstance(culprit, str) and culprit.strip()):
@@ -639,6 +674,15 @@ def _validate_distractors(
     distractor must name the wrong cause the fixtures actually suggest).
     """
     if "distractors" not in data:
+        if (
+            kind == KIND_POSTMORTEM
+            and isinstance(data.get(FORBIDDEN_KEY), list)
+            and data.get(FORBIDDEN_KEY)
+        ):
+            # A postmortem's forbidden claims already name the wrong causes
+            # the fixtures dangle (blaming a healthy component or a person);
+            # separate distractor groups would restate them (issue #148).
+            return [], []
         return [], [
             "expected.json: no 'distractors' groups — every task must define at "
             "least one distractor group naming the wrong cause its red-herring "
