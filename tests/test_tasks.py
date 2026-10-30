@@ -722,6 +722,11 @@ def test_symptom_does_not_leak_root_cause(task_dir: Path):
     root_cause group."""
     config = _config_of(task_dir)
     _, rubric = _load_rubric_pair(task_dir)
+    if not (isinstance(rubric.get("root_cause"), list) and rubric["root_cause"]):
+        # Non-diagnosis kinds (timeline, postmortem, pre-incident review) grade
+        # different contracts with no root_cause groups to leak; their own
+        # contract tests cover the equivalent check.
+        pytest.skip("rubric has no root_cause groups (non-diagnosis kind)")
     result = grade({"root_cause": str(config.get("symptom", ""))}, rubric)
     entries = result["detail"]["root_cause"]
     matched = [entry["matched"] for entry in entries if entry["matched"] is not None]

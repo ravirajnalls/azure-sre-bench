@@ -25,6 +25,7 @@ import yaml
 from bench import GRADER_VERSION, RESULT_SCHEMA_VERSION
 from bench.grader import cap_evidence, extract_files_read, extract_usage, grade, rubric_sha256
 from bench.heldout import HeldoutKeyError, load_hidden_json, split_of
+from bench.preincident import is_pre_incident_review
 from bench.releases import load_release, verify_release
 from bench.remediation import grade_for_task, is_remediation
 from bench.sim import COMMANDS_ENV, COMMANDS_FILENAME, LOG_ENV, LOG_FILENAME, SIM_DIR
@@ -73,7 +74,21 @@ def prepare_workspace(task_dir: Path, workspace: Path) -> None:
     symptom_md = (
         f"# {title}\n\n{task.get('symptom', '')}\n\nEvidence is in `fixtures/`.\n"
     )
-    if is_remediation(task):
+    if is_pre_incident_review(task):
+        # Issue #147: a pre-incident review's answer contract is a findings
+        # list, not a diagnosis — this is the runner's only agent-facing
+        # surface, so it must carry the shape.
+        symptom_md += (
+            "\nThis is a pre-incident-review task: review the proposed change "
+            "in `fixtures/` and include a `findings` list in your answer — at "
+            'most 5 objects, each `{"file": str, "line": int, "issue": str, '
+            '"fix": str}` — one per change that would cause an incident: the '
+            "file (as named in the diff) and its 1-based line, what will break "
+            "when it ships, and the fix to make before merge. Report only "
+            "changes that would cause an incident; healthy changes are not "
+            "findings.\n"
+        )
+    elif is_remediation(task):
         # The runner's only agent-facing surface: a remediation task (issue
         # #110) must tell agents the patch half of the answer contract.
         symptom_md += (
