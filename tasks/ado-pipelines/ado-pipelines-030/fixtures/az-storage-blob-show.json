@@ -1,0 +1,39 @@
+{
+  "account": {
+    "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-prod-tfstate/providers/Microsoft.Storage/storageAccounts/stprodtfstate001",
+    "name": "stprodtfstate001"
+  },
+  "container": "tfstate",
+  "metadata": [
+    {
+      "name": "managedby",
+      "value": "terraform"
+    }
+  ],
+  "name": "prod.terraform.tfstate",
+  "properties": {
+    "appendBlobCommittedBlockCount": null,
+    "blobTier": "Hot",
+    "blobType": "BlockBlob",
+    "contentLength": 194622,
+    "contentSettings": {
+      "cacheControl": null,
+      "contentDisposition": null,
+      "contentEncoding": null,
+      "contentLanguage": null,
+      "contentType": "application/octet-stream"
+    },
+    "creationTime": "2025-01-15T10:22:04+00:00",
+    "deleted": false,
+    "deletedTime": null,
+    "etag": "0x8DCFD1A3B7E4A90",
+    "incrementalCopy": false,
+    "lastModified": "2026-10-29T08:41:27+00:00",
+    "leaseDuration": "infinite",
+    "leaseState": "leased",
+    "leaseStatus": "locked",
+    "pageBlobSequenceNumber": null,
+    "remainingRetentionDays": null
+  },
+  "snapshot": null
+}
