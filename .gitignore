@@ -9,3 +9,7 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 .venv/
+
+# Live-mode agent kubeconfig — minted by setup.sh, holds a read-only
+# ServiceAccount token (issue #126). Never commit.
+live/**/agent.kubeconfig

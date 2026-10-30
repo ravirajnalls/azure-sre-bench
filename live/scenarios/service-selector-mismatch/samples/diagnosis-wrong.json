@@ -1,0 +1,8 @@
+{
+  "root_cause": "A NetworkPolicy applied during this morning's security hardening is dropping traffic from the ingress controller to the storefront pods, so requests never reach the backend and nginx returns 502 for /shop.",
+  "evidence": [
+    "ingress-nginx error log shows upstream connection failures for the /shop path",
+    "storefront pods are Running and Ready, so the pods themselves look healthy"
+  ],
+  "fix": "Add an ingress rule to the NetworkPolicy allowing traffic from the ingress-nginx namespace to the storefront pods."
+}

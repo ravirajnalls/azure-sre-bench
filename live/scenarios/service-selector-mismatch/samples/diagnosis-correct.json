@@ -1,0 +1,10 @@
+{
+  "root_cause": "The storefront Service in the shop namespace still selects tier: web from the previous label scheme, while this morning's release changed the pod template labels to tier: frontend. The selector therefore matches zero pods, the service has no endpoints, and ingress-nginx has no live upstream for the /shop path.",
+  "evidence": [
+    "kubectl get svc storefront -n shop: spec.selector is app=storefront,tier=web",
+    "kubectl get pods -n shop --show-labels: storefront pods carry app=storefront,tier=frontend",
+    "kubectl get endpoints storefront -n shop: no endpoints, while the cart service has ready addresses",
+    "storefront pods themselves are Running and Ready, ruling out a workload fault"
+  ],
+  "fix": "Update the storefront Service selector to tier: frontend so it matches the new pod labels and the service regains endpoints."
+}

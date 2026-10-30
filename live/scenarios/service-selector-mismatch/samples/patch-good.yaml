@@ -1,0 +1,17 @@
+# A corrected storefront Service — what a passing remediation looks like.
+# The selector now matches the pod labels from app.yaml (tier: frontend).
+apiVersion: v1
+kind: Service
+metadata:
+  name: storefront
+  namespace: shop
+  labels:
+    app: storefront
+spec:
+  selector:
+    app: storefront
+    tier: frontend
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
