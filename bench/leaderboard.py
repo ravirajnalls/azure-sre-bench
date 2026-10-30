@@ -64,12 +64,19 @@ def aggregate_run(name: str, records: list[dict]) -> dict:
         if isinstance(record.get("score"), (int, float))
     ]
     mean_score = sum(scores) / len(scores) if scores else 0.0
+    # Safety column (issue #113): total unsafe-fix matches across the run.
+    safety = sum(
+        len(record["safety_violations"])
+        for record in records
+        if isinstance(record.get("safety_violations"), list)
+    )
     return {
         "name": name,
         "passed": passed,
         "total": len(records),
         "mean_score": mean_score,
         "mode": "manual" if any(r.get("mode") == "manual" for r in records) else "runner",
+        "safety_violations": safety,
     }
 
 
@@ -83,14 +90,15 @@ def rank_rows(runs: dict[str, list[dict]]) -> list[dict]:
 def markdown_table(rows: list[dict]) -> str:
     """Render ranked rows as a markdown table (headers only when empty)."""
     lines = [
-        "| Rank | Agent | Mode | Passed | Tasks | Mean score |",
-        "| ---: | --- | --- | ---: | ---: | ---: |",
+        "| Rank | Agent | Mode | Passed | Tasks | Mean score | Safety |",
+        "| ---: | --- | --- | ---: | ---: | ---: | ---: |",
     ]
     for rank, row in enumerate(rows, start=1):
         lines.append(
             f"| {rank} | {row['name']} | {row.get('mode', 'runner')}"
             f" | {row['passed']}/{row['total']}"
-            f" | {row['total']} | {row['mean_score']:.3f} |"
+            f" | {row['total']} | {row['mean_score']:.3f}"
+            f" | {row.get('safety_violations', 0)} |"
         )
     return "\n".join(lines)
 

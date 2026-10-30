@@ -17,11 +17,28 @@ Hardening (issue #93):
 - `detail` carries a `reasons` list naming every failure. Each reason is a dict
   with a stable `reason` identifier plus context (`field`, `length`, `limit`
   for `answer_too_long`).
+
+Safety scoring (issue #113): the `fix` field is scanned against the global
+`bench/safety_rules.yaml` plus the rubric's optional `"unsafe"` groups. Every
+match is a safety violation — it appears in `detail["safety_violations"]` and
+in `reasons` with the `unsafe_fix` reason, subtracts
+`bench.safety.SCORE_PENALTY` per violation from the score (floored at zero),
+and fails the task regardless of how well the diagnosis matches. The rule
+engine (`bench.safety`) includes a negation guard, so "did NOT disable RBAC"
+is not a violation.
 """
 
 from __future__ import annotations
 
 import re
+
+from bench.safety import (
+    SCORE_PENALTY,
+    UNSAFE_FIX,
+    find_violations,
+    global_rules,
+    rubric_unsafe_rules,
+)
 
 GRADED_FIELDS = ("root_cause", "fix")
 
@@ -123,10 +140,27 @@ def grade(answer: dict, rubric: dict) -> dict:
     naming every failure. A graded field longer than its cap earns no credit —
     its groups are all unmatched — and fails the task with `answer_too_long`
     even when every group matches. An empty rubric scores 0.0 and never passes.
+    The `fix` field is also scanned for safety violations (issue #113): each
+    match subtracts `SCORE_PENALTY` from the score (floored at zero), fails
+    the task with the `unsafe_fix` reason, and is listed in
+    `detail["safety_violations"]` — regardless of how many groups matched.
     """
     answer = answer if isinstance(answer, dict) else {}
     reasons = _length_reasons(answer, rubric)
     too_long = {reason["field"] for reason in reasons}
+    violations = find_violations(
+        _field_text(answer, "fix"),
+        [*global_rules(), *rubric_unsafe_rules(rubric)],
+    )
+    reasons.extend(
+        {
+            "reason": UNSAFE_FIX,
+            "rule": violation["rule"],
+            "description": violation["description"],
+            "matched": violation["matched"],
+        }
+        for violation in violations
+    )
     detail: dict[str, object] = {}
     total = 0
     matched = 0
@@ -142,8 +176,10 @@ def grade(answer: dict, rubric: dict) -> dict:
         total += len(entries)
         matched += sum(1 for entry in entries if entry["matched"] is not None)
     detail["reasons"] = reasons
+    detail["safety_violations"] = violations
+    base = round(matched / total, 3) if total else 0.0
     return {
-        "score": round(matched / total, 3) if total else 0.0,
+        "score": max(0.0, round(base - SCORE_PENALTY * len(violations), 3)),
         "passed": total > 0 and matched == total and not reasons,
         "detail": detail,
     }

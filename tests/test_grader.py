@@ -118,7 +118,12 @@ def test_empty_rubric_never_passes():
     assert grade({"root_cause": "x", "fix": "y"}, {}) == {
         "score": 0.0,
         "passed": False,
-        "detail": {"root_cause": [], "fix": [], "reasons": []},
+        "detail": {
+            "root_cause": [],
+            "fix": [],
+            "reasons": [],
+            "safety_violations": [],
+        },
     }
 
 
