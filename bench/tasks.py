@@ -20,6 +20,9 @@ from pathlib import Path
 
 import yaml
 
+from bench.sim import COMMANDS_FILENAME
+from bench.sim.sim_cli import parse_entries
+
 REQUIRED_KEYS = ("id", "title", "category", "difficulty", "tags", "symptom")
 
 CATEGORIES = frozenset(
@@ -170,7 +173,11 @@ def _validate_fixtures(task_dir: Path) -> list[str]:
     if not fixtures_dir.is_dir():
         return [f"missing fixtures/ directory (expected at {fixtures_dir})"]
 
-    files = sorted(path for path in fixtures_dir.iterdir() if path.is_file())
+    entries = sorted(path for path in fixtures_dir.iterdir() if path.is_file())
+    # `_commands.yaml` configures the simulated CLIs (issue #111), so it is not
+    # evidence: exempt from the fixture count and the placeholder-GUID rule.
+    commands_file = next((path for path in entries if path.name == COMMANDS_FILENAME), None)
+    files = [path for path in entries if path != commands_file]
     if not MIN_FIXTURES <= len(files) <= MAX_FIXTURES:
         errors.append(
             f"fixtures/ must contain {MIN_FIXTURES}-{MAX_FIXTURES} files, found {len(files)}"
@@ -189,7 +196,26 @@ def _validate_fixtures(task_dir: Path) -> list[str]:
                     f"fixtures/{fixture.name}: non-placeholder GUID '{guid}' "
                     "(use 00000000-0000-0000-0000-00000000000X)"
                 )
+    errors.extend(_validate_commands_file(commands_file))
     return errors
+
+
+def _validate_commands_file(path: Path | None) -> list[str]:
+    """Shape-check the simulated-CLI commands file (issue #111).
+
+    The file is exempt from the evidence-file rules (count, GUID scan), so this
+    is the corpus gate's only chance to catch a typo that would break every
+    agent run's simulated commands on the task.
+    """
+    if path is None:
+        return []
+    try:
+        data = yaml.safe_load(path.read_text(encoding="utf-8"))
+    except (OSError, yaml.YAMLError) as exc:
+        return [f"fixtures/{COMMANDS_FILENAME}: invalid YAML ({exc})"]
+    return [
+        f"fixtures/{COMMANDS_FILENAME}: {error}" for error in parse_entries(data)[1]
+    ]
 
 
 def _validate_expected(task_dir: Path) -> list[str]:

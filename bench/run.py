@@ -23,6 +23,7 @@ from pathlib import Path
 import yaml
 
 from bench.grader import grade
+from bench.sim import COMMANDS_ENV, COMMANDS_FILENAME, LOG_ENV, LOG_FILENAME, SIM_DIR
 
 TASKS_DIR = Path("tasks")
 RESULTS_DIR = Path("results")
@@ -49,11 +50,17 @@ def prepare_workspace(task_dir: Path, workspace: Path) -> None:
     """Copy only the agent-visible files into the workspace.
 
     The information boundary: `expected.json` and `solution.json` must never be
-    copied where the agent can read them.
+    copied where the agent can read them. `_commands.yaml` is excluded too: it
+    configures the simulated CLIs (issue #111) and reaches the agent through
+    the shim environment, not as a one-file answer dump in `fixtures/`.
     """
     fixtures_src = Path(task_dir) / "fixtures"
     if fixtures_src.is_dir():
-        shutil.copytree(fixtures_src, Path(workspace) / "fixtures")
+        shutil.copytree(
+            fixtures_src,
+            Path(workspace) / "fixtures",
+            ignore=shutil.ignore_patterns(COMMANDS_FILENAME),
+        )
     task = load_task(task_dir)
     title = task.get("title") or task.get("id") or "Incident"
     symptom_md = (
@@ -107,6 +114,23 @@ def parse_answer(stdout: str) -> dict:
     return {}
 
 
+def _with_sim_env(env: dict[str, str], task_dir: Path, workspace: Path) -> dict[str, str]:
+    """Activate the simulated CLIs when the task ships `fixtures/_commands.yaml`.
+
+    The only runner change needed for issue #111: put `bench/sim` first on the
+    agent's PATH so `kubectl`/`az` resolve to the shims, and tell the shims
+    where the commands file and the invocation log live.
+    """
+    commands_file = Path(task_dir) / "fixtures" / COMMANDS_FILENAME
+    if not commands_file.is_file():
+        return env
+    env = dict(env)
+    env["PATH"] = os.pathsep.join([str(SIM_DIR), env.get("PATH", os.defpath)])
+    env[COMMANDS_ENV] = str(commands_file)
+    env[LOG_ENV] = str(Path(workspace) / LOG_FILENAME)
+    return env
+
+
 def _load_json(path: Path) -> dict:
     try:
         with open(path, encoding="utf-8") as fh:
@@ -114,6 +138,18 @@ def _load_json(path: Path) -> dict:
         return data if isinstance(data, dict) else {}
     except (OSError, ValueError):
         return {}
+
+
+def _read_text(path: Path) -> str:
+    """Read a workspace file, or "" when it is absent/unreadable.
+
+    An unreadable command trace is telemetry loss, never a run failure — the
+    log only exists when the task simulates CLIs and the agent ran commands.
+    """
+    try:
+        return path.read_text(encoding="utf-8")
+    except OSError:
+        return ""
 
 
 def run_task(
@@ -132,7 +168,11 @@ def run_task(
     workspace = Path(tempfile.mkdtemp(prefix=f"bench-{task_id}-"))
     try:
         prepare_workspace(task_dir, workspace)
-        env = dict(os.environ, TASK_DIR=str(workspace), TASK_ID=task_id)
+        env = _with_sim_env(
+            dict(os.environ, TASK_DIR=str(workspace), TASK_ID=task_id),
+            task_dir,
+            workspace,
+        )
         symptom = str(task.get("symptom", ""))
 
         start = time.monotonic()
@@ -162,6 +202,9 @@ def run_task(
             stderr = str(exc)
             returncode = None
         elapsed_s = round(time.monotonic() - start, 3)
+        # The command trace must be read before the finally below deletes the
+        # workspace — afterwards it is unrecoverable (issue #111).
+        commands_log = _read_text(workspace / LOG_FILENAME)
     finally:
         shutil.rmtree(workspace, ignore_errors=True)
 
@@ -177,10 +220,13 @@ def run_task(
         "detail": result["detail"],
         "timed_out": timed_out,
         "returncode": returncode,
+        "commands": [line for line in commands_log.splitlines() if line.strip()],
     }
 
     out_dir = Path(results_root) / name
     out_dir.mkdir(parents=True, exist_ok=True)
+    if commands_log.strip():
+        (out_dir / f"{task_id}.commands.log").write_text(commands_log, encoding="utf-8")
     (out_dir / f"{task_id}.json").write_text(
         json.dumps(record, indent=2) + "\n", encoding="utf-8"
     )
