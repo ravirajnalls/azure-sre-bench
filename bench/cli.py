@@ -4,7 +4,6 @@ Issue #1 scaffolded the subcommand surface; `validate` and `list` are live as of
 issue #2, `grade` as of issue #3, `run` as of issue #4, `site` as of issue #40,
 `leaderboard` as of issue #41, `catalog` as of issue #42, `verify` as of issue
 #118, `submit` and `prompt` as of issue #124, `new` as of issue #120,
-<<<<<<< HEAD
 `mcp-serve` as of issue #123, `sweep` as of issue #125, `export` as of
 issue #117, and `explain` as of issue #149: the full
 subcommand surface is implemented. `bench run --release` (issue #116) checks
