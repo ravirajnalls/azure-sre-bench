@@ -31,6 +31,10 @@ body:
         - ado-pipelines
         - cost
         - monitoring
+        - data
+        - messaging
+        - edge
+        - serverless
     validations:
       required: true
 

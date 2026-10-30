@@ -55,7 +55,8 @@ tasks/<category>/<task-id>/
 ```
 
 Categories: `aks-networking`, `aks-identity`, `aks-workloads`, `aks-ops`, `networking`,
-`identity`, `app-service`, `key-vault`, `ado-pipelines`, `cost`, `monitoring`.
+`identity`, `app-service`, `key-vault`, `ado-pipelines`, `cost`, `monitoring`,
+`data`, `messaging`, `edge`, `serverless`.
 
 Task IDs are `<category>-<nnn>` where `nnn` is the zero-padded backlog number. The
 folder name, the `id` field in `task.yaml`, and the parent directory must agree.

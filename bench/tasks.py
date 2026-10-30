@@ -59,6 +59,10 @@ CATEGORIES = frozenset(
         "ado-pipelines",
         "cost",
         "monitoring",
+        "data",
+        "messaging",
+        "edge",
+        "serverless",
     }
 )
 
