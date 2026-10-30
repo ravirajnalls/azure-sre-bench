@@ -1,0 +1,30 @@
+# kubectl get cm coredns-custom -n kube-system -o yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: coredns-custom
+  namespace: kube-system
+  uid: 00000000-0000-0000-0000-000000000005
+  resourceVersion: "2216902"
+  creationTimestamp: "2026-08-14T10:58:41Z"
+  labels:
+    app: kube-dns
+    kubernetes.io/cluster-service: "true"
+  annotations:
+    kubernetes.io/description: >-
+      AKS customer-managed CoreDNS overrides. Forwarded to the
+      e-commerce platform team for review on 2026-08-15.
+data:
+  Corefile: |
+    # on-prem DNS bridge for the legacy ERP integration (erp-dc01)
+    # added by platform-eng 2026-08-14, see change request CHG0001432
+    .:53 {
+        errors
+        log
+        forward . 10.20.1.53
+        cache 30
+        loop
+        reload
+        loadbalance
+    }
+    import custom/*.override

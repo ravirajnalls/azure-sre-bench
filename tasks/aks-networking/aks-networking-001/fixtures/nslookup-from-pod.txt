@@ -1,0 +1,18 @@
+# kubectl exec -n shop deploy/orders-api -- nslookup api.stripe.com
+Server:		10.0.0.10
+Address:	10.0.0.10#53
+
+** server can't find api.stripe.com: connection timed out
+
+# kubectl exec -n shop deploy/orders-api -- nslookup graph.microsoft.com
+Server:		10.0.0.10
+Address:	10.0.0.10#53
+
+** server can't find graph.microsoft.com: connection timed out
+
+# kubectl exec -n shop deploy/orders-api -- nslookup orders-api.shop.svc.cluster.local
+Server:		10.0.0.10
+Address:	10.0.0.10#53
+
+Name:	orders-api.shop.svc.cluster.local
+Address: 10.244.0.31

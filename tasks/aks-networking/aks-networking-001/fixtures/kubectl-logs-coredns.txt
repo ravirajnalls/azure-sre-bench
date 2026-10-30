@@ -1,0 +1,16 @@
+CoreDNS-1.11.4
+linux/amd64, go1.22.5, f59c0d5
+2026-10-30T08:59:12.774Z [INFO] plugin/reload: Running configuration SHA512 = 3f8a91c2b7e64d05...
+2026-10-30T09:02:41.118Z [INFO] 10.244.2.31:38812 - 48102 "A IN api.stripe.com. udp 44 false 512" NOERROR qr,aa,rd,ra 0 0.000009316s
+2026-10-30T09:02:41.126Z [ERROR] plugin/errors: 2 api.stripe.com. A: read udp 10.244.0.121:44318->10.20.1.53:53: i/o timeout
+2026-10-30T09:02:46.131Z [ERROR] plugin/errors: 2 api.stripe.com. A: read udp 10.244.0.121:57104->10.20.1.53:53: i/o timeout
+2026-10-30T09:02:51.137Z [ERROR] plugin/errors: 2 api.stripe.com. A: read udp 10.244.0.121:33779->10.20.1.53:53: i/o timeout
+2026-10-30T09:02:52.904Z [INFO] 10.244.1.18:51204 - 1301 "A IN orders-api.shop.svc.cluster.local. udp 63 false 512" NOERROR qr,aa,rd,ra 10.244.0.31 1 0.000071412s
+2026-10-30T09:03:12.225Z [ERROR] plugin/errors: 2 graph.microsoft.com. A: read udp 10.244.1.66:39901->10.20.1.53:53: i/o timeout
+2026-10-30T09:03:14.301Z [ERROR] plugin/errors: 2 shopacr00000001.azurecr.io. A: read udp 10.244.1.66:45612->10.20.1.53:53: i/o timeout
+2026-10-30T09:03:18.447Z [INFO] 10.244.0.17:42871 - 48104 "AAAA IN api.stripe.com. udp 47 false 512" NOERROR qr,aa,rd,ra 0 0.000008522s
+2026-10-30T09:03:22.519Z [ERROR] plugin/errors: 2 api.stripe.com. AAAA: read udp 10.244.1.66:51930->10.20.1.53:53: i/o timeout
+2026-10-30T09:03:29.882Z [INFO] 10.244.2.58:54419 - 1302 "A IN storefront.shop.svc.cluster.local. udp 59 false 512" NOERROR qr,aa,rd,ra 10.244.1.44 1 0.000068231s
+2026-10-30T09:04:01.638Z [ERROR] plugin/errors: 2 graph.microsoft.com. A: read udp 10.244.0.121:33890->10.20.1.53:53: i/o timeout
+2026-10-30T09:05:12.901Z [ERROR] plugin/errors: 2 login.microsoftonline.com. A: read udp 10.244.1.66:47213->10.20.1.53:53: i/o timeout
+2026-10-30T09:07:44.120Z [ERROR] plugin/errors: 2 shopacr00000001.azurecr.io. A: read udp 10.244.0.121:58841->10.20.1.53:53: i/o timeout
