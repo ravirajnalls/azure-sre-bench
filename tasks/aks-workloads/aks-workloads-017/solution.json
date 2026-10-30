@@ -1,0 +1,10 @@
+{
+  "root_cause": "The checkout-api container has no cpu resource request — the deployment manifest never sets resources.requests.cpu, so the HorizontalPodAutoscaler cannot compute CPU utilization (usage divided by request) for any pod. Every replica reports <unknown>/70% utilization and the HPA stays pinned at minReplicas while the pods are actually pegged.",
+  "evidence": [
+    "deployment.yaml: the checkout-api container defines no resources block at all — no cpu request is set",
+    "kubectl-get-hpa.txt: TARGETS reads <unknown>/70%, meaning utilization cannot be computed",
+    "kubectl-describe-hpa.txt: FailedComputeMetricsReplicas — missing request for cpu",
+    "kubectl-top-pod.txt: metrics-server does report usage (roughly 900m per pod), so metrics flow and only the request is absent"
+  ],
+  "fix": "Set a cpu request on the checkout-api container in the deployment — add a resources.requests block (requests.cpu sized against observed usage, e.g. 500m, with a matching memory request) — so the HPA can compute utilization percentages and scale between minReplicas and maxReplicas."
+}
