@@ -1,4 +1,4 @@
-# SLOWLOG GET rediscache-session-prod — captured 2026-10-29T10:22:00Z
+# SLOWLOG GET rediscache-session-prod — captured 2026-10-29 10:22 UTC
 # (redis-cli SLOWLOG GET 25, trimmed to the slowest entries; durations in microseconds)
 1)  1) (integer) 1488321
     2) (integer) 1793269200

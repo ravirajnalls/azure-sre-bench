@@ -1,10 +1,10 @@
 # Change record CHG-4471 — Platform Observability
 # Deployed by: platform-tooling service account
-2026-10-27T09:00:14Z DEPLOY cache-inventory-job v1.4.0 -> prod (helm upgrade)
+2026-10-27T09:00:14Z INFO DEPLOY cache-inventory-job v1.4.0 -> prod (helm upgrade)
     change: adds nightly key inventory export for capacity reporting
-2026-10-29T10:22:41Z HOTFIX-RUNBOOK consult: cache inventory job now runs
+2026-10-29T10:22:41Z INFO HOTFIX-RUNBOOK consult: cache inventory job now runs
     `key inventory scan` every 5 minutes (schedule: */5 * * * *) after
     v1.4.0 config change "exportFrequency: nightly -> 5m"
     owner: observability team (op: @m.danvers)
-2026-10-29T10:25:00Z ROLLBACK cache-inventory-job v1.4.0 -> v1.3.9 (helm rollback)
+2026-10-29T10:25:00Z WARN ROLLBACK cache-inventory-job v1.4.0 -> v1.3.9 (helm rollback)
     reason: suspected correlation with Redis latency waves (pending verification)
