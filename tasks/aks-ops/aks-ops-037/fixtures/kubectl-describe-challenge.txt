@@ -1,0 +1,40 @@
+# kubectl -n shop describe challenge shop-contoso-tls-1-3847261917
+Name:         shop-contoso-tls-1-3847261917
+Namespace:    shop
+Labels:       <none>
+Annotations:  <none>
+API Version:  acme.cert-manager.io/v1
+Kind:         Challenge
+Metadata:
+  Creation Timestamp: 2026-10-05T09:12:06Z
+  Generation:         1
+  Owner References:
+    API Version:           cert-manager.io/v1
+    Block Owner Deletion:  true
+    Controller:            true
+    Kind:                  Certificate
+    Name:                  shop-contoso-tls
+    UID:                   00000000-0000-0000-0000-000000000003
+Spec:
+  Authorization URL:  https://acme-v02.api.letsencrypt.org/acme/authz/1884923177/00000000-0000-0000-0000-000000000005
+  Dns Name:           shop.contoso.com
+  Ingress Name:       cm-http-solver-shop-contoso-tls
+  Issuer Ref:
+    Group:  cert-manager.io
+    Kind:   ClusterIssuer
+    Name:   letsencrypt-prod
+  Token:      8sTq2mVbN7pQxR4yZc6dEf9gHj1kL3mN5pQ7rS9tUvWxAyBzC
+  Type:       HTTP-01
+  URL:        https://acme-v02.api.letsencrypt.org/challenge/1884923177/00000000-0000-0000-0000-000000000006/9Tq2m
+  Wildcard:   false
+Status:
+  Presented:   true
+  Processing:  true
+  Reason:      Waiting for http-01 challenge propagation: self check failed for domain "shop.contoso.com": HTTP request to http://shop.contoso.com/.well-known/acme-challenge/8sTq2mVbN7pQxR4yZc6dEf9gHj1kL3mN5pQ7rS9tUvWxAyBzC returned status code 404 (expected 200)
+  State:       pending
+Events:
+  Type     Reason          Age                    From                       Message
+  ----     ------          ----                   ----                       -------
+  Normal   Started         8d                     cert-manager-cert-manager  Challenge processing for domain "shop.contoso.com"
+  Normal   Presented       8d                     cert-manager-cert-manager  Presented http-01 challenge using Ingress "cm-http-solver-shop-contoso-tls"
+  Warning  SelfCheckFailed 2m (x19217 over 8d)    cert-manager-cert-manager  Propagation check failed: self check returned status code 404 instead of 200 for the challenge path

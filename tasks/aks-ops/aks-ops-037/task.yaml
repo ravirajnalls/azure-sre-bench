@@ -1,0 +1,19 @@
+id: aks-ops-037
+canary: 00000000-0000-0000-0000-000000000114  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
+title: TLS certificate for shop.contoso.com expired and renewal is silently failing
+category: aks-ops
+difficulty: hard
+tags:
+  - aks-ops
+  - cert-manager
+  - tls
+  - ingress
+  - letsencrypt
+  - kubernetes
+symptom: |
+  Browsers report the TLS certificate for shop.contoso.com as expired and
+  customers see a certificate warning on the storefront. The certificate on
+  aks-shop-prod is supposed to renew automatically 30 days before expiry, but
+  that never happened and no alert fired from the issuer. The team confirms
+  the pods in the issuer's namespace are all running. The storefront team
+  needs the site trusted again before tomorrow's promotion.

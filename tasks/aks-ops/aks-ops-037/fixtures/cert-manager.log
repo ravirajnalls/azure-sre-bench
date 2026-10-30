@@ -1,0 +1,10 @@
+# kubectl -n cert-manager logs deploy/cert-manager --since=30m
+I1013 07:38:52.114230       1 start.go:76] starting cert-manager — cert-manager version: v1.16.2
+I1013 07:38:52.118974       1 leaderelection.go:260] successfully acquired lease cert-manager/cert-manager
+I1013 07:38:52.220315       1 controller.go:217] starting "certificaterequests" controller
+I1013 07:38:52.220864       1 controller.go:217] starting "challenges" controller
+I1013 07:40:01.552119       1 sync.go:214] "Re-checking the state of the challenge for domain" error="propagation check failed: HTTP request to http://shop.contoso.com/.well-known/acme-challenge/8sTq2mVbN7pQxR4yZc6dEf9gHj1kL3mN5pQ7rS9tUvWxAyBzC returned status code 404 (expected 200)" resource="shop-contoso-tls-1-3847261917" resource_kind="Challenge" resource_name="shop-contoso-tls-1-3847261917"
+I1013 07:42:01.554902       1 sync.go:214] "Re-checking the state of the challenge for domain" error="propagation check failed: HTTP request to http://shop.contoso.com/.well-known/acme-challenge/8sTq2mVbN7pQxR4yZc6dEf9gHj1kL3mN5pQ7rS9tUvWxAyBzC returned status code 404 (expected 200)" resource="shop-contoso-tls-1-3847261917" resource_kind="Challenge"
+I1013 07:44:01.553617       1 sync.go:214] "Re-checking the state of the challenge for domain" error="propagation check failed: HTTP request to http://shop.contoso.com/.well-known/acme-challenge/8sTq2mVbN7pQxR4yZc6dEf9gHj1kL3mN5pQ7rS9tUvWxAyBzC returned status code 404 (expected 200)" resource="shop-contoso-tls-1-3847261917" resource_kind="Challenge"
+I1013 07:44:01.661204       1 acme.go:204] re-verified certificate shop-contoso-tls retry scheduled in 2m
+# ACME account re-registration on pod start: status registered=true, uri=https://acme-v02.api.letsencrypt.org/acme/acct/884923177

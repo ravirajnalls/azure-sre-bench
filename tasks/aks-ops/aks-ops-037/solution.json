@@ -1,0 +1,16 @@
+{
+  "root_cause": "The cluster's only ingress controller class is webapprouting.kubernetes.azure.com (the webapprouting add-on), but the letsencrypt-prod ClusterIssuer's http01 block declares ingressClassName: nginx. That ingress class does not exist, so no controller handles cert-manager's solver ingress and the ACME HTTP-01 challenge self-check gets a 404 on the challenge path. The challenge never becomes valid, the ACME order never completes, and the certificate expired on 10 October; the cert-manager pods are healthy and unrelated to the failure.",
+  "evidence": [
+    "clusterissuer.yaml: the letsencrypt-prod solver's http01 block declares ingressClassName: nginx",
+    "kubectl-get-ingressclass.txt: the only IngressClass in the cluster is webapprouting.kubernetes.azure.com — no nginx class exists",
+    "kubectl-describe-challenge.txt: challenge self-check for shop.contoso.com returns status code 404 (expected 200) and has been retrying for 8 days",
+    "cert-manager.log: repeated propagation check failures with 404 on the acme-challenge path, while the ACME account itself registers fine",
+    "kubectl-get-pods-cert-manager.txt: all cert-manager pods Running with no warning events — rules out an issuer outage"
+  ],
+  "fix": "Change the letsencrypt-prod ClusterIssuer solver's http01.ingressClassName from nginx to webapprouting.kubernetes.azure.com (kubectl edit clusterissuer letsencrypt-prod) so the webapprouting controller serves the ACME challenge path; alternatively remove the ingressClassName field to fall back to the cluster default class. Then delete the pending Challenge to let cert-manager retry the order and confirm the shop-tls secret is re-issued and the storefront serves a valid certificate.",
+  "evidence_files": [
+    "clusterissuer.yaml",
+    "kubectl-get-ingressclass.txt",
+    "kubectl-describe-challenge.txt"
+  ]
+}

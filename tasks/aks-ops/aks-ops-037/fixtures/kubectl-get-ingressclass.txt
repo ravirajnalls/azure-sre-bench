@@ -1,0 +1,16 @@
+# kubectl get ingressclass
+NAME                                 CONTROLLER                                              PARAMETERS   AGE
+webapprouting.kubernetes.azure.com   webapprouting.kubernetes.azure.com/webapprouting        <none>       9d
+# kubectl get ingressclass webapprouting.kubernetes.azure.com -o yaml
+apiVersion: networking.k8s.io/v1
+kind: IngressClass
+metadata:
+  name: webapprouting.kubernetes.azure.com
+  annotations:
+    meta.helm.sh/release-name: webapprouting
+    app.kubernetes.io/managed-by: Helm
+  labels:
+    app.kubernetes.io/component: controller
+    azure-addons: webapprouting
+spec:
+  controller: webapprouting.kubernetes.azure.com/webapprouting

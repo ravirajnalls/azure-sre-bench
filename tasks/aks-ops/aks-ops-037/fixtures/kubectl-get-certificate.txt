@@ -1,0 +1,41 @@
+# kubectl -n shop describe certificate shop-contoso-tls
+Name:         shop-contoso-tls
+Namespace:    shop
+Labels:       app=storefront
+Annotations:  cert-manager.io/issuer-kind: ClusterIssuer
+              cert-manager.io/issuer-name: letsencrypt-prod
+API Version:  cert-manager.io/v1
+Kind:         Certificate
+Metadata:
+  Creation Timestamp: 2026-07-11T21:18:30Z
+  Generation:         3
+Spec:
+  Dns Names:
+    shop.contoso.com
+  Issuer Ref:
+    Group:  cert-manager.io
+    Kind:   ClusterIssuer
+    Name:   letsencrypt-prod
+  Secret Name:          shop-tls
+  Usages:
+    digital signature
+    key encipherment
+    server auth
+Status:
+  Conditions:
+    Last Transition Time:  2026-10-05T09:12:04Z
+    Message:               Waiting for HTTP-01 challenge propagation
+    Observed Generation:   3
+    Reason:                Issuance
+    Status:                False
+    Type:                  Ready
+  Not After:               2026-10-10T21:18:33Z
+  Not Before:              2026-07-11T21:18:33Z
+  Renewal Time:            2026-09-10T21:18:33Z
+Events:
+  Type    Reason         Age                    From                                   Message
+  ----    ------         ----                   ----                                   -------
+  Normal  Issuing        8d                     cert-manager-cert-manager              Issuing certificate as it was renewed
+  Normal  Generated      8d                     cert-manager-cert-manager              Generated new private key
+  Normal  Requested      8d                     cert-manager-cert-manager              Created new CertificateRequest resource
+  Warning ReadFailed     2m (x1981 over 8d)     cert-manager-cert-manager              Issuance failed: certificate is past its Not After date and the ACME order never completed
