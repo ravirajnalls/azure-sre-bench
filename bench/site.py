@@ -461,11 +461,21 @@ _FILTER_SCRIPT = """\
     document.querySelectorAll("#tbl-bycat tr[data-category]").forEach(function (tr) {
       tr.classList.toggle("hidden", c !== "all" && tr.getAttribute("data-category") !== c);
     });
-    // Open-source-only and grading-mode act on agent rows AND agent columns
-    // (overall rows, category/heatmap header + cells) via the same keys.
+    // Open-source-only and grading-mode act on agent rows AND agent columns.
+    // Only the overall rows carry the per-agent keys, so build the agent
+    // state from them first and apply it to every data-agent element.
+    var agentOpen = {}, agentMode = {};
+    document.querySelectorAll("#tbl-overall tr[data-agent]").forEach(function (tr) {
+      agentOpen[tr.getAttribute("data-agent")] = tr.getAttribute("data-open-source");
+      agentMode[tr.getAttribute("data-agent")] = tr.getAttribute("data-mode");
+    });
     document.querySelectorAll("[data-agent]").forEach(function (el) {
-      var hide = (o && el.getAttribute("data-open-source") === "0") ||
-                 (m !== "all" && el.getAttribute("data-mode") !== m);
+      var key = el.getAttribute("data-agent");
+      var os = el.hasAttribute("data-open-source")
+        ? el.getAttribute("data-open-source") : agentOpen[key];
+      var md = el.hasAttribute("data-mode")
+        ? el.getAttribute("data-mode") : agentMode[key];
+      var hide = (o && os === "0") || (m !== "all" && md !== m);
       el.classList.toggle("hidden", hide);
     });
     var note = document.getElementById("filter-empty");
