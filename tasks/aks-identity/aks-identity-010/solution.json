@@ -1,0 +1,11 @@
+{
+  "root_cause": "The cluster runs with Azure RBAC for Kubernetes enabled (aadProfile.enableAzureRbac true), which means Kubernetes RBAC objects such as the payments RoleBinding are ignored for Entra identities and authorization falls entirely to Azure role assignments on the cluster resource. grp-sre-oncall has no role assignment granting Azure Kubernetes Service RBAC Reader or Writer at the payments namespace scope — the only cluster-level assignment is Azure Kubernetes Service Cluster User Role for the platform-admins group, and the namespace-scope RBAC Writer covers only the payments-deploy group. So the group's Forbidden is expected behavior, not a broken RoleBinding.",
+  "evidence": [
+    "az-aks-show.json: aadProfile.enableAzureRbac is true, so Entra users are authorized by Azure role assignments, not Kubernetes RBAC",
+    "az-role-assignment-list.json: no role assignment for grp-sre-oncall (00000000-0000-0000-0000-000000000003) at the cluster or payments namespace scope; only Cluster User Role for grp-platform-admins and namespace-scope RBAC Writer for grp-payments-deploy",
+    "kubectl-get-rolebinding.yaml: the sre-oncall-payments RoleBinding binds grp-sre-oncall to the view ClusterRole and looks correct, but it is ignored when Azure RBAC is enabled (red herring)",
+    "az-ad-group-member-check.json: the forbidden user's object id is a member of grp-sre-oncall, ruling out missing group membership",
+    "kubectl-error.txt: Forbidden on pods, deployments, and logs in payments with the user shown as object id 00000000-0000-0000-0000-000000000004"
+  ],
+  "fix": "Assign the Azure Kubernetes Service RBAC Reader role (or Azure Kubernetes Service RBAC Writer if the group needs write access) to grp-sre-oncall at the payments namespace scope, e.g. az role assignment create --assignee 00000000-0000-0000-0000-000000000003 --role 'Azure Kubernetes Service RBAC Reader' --scope <cluster-id>/namespaces/payments; the Kubernetes RoleBinding needs no change."
+}

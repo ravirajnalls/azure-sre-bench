@@ -1,0 +1,5 @@
+{
+  "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#directoryObjects/$entity",
+  "@odata.type": "#microsoft.graph.user",
+  "value": true
+}
