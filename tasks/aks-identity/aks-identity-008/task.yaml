@@ -1,0 +1,14 @@
+id: aks-identity-008
+title: Key Vault access from orders-api fails after namespace move
+category: aks-identity
+difficulty: easy
+tags:
+  - aks-identity
+  - workload-identity
+  - key-vault
+  - federated-credential
+symptom: >-
+  orders-api was moved from namespace default to orders last night. Pods start and
+  pass their probes, but every request that needs a secret from Key Vault
+  kv-orders-prod fails and customers get HTTP 500. Key Vault and the container
+  image are unchanged.
