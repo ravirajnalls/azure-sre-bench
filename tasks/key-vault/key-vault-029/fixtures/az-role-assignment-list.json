@@ -1,0 +1,17 @@
+[
+  {
+    "canDelegate": false,
+    "condition": null,
+    "conditionVersion": null,
+    "createdOn": "2026-01-19T14:03:55.2291041Z",
+    "id": "/subscriptions/00000000-0000-0000-0000-000000000002/resourceGroups/rg-reports-prod/providers/Microsoft.KeyVault/vaults/kv-reports/providers/Microsoft.Authorization/roleAssignments/00000000-0000-0000-0000-000000000007",
+    "name": "00000000-0000-0000-0000-000000000007",
+    "principalId": "00000000-0000-0000-0000-000000000005",
+    "principalType": "User",
+    "roleDefinitionId": "/subscriptions/00000000-0000-0000-0000-000000000002/providers/Microsoft.Authorization/roleDefinitions/00000000-0000-0000-0000-000000000008",
+    "roleDefinitionName": "Key Vault Administrator",
+    "scope": "/subscriptions/00000000-0000-0000-0000-000000000002/resourceGroups/rg-reports-prod/providers/Microsoft.KeyVault/vaults/kv-reports",
+    "type": "Microsoft.Authorization/roleAssignments",
+    "updatedOn": "2026-01-19T14:03:55.2291041Z"
+  }
+]
