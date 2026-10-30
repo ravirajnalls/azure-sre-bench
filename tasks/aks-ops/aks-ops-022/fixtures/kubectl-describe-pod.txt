@@ -1,0 +1,44 @@
+Name:             ledger-db-0
+Namespace:        finance
+Priority:         2000001000
+Priority Class:   system-cluster-critical
+Service Account:  ledger-db
+Node:             <none>
+Labels:           apps.kubernetes.io/pod-index=0
+                  controller-revision-hash=ledger-db-7d9f8b6c4
+                  statefulset.kubernetes.io/pod-name=ledger-db-0
+Annotations:      <none>
+Status:           Pending
+IP:
+IPs:              <none>
+Controlled By:    StatefulSet/ledger-db
+Containers:
+  postgres:
+    Image:      postgres:16.4
+    Port:       5432/TCP
+    Host Port:  0/TCP
+    Environment:
+      POSTGRES_DB:        ledger
+      POSTGRES_PASSWORD:  ***omitted***
+    Mounts:
+      /var/lib/postgresql/data from data (rw)
+Conditions:
+  Type        Status
+  PodReady    False
+  Scheduled   False
+Volumes:
+  data:
+    Type:       PersistentVolumeClaim (a reference to a PersistentVolumeClaim in the same namespace)
+    ClaimName:  data-ledger-db-0
+    ReadOnly:   false
+QoS Class:      Burstable
+Events:
+  Type     Reason            Age    From                     Message
+  ----     ------            ----   ----                     -------
+  Normal   SuccessfulCreate  3m2s   statefulset-controller   create Claim data-ledger-db-0 in Pod ledger-db-0 success
+  Normal   SuccessfulCreate  3m2s   statefulset-controller   create Pod ledger-db-0 in StatefulSet ledger-db success
+  Warning  FailedScheduling  3m1s   default-scheduler        0/4 nodes are available: 4 node(s) had volume node affinity conflict.
+  Warning  FailedScheduling  2m57s  default-scheduler        0/4 nodes are available: 4 node(s) had volume node affinity conflict.
+  Warning  FailedScheduling  2m51s  default-scheduler        0/4 nodes are available: 4 node(s) had volume node affinity conflict.
+  Warning  FailedScheduling  2m43s  default-scheduler        0/4 nodes are available: 4 node(s) had volume node affinity conflict.
+  Warning  FailedScheduling  2m27s  default-scheduler        0/4 nodes are available: 4 node(s) had volume node affinity conflict.
