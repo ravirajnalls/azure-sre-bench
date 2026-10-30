@@ -89,6 +89,17 @@ def build_parser() -> argparse.ArgumentParser:
                 help="restrict the run to one split (default: all)",
             )
             run_parser.add_argument(
+                "--repeat",
+                type=int,
+                default=1,
+                metavar="N",
+                help=(
+                    "run each task N times for run-to-run variance "
+                    "(issue #162): records land in results/<name>/<task>.<k>.json "
+                    "(default: 1, one <task>.json per task)"
+                ),
+            )
+            run_parser.add_argument(
                 "--release",
                 metavar="VERSION",
                 help=(

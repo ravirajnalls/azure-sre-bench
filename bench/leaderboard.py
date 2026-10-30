@@ -198,6 +198,28 @@ def aggregate_run(
         if current
         else None
     )
+    # Repeated-run metrics (issue #162): current records grouped per task —
+    # pass@k is the fraction of tasks with at least one passing run, flaky
+    # counts tasks passed in some but not all runs. Runs without repeats stay
+    # None: an em dash, not a zero — single-run results carry no variance data.
+    by_task: dict[str, list[dict]] = {}
+    for record in current:
+        by_task.setdefault(str(record.get("task") or ""), []).append(record)
+    repeat_counts = [len(runs) for runs in by_task.values()]
+    max_repeat = max(repeat_counts) if repeat_counts else 1
+    if max_repeat > 1 and by_task:
+        pass_at_n = (
+            sum(1 for runs in by_task.values() if any(r.get("passed") is True for r in runs))
+            / len(by_task)
+        )
+        flaky = sum(
+            1
+            for runs in by_task.values()
+            if 0 < sum(r.get("passed") is True for r in runs) < len(runs)
+        )
+    else:
+        pass_at_n = None
+        flaky = None
     return {
         "name": name,
         "passed": passed,
@@ -206,6 +228,9 @@ def aggregate_run(
         "pass_rate": pass_rate,
         "ci_low": ci[0] if ci else None,
         "ci_high": ci[1] if ci else None,
+        "pass_at_n": pass_at_n,
+        "flaky": flaky,
+        "repeats": max_repeat if max_repeat > 1 else None,
         "tied": False,
         "mode": "manual" if any(r.get("mode") == "manual" for r in records) else "runner",
         "safety_violations": safety,
@@ -291,12 +316,26 @@ def _fmt_ci(row: dict) -> str:
     return f"{rate * 100:.1f}% ({low * 100:.1f}–{high * 100:.1f})"
 
 
+def _fmt_pass_at_k(row: dict) -> str:
+    """`0.85 (k=3)` for repeated runs; an em dash without repeats (#162)."""
+    value, repeats = row.get("pass_at_n"), row.get("repeats")
+    if value is None or repeats is None:
+        return "—"
+    return f"{value:.2f} (k={repeats})"
+
+
+def _fmt_flaky(row: dict) -> str:
+    """Flaky-task count for repeated runs; an em dash without repeats."""
+    value = row.get("flaky")
+    return "—" if value is None else str(value)
+
+
 def markdown_table(rows: list[dict]) -> str:
     """Render ranked rows as a markdown table (headers only when empty)."""
     lines = [
         "| Rank | Agent | Mode | Status | Passed | Tasks | Mean score | Pass rate (95% CI)"
-        " | Safety | Median time | Median cmds | Cost |",
-        "| ---: | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
+        " | Pass@k | Flaky | Safety | Median time | Median cmds | Cost |",
+        "| ---: | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
     ]
     for rank, row in enumerate(rows, start=1):
         tied = "≈" if row.get("tied") else ""
@@ -306,6 +345,8 @@ def markdown_table(rows: list[dict]) -> str:
             f" | {row['passed']}/{row['total']}"
             f" | {row['total']} | {row['mean_score']:.3f}"
             f" | {_fmt_ci(row)}"
+            f" | {_fmt_pass_at_k(row)}"
+            f" | {_fmt_flaky(row)}"
             f" | {row.get('safety_violations', 0)}"
             f" | {_fmt_elapsed(row.get('median_elapsed_s'))}"
             f" | {_fmt_commands(row.get('median_commands'))}"

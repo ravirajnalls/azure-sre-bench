@@ -74,6 +74,8 @@ CELL_FAIL = "fail"
 CELL_NONE = "none"
 CELL_STALE = "stale"
 CELL_LEGACY = "legacy"
+# Repeated runs (issue #162): a task whose runs split both ways.
+CELL_FLAKY = "flaky"
 
 # Heatmap labels per cell state (&mdash; renders as an em dash).
 _CELL_LABELS = {
@@ -82,6 +84,7 @@ _CELL_LABELS = {
     CELL_NONE: "&mdash;",
     CELL_STALE: "STALE",
     CELL_LEGACY: "LEGACY",
+    CELL_FLAKY: "FLAKY",
 }
 
 _STYLE = """\
@@ -104,10 +107,12 @@ th { white-space: nowrap; background: rgba(127, 127, 127, 0.08); }
 td.num, th.num { text-align: right; }
 td.heat { text-align: center; font-weight: 600; font-size: 0.85rem; }
 .pass { color: #1a7f37; } .fail { color: #cf222e; }
+.flaky { color: #9a6700; font-style: italic; }
 @media (prefers-color-scheme: dark) {
   th, td { border-color: #30363d; }
   .pass { color: #3fb950; } .fail { color: #f85149; }
   .stale { color: #d29922; }
+  .flaky { color: #d29922; }
 }
 .none { color: #8c959f; font-weight: 400; }
 .stale { color: #9a6700; }
@@ -169,6 +174,25 @@ code { font-family: ui-monospace, monospace; }
 """
 
 
+# Repeated runs (issue #162) write `<task>.<k>.json`; task ids never end in
+# `. <digits>` (they are `<category>-<nnn>`), so a trailing dot-digits suffix
+# always means a repeat index, never part of a task id.
+_REPEAT_SUFFIX = re.compile(r"^(?P<base>.+)\.(?P<k>\d+)$")
+
+
+def parse_result_stem(stem: str) -> tuple[str, int | None]:
+    """Split a result filename stem into `(task id, repeat index)`.
+
+    `monitoring-001` -> `(monitoring-001, None)`;
+    `monitoring-001.2` -> `(monitoring-001, 2)`. Plain single-run names are
+    untouched, so pre-#162 result folders load exactly as before.
+    """
+    match = _REPEAT_SUFFIX.match(stem)
+    if match:
+        return match.group("base"), int(match.group("k"))
+    return stem, None
+
+
 def load_results(results_root: Path) -> dict[str, list[dict]]:
     """Read every run folder under `results_root`.
 
@@ -193,9 +217,19 @@ def load_results(results_root: Path) -> dict[str, list[dict]]:
             except (OSError, ValueError):
                 continue
             if isinstance(record, dict):
-                record.setdefault("task", path.stem)
+                task_id, repeat_index = parse_result_stem(path.stem)
+                record.setdefault("task", task_id)
+                if repeat_index is not None:
+                    # The filename defines the repeat index (issue #162); a
+                    # record stamp, if any, cannot disagree with its file.
+                    record["repeat"] = repeat_index
                 records.append(record)
-        records.sort(key=lambda record: str(record.get("task", "")))
+        records.sort(
+            key=lambda record: (
+                str(record.get("task", "")),
+                record.get("repeat") if record.get("repeat") is not None else -1,
+            )
+        )
         runs[run_dir.name] = records
     return runs
 
@@ -287,8 +321,10 @@ def aggregate(
     weakest state present (`stale`, then `legacy`).
     """
     agents = sorted(results)
-    # (agent, task) -> graded outcome; last record wins if a task appears twice.
-    outcomes: dict[tuple[str, str], dict] = {}
+    # (agent, task) -> one graded outcome per run of that task. Single-run
+    # results have exactly one outcome per (agent, task); repeats (issue #162)
+    # append in run order (records arrive sorted by task, then repeat index).
+    outcomes: dict[tuple[str, str], list[dict]] = {}
     for agent, records in results.items():
         for record in records:
             task = str(record.get("task") or "")
@@ -298,7 +334,8 @@ def aggregate(
                 score = float(record.get("score", 0.0))
             except (TypeError, ValueError):
                 score = 0.0
-            outcomes[(agent, task)] = {
+            outcomes.setdefault((agent, task), []).append({
+                "task": task,
                 "passed": bool(record.get("passed")),
                 "score": score,
                 "status": classify_record(record, rubric_hashes),
@@ -307,23 +344,25 @@ def aggregate(
                 "elapsed_s": record.get("elapsed_s"),
                 "efficiency": record.get("efficiency"),
                 "usage": record.get("usage"),
-            }
+            })
     tasks = sorted({task for _, task in outcomes})
 
     def row(
         agent: str, category: str | None, difficulty: str | None = None
     ) -> dict:
-        picked = [
+        counted = [
             outcome
-            for (run, task), outcome in outcomes.items()
+            for (run, task), group in outcomes.items()
             if run == agent
             and (category is None or task_category(task) == category)
             and (
                 difficulty is None
                 or (difficulties or {}).get(task, "unknown") == difficulty
             )
+            for outcome in group
+            if outcome["status"] == STATUS_CURRENT
+
         ]
-        counted = [outcome for outcome in picked if outcome["status"] == STATUS_CURRENT]
         passed = sum(1 for outcome in counted if outcome["passed"])
         mean = (
             round(sum(outcome["score"] for outcome in counted) / len(counted), 3)
@@ -337,6 +376,28 @@ def aggregate(
             if counted
             else None
         )
+        # Repeated-run metrics (issue #162): current outcomes grouped per task.
+        # Pass@k is the fraction of tasks with at least one passing run, flaky
+        # counts tasks passed in some but not all of their runs. Runs without
+        # repeats carry None — no flakiness information, an em dash, not a 0.
+        by_task: dict[str, list[dict]] = {}
+        for outcome in counted:
+            by_task.setdefault(outcome["task"], []).append(outcome)
+        repeat_counts = [len(runs) for runs in by_task.values()]
+        max_repeat = max(repeat_counts) if repeat_counts else 1
+        if max_repeat > 1 and by_task:
+            pass_at_n = (
+                sum(1 for runs in by_task.values() if any(o["passed"] for o in runs))
+                / len(by_task)
+            )
+            flaky = sum(
+                1
+                for runs in by_task.values()
+                if 0 < sum(o["passed"] for o in runs) < len(runs)
+            )
+        else:
+            pass_at_n = None
+            flaky = None
         # Efficiency/cost aggregates (issue #112), over current-version
         # outcomes only; a metric no record reported renders an em dash.
         elapsed = [
@@ -364,6 +425,9 @@ def aggregate(
             "pass_rate": passed / len(counted) if counted else None,
             "ci_low": ci[0] if ci else None,
             "ci_high": ci[1] if ci else None,
+            "pass_at_n": pass_at_n,
+            "flaky": flaky,
+            "repeats": max_repeat if max_repeat > 1 else None,
             "median_elapsed_s": median(elapsed),
             "median_commands": median(commands),
             "total_cost_usd": sum(costs) if costs else None,
@@ -372,8 +436,9 @@ def aggregate(
     def agent_status(agent: str) -> str:
         statuses = [
             outcome["status"]
-            for (run, _), outcome in outcomes.items()
+            for (run, _), group in outcomes.items()
             if run == agent
+            for outcome in group
         ]
         if not statuses:
             # No graded outcomes at all: no current-version result to rank,
@@ -816,15 +881,26 @@ def render_learn_html(explainers: dict[str, dict]) -> str:
     return "\n".join(parts)
 
 
-def _cell(outcome: dict | None) -> str:
-    if outcome is None:
+def _cell(group: list[dict] | None) -> str:
+    """Heatmap cell for one (agent, task) outcome group.
+
+    Single-record groups behave exactly as before #162. Repeated runs decide
+    the cell from their current-version outcomes: all pass, all fail, or —
+    split both ways — FLAKY. A group with no current outcome keeps the stale/
+    legacy marker so the heatmap never claims a PASS/FAIL it cannot back.
+    """
+    if not group:
         return CELL_NONE
-    status = outcome.get("status", STATUS_CURRENT)
-    if status == STATUS_STALE:
-        return CELL_STALE
-    if status == STATUS_LEGACY:
-        return CELL_LEGACY
-    return CELL_PASS if outcome["passed"] else CELL_FAIL
+    statuses = [outcome.get("status", STATUS_CURRENT) for outcome in group]
+    current = [outcome for outcome in group if outcome.get("status", STATUS_CURRENT) == STATUS_CURRENT]
+    if not current:
+        return CELL_STALE if STATUS_STALE in statuses else CELL_LEGACY
+    passes = sum(1 for outcome in current if outcome["passed"])
+    if passes == 0:
+        return CELL_FAIL
+    if passes == len(current):
+        return CELL_PASS
+    return CELL_FLAKY
 
 
 def _num_cell(value: float | None, formatted: str | None = None) -> str:
@@ -864,6 +940,19 @@ def _summary_row(entry: dict) -> str:
         if rate is not None and low is not None and high is not None
         else "&mdash;"
     )
+    # Repeated runs (issue #162): pass@k with the k it was measured at, and
+    # the flaky-task count. Absent without repeats — an em dash, not a zero.
+    pass_at_n, repeats, flaky = (
+        entry.get("pass_at_n"),
+        entry.get("repeats"),
+        entry.get("flaky"),
+    )
+    pass_at_k_text = (
+        f"{pass_at_n:.2f} (k={repeats})"
+        if pass_at_n is not None and repeats is not None
+        else "&mdash;"
+    )
+    flaky_text = str(flaky) if flaky is not None else "&mdash;"
     return (
         f'<tr data-agent="{row_agent}" data-open-source="{oss}" data-mode="{mode}">'
         f"<td>{name}{sub}{contact_html}</td>"
@@ -872,6 +961,8 @@ def _summary_row(entry: dict) -> str:
         f'<td class="num">{entry["passed"]}/{entry["total"]}</td>'
         f'<td class="num">{entry["mean_score"]:.3f}</td>'
         f'<td class="num">{ci_text}</td>'
+        f'<td class="num">{pass_at_k_text}</td>'
+        f'<td class="num">{flaky_text}</td>'
         + _num_cell(elapsed, f"{elapsed:.1f}s" if elapsed is not None else None)
         + _num_cell(commands, format(commands, "g") if commands is not None else None)
         + _num_cell(cost, f"${cost:.4f}" if cost is not None else None)
@@ -983,6 +1074,7 @@ def render_html(agg: dict) -> str:
         parts.append(
             "<tr><th>Agent</th><th>Status</th><th>Mode</th><th class=num>Passed</th>"
             "<th class=num>Mean score</th><th class=num>Pass rate (95% CI)</th>"
+            "<th class=num>Pass@k</th><th class=num>Flaky</th>"
             "<th class=num>Median time</th>"
             "<th class=num>Median cmds</th><th class=num>Cost</th></tr>"
         )

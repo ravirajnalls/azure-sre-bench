@@ -27,6 +27,7 @@ from bench.site import (
     load_results,
     pareto_frontier,
     pass_rate,
+    parse_result_stem,
     render_category_heatmap,
     render_cost_chart,
     render_difficulty_chart,
@@ -132,6 +133,9 @@ def test_aggregate_one_run(tmp_path: Path):
             "pass_rate": 0.0,
             "ci_low": 0.0,
             "ci_high": 0.0,
+            "pass_at_n": None,
+            "flaky": None,
+            "repeats": None,
             "median_elapsed_s": None,
             "median_commands": None,
             "total_cost_usd": None,
@@ -175,6 +179,9 @@ def test_aggregate_many_runs_and_missing_cells(tmp_path: Path):
         "pass_rate": 0.5,
         "ci_low": 0.0,
         "ci_high": 1.0,
+        "pass_at_n": None,
+        "flaky": None,
+        "repeats": None,
         "median_elapsed_s": None,
         "median_commands": None,
         "total_cost_usd": None,
@@ -300,6 +307,9 @@ def test_aggregate_marks_stale_and_legacy_cells_and_counts_current_only():
             "pass_rate": 1.0,
             "ci_low": 1.0,
             "ci_high": 1.0,
+            "pass_at_n": None,
+            "flaky": None,
+            "repeats": None,
             "median_elapsed_s": None,
             "median_commands": None,
             "total_cost_usd": None,
@@ -679,6 +689,95 @@ def test_site_cli_writes_learn_page(tmp_path, capsys):
     assert "explainer pages" in capsys.readouterr().out
 
 
+
+# --- repeated runs (issue #162) ----------------------------------------------
+
+
+def test_parse_result_stem_splits_repeat_suffix():
+    assert parse_result_stem("monitoring-001") == ("monitoring-001", None)
+    assert parse_result_stem("monitoring-001.2") == ("monitoring-001", 2)
+    # Non-numeric suffixes are not repeats — a hand-named file keeps its stem.
+    assert parse_result_stem("monitoring-001.final") == ("monitoring-001.final", None)
+
+
+def test_load_results_groups_repeat_files(tmp_path):
+    run_dir = tmp_path / "rep"
+    run_dir.mkdir()
+    files = [
+        ("cost-001.json", 1.0, True),
+        ("cost-001.0.json", 1.0, True),
+        ("cost-001.1.json", 0.0, False),
+        ("cost-001.2.json", 1.0, True),
+    ]
+    for stem, score, passed in files:
+        (run_dir / stem).write_text(
+            json.dumps({"task": "cost-001", "score": score, "passed": passed}),
+            encoding="utf-8",
+        )
+    records = load_results(tmp_path)["rep"]
+    # All four files belong to one task; repeats keep file order after the
+    # pre-existing single-run record.
+    assert [(r["task"], r.get("repeat")) for r in records] == [
+        ("cost-001", None),
+        ("cost-001", 0),
+        ("cost-001", 1),
+        ("cost-001", 2),
+    ]
+
+
+def repeat_record(task: str, k: int, passed: bool, score: float = 1.0) -> dict:
+    # Built on the shared `record` helper so the version fields classify as
+    # current — the same contract a real `bench run --repeat` record has.
+    return {**record(task, score, passed), "repeat": k}
+
+
+def test_aggregate_repeat_metrics_and_flaky_heatmap_cell():
+    agg = aggregate(
+        {
+            "agent": [
+                repeat_record("steady-001", 0, True),
+                repeat_record("steady-001", 1, True),
+                repeat_record("steady-001", 2, True),
+                repeat_record("mixed-001", 0, True),
+                repeat_record("mixed-001", 1, False, 0.0),
+                repeat_record("mixed-001", 2, True),
+                repeat_record("always-fail-001", 0, False, 0.0),
+                repeat_record("always-fail-001", 1, False, 0.0),
+            ]
+        }
+    )
+    row = agg["overall"][0]
+    # Pooled per-run counts: 5 passes across 8 runs (steady 3, mixed 2, fail 0).
+    assert row["passed"] == 5 and row["total"] == 8
+    assert row["pass_rate"] == pytest.approx(0.625)
+    # Pass@k: 2 of 3 tasks solved at least once, measured at k=3.
+    assert row["pass_at_n"] == pytest.approx(2 / 3)
+    assert row["repeats"] == 3
+    # One flaky task: mixed-001 passed in some but not all runs.
+    assert row["flaky"] == 1
+    heatmap = {r["task"]: r["cells"] for r in agg["heatmap"]}
+    assert heatmap["steady-001"] == ["pass"]
+    assert heatmap["mixed-001"] == ["flaky"]
+    assert heatmap["always-fail-001"] == ["fail"]
+
+
+def test_render_overall_shows_pass_at_k_flaky_and_heatmap_flaky_cell():
+    agg = aggregate(
+        {
+            "agent": [
+                repeat_record("mixed-001", 0, True),
+                repeat_record("mixed-001", 1, False, 0.0),
+            ]
+        }
+    )
+    page = render_html(agg)
+    assert "Pass@k" in page
+    # One task, solved in at least one of its two runs → pass@2 = 1.00.
+    assert "1.00 (k=2)" in page
+    # The flaky heat cell keeps its agent filter attribute.
+    assert 'class="heat flaky" data-agent="agent"' in page
+    assert "FLAKY" in page
+
 # --- cost vs accuracy chart (issue #164) ---------------------------------------
 
 
@@ -839,6 +938,9 @@ def test_aggregate_by_difficulty_groups_and_orders(tmp_path: Path):
             "pass_rate": 0.0,
             "ci_low": 0.0,
             "ci_high": 0.0,
+            "pass_at_n": None,
+            "flaky": None,
+            "repeats": None,
             "median_elapsed_s": None,
             "median_commands": None,
             "total_cost_usd": None,

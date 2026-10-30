@@ -227,9 +227,9 @@ def test_markdown_table_has_status_column():
     table = markdown_table(rows)
     assert table.splitlines()[0] == (
         "| Rank | Agent | Mode | Status | Passed | Tasks | Mean score | Pass rate (95% CI)"
-        " | Safety | Median time | Median cmds | Cost |"
+        " | Pass@k | Flaky | Safety | Median time | Median cmds | Cost |"
     )
-    assert "| 1 | naive | runner | current | 1/1 | 1 | 1.000 | 100.0% (100.0–100.0) | 0 | — | — | — |" in table
+    assert "| 1 | naive | runner | current | 1/1 | 1 | 1.000 | 100.0% (100.0–100.0) | — | — | 0 | — | — | — |" in table
 
 
 def test_leaderboard_markdown_renders_mixed_version_results(tmp_path):
@@ -280,15 +280,15 @@ def test_leaderboard_markdown_renders_mixed_version_results(tmp_path):
     table = leaderboard_markdown(results, tasks_root)
     lines = table.splitlines()
     assert (
-        "| 1 | new-agent | runner | current | 1/1 | 1 | 1.000 | 100.0% (100.0–100.0) | 0 | — | — | — |"
+        "| 1 | new-agent | runner | current | 1/1 | 1 | 1.000 | 100.0% (100.0–100.0) | — | — | 0 | — | — | — |"
         in lines
     )
     assert (
-        "| 2 | mid-agent | runner | stale | 0/0 | 0 | 0.000 | — | 0 | — | — | — |"
+        "| 2 | mid-agent | runner | stale | 0/0 | 0 | 0.000 | — | — | — | 0 | — | — | — |"
         in lines
     )
     assert (
-        "| 3 | old-agent | runner | legacy | 0/0 | 0 | 0.000 | — | 0 | — | — | — |"
+        "| 3 | old-agent | runner | legacy | 0/0 | 0 | 0.000 | — | — | — | 0 | — | — | — |"
         in lines
     )
 
@@ -352,8 +352,8 @@ def test_markdown_table_renders_efficiency_values():
         aggregate_run("sparse", [versioned("t1")]),
     ]
     table = markdown_table(rows)
-    assert "| 1 | rich | runner | current | 2/2 | 2 | 1.000 | 100.0% (100.0–100.0) | 0 | 1.5s | 3.5 | $0.0123 |" in table
-    assert "| 2 | sparse | runner | current | 1/1 | 1 | 1.000 | 100.0% (100.0–100.0) | 0 | — | — | — |" in table
+    assert "| 1 | rich | runner | current | 2/2 | 2 | 1.000 | 100.0% (100.0–100.0) | — | — | 0 | 1.5s | 3.5 | $0.0123 |" in table
+    assert "| 2 | sparse | runner | current | 1/1 | 1 | 1.000 | 100.0% (100.0–100.0) | — | — | 0 | — | — | — |" in table
 
 
 # --- pass-rate bootstrap CI (issue #161) -------------------------------------
@@ -510,3 +510,52 @@ def test_cli_leaderboard_by_category(tmp_path, capsys):
     out = capsys.readouterr().out
     assert "| Category | naive |" in out
     assert "| monitoring | 1/1 (1.000) |" in out
+
+# --- repeated runs (issue #162) ----------------------------------------------
+
+
+def test_aggregate_run_repeat_metrics():
+    runs = [
+        # steady: 3/3, mixed: 2/3 (flaky), always-fail: 0/2
+        versioned("t1"),
+        versioned("t1"),
+        versioned("t1"),
+        versioned("t2"),
+        versioned("t2", passed=False, score=0.0),
+        versioned("t2"),
+        versioned("t3", passed=False, score=0.0),
+        versioned("t3", passed=False, score=0.0),
+    ]
+    row = aggregate_run("agent", runs)
+    # Pooled per-run counts rank unchanged; pass@k is over tasks.
+    assert row["passed"] == 5 and row["total"] == 8
+    assert row["repeats"] == 3
+    assert row["pass_at_n"] == pytest.approx(2 / 3)
+    assert row["flaky"] == 1
+
+
+def test_aggregate_run_without_repeats_carries_no_variance_fields():
+    row = aggregate_run("agent", [versioned("t1"), versioned("t2")])
+    assert row["pass_at_n"] is None
+    assert row["flaky"] is None
+    assert row["repeats"] is None
+
+
+def test_markdown_table_renders_pass_at_k_and_flaky_columns():
+    repeated = aggregate_run(
+        "agent",
+        [
+            versioned("t1"),
+            versioned("t1"),
+            versioned("t2", passed=False, score=0.0),
+            versioned("t2"),
+        ],
+    )
+    single = aggregate_run("solo", [versioned("t1")])
+    table = markdown_table([repeated, single])
+    assert "| Pass@k | Flaky |" in table.splitlines()[0]
+    # Both tasks solved at least once across k=2; one flaky task.
+    assert "| 1 | agent | runner | current | 3/4 | 4 | 0.750" in table
+    assert "1.00 (k=2) | 1 |" in table
+    # Single-run rows carry em dashes, not zeros — no variance data exists.
+    assert "| 2 | solo | runner | current | 1/1 | 1 | 1.000 | 100.0% (100.0–100.0) | — | — |" in table
