@@ -1,9 +1,9 @@
 """Command-line interface for Azure SRE Bench.
 
 Issue #1 scaffolded the subcommand surface; `validate` and `list` are live as of
-issue #2, `grade` as of issue #3, `run` as of issue #4, `leaderboard` as of
-issue #41, and `catalog` as of issue #42. The remaining subcommand lands with
-the reporting layer (issue #40).
+issue #2, `grade` as of issue #3, `run` as of issue #4, `site` as of issue #40,
+`leaderboard` as of issue #41, and `catalog` as of issue #42: the full
+subcommand surface is implemented.
 """
 
 from __future__ import annotations
@@ -19,7 +19,7 @@ from bench.tasks import load_tasks
 
 SUBCOMMANDS = ("validate", "list", "grade", "run", "site", "leaderboard", "catalog")
 
-IMPLEMENTED = ("validate", "list", "grade", "run", "leaderboard", "catalog")
+IMPLEMENTED = ("validate", "list", "grade", "run", "site", "leaderboard", "catalog")
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -78,6 +78,20 @@ def build_parser() -> argparse.ArgumentParser:
                 "--results-root",
                 default="results",
                 help="results root directory (default: ./results)",
+            )
+        elif name == "site":
+            site_parser = sub.add_parser(
+                name, help="build the static leaderboard site from results/"
+            )
+            site_parser.add_argument(
+                "--results-root",
+                default="results",
+                help="results directory of run folders (default: results)",
+            )
+            site_parser.add_argument(
+                "--out",
+                default="site/index.html",
+                help="output HTML path (default: site/index.html)",
             )
         else:
             subparser = sub.add_parser(name)
@@ -167,6 +181,10 @@ def main(argv: list[str] | None = None) -> int:
             from bench.run import cmd_run  # deferred: keeps --help cheap
 
             return cmd_run(args)
+        if args.command == "site":
+            from bench.site import cmd_site  # deferred: keeps --help cheap
+
+            return cmd_site(args)
         root = Path(getattr(args, "root", "tasks"))
         if args.command == "validate":
             return cmd_validate(root)
@@ -179,7 +197,7 @@ def main(argv: list[str] | None = None) -> int:
         return cmd_list(root)
     print(
         f"'bench {args.command}' is not implemented yet; "
-        "see issues #40-#41 for the planned subcommands.",
+        "all subcommands are implemented; this should be unreachable.",
         file=sys.stderr,
     )
     return 2
