@@ -65,6 +65,7 @@
 | aks-ops-056 | New billing-ui pods never start after this morning's release while old replicas serve | medium | aks-ops, defender-for-containers, admission-policy, supply-chain, kubernetes |
 | aks-ops-069 | Checkout API error rate jumped minutes after a deploy | medium | aks, kubernetes, change-attribution, connection-pool, incident-timeline |
 | aks-ops-073 | Platform PR that will break tonight's cluster upgrade | hard | aks-ops, aks, node-pool-upgrade, ip-exhaustion, bicep, max-surge |
+| aks-ops-075 | Reconstruct the night the upgrade stalled | medium | aks-ops, aks, timeline, node-pool-upgrade, poddisruptionbudget, clock-skew |
 
 ## aks-workloads
 
