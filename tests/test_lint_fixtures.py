@@ -361,6 +361,20 @@ def test_logs_midnight_bins_are_excluded_from_the_window(tmp_path):
     assert findings_for(root) == []
 
 
+def test_logs_klog_headers_without_a_year_do_not_manufacture_a_window_span(tmp_path):
+    # Klog headers carry no year; their synthetic placeholder year must not be
+    # compared against ISO dates in other files (issue #159: aks-ops-050).
+    files = {
+        "konnectivity-agent.log": (
+            "I1028 02:14:09.113742       1 client.go:761] \"Connecting to server\"\n"
+            "E1028 02:16:40.160901       1 service.go:120] \"Lost connection\"\n"
+        ),
+        "azfw-log.csv": "TimeGenerated,Action\n2026-10-28T01:32:09Z,Deny\n",
+    }
+    root = log_task(tmp_path, files=files)
+    assert findings_for(root) == []
+
+
 def test_logs_describe_events_with_fake_reason_are_flagged(tmp_path):
     events = (
         "Events:\n"

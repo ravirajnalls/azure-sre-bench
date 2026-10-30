@@ -1,4 +1,5 @@
 {
+  "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-prod/providers/Microsoft.ContainerService/managedClusters/prod-aks-eus1",
   "aadProfile": null,
   "agentPoolProfiles": [
     {
