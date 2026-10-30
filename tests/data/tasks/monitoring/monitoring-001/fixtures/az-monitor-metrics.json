@@ -1,0 +1,14 @@
+{
+  "alerts": [
+    {
+      "name": "IngressLatencyP95",
+      "description": "Ingress p95 latency above 5s for 10 minutes",
+      "resourceId": "/subscriptions/00000000-0000-0000-0000-00000000000a/resourceGroups/rg-prod/providers/Microsoft.Network/applicationGateways/appgw-prod",
+      "metric": "TimeInterval",
+      "value": 6.4,
+      "threshold": 5.0,
+      "unit": "Seconds",
+      "timestamp": "2026-10-30T08:14:00Z"
+    }
+  ]
+}

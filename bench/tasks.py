@@ -1,0 +1,230 @@
+"""Task discovery, loading, and validation (issue #2).
+
+A task is a directory `tasks/<category>/<task-id>/` containing `task.yaml`, a
+`fixtures/` folder (2-10 files), and the hidden `expected.json` (rubric) and
+`solution.json` (reference answer). `inspect_task` collects every violation for
+one task so a single run reports all problems, and `load_tasks` additionally
+detects duplicate ids across the repo.
+"""
+
+from __future__ import annotations
+
+import json
+import re
+from dataclasses import dataclass, field
+from pathlib import Path
+
+import yaml
+
+REQUIRED_KEYS = ("id", "title", "category", "difficulty", "tags", "symptom")
+
+CATEGORIES = frozenset(
+    {
+        "aks-networking",
+        "aks-identity",
+        "aks-workloads",
+        "aks-ops",
+        "networking",
+        "identity",
+        "app-service",
+        "key-vault",
+        "ado-pipelines",
+        "cost",
+        "monitoring",
+    }
+)
+
+DIFFICULTIES = frozenset({"easy", "medium", "hard"})
+
+MIN_FIXTURES = 2
+MAX_FIXTURES = 10
+
+# Any GUID-shaped token in a fixture must be a placeholder of the form
+# 00000000-0000-0000-0000-00000000000X (issue #2; AGENTS.md "Fixtures").
+GUID_RE = re.compile(
+    r"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"
+)
+PLACEHOLDER_GUID_RE = re.compile(r"0{8}-0{4}-0{4}-0{4}-0{11}[0-9a-fA-F]")
+
+
+@dataclass
+class TaskResult:
+    """Outcome of inspecting one task directory."""
+
+    path: Path
+    config: dict | None = None
+    errors: list[str] = field(default_factory=list)
+
+    @property
+    def id(self) -> str:
+        if self.config and self.config.get("id"):
+            return str(self.config["id"])
+        return self.path.name
+
+
+def _validate_group(group: object) -> bool:
+    """A rubric group is a non-empty list of non-empty strings."""
+    return isinstance(group, list) and bool(group) and all(
+        isinstance(alternative, str) and alternative.strip() for alternative in group
+    )
+
+
+def _validate_config(config: dict, task_dir: Path) -> list[str]:
+    errors: list[str] = []
+    for key in REQUIRED_KEYS:
+        if config.get(key) is None:
+            errors.append(f"task.yaml: missing required key '{key}'")
+
+    title = config.get("title")
+    if title is not None and not (isinstance(title, str) and title.strip()):
+        errors.append("task.yaml: 'title' must be a non-empty string")
+
+    symptom = config.get("symptom")
+    if symptom is not None and not (isinstance(symptom, str) and symptom.strip()):
+        errors.append("task.yaml: 'symptom' must be a non-empty string")
+
+    category = config.get("category")
+    if category is not None and category not in CATEGORIES:
+        errors.append(f"task.yaml: unknown category '{category}'")
+
+    difficulty = config.get("difficulty")
+    if difficulty is not None and difficulty not in DIFFICULTIES:
+        errors.append(
+            f"task.yaml: difficulty must be one of {sorted(DIFFICULTIES)}, got '{difficulty}'"
+        )
+
+    tags = config.get("tags")
+    if tags is not None:
+        if not isinstance(tags, list) or not tags:
+            errors.append("task.yaml: 'tags' must be a non-empty list")
+        elif not all(isinstance(tag, str) and tag.strip() for tag in tags):
+            errors.append("task.yaml: 'tags' must contain only non-empty strings")
+
+    if isinstance(category, str):
+        if task_dir.parent.name != category:
+            errors.append(
+                f"task folder sits under '{task_dir.parent.name}' but category is '{category}'"
+            )
+
+    task_id = config.get("id")
+    if task_id is not None:
+        if not isinstance(task_id, str) or not task_id.strip():
+            errors.append("task.yaml: 'id' must be a non-empty string")
+        else:
+            if task_dir.name != task_id:
+                errors.append(
+                    f"id '{task_id}' does not match folder name '{task_dir.name}'"
+                )
+            if category in CATEGORIES and not re.fullmatch(
+                rf"{re.escape(category)}-\d{{3,}}", task_id
+            ):
+                errors.append(
+                    f"id '{task_id}' does not match '<category>-<nnn>' "
+                    f"for category '{category}'"
+                )
+    return errors
+
+
+def _validate_fixtures(task_dir: Path) -> list[str]:
+    errors: list[str] = []
+    fixtures_dir = task_dir / "fixtures"
+    if not fixtures_dir.is_dir():
+        return [f"missing fixtures/ directory (expected at {fixtures_dir})"]
+
+    files = sorted(path for path in fixtures_dir.iterdir() if path.is_file())
+    if not MIN_FIXTURES <= len(files) <= MAX_FIXTURES:
+        errors.append(
+            f"fixtures/ must contain {MIN_FIXTURES}-{MAX_FIXTURES} files, found {len(files)}"
+        )
+
+    for fixture in files:
+        try:
+            text = fixture.read_text(encoding="utf-8", errors="replace")
+        except OSError as exc:
+            errors.append(f"fixtures/{fixture.name}: unreadable ({exc})")
+            continue
+        for match in GUID_RE.finditer(text):
+            guid = match.group(0)
+            if not PLACEHOLDER_GUID_RE.fullmatch(guid):
+                errors.append(
+                    f"fixtures/{fixture.name}: non-placeholder GUID '{guid}' "
+                    "(use 00000000-0000-0000-0000-00000000000X)"
+                )
+    return errors
+
+
+def _validate_expected(task_dir: Path) -> list[str]:
+    path = task_dir / "expected.json"
+    if not path.is_file():
+        return ["missing expected.json"]
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        return [f"expected.json does not parse: {exc}"]
+    if not isinstance(data, dict):
+        return ["expected.json must contain a JSON object"]
+    errors = []
+    for rubric_field in ("root_cause", "fix"):
+        value = data.get(rubric_field)
+        if not (isinstance(value, list) and value and all(_validate_group(g) for g in value)):
+            errors.append(
+                f"expected.json: '{rubric_field}' must be a non-empty list "
+                "of non-empty string lists"
+            )
+    return errors
+
+
+def _validate_solution(task_dir: Path) -> list[str]:
+    path = task_dir / "solution.json"
+    if not path.is_file():
+        return ["missing solution.json"]
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        return [f"solution.json does not parse: {exc}"]
+    if not isinstance(data, dict):
+        return ["solution.json must contain a JSON object"]
+    return []
+
+
+def inspect_task(task_dir: Path) -> TaskResult:
+    """Validate one task directory, collecting every violation found."""
+    result = TaskResult(path=task_dir)
+
+    task_yaml = task_dir / "task.yaml"
+    if not task_yaml.is_file():
+        result.errors.append(f"missing task.yaml (expected at {task_yaml})")
+    else:
+        try:
+            config = yaml.safe_load(task_yaml.read_text(encoding="utf-8"))
+        except yaml.YAMLError as exc:
+            result.errors.append(f"task.yaml does not parse: {exc}")
+        else:
+            if isinstance(config, dict):
+                result.config = config
+                result.errors.extend(_validate_config(config, task_dir))
+            else:
+                result.errors.append("task.yaml must contain a mapping")
+
+    result.errors.extend(_validate_fixtures(task_dir))
+    result.errors.extend(_validate_expected(task_dir))
+    result.errors.extend(_validate_solution(task_dir))
+    # Repeated violations (e.g. the same GUID twice in one fixture) report once.
+    result.errors = list(dict.fromkeys(result.errors))
+    return result
+
+
+def load_tasks(root: Path) -> list[TaskResult]:
+    """Inspect every task directory under `root` (layout: <category>/<task-id>/)."""
+    task_dirs = sorted(path for path in root.glob("*/*") if path.is_dir())
+    results = [inspect_task(task_dir) for task_dir in task_dirs]
+
+    paths_by_id: dict[str, list[Path]] = {}
+    for result in results:
+        if result.config and result.config.get("id"):
+            paths_by_id.setdefault(result.id, []).append(result.path)
+    for result in results:
+        if result.config and result.config.get("id") and len(paths_by_id[result.id]) > 1:
+            others = ", ".join(str(p) for p in paths_by_id[result.id] if p != result.path)
+            result.errors.append(f"duplicate id '{result.id}' (also defined in {others})")
+    return results

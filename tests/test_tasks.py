@@ -1,0 +1,358 @@
+"""Unit tests for the task loader and validator (issue #2).
+
+Each test copies the valid fixture task from ``tests/data/`` into a tmp dir and
+breaks exactly one rule, so every validation rule is exercised in isolation.
+"""
+
+from __future__ import annotations
+
+import json
+import os
+import shutil
+import subprocess
+import sys
+from pathlib import Path
+
+import yaml
+
+from bench.tasks import inspect_task, load_tasks
+
+DATA_TASKS = Path(__file__).parent / "data" / "tasks"
+BASE_TASK = DATA_TASKS / "monitoring" / "monitoring-001"
+
+REAL_GUID = "12345678-1234-1234-1234-123456789012"
+PLACEHOLDER_GUID = "00000000-0000-0000-0000-00000000000a"
+
+
+def copy_task(tmp_path: Path, name: str = "monitoring-001") -> Path:
+    """Copy the valid fixture task into tmp_path under its category."""
+    dest = tmp_path / "tasks" / "monitoring" / name
+    shutil.copytree(BASE_TASK, dest)
+    return dest
+
+
+def patch_yaml(task_dir: Path, **changes: object) -> None:
+    """Rewrite task.yaml with the given field changes (None deletes the key)."""
+    yaml_path = task_dir / "task.yaml"
+    config = yaml.safe_load(yaml_path.read_text(encoding="utf-8"))
+    for key, value in changes.items():
+        if value is None:
+            config.pop(key, None)
+        else:
+            config[key] = value
+    yaml_path.write_text(yaml.safe_dump(config, sort_keys=False), encoding="utf-8")
+
+
+def load_one(tmp_path: Path):
+    results = load_tasks(tmp_path / "tasks")
+    assert len(results) == 1
+    return results[0]
+
+
+def test_valid_fixture_task_has_no_errors(tmp_path: Path):
+    result = inspect_task(copy_task(tmp_path))
+    assert result.errors == []
+    assert result.config is not None
+    assert result.config["id"] == "monitoring-001"
+
+
+# --- task.yaml required keys and field types -------------------------------
+
+
+def test_missing_required_key(tmp_path: Path):
+    task_dir = copy_task(tmp_path)
+    patch_yaml(task_dir, symptom=None)
+    result = load_one(tmp_path)
+    assert "task.yaml: missing required key 'symptom'" in result.errors
+
+
+def test_empty_title(tmp_path: Path):
+    task_dir = copy_task(tmp_path)
+    patch_yaml(task_dir, title="   ")
+    result = load_one(tmp_path)
+    assert "task.yaml: 'title' must be a non-empty string" in result.errors
+
+
+def test_empty_symptom(tmp_path: Path):
+    task_dir = copy_task(tmp_path)
+    patch_yaml(task_dir, symptom="")
+    result = load_one(tmp_path)
+    assert "task.yaml: 'symptom' must be a non-empty string" in result.errors
+
+
+def test_unparseable_task_yaml(tmp_path: Path):
+    task_dir = copy_task(tmp_path)
+    (task_dir / "task.yaml").write_text("id: [unclosed\n", encoding="utf-8")
+    result = load_one(tmp_path)
+    assert any(error.startswith("task.yaml does not parse") for error in result.errors)
+
+
+def test_task_yaml_not_a_mapping(tmp_path: Path):
+    task_dir = copy_task(tmp_path)
+    (task_dir / "task.yaml").write_text("- just\n- a\n- list\n", encoding="utf-8")
+    result = load_one(tmp_path)
+    assert "task.yaml must contain a mapping" in result.errors
+
+
+def test_missing_task_yaml(tmp_path: Path):
+    task_dir = copy_task(tmp_path)
+    (task_dir / "task.yaml").unlink()
+    result = load_one(tmp_path)
+    assert any(error.startswith("missing task.yaml") for error in result.errors)
+
+
+# --- id / category / folder agreement --------------------------------------
+
+
+def test_id_folder_mismatch(tmp_path: Path):
+    task_dir = copy_task(tmp_path)
+    patch_yaml(task_dir, id="monitoring-002")
+    result = load_one(tmp_path)
+    assert "id 'monitoring-002' does not match folder name 'monitoring-001'" in result.errors
+
+
+def test_parent_directory_must_equal_category(tmp_path: Path):
+    task_dir = copy_task(tmp_path)
+    moved = task_dir.parent.parent / "networking" / task_dir.name
+    moved.parent.mkdir()
+    task_dir.rename(moved)
+    result = load_one(tmp_path)
+    assert (
+        "task folder sits under 'networking' but category is 'monitoring'" in result.errors
+    )
+
+
+def test_id_not_matching_category_nnn_pattern(tmp_path: Path):
+    task_dir = copy_task(tmp_path, name="monitoring-1")
+    patch_yaml(task_dir, id="monitoring-1")
+    result = load_one(tmp_path)
+    assert any("does not match '<category>-<nnn>'" in error for error in result.errors)
+
+
+def test_unknown_category(tmp_path: Path):
+    task_dir = copy_task(tmp_path)
+    patch_yaml(task_dir, category="kubernetes")
+    result = load_one(tmp_path)
+    assert "task.yaml: unknown category 'kubernetes'" in result.errors
+
+
+def test_invalid_difficulty(tmp_path: Path):
+    task_dir = copy_task(tmp_path)
+    patch_yaml(task_dir, difficulty="trivial")
+    result = load_one(tmp_path)
+    assert any("difficulty must be one of" in error for error in result.errors)
+
+
+def test_tags_must_be_non_empty_list(tmp_path: Path):
+    task_dir = copy_task(tmp_path)
+    patch_yaml(task_dir, tags=[])
+    result = load_one(tmp_path)
+    assert "task.yaml: 'tags' must be a non-empty list" in result.errors
+
+
+def test_tags_must_be_strings(tmp_path: Path):
+    task_dir = copy_task(tmp_path)
+    patch_yaml(task_dir, tags=["monitoring", 42])
+    result = load_one(tmp_path)
+    assert "task.yaml: 'tags' must contain only non-empty strings" in result.errors
+
+
+# --- fixtures ---------------------------------------------------------------
+
+
+def test_too_few_fixtures(tmp_path: Path):
+    task_dir = copy_task(tmp_path)
+    (task_dir / "fixtures" / "kubectl-logs-ingress.txt").unlink()
+    result = load_one(tmp_path)
+    assert "fixtures/ must contain 2-10 files, found 1" in result.errors
+
+
+def test_too_many_fixtures(tmp_path: Path):
+    task_dir = copy_task(tmp_path)
+    for index in range(9):
+        (task_dir / "fixtures" / f"extra-{index}.txt").write_text("noise", encoding="utf-8")
+    result = load_one(tmp_path)
+    assert "fixtures/ must contain 2-10 files, found 11" in result.errors
+
+
+def test_missing_fixtures_directory(tmp_path: Path):
+    task_dir = copy_task(tmp_path)
+    shutil.rmtree(task_dir / "fixtures")
+    result = load_one(tmp_path)
+    assert any(error.startswith("missing fixtures/ directory") for error in result.errors)
+
+
+def test_fixture_bounds_are_inclusive(tmp_path: Path):
+    """2 and 10 fixtures are both inside the allowed 2-10 range."""
+    task_dir = copy_task(tmp_path)
+    for index in range(8):
+        (task_dir / "fixtures" / f"extra-{index}.txt").write_text("noise", encoding="utf-8")
+    assert load_one(tmp_path).errors == []
+
+
+def test_non_placeholder_guid_in_fixture(tmp_path: Path):
+    task_dir = copy_task(tmp_path)
+    fixture = task_dir / "fixtures" / "kubectl-logs-ingress.txt"
+    fixture.write_text(
+        f"pod uid {REAL_GUID} rejected upstream request\n", encoding="utf-8"
+    )
+    result = load_one(tmp_path)
+    assert any(
+        f"non-placeholder GUID '{REAL_GUID}'" in error for error in result.errors
+    )
+
+
+def test_placeholder_guid_is_accepted(tmp_path: Path):
+    task_dir = copy_task(tmp_path)
+    fixture = task_dir / "fixtures" / "kubectl-logs-ingress.txt"
+    fixture.write_text(f"pod uid {PLACEHOLDER_GUID} rejected upstream request\n", encoding="utf-8")
+    assert load_one(tmp_path).errors == []
+
+
+# --- expected.json / solution.json rubric shapes ----------------------------
+
+
+def test_missing_expected_json(tmp_path: Path):
+    task_dir = copy_task(tmp_path)
+    (task_dir / "expected.json").unlink()
+    result = load_one(tmp_path)
+    assert "missing expected.json" in result.errors
+
+
+def test_malformed_expected_json(tmp_path: Path):
+    task_dir = copy_task(tmp_path)
+    (task_dir / "expected.json").write_text("{not json", encoding="utf-8")
+    result = load_one(tmp_path)
+    assert any(
+        error.startswith("expected.json does not parse") for error in result.errors
+    )
+
+
+def test_missing_rubric_field(tmp_path: Path):
+    task_dir = copy_task(tmp_path)
+    data = json.loads((task_dir / "expected.json").read_text(encoding="utf-8"))
+    del data["fix"]
+    (task_dir / "expected.json").write_text(json.dumps(data), encoding="utf-8")
+    result = load_one(tmp_path)
+    assert (
+        "expected.json: 'fix' must be a non-empty list of non-empty string lists"
+        in result.errors
+    )
+
+
+def test_empty_rubric_field(tmp_path: Path):
+    task_dir = copy_task(tmp_path)
+    data = json.loads((task_dir / "expected.json").read_text(encoding="utf-8"))
+    data["root_cause"] = []
+    (task_dir / "expected.json").write_text(json.dumps(data), encoding="utf-8")
+    result = load_one(tmp_path)
+    assert (
+        "expected.json: 'root_cause' must be a non-empty list of non-empty string lists"
+        in result.errors
+    )
+
+
+def test_rubric_group_must_be_non_empty_string_list(tmp_path: Path):
+    task_dir = copy_task(tmp_path)
+    data = json.loads((task_dir / "expected.json").read_text(encoding="utf-8"))
+    data["fix"] = [["scale the ingress controller"], []]
+    (task_dir / "expected.json").write_text(json.dumps(data), encoding="utf-8")
+    result = load_one(tmp_path)
+    assert (
+        "expected.json: 'fix' must be a non-empty list of non-empty string lists"
+        in result.errors
+    )
+
+
+def test_missing_solution_json(tmp_path: Path):
+    task_dir = copy_task(tmp_path)
+    (task_dir / "solution.json").unlink()
+    result = load_one(tmp_path)
+    assert "missing solution.json" in result.errors
+
+
+def test_malformed_solution_json(tmp_path: Path):
+    task_dir = copy_task(tmp_path)
+    (task_dir / "solution.json").write_text("[", encoding="utf-8")
+    result = load_one(tmp_path)
+    assert any(
+        error.startswith("solution.json does not parse") for error in result.errors
+    )
+
+
+# --- duplicate ids across the repo ------------------------------------------
+
+
+def test_duplicate_ids_detected(tmp_path: Path):
+    copy_task(tmp_path)
+    second = tmp_path / "tasks" / "cost" / "monitoring-001"
+    second.parent.mkdir()
+    shutil.copytree(BASE_TASK, second)
+    results = load_tasks(tmp_path / "tasks")
+    assert len(results) == 2
+    for result in results:
+        assert any(
+            error.startswith("duplicate id 'monitoring-001'") for error in result.errors
+        )
+
+
+# --- CLI: validate -----------------------------------------------------------
+
+
+def run_cli(*args: str, cwd: Path) -> subprocess.CompletedProcess[str]:
+    env = {
+        **os.environ,
+        "PYTHONPATH": str(Path(__file__).resolve().parents[1]),
+    }
+    return subprocess.run(
+        [sys.executable, "-m", "bench", *args],
+        capture_output=True,
+        text=True,
+        cwd=cwd,
+        env=env,
+    )
+
+
+def test_validate_success_exit_zero(tmp_path: Path):
+    copy_task(tmp_path)
+    proc = run_cli("validate", "tasks", cwd=tmp_path)
+    assert proc.returncode == 0
+    assert "1/1 tasks valid" in proc.stdout
+    assert "FAIL" not in proc.stdout
+
+
+def test_validate_failure_exit_nonzero_with_fail_lines(tmp_path: Path):
+    task_dir = copy_task(tmp_path)
+    patch_yaml(task_dir, difficulty="trivial")
+    proc = run_cli("validate", "tasks", cwd=tmp_path)
+    assert proc.returncode == 1
+    assert f"FAIL tasks/monitoring/{task_dir.name}" in proc.stdout
+    assert "difficulty must be one of" in proc.stdout
+    assert "0/1 tasks valid" in proc.stdout
+
+
+def test_validate_zero_tasks_exits_nonzero(tmp_path: Path):
+    (tmp_path / "tasks").mkdir()
+    proc = run_cli("validate", "tasks", cwd=tmp_path)
+    assert proc.returncode == 1
+    assert "0/0 tasks valid" in proc.stdout
+
+
+# --- CLI: list ---------------------------------------------------------------
+
+
+def test_list_prints_id_difficulty_title(tmp_path: Path):
+    copy_task(tmp_path)
+    proc = run_cli("list", "tasks", cwd=tmp_path)
+    assert proc.returncode == 0
+    assert (
+        "monitoring-001  easy  Intermittent 503s from orders-api behind the AKS ingress"
+        in proc.stdout
+    )
+
+
+def test_list_on_empty_root_is_quiet_success(tmp_path: Path):
+    (tmp_path / "tasks").mkdir()
+    proc = run_cli("list", "tasks", cwd=tmp_path)
+    assert proc.returncode == 0
+    assert proc.stdout == ""

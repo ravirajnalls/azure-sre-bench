@@ -1,0 +1,9 @@
+id: monitoring-001
+title: Intermittent 503s from orders-api behind the AKS ingress
+category: monitoring
+difficulty: easy
+tags:
+  - monitoring
+  - example
+symptom: Alerts fire on elevated 5xx rates from the orders-api ingress endpoint
+  during peak traffic hours.
