@@ -1,0 +1,21 @@
+id: aks-ops-075
+canary: 00000000-0000-0000-0000-000000000114  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
+title: Reconstruct the night the upgrade stalled
+category: aks-ops
+difficulty: medium
+tags:
+  - aks-ops
+  - aks
+  - timeline
+  - node-pool-upgrade
+  - poddisruptionbudget
+  - clock-skew
+kind: timeline
+symptom: |
+  During last night's node-pool upgrade on payments-prod-aks the drain of the
+  first node stalled for over half an hour and the on-call had to step in.
+  Four record sources captured the incident; the merged export is in
+  fixtures/events.json and fixtures/sources.md describes each source (one
+  export has a documented clock offset). Reconstruct what actually happened,
+  in the order it happened, using every source's content — timestamps alone
+  will mislead you.
