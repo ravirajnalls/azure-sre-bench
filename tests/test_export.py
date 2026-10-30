@@ -25,7 +25,7 @@ from bench.export import (
     PUBLIC_DATASET_FILENAME,
     export_dataset,
 )
-from bench.grader import grade
+from bench.remediation import grade_for_task
 from bench.heldout import encrypt_hidden, generate_identity, load_hidden_json
 from bench.tasks import load_tasks
 
@@ -199,8 +199,15 @@ def test_eval_file_round_trips_through_the_real_grader(tmp_path, no_key):
     summary = export_dataset(REAL_TASKS, out)
     eval_records = read_jsonl(out / EVAL_DATASET_FILENAME)
     assert summary.eval_count == len(eval_records)
+    # Grade through the shared entry point (grade_for_task), not the raw
+    # diagnosis grader: eval records now include non-diagnosis kinds (e.g.
+    # pre-incident reviews) whose rubrics the shape-blind grader cannot read.
+    tasks = {task.id: task for task in load_tasks(REAL_TASKS)}
     for record in eval_records:
-        result = grade(record["solution"], record["expected"])
+        task = tasks[record["id"]]
+        result = grade_for_task(
+            record["solution"], record["expected"], task.path, task.config
+        )
         assert result["passed"], f"reference solution for {record['id']} failed"
 
 

@@ -1,0 +1,23 @@
+diff --git a/aks.bicep b/aks.bicep
+index 8f4c2a1..b9d3e77 100644
+--- a/aks.bicep
++++ b/aks.bicep
+@@ -2,7 +2,7 @@ param location string = resourceGroup().location
+ param clusterName string = 'orders-prod-aks'
+-param kubernetesVersion string = '1.30.4'
++param kubernetesVersion string = '1.30.7'
+ 
+ var clusterTags = {
+   environment: 'prod'
+-  costcenter: '4470'
++  costcenter: '4471'
+@@ -34,7 +34,9 @@ resource poolWorkload 'Microsoft.ContainerService/managedClusters/agentPools@202
+     vmSize: 'Standard_D4s_v5'
+     networkPlugin: 'azure'
+     vnetSubnetId: snetWorkload.id
+     upgradeSettings: {
+-      maxSurge: '33%'
++      maxSurge: '100%'
+     }
+   }
+ }

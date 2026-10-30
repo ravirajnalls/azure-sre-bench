@@ -1,0 +1,16 @@
+{
+  "findings": [
+    {
+      "file": "aks.bicep",
+      "line": 36,
+      "issue": [
+        ["maxsurge", "surge"],
+        ["subnet", "ip", "address space", "addresses"]
+      ]
+    }
+  ],
+  "distractors": [
+    ["kubernetes version", "orchestrator version", "version bump", "1.30"],
+    ["tags", "costcenter", "cost center", "cost-center"]
+  ]
+}

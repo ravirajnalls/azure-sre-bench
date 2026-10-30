@@ -1,0 +1,15 @@
+{
+  "findings": [
+    {
+      "file": "aks.bicep",
+      "line": 36,
+      "issue": "maxSurge 100% on the 20-node npworkload pool requires about 600 pod IPs (20 surge nodes x 30 maxPods) in snet-orders-workload while the upgrade drains, but the /25 subnet has roughly 60 free addresses — surge node and pod IP allocation will fail and the upgrade will stall mid-rollout, leaving the pool partially upgraded.",
+      "fix": "Drop maxSurge to a value the subnet can host (e.g. '10%', about 2 surge nodes x 31 addresses) or extend snet-orders-workload's address space (or move the pool to a larger subnet) before the window. The Kubernetes version bump and the cost-center tag change are benign and can merge as-is."
+    }
+  ],
+  "evidence_files": [
+    "aks.bicep",
+    "az-aks-nodepool-list.json",
+    "az-network-vnet-subnet-show.json"
+  ]
+}

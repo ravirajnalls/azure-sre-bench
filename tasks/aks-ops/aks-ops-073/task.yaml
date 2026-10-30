@@ -1,0 +1,25 @@
+id: aks-ops-073
+canary: 00000000-0000-0000-0000-000000000114  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
+title: Platform PR that will break tonight's cluster upgrade
+category: aks-ops
+difficulty: hard
+tags:
+  - aks-ops
+  - aks
+  - node-pool-upgrade
+  - ip-exhaustion
+  - bicep
+  - max-surge
+kind: pre-incident-review
+symptom: |
+  You are the reviewing SRE for the platform team's maintenance PR #4821 on the
+  orders-prod cluster, scheduled to merge before tonight's 22:00 UTC upgrade
+  window. The change touches the cluster's Bicep: a Kubernetes version bump,
+  a cost-center tag update, and a tuning change to the npworkload pool's
+  upgrade behavior. The PR was applied to the staging twin yesterday and the
+  attached snapshots (`pr.diff`, `aks.bicep`, `az-aks-nodepool-list.json`,
+  `az-network-vnet-subnet-show.json`) reflect the proposed state. One detail
+  on your radar from the capacity report: snet-orders-workload has roughly 60
+  free addresses. Review the proposed change and report anything in it that
+  would cause an incident during or right after the window — with the fix to
+  make before merge.
