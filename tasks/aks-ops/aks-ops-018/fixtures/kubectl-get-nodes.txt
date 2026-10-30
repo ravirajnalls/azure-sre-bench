@@ -1,0 +1,5 @@
+NAME                                STATUS                     ROLES   AGE   VERSION   INTERNAL-IP    OS-IMAGE                         KERNEL-VERSION
+aks-npuser-31214664-vmss000000      Ready,SchedulingDisabled   agent   31d   v1.30.6   10.240.0.5     Ubuntu 22.04.5 LTS               5.15.0-1083-azure
+aks-npuser-31214664-vmss000001      Ready                      agent   31d   v1.30.6   10.240.0.6     Ubuntu 22.04.5 LTS               5.15.0-1083-azure
+aks-npuser-31214664-vmss000002      Ready                      agent   29d   v1.30.6   10.240.0.7     Ubuntu 22.04.5 LTS               5.15.0-1083-azure
+aks-systempool-31214664-vmss000000  Ready                      agent   47d   v1.31.1   10.240.0.4     Azure Linux 3.0                  6.6.57.1-1.azl3

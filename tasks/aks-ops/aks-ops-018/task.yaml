@@ -1,0 +1,17 @@
+id: aks-ops-018
+title: Cluster upgrade stuck draining a node
+category: aks-ops
+difficulty: medium
+tags:
+  - aks-ops
+  - aks
+  - kubernetes
+  - poddisruptionbudget
+  - upgrades
+symptom: |
+  An AKS upgrade from 1.30.6 to 1.31.1 kicked off about three hours ago and has
+  not progressed past the first user node pool node. The node was cordoned —
+  kubectl shows it SchedulingDisabled — but the drain never completes, and the
+  portal reports the cluster as "Upgrading" the entire time. No application
+  pods have restarted and workloads are still serving normally, so on-call is
+  unsure why the upgrade is blocked.

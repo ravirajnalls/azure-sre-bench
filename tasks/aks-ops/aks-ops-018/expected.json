@@ -1,0 +1,9 @@
+{
+  "root_cause": [
+    ["pdb", "poddisruptionbudget", "disruption budget"],
+    ["minavailable", "allowed disruptions", "0"]
+  ],
+  "fix": [
+    ["maxunavailable", "minavailable: 1", "increase replicas", "scale"]
+  ]
+}
