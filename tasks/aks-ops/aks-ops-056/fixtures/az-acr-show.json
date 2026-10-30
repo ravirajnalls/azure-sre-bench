@@ -1,0 +1,17 @@
+{
+  "name": "retailacr000a",
+  "resourceGroup": "rg-retail-images",
+  "location": "eastus2",
+  "sku": "Premium",
+  "provisioningState": "Succeeded",
+  "networkRuleSet": {
+    "defaultAction": "Allow",
+    "virtualNetworkRules": [],
+    "ipRules": []
+  },
+  "quarantinePolicy": { "status": "disabled" },
+  "retentionPolicy": { "enabled": true, "days": 30 },
+  "privateEndpointConnections": [
+    { "name": "pe-billing", "provisioningState": "Succeeded" }
+  ]
+}
