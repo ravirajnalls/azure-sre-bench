@@ -1,0 +1,13 @@
+id: ado-pipelines-030
+title: Terraform apply hangs on state lock
+category: ado-pipelines
+difficulty: easy
+tags:
+  - ado-pipelines
+  - azure-devops
+  - terraform
+  - azure-storage
+  - state-management
+symptom: |
+  Every run of the infra-prod pipeline hangs then fails at terraform plan;
+  started after a run was cancelled yesterday.

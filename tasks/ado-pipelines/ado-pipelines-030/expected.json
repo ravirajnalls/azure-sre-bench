@@ -1,0 +1,15 @@
+{
+  "root_cause": [
+    ["lease", "blob lease", "state lock", "state-lock", "locked"],
+    ["cancel", "canceled"]
+  ],
+  "fix": [
+    [
+      "force-unlock",
+      "force unlock",
+      "break the lease",
+      "lease break",
+      "az storage blob lease break"
+    ]
+  ]
+}
