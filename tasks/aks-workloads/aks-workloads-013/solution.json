@@ -1,0 +1,11 @@
+{
+  "root_cause": "The indexer container is being OOMKilled (exit code 137): its container memory limit is 512Mi, but the JVM is configured with -Xmx768m. The Java heap alone can grow past the container limit, so during peak indexing the pod's memory use hits 512Mi and the kernel kills the process. The application never logs an error because the process is terminated abruptly, and the node CPU spikes are normal peak-load behavior, not the cause.",
+  "evidence": [
+    "kubectl-describe-pod.txt: Last State: Terminated, Reason: OOMKilled, Exit Code: 137, Restart Count: 14",
+    "deployment.yaml: resources.limits.memory is 512Mi while JAVA_TOOL_OPTIONS sets -Xmx768m — the JVM heap max exceeds the container limit",
+    "kubectl-top-pod.txt: both search-indexer pods report 511Mi/510Mi memory used, pinned at the 512Mi limit",
+    "search-indexer.log: healthy INFO batches with no errors, ending abruptly at 09:40:56 — matching the OOMKilled Finished time in kubectl-describe-pod.txt",
+    "node-cpu-kql.csv: node CPU peaks around 68% average during the same window — nodes are busy but not the failure source"
+  ],
+  "fix": "Make the container memory limit larger than the JVM heap: raise the deployment's memory limit (e.g. to 1Gi, leaving headroom above -Xmx768m for metaspace, threads, and off-heap), or lower the JVM's -Xmx (e.g. -Xmx384m) to fit inside the existing 512Mi limit, then redeploy the search-indexer deployment."
+}

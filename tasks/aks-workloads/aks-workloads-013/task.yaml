@@ -1,0 +1,18 @@
+id: aks-workloads-013
+title: search-indexer pods restart several times an hour during peak traffic
+category: aks-workloads
+difficulty: easy
+tags:
+  - aks-workloads
+  - aks
+  - kubernetes
+  - oomkilled
+  - jvm
+  - memory
+symptom: |
+  The search-indexer deployment has been restarting several times an hour
+  since yesterday's peak-traffic window began. No errors appear in the
+  application logs before the restarts, and the indexer falls further behind
+  on the document queue with each bounce. Node CPU graphs show spikes during
+  the same window, but the service keeps running — only search-indexer
+  restarts.

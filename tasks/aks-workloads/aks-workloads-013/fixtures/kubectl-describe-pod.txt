@@ -1,0 +1,59 @@
+Name:           search-indexer-7c9d8b6f5-qk2lv
+Namespace:      search
+Priority:       0
+Service Account: search-indexer
+Node:           aks-nodepool1-00000001-vmss000000/10.240.0.35
+Start Time:     Thu, 30 Oct 2026 06:02:11 +0000
+Labels:         app=search-indexer
+                pod-template-hash=7c9d8b6f5
+Annotations:    <none>
+Status:         Running
+IP:             10.244.1.62
+IPs:
+  IP:           10.244.1.62
+Controlled By:  ReplicaSet/search-indexer-7c9d8b6f5
+Containers:
+  indexer:
+    Container ID:   containerd://8f4c2a91b7de6c0531a9f8e2d4b7c6a1e3f90d82b5c7a4e1d6f8b3c2a9e7d410
+    Image:          shopacr00000001.azurecr.io/search-indexer:2026.10.29
+    Image ID:       shopacr00000001.azurecr.io/search-indexer@sha256:1d4c9f6b2e7a8c35f0b9d6e4a2c8f1b7e5d3a9c6f8b2e4d7a1c9f6b3e5d8a2c4
+    Port:           <none>
+    Host Port:      <none>
+    State:          Running
+      Started:      Thu, 30 Oct 2026 09:41:08 +0000
+    Last State:     Terminated
+      Reason:       OOMKilled
+      Exit Code:    137
+      Started:      Thu, 30 Oct 2026 09:12:47 +0000
+      Finished:     Thu, 30 Oct 2026 09:40:56 +0000
+    Ready:          True
+    Restart Count:  14
+    Environment:
+      QUEUE_BROKER:   amqp://catalog-events.search.svc.cluster.local:5672
+      INDEX_NAME:     catalog-products
+      JAVA_TOOL_OPTIONS:  -Xms256m -Xmx768m
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access (ro)
+Conditions:
+  Type              Status
+  Initialized       True
+  Ready             True
+  ContainersReady   True
+  PodScheduled      True
+QoS Class:         Burstable
+Node-Selectors:    <none>
+Tolerations:       node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                   node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type     Reason          Age                     From               Message
+  ----     ------          ----                    ----               -------
+  Normal   Scheduled       4h2m                    default-scheduler  Successfully assigned search/search-indexer-7c9d8b6f5-qk2lv to aks-nodepool1-00000001-vmss000000
+  Normal   Pulling         4h2m                    kubelet            Pulling image "shopacr00000001.azurecr.io/search-indexer:2026.10.29"
+  Normal   Pulled          4h1m                    kubelet            Successfully pulled image "shopacr00000001.azurecr.io/search-indexer:2026.10.29" in 1.842s
+  Normal   Created         4h1m                    kubelet            Created container indexer
+  Normal   Started         4h1m                    kubelet            Started container indexer
+  Warning  BackOff         3h31m (x2 over 3h32m)   kubelet            Back-off restarting failed container
+  Normal   Pulled          41m                     kubelet            Container image "shopacr00000001.azurecr.io/search-indexer:2026.10.29" already present on machine
+  Normal   Created         41m                     kubelet            Created container indexer
+  Normal   Started         41m                     kubelet            Started container indexer
+  Warning  BackOff         2m (x7 over 34m)        kubelet            Back-off restarting failed container
