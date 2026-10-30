@@ -19,6 +19,12 @@ Cost vs accuracy (issue #164): a scatter plot of each agent's total recorded
 cost against its pass rate, with the Pareto frontier (no agent dominated on
 both axes) highlighted and agents without cost telemetry listed separately.
 
+Breakdown charts (issue #165): a category × agent pass-rate heatmap and a
+difficulty × agent bar chart, next to the tables; `bench leaderboard --by
+category|difficulty` prints the same breakdowns as markdown. Task category
+and difficulty derivation now live in `bench.tasks` and are re-exported
+here for backward compatibility.
+
 Learn pages (issue #149): `bench site` also renders `site/learn.html` — one
 spoiler-collapsed (`<details>`) section per task that ships an `explainer.md`,
 rendered from a minimal Markdown subset with everything HTML-escaped. Sections
@@ -50,7 +56,12 @@ from bench.leaderboard import (
     median,
 )
 from bench.stats import bootstrap_pass_rate_ci
-from bench.tasks import CATEGORIES, current_rubric_hashes
+from bench.tasks import (
+    current_rubric_hashes,
+    difficulty_sort_key,
+    task_category,
+    task_difficulties,
+)
 from bench.verify import load_agent_metadata
 
 DEFAULT_RESULTS_ROOT = "results"
@@ -119,6 +130,28 @@ td.heat { text-align: center; font-weight: 600; font-size: 0.85rem; }
   .chart .pt.frontier { fill: #3fb950; }
   .chart .frontier-line { stroke: #3fb950; }
 }
+/* Issue-#165 breakdown charts */
+.chart .col-head { font-weight: 600; }
+.chart .cell { fill: #1a7f37; }
+.chart .cell.none { fill: none; stroke: #d0d7de; stroke-dasharray: 2 2; }
+.chart .cell-text { fill: #1f2328; }
+.chart .cell-text.none { fill: #8c959f; }
+.chart .cell-text.light { fill: #ffffff; }
+.chart .track { fill: rgba(127, 127, 127, 0.12); }
+.chart .bar-easy { fill: #1a7f37; }
+.chart .bar-medium { fill: #9a6700; }
+.chart .bar-hard { fill: #cf222e; }
+@media (prefers-color-scheme: dark) {
+  .chart .cell { fill: #3fb950; }
+  .chart .cell.none { stroke: #30363d; }
+  .chart .cell-text { fill: #e6edf3; }
+  .chart .cell-text.none { fill: #8b949e; }
+  .chart .cell-text.light { fill: #ffffff; }
+  .chart .track { fill: rgba(139, 148, 158, 0.2); }
+  .chart .bar-easy { fill: #3fb950; }
+  .chart .bar-medium { fill: #d29922; }
+  .chart .bar-hard { fill: #f85149; }
+}
 /* Issue-#119 filters: wrap on phone width; .hidden hides filtered-out rows. */
 .filters {
   display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center;
@@ -167,18 +200,6 @@ def load_results(results_root: Path) -> dict[str, list[dict]]:
     return runs
 
 
-def task_category(task_id: str) -> str:
-    """Derive a task's category from its `<category>-<nnn>` id.
-
-    Categories may contain hyphens (e.g. `aks-networking`), so the longest
-    known prefix wins; unknown ids fall back to `other`.
-    """
-    for category in sorted(CATEGORIES, key=len, reverse=True):
-        if task_id.startswith(f"{category}-"):
-            return category
-    return "other"
-
-
 def load_agent_metadata_map(results_root: Path) -> dict[str, dict]:
     """Map run name -> its #118 `agent.yaml` descriptor, when valid.
 
@@ -197,30 +218,6 @@ def load_agent_metadata_map(results_root: Path) -> dict[str, dict]:
         if meta is not None and not errors:
             metadata[run_dir.name] = meta
     return metadata
-
-
-def task_difficulties(tasks_root: Path) -> dict[str, str]:
-    """Map task id -> its `task.yaml` difficulty, for tasks under `tasks_root`.
-
-    Difficulty is public corpus metadata (it survives held-out encryption, which
-    hides only `expected.json`/`solution.json`), so the site can bake it into
-    the heatmap for the issue-#119 difficulty filter. A task.yaml missing the
-    field, or unparseable, is skipped — the filter then shows that task as
-    unknown rather than lying about it.
-    """
-    difficulties: dict[str, str] = {}
-    for path in sorted(Path(tasks_root).rglob("task.yaml")):
-        try:
-            config = yaml.safe_load(path.read_text(encoding="utf-8"))
-        except (OSError, yaml.YAMLError):
-            continue
-        if not isinstance(config, dict):
-            continue
-        task_id = config.get("id")
-        difficulty = config.get("difficulty")
-        if isinstance(task_id, str) and isinstance(difficulty, str):
-            difficulties[task_id] = difficulty
-    return difficulties
 
 
 def safe_repo_url(value: object) -> str | None:
@@ -313,11 +310,18 @@ def aggregate(
             }
     tasks = sorted({task for _, task in outcomes})
 
-    def row(agent: str, category: str | None) -> dict:
+    def row(
+        agent: str, category: str | None, difficulty: str | None = None
+    ) -> dict:
         picked = [
             outcome
             for (run, task), outcome in outcomes.items()
-            if run == agent and (category is None or task_category(task) == category)
+            if run == agent
+            and (category is None or task_category(task) == category)
+            and (
+                difficulty is None
+                or (difficulties or {}).get(task, "unknown") == difficulty
+            )
         ]
         counted = [outcome for outcome in picked if outcome["status"] == STATUS_CURRENT]
         passed = sum(1 for outcome in counted if outcome["passed"])
@@ -405,6 +409,21 @@ def aggregate(
             }
         )
 
+    # Issue #165: the same breakdown sliced by difficulty, in easy/medium/hard
+    # order (then anything unrecognized, e.g. `unknown`, alphabetically).
+    by_difficulty: list[dict] = []
+    for difficulty in sorted(
+        {(difficulties or {}).get(task, "unknown") for task in tasks},
+        key=difficulty_sort_key,
+    ):
+        agents_rows = [row(agent, None, difficulty) for agent in agents]
+        by_difficulty.append(
+            {
+                "difficulty": difficulty,
+                "agents": [entry for entry in agents_rows if entry["total"]],
+            }
+        )
+
     heatmap = [
         {
             "task": task,
@@ -423,6 +442,7 @@ def aggregate(
         "tasks": tasks,
         "overall": overall,
         "by_category": by_category,
+        "by_difficulty": by_difficulty,
         "heatmap": heatmap,
     }
 
@@ -550,6 +570,128 @@ def render_cost_chart(agg: dict) -> tuple[str | None, list[str]]:
                    f'{html.escape(p["agent"])}</text>')
     out.append("</svg>")
     return "\n".join(out), no_cost
+
+
+# --- breakdown charts (issue #165) ----------------------------------------------
+
+
+def render_category_heatmap(agg: dict) -> str | None:
+    """Category × agent pass-rate grid as a self-contained SVG (issue #165).
+
+    One row per category, one column per agent. Cell fill opacity is the
+    pass rate, the cell text the percentage, and a `<title>` tooltip carries
+    the exact passed/total counts. None when there is nothing to grid.
+    """
+    blocks = agg["by_category"]
+    agents = agg["agents"]
+    if not blocks or not agents:
+        return None
+    label_w, cell_w, cell_h, top = 130, 84, 34, 24
+    width = label_w + cell_w * len(agents) + 12
+    height = top + cell_h * len(blocks) + 12
+    out = [
+        f'<svg class="chart heat-grid" viewBox="0 0 {width} {height}" role="img" '
+        'aria-label="Pass rate by category and agent">',
+    ]
+    for j, agent in enumerate(agents):
+        x = label_w + j * cell_w + (cell_w - 2) / 2
+        out.append(
+            f'<text class="col-head" x="{x:.1f}" y="{top - 8}" '
+            f'text-anchor="middle">{html.escape(agent)}</text>'
+        )
+    for i, block in enumerate(blocks):
+        y = top + i * cell_h
+        out.append(
+            f'<text x="{label_w - 10}" y="{y + cell_h / 2 + 4:.1f}" '
+            f'text-anchor="end">{html.escape(block["category"])}</text>'
+        )
+        for j, agent in enumerate(agents):
+            entry = next((e for e in block["agents"] if e["agent"] == agent), None)
+            x = label_w + j * cell_w
+            cx = x + cell_w / 2
+            cy = y + cell_h / 2 + 4
+            if entry is None:
+                out.append(
+                    f'<rect class="cell none" x="{x + 1}" y="{y + 1}" '
+                    f'width="{cell_w - 2}" height="{cell_h - 2}"/>'
+                )
+                out.append(
+                    f'<text class="cell-text none" x="{cx:.1f}" y="{cy:.1f}" '
+                    'text-anchor="middle">&mdash;</text>'
+                )
+                continue
+            rate = pass_rate(entry) or 0.0
+            out.append(
+                f'<rect class="cell" x="{x + 1}" y="{y + 1}" width="{cell_w - 2}" '
+                f'height="{cell_h - 2}" fill-opacity="{rate:.2f}">'
+                f"<title>{html.escape(agent)}: {entry['passed']}/{entry['total']} "
+                "passed</title></rect>"
+            )
+            text_cls = "cell-text light" if rate >= 0.55 else "cell-text"
+            out.append(
+                f'<text class="{text_cls}" x="{cx:.1f}" y="{cy:.1f}" '
+                f'text-anchor="middle">{rate * 100:.0f}%</text>'
+            )
+    out.append("</svg>")
+    return "\n".join(out)
+
+
+def render_difficulty_chart(agg: dict) -> str | None:
+    """Difficulty × agent pass-rate bar chart as a self-contained SVG (#165).
+
+    One row per difficulty (easy/medium/hard order), one grouped bar slot per
+    agent; bar length is the pass rate with the percentage at the bar's end.
+    None when there is nothing to chart.
+    """
+    blocks = agg["by_difficulty"]
+    agents = agg["agents"]
+    if not blocks or not agents:
+        return None
+    label_w, top, bar_h, row_gap = 120, 24, 18, 14
+    slot_w = (640 - label_w - 16) / max(1, len(agents))
+    width = label_w + slot_w * len(agents) + 16
+    height = top + (bar_h + row_gap) * len(blocks) + 12
+    out = [
+        f'<svg class="chart diff-chart" viewBox="0 0 {width:.0f} {height}" role="img" '
+        'aria-label="Pass rate by difficulty and agent">',
+    ]
+    for i, block in enumerate(blocks):
+        y = top + i * (bar_h + row_gap)
+        out.append(
+            f'<text x="{label_w - 10}" y="{y + bar_h / 2 + 4:.1f}" '
+            f'text-anchor="end">{html.escape(block["difficulty"])}</text>'
+        )
+        for j, agent in enumerate(agents):
+            entry = next((e for e in block["agents"] if e["agent"] == agent), None)
+            x0 = label_w + j * slot_w
+            track_w = slot_w - 6
+            out.append(
+                f'<rect class="track" x="{x0:.1f}" y="{y}" width="{track_w:.1f}" '
+                f'height="{bar_h}" rx="3"/>'
+            )
+            if entry is None:
+                out.append(
+                    f'<text class="cell-text none" x="{x0 + track_w / 2:.1f}" '
+                    f'y="{y + bar_h / 2 + 4:.1f}" text-anchor="middle">'
+                    "&mdash;</text>"
+                )
+                continue
+            rate = pass_rate(entry) or 0.0
+            difficulty = block["difficulty"]
+            out.append(
+                f'<rect class="bar bar-{html.escape(difficulty, quote=True)}" '
+                f'x="{x0:.1f}" y="{y}" width="{track_w * rate:.1f}" '
+                f'height="{bar_h}" rx="3">'
+                f"<title>{html.escape(agent)}: {entry['passed']}/{entry['total']} "
+                f"passed ({html.escape(difficulty)})</title></rect>"
+            )
+            out.append(
+                f'<text class="cell-text" x="{x0 + track_w * rate + 4:.1f}" '
+                f'y="{y + bar_h / 2 + 4:.1f}" text-anchor="start">'
+                f"{rate * 100:.0f}%</text>"
+            )
+    out.append("</svg>")
+    return "\n".join(out)
 
 
 def load_explainers(tasks_root: Path) -> dict[str, dict]:
@@ -897,6 +1039,16 @@ def render_html(agg: dict) -> str:
                 f"<td>{html.escape(block['category'])}</td>{''.join(cells)}</tr>"
             )
         parts.append("</table></div>")
+
+        parts.append("<h2>Category &times; agent</h2>")
+        category_heat = render_category_heatmap(agg)
+        if category_heat is not None:
+            parts.append(category_heat)
+
+        parts.append("<h2>Difficulty &times; agent</h2>")
+        difficulty_chart = render_difficulty_chart(agg)
+        if difficulty_chart is not None:
+            parts.append(difficulty_chart)
 
         parts.append("<h2>Task &times; agent</h2>")
         parts.append('<div class="tablewrap"><table id="tbl-heatmap">')

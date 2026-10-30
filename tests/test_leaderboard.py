@@ -9,6 +9,7 @@ from bench import GRADER_VERSION
 from bench.cli import main
 from bench.leaderboard import (
     END_MARKER,
+    breakdown_markdown,
     START_MARKER,
     STATUS_CURRENT,
     STATUS_LEGACY,
@@ -413,3 +414,99 @@ def test_markdown_table_renders_ci_column_and_tie_marker():
 def test_markdown_table_ci_is_em_dash_without_current_records():
     table = markdown_table(rank_rows({"legacy": [record("t1", 1.0, True)]}))
     assert "| 1 | legacy | runner | legacy | 0/0 | 0 | 0.000 | — |" in table
+
+
+# --- breakdown by category / difficulty (issue #165) ---------------------------
+
+
+def versioned_record(task: str, score: float, passed: bool) -> dict:
+    return {**record(task, score, passed), "grader_version": GRADER_VERSION, "rubric_sha256": "a" * 64}
+
+
+def seed_task(tasks_root: Path, task_id: str, difficulty: str) -> None:
+    category, _, _ = task_id.partition("-00")
+    task_dir = tasks_root / category / task_id
+    task_dir.mkdir(parents=True, exist_ok=True)
+    (task_dir / "task.yaml").write_text(
+        f"id: {task_id}\ndifficulty: {difficulty}\n", encoding="utf-8"
+    )
+
+
+def test_breakdown_markdown_by_category(tmp_path):
+    (tmp_path / "results").mkdir()
+    run_dir = tmp_path / "results" / "naive"
+    run_dir.mkdir()
+    recs = [
+        versioned_record("monitoring-001", 1.0, True),
+        versioned_record("monitoring-002", 0.5, True),
+        versioned_record("cost-001", 0.0, False),
+    ]
+    for index, rec in enumerate(recs):
+        (run_dir / f"r{index}.json").write_text(json.dumps(rec), encoding="utf-8")
+    table = breakdown_markdown(tmp_path / "results", tmp_path / "tasks", "category")
+    assert table.startswith("| Category | naive |")
+    assert "| monitoring | 2/2 (0.750) |" in table
+    assert "| cost | 0/1 (0.000) |" in table
+    # Groups with no records from the agent cannot happen here (single agent
+    # ran everything), so no em-dash row is expected.
+
+
+def test_breakdown_markdown_by_difficulty_orders_and_dashes(tmp_path):
+    tasks_root = tmp_path / "tasks"
+    seed_task(tasks_root, "monitoring-001", "hard")
+    seed_task(tasks_root, "monitoring-002", "easy")
+    run_dir = tmp_path / "results" / "naive"
+    run_dir.mkdir(parents=True)
+    recs = [
+        versioned_record("monitoring-001", 1.0, True),
+        versioned_record("monitoring-002", 0.0, False),
+    ]
+    for index, rec in enumerate(recs):
+        (run_dir / f"r{index}.json").write_text(json.dumps(rec), encoding="utf-8")
+    run_dir2 = tmp_path / "results" / "partial"
+    run_dir2.mkdir(parents=True)
+    (run_dir2 / "r0.json").write_text(
+        json.dumps(versioned_record("monitoring-001", 1.0, True)), encoding="utf-8"
+    )
+    table = breakdown_markdown(tmp_path / "results", tasks_root, "difficulty")
+    lines = table.splitlines()
+    assert lines[0] == "| Difficulty | naive | partial |"
+    assert "| easy | 0/1 (0.000) | — |" in lines
+    assert "| hard | 1/1 (1.000) | 1/1 (1.000) |" in lines
+    assert lines.index("| easy | 0/1 (0.000) | — |") < lines.index(
+        "| hard | 1/1 (1.000) | 1/1 (1.000) |"
+    )
+
+
+def test_breakdown_markdown_stale_records_drop_out(tmp_path):
+    run_dir = tmp_path / "results" / "naive"
+    run_dir.mkdir(parents=True)
+    stale = {**versioned_record("monitoring-001", 1.0, True), "grader_version": GRADER_VERSION + 1}
+    (run_dir / "r0.json").write_text(json.dumps(stale), encoding="utf-8")
+    table = breakdown_markdown(tmp_path / "results", tmp_path / "tasks", "category")
+    assert table == "| Category | naive |\n| --- | --- |"
+
+
+def test_cli_leaderboard_by_category(tmp_path, capsys):
+    run_dir = tmp_path / "results" / "naive"
+    run_dir.mkdir(parents=True)
+    (run_dir / "r0.json").write_text(
+        json.dumps(versioned_record("monitoring-001", 1.0, True)), encoding="utf-8"
+    )
+    assert (
+        main(
+            [
+                "leaderboard",
+                "--results-root",
+                str(tmp_path / "results"),
+                "--tasks-root",
+                str(tmp_path / "tasks"),
+                "--by",
+                "category",
+            ]
+        )
+        == 0
+    )
+    out = capsys.readouterr().out
+    assert "| Category | naive |" in out
+    assert "| monitoring | 1/1 (1.000) |" in out
