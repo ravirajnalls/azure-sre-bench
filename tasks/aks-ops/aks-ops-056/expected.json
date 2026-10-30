@@ -1,13 +1,47 @@
 {
   "root_cause": [
-    ["defender", "microsoft defender", "defender for containers", "gated deployment", "admission webhook", "denypolicy", "security-vulnerability-gate", "gated deployment policy"],
-    ["cve-2026-33412", "cve", "critical vulnerability", "critical cve", "vulnerability finding", "cvss 9.8", "vulnerable base image"]
+    [
+      "defender",
+      "microsoft defender",
+      "defender for containers",
+      "gated deployment",
+      "admission webhook",
+      "denypolicy",
+      "security-vulnerability-gate",
+      "gated deployment policy"
+    ],
+    [
+      "cve-2026-33412",
+      "cve",
+      "critical vulnerability",
+      "critical cve",
+      "vulnerability finding",
+      "cvss 9.8",
+      "vulnerable base image"
+    ]
   ],
   "fix": [
-    ["patch", "patched base image", "fixed base image", "rebuild", "rebuild the image", "new image", "bump the base image"],
-    ["exemption", "policy exemption", "allow the image", "allowlist the digest"]
+    [
+      "patch",
+      "patched base image",
+      "fixed base image",
+      "rebuild",
+      "rebuild the image",
+      "new image",
+      "bump the base image",
+      "exemption",
+      "policy exemption",
+      "allow the image",
+      "allowlist the digest"
+    ]
   ],
   "distractors": [
-    ["acr", "azure container registry", "acr network rules", "imagepullbackoff", "image pull"]
+    [
+      "acr",
+      "azure container registry",
+      "acr network rules",
+      "imagepullbackoff",
+      "image pull"
+    ]
   ]
 }
