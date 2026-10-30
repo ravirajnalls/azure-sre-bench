@@ -1,0 +1,8 @@
+// Checkout API p95 latency by dependency, 30m window
+requests
+| where timestamp > ago(30m)
+| where name startswith "POST /checkout"
+| summarize p95 = percentile(duration, 95) by dependency = tostring(customDimensions.dependency)
+| order by p95 desc
+// redis-cache dependency p95: 4300ms (was 40ms before 14:02 UTC)
+// sql-payments dependency p95: 55ms — healthy red herring

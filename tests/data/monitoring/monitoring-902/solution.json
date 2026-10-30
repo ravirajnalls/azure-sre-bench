@@ -1,0 +1,8 @@
+{
+  "root_cause": "The billing-api exhausted its Redis connection pool: the pod logs show 'redis pool exhausted' and connection refused to redis-cache.checkout.svc:6379, while the redis pod itself is healthy.",
+  "evidence": [
+    "kubectl-logs-billing.txt: 'redis pool: 32/32 connections in use' then 'redis pool exhausted'",
+    "kubectl-get-pods.txt: billing-api pods CrashLoopBackOff with 39-41 restarts while redis-cache-0 is Running"
+  ],
+  "fix": "Raise the connection limit (pool size) in the billing-api Redis client configuration and restart the deployment."
+}

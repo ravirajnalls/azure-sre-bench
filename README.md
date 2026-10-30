@@ -207,6 +207,33 @@ The adapter never talks to a model itself — your runnable does, inside the sam
 tool boundary as the ReAct baseline (only `symptom.md` and `fixtures/` are
 readable). On any failure it prints `{}` and exits 0, graded as a FAIL.
 
+## Run an MCP-capable agent
+
+Any agent that speaks the Model Context Protocol can be benchmarked through the
+bundled stdio server — no benchmark-specific code on the agent side:
+
+```bash
+python -m bench run \
+  --agent "python agents/mcp_client_runner.py \
+    --agent-command '<your-agent-command>'" \
+  --task aks-identity-008
+```
+
+The driver (`agents/mcp_client_runner.py`) probes the server
+(`bench mcp-serve --task <id>`) before the run so a broken setup fails fast, then
+hands the agent two environment variables: `BENCH_MCP_SERVER_COMMAND` (the server
+command line the agent should spawn with its own MCP client) and
+`BENCH_MCP_ANSWER_FILE` (where `submit_answer` persists the contract JSON). The
+server exposes the symptom as a resource (`task://<task-id>/symptom`) and four
+scoped tools:
+
+| Tool | Effect |
+| --- | --- |
+| `list_files` | fixture names only — never `expected.json`, `solution.json`, or the command table |
+| `read_file` | one fixture's text, containment-checked against the fixtures directory |
+| `run_command` | canned read-only output from the task's `_commands.yaml`, when it defines one — never host execution; mutating commands are blocked |
+| `submit_answer` | records the contract JSON that `bench run` grades |
+
 ## Contributing
 
 The benchmark grows one task at a time, and every task follows the same conventions:

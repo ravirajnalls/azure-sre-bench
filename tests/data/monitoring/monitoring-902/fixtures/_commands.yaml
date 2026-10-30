@@ -1,0 +1,8 @@
+# Canned read-only commands for the MCP server's run_command tool (issue #123).
+# Schema follows the simulated-CLI command table designed in issue #111:
+# a normalized command line mapped to the fixture file holding its output.
+# The MCP server hides this file from list_files/read_file — it names the
+# investigation path.
+commands:
+  "kubectl get pods -n checkout": kubectl-get-pods.txt
+  "kubectl logs deploy/billing-api -n checkout": kubectl-logs-billing.txt

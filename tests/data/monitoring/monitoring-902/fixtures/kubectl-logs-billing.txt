@@ -1,0 +1,8 @@
+2026-10-30T14:01:59Z INFO  billing-api health check ok (latency=41ms)
+2026-10-30T14:02:03Z WARN  redis pool: 32/32 connections in use, waiting
+2026-10-30T14:02:05Z ERROR redis pool exhausted: timeout waiting for idle connection
+2026-10-30T14:02:05Z ERROR checkout charge failed: connection refused redis-cache.checkout.svc:6379
+2026-10-30T14:02:07Z WARN  redis pool: 32/32 connections in use, waiting
+2026-10-30T14:02:09Z ERROR checkout charge failed: connection refused redis-cache.checkout.svc:6379
+2026-10-30T14:02:14Z ERROR redis pool exhausted: timeout waiting for idle connection
+2026-10-30T14:02:20Z INFO  billing-api liveness probe failed; kubelet restarting container

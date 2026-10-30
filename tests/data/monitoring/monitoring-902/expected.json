@@ -1,0 +1,4 @@
+{
+  "root_cause": [["redis connection pool", "connection pool exhausted"]],
+  "fix": [["connection limit", "max connections", "pool size"]]
+}
