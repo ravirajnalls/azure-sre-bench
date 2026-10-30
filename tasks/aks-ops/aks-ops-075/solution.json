@@ -12,5 +12,8 @@
     "chat-0911",
     "chat-0918",
     "pl-044"
+  ],
+  "evidence_files": [
+    "events.json"
   ]
 }

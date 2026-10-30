@@ -12,5 +12,11 @@
     "chat-0911",
     "chat-0918",
     "pl-044"
+  ],
+  "distractors": [
+    [
+      "the drain failed because kubectl drain ran with the wrong flags",
+      "kubectl drain"
+    ]
   ]
 }
