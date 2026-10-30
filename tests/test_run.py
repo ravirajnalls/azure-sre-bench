@@ -322,6 +322,22 @@ def test_workspace_never_contains_commands_file(tmp_path):
     assert "_commands.yaml" not in listing
 
 
+def test_workspace_never_contains_lintignore(tmp_path):
+    """Information boundary (issue #152): .lintignore declares which fixture
+    inconsistencies are intentional — i.e. which one is the planted bug — so
+    it must never reach the agent's evidence directory."""
+    task_dir = tmp_path / "task"
+    shutil.copytree(TEST_TASK, task_dir)
+    (task_dir / "fixtures" / ".lintignore").write_text(
+        "# seeded for the boundary test\nnamespace: default\n", encoding="utf-8"
+    )
+    workspace = tmp_path / "ws"
+    runner.prepare_workspace(task_dir, workspace)
+
+    assert (workspace / "fixtures").is_dir()
+    assert not (workspace / "fixtures" / ".lintignore").exists()
+
+
 def test_task_without_commands_file_records_no_commands(tmp_path):
     cmd = write_agent(tmp_path, LISTING_AGENT)
     record = runner.run_task(TEST_TASK, cmd, name="plain", results_root=tmp_path)

@@ -48,6 +48,26 @@ Categories: `aks-networking`, `aks-identity`, `aks-workloads`, `aks-ops`, `netwo
   warning-only; new az fixtures should satisfy the mapped schema or a follow-up
   fix lands via the fixture-lint issues.
 
+### Cross-file consistency lint (`bench lint-fixtures`, issue #152)
+
+`bench lint-fixtures --check consistency` (or all registered checkers with no
+`--check`) extracts cluster names, regions, zone sets, subscription/tenant
+placeholder GUIDs, Key Vault names, and namespace bindings from every fixture
+and flags disagreements across files. It exits 1 on error-severity findings.
+The checker registers itself in the `bench.lint_fixtures` registry (issue #151)
+as the `consistency` check.
+
+- When a fixture's inconsistency **is the planted root cause** (a wrong tenant
+  in a SecretProviderClass, a stale federated-credential subject), declare it
+  in `fixtures/.lintignore` so the checker stays quiet for the right reason:
+  ```text
+  # fixtures/.lintignore — category:value or a bare value; # comments
+  namespace: default
+  ```
+- Multi-resource list outputs (`az-vm-list`, `az-disk-list`) may vary locations
+  and zones per entry; the checker compares spatial facts only across
+  single-resource documents. `fixtures/_commands.yaml` is never linted.
+
 ## Task.yaml canary (issue #114)
 
 Every `task.yaml` carries a fixed canary GUID line so a task's presence in a

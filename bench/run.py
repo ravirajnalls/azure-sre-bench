@@ -23,6 +23,7 @@ from pathlib import Path
 import yaml
 
 from bench import GRADER_VERSION, RESULT_SCHEMA_VERSION
+from bench.fixture_lint import LINTIGNORE_FILENAME
 from bench.grader import cap_evidence, extract_files_read, extract_usage, grade, rubric_sha256
 from bench.heldout import HeldoutKeyError, load_hidden_json, split_of
 from bench.releases import load_release, verify_release
@@ -60,13 +61,15 @@ def prepare_workspace(task_dir: Path, workspace: Path) -> None:
     `_commands.yaml` is excluded too: it
     configures the simulated CLIs (issue #111) and reaches the agent through
     the shim environment, not as a one-file answer dump in `fixtures/`.
+    `.lintignore` is excluded as well (issue #152): it documents which fixture
+    inconsistencies are intentional — i.e. which of them is the planted bug.
     """
     fixtures_src = Path(task_dir) / "fixtures"
     if fixtures_src.is_dir():
         shutil.copytree(
             fixtures_src,
             Path(workspace) / "fixtures",
-            ignore=shutil.ignore_patterns(COMMANDS_FILENAME),
+            ignore=shutil.ignore_patterns(COMMANDS_FILENAME, LINTIGNORE_FILENAME),
         )
     task = load_task(task_dir)
     title = task.get("title") or task.get("id") or "Incident"

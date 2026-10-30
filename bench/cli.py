@@ -18,6 +18,7 @@ import sys
 from pathlib import Path
 
 from bench import __version__
+import bench.fixture_lint  # noqa: F401 — registers the consistency checker (issue #152)
 from bench.export import SUPPORTED_FORMATS
 from bench.heldout import ENCRYPTED_SUFFIX, HeldoutKeyError, load_hidden_json
 from bench.remediation import grade_for_task

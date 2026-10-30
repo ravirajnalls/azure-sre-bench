@@ -1,0 +1,4 @@
+# Intentional cross-file inconsistencies — each names this task's planted root cause.
+# The federated credential subject pins the OLD namespace (default) while the
+# orders-api ServiceAccount now lives in `orders`; that mismatch is the bug.
+namespace: default
