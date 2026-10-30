@@ -1,0 +1,19 @@
+id: aks-ops-056
+canary: 00000000-0000-0000-0000-000000000114  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
+title: New billing-ui pods never start after this morning's release while old replicas serve
+category: aks-ops
+difficulty: medium
+tags:
+  - aks-ops
+  - defender-for-containers
+  - admission-policy
+  - supply-chain
+  - kubernetes
+symptom: |
+  After this morning's 06:15 UTC release, new billing-ui pods in the
+  billing namespace never start — the Deployment rollout has been stuck at
+  1/4 since, while the older replicas from last week's image keep serving
+  normally. The registry is reachable from the cluster (other
+  retailacr000a images pull fine), the release changed no manifest besides
+  the image tag, and the team has already re-run the pipeline twice with
+  the same result.

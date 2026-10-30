@@ -1,0 +1,14 @@
+{
+  "root_cause": "Defender for Containers' gated deployment policy (the denypolicy.gateddeployment admission webhook, gate security-vulnerability-gate) denies every new billing-ui pod because the release's base-image bump pulled in critical CVE-2026-33412 (CVSS 9.8) on the v2026.10.30-rc4 image; the admission webhook blocks the Deployment's ReplicaSets while the older replicas on v2026.10.23-rc2 keep serving.",
+  "evidence": [
+    "kubectl-describe-pod.txt: FailedCreate with admission webhook denypolicy.gateddeployment.security.microsoft.com denying image billing-ui:v2026.10.30-rc4 (gate: security-vulnerability-gate)",
+    "defender-vulnerability-findings.json: v2026.10.30-rc4 carries CVE-2026-33412 classified Critical (CVSS 9.8), first observed 06:12 — minutes before the rollout; the running v2026.10.23-rc2 has only a Low finding",
+    "Dockerfile.diff: the release bumped the base image digest (vendor security rebuild), introducing the vulnerable layer with no app changes",
+    "deployment.yaml: image tag matches the denied v2026.10.30-rc4; rollout stuck at 1/4 since 06:15"
+  ],
+  "fix": "Rebuild and repush billing-ui on the vendor's patched base image (new tag, e.g. v2026.10.30-rc5), confirm the Defender finding clears, and roll out the new tag; if the release cannot wait, add a scoped, time-boxed policy exemption for the specific image digest in the Defender gated deployment policy and track the permanent fix.",
+  "evidence_files": [
+    "kubectl-describe-pod.txt",
+    "defender-vulnerability-findings.json"
+  ]
+}

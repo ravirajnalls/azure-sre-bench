@@ -1,0 +1,16 @@
+Name:             billing-ui-5f6d7b9c8d-xk2tq
+Namespace:        billing
+Status:           Pending
+Image:            retailacr000a.azurecr.io/billing-ui:v2026.10.30-rc4
+Init Containers:
+  check-image-gate:
+    State:          Terminated
+      Reason:       Completed
+Events:
+  Type     Reason        Age   From                     Message
+  ----     ------        ----  ----                     -------
+  Normal   Scheduled     3m    default-scheduler        Successfully assigned billing/billing-ui-5f6d7b9c8d-xk2tq to aks-nodeworker-vmss000012
+  Warning  FailedCreate  3m    deployment-controller    Error creating: admission webhook "denypolicy.gateddeployment.security.microsoft.com" denied the request: Deployment blocked: image billing-ui:v2026.10.30-rc4 (sha256:000a...) denied by gated deployment policy — Defender for Containers reports a critical vulnerability on this image (gate: security-vulnerability-gate)
+  Normal   Pulled        2m    kubelet                  Container image already present on machine
+  # Older replica billing-ui-6b9d8f7c4-t9mzp (v2026.10.23-rc2) keeps serving;
+  # only pods created after this morning's rollout are denied.

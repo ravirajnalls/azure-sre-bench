@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: billing-ui
+  namespace: billing
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: billing-ui
+  template:
+    metadata:
+      labels:
+        app: billing-ui
+    spec:
+      containers:
+        - name: billing-ui
+          image: retailacr000a.azurecr.io/billing-ui:v2026.10.30-rc4
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+# Rollout started 06:15 UTC; rollout status has been stuck at 1/4 since.
