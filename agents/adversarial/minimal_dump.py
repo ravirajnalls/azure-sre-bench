@@ -45,7 +45,12 @@ def fixture_texts(fixtures_dir: Path) -> list[str]:
 
 
 def capped_dump_answer(fixtures_dir: Path) -> dict:
-    """Contract-shaped dump that stays under the future issue-#93 caps."""
+    """Contract-shaped dump that stays under the future issue-#93 caps.
+
+    The extra keys cover the change-attribution kind's fields (issue #144) so
+    the probe stays the cheapest legal answer on every answer shape; the
+    diagnosis fields are byte-for-byte what they were before.
+    """
     texts = fixture_texts(fixtures_dir)
     blob = "\n".join(texts)
     return {
@@ -54,6 +59,8 @@ def capped_dump_answer(fixtures_dir: Path) -> dict:
             text[:EVIDENCE_ITEM_MAX_CHARS] for text in texts[:EVIDENCE_MAX_ITEMS]
         ],
         "fix": blob[:FIX_MAX_CHARS],
+        "culprit": blob[:ROOT_CAUSE_MAX_CHARS],  # ids are exact-matched anyway
+        "reasoning": blob[:ROOT_CAUSE_MAX_CHARS],
     }
 
 

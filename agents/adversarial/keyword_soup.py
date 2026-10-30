@@ -54,14 +54,23 @@ def soup_answer(rubric: dict) -> dict:
     this probe fail. A cheater deliberate enough to filter the distractor
     groups out is writing a targeted diagnosis, which is the honest behavior
     the gate exists to demand.
+
+    New kinds self-trap the same way: a change-attribution rubric (#144) gets
+    its `culprit` copied verbatim but its decoy changes pasted into
+    `reasoning`, tripping the distractor check. The check is additive: on
+    diagnosis rubrics the answer is byte-for-byte what it was.
     """
-    return {
+    answer = {
         "root_cause": soup(
             [*(rubric.get("root_cause") or []), *(rubric.get("distractors") or [])]
         ),
         "evidence": [],  # no fixture was read — there is nothing real to cite
         "fix": soup(rubric.get("fix")),
     }
+    if isinstance(rubric.get("culprit"), str):  # change-attribution rubric (#144)
+        answer["culprit"] = rubric["culprit"]
+        answer["reasoning"] = soup(rubric.get("distractors"))
+    return answer
 
 
 def find_rubric(task_id: str) -> Path:

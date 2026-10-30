@@ -17,6 +17,7 @@ import json
 from pathlib import Path
 
 from bench import GRADER_VERSION, RESULT_SCHEMA_VERSION
+from bench.attribution import is_attribution
 from bench.grader import cap_evidence, extract_usage, rubric_sha256
 from bench.heldout import ENCRYPTED_SUFFIX, HeldoutKeyError, load_hidden_json
 from bench.remediation import grade_for_task, is_remediation
@@ -82,6 +83,15 @@ implements your fix. Every patched file is checked against task assertions and
 scanned for unsafe changes.
 """
 
+ATTRIBUTION_BLOCK = """
+
+## Change attribution
+
+This is a change-attribution task: answer with `culprit` (exactly one change
+id from the change log), `reasoning` (why that change caused the incident and
+no other change did), and `fix` (the remediation that undoes it).
+"""
+
 
 def load_task_prompt(task_dir: Path) -> str:
     """Build the paste-ready prompt from a task directory on disk."""
@@ -98,6 +108,9 @@ def load_task_prompt(task_dir: Path) -> str:
     if is_remediation(task):
         # Same contract the `bench run` workspace hint gives agents (issue #110).
         prompt += REMEDIATION_BLOCK
+    elif is_attribution(task):
+        # Same contract the `bench run` workspace hint gives agents (issue #144).
+        prompt += ATTRIBUTION_BLOCK
     return prompt
 
 

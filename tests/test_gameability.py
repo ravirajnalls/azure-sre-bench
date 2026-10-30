@@ -184,7 +184,13 @@ def test_fixture_dump_covers_all_fields(tmp_path: Path):
 
 def test_fixture_dump_missing_fixtures_dir_yields_empty_answer(tmp_path: Path):
     answer = fixture_dump.dump_answer(tmp_path / "fixtures")
-    assert answer == {"root_cause": "", "evidence": [], "fix": ""}
+    assert answer == {
+        "root_cause": "",
+        "evidence": [],
+        "fix": "",
+        "culprit": "",
+        "reasoning": "",
+    }
 
 
 def test_minimal_dump_stays_under_future_caps(tmp_path: Path):

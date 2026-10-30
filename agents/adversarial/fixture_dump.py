@@ -37,13 +37,20 @@ def fixture_texts(fixtures_dir: Path) -> list[str]:
 
 
 def dump_answer(fixtures_dir: Path) -> dict:
-    """Contract-shaped answer that dumps raw fixture text into every field."""
+    """Contract-shaped answer that dumps raw fixture text into every field.
+
+    The field set is a superset: the extra keys feed the change-attribution
+    kind (issue #144) and are ignored by the diagnosis grader, so the dump is
+    the all-fields attack on every answer shape at once.
+    """
     texts = fixture_texts(fixtures_dir)
     blob = "\n".join(texts)
     return {
         "root_cause": blob,
         "evidence": texts,  # the grader appends evidence to the root-cause text
         "fix": blob,
+        "culprit": blob,  # attribution half (#144): a blob is never one exact id
+        "reasoning": blob,  # and trips the distractor check on decoy mentions
     }
 
 
