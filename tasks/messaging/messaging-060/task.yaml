@@ -1,0 +1,17 @@
+id: messaging-060
+canary: 00000000-0000-0000-0000-000000000114  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
+title: Service Bus dead-letter queue fills while the main queue drains
+category: messaging
+difficulty: medium
+tags:
+  - messaging
+  - azure
+  - servicebus
+  - dead-letter
+  - queues
+symptom: |
+  Order throughput dropped to zero since yesterday morning: the orders Service
+  Bus queue's own backlog is nearly empty, yet the dead-letter count is
+  climbing by thousands of messages per hour and nothing reaches the order
+  database. The orders-consumer service reports itself healthy and running,
+  and the messaging namespace shows no signs of rate limiting.

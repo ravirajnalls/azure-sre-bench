@@ -1,0 +1,7 @@
+2026-10-29T08:40:59Z INFO  [orders-consumer] starting orders-consumer version 2.7.0 (env prod, queue orders, concurrency 8)
+2026-10-29T08:41:04Z ERROR [orders-consumer] failed to handle message id=00000000-0000-0000-0000-000000000005 attempt=1/3: JsonException: expected property 'amountCents' (number), found legacy property 'amount' (string) — abandoning delivery
+2026-10-29T08:41:08Z ERROR [orders-consumer] failed to handle message id=00000000-0000-0000-0000-000000000006 attempt=1/3: JsonException: expected property 'amountCents' (number), found legacy property 'amount' (string) — abandoning delivery
+2026-10-29T08:42:06Z ERROR [orders-consumer] failed to handle message id=00000000-0000-0000-0000-000000000005 attempt=2/3: JsonException: expected property 'amountCents' (number), found legacy property 'amount' (string) — abandoning delivery
+2026-10-29T08:43:08Z ERROR [orders-consumer] failed to handle message id=00000000-0000-0000-0000-000000000005 attempt=3/3: JsonException: expected property 'amountCents' (number), found legacy property 'amount' (string) — message will be dead-lettered
+2026-10-29T09:00:00Z INFO  [orders-consumer] health probe OK (lock renewal active, connection open)
+2026-10-29T12:00:00Z INFO  [orders-consumer] health probe OK (lock renewal active, connection open)
