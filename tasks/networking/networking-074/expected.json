@@ -1,0 +1,15 @@
+{
+  "findings": [
+    {
+      "file": "network.tf",
+      "line": 43,
+      "issue": [
+        ["route", "udr", "0.0.0.0/0", "route table"],
+        ["firewall", "egress", "outboundtype", "outbound type", "fqdn"]
+      ]
+    }
+  ],
+  "distractors": [
+    ["variable", "rename", "renamed", "aks_subnets", "cluster_subnets", "naming standard"]
+  ]
+}
