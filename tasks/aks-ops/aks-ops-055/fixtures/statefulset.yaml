@@ -32,5 +32,3 @@ spec:
         resources:
           requests:
             storage: 50Gi
-# NOTE: no podDisruptionBudget anywhere in the streaming namespace, and no
-# eviction-class annotations on the pod template.
