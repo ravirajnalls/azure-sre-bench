@@ -1,0 +1,15 @@
+{
+  "root_cause": "The cartitems container uses /region as its single hash partition key (az-cosmosdb-sql-container-show.json), and 82% of documents carry region=eastus (sample-documents.json). At peak, all that traffic lands on one logical/physical partition whose normalized RU consumption reaches 100% (normalized-ru-by-partition.csv) while other partitions sit near 10%. Cosmos DB enforces throughput per partition, so the hot partition throttles cart-api with 429 substatus 3200 (cart-api.log) even though the container-wide total is only ~30% of the 30000 RU/s provisioned (total-ru.csv).",
+  "evidence": [
+    "az-cosmosdb-sql-container-show.json: cartitems has partitionKey paths ['/region'] with 30000 RU/s manual throughput",
+    "normalized-ru-by-partition.csv: physical partition 0 reaches 100% normalized RU consumption during peak while partitions 1 and 2 stay under 15% — a single hot partition",
+    "sample-documents.json: 82% of documents have region=eastus, so the /region key concentrates most traffic into one logical partition",
+    "cart-api.log: all sampled 429s (substatus 3200) carry partitionKeyRegion=eastus, while westeurope/australiaeast reads succeed in single-digit milliseconds",
+    "total-ru.csv: account-wide consumption peaks at ~31% of provisioned — the container overall has headroom, ruling out insufficient total throughput"
+  ],
+  "fix": "Repartition so traffic spreads across many logical partitions: migrate the container to a higher-cardinality partition key (e.g. /customerId), a synthetic key combining region and customer, or hierarchical partition keys such as [/region, /customerId]. Changing a partition key requires a new container plus data copy (no in-place change), so ship it as a migration. Raising RU/s or enabling autoscale does not fix it — the container-wide total is ~30% consumed; only the single eastus partition is saturated.",
+  "evidence_files": [
+    "normalized-ru-by-partition.csv",
+    "az-cosmosdb-sql-container-show.json"
+  ]
+}

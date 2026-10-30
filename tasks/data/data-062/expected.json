@@ -1,0 +1,12 @@
+{
+  "root_cause": [
+    ["hot partition", "partition skew", "partition key"],
+    ["/region", "region"]
+  ],
+  "fix": [
+    ["partition key", "hierarchical", "synthetic"]
+  ],
+  "distractors": [
+    ["increase throughput", "autoscale", "raise ru"]
+  ]
+}

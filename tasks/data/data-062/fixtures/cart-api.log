@@ -1,0 +1,17 @@
+2026-10-29T18:32:04.112Z WARN  [cart-api] CosmosException 429 (substatus 3200) on POST /cart/add — activity 00000000-0000-0000-0000-000000000001, retryAfterMs 412, partitionKeyRegion=eastus
+2026-10-29T18:32:04.390Z WARN  [cart-api] CosmosException 429 (substatus 3200) on POST /cart/add — activity 00000000-0000-0000-0000-000000000001, retryAfterMs 893, partitionKeyRegion=eastus
+2026-10-29T18:32:05.007Z INFO  [cart-api] CosmosException 429 rate limited: 3 retried, 1 exhausted — operation UpsertItem(cartId=ct-8842), region partition=eastus
+2026-10-29T18:33:41.550Z WARN  [cart-api] CosmosException 429 (substatus 3200) on GET /cart/ct-9017 — activity 00000000-0000-0000-0000-000000000002, retryAfterMs 375, partitionKeyRegion=eastus
+2026-10-29T18:33:41.802Z INFO  [cart-api] ReadItem(cartId=ct-9052, region=westeurope) completed in 7 ms — 200
+2026-10-29T18:33:41.914Z INFO  [cart-api] ReadItem(cartId=ct-9061, region=australiaeast) completed in 9 ms — 200
+2026-10-29T18:34:12.276Z WARN  [cart-api] CosmosException 429 (substatus 3200) on POST /cart/add — activity 00000000-0000-0000-0000-000000000003, retryAfterMs 1180, partitionKeyRegion=eastus
+2026-10-29T18:36:58.441Z INFO  [cart-api] ReadItem(cartId=ct-9110, region=westeurope) completed in 6 ms — 200
+2026-10-29T18:37:02.938Z WARN  [cart-api] CosmosException 429 (substatus 3200) on GET /cart/ct-9148 — activity 00000000-0000-0000-0000-000000000004, retryAfterMs 460, partitionKeyRegion=eastus
+2026-10-29T18:37:03.201Z WARN  [cart-api] p99 latency AddToCart 4x baseline since 18:30Z; all sampled 429s carry partitionKeyRegion=eastus
+2026-10-29T18:41:19.633Z WARN  [cart-api] CosmosException 429 (substatus 3200) on POST /cart/add — activity 00000000-0000-0000-0000-000000000005, retryAfterMs 760, partitionKeyRegion=eastus
+2026-10-29T18:45:00.000Z INFO  [cart-api] Cosmos client: consistency=Session, maxRetryAttemptsOnThrottledRequests=9, maxRetryWaitTimeInSeconds=30
+2026-10-29T18:47:31.884Z WARN  [cart-api] CosmosException 429 (substatus 3200) on POST /cart/add — activity 00000000-0000-0000-0000-000000000006, retryAfterMs 512, partitionKeyRegion=eastus
+2026-10-29T18:52:10.077Z WARN  [cart-api] CosmosException 429 (substatus 3200) on POST /cart/add — activity 00000000-0000-0000-0000-000000000007, retryAfterMs 640, partitionKeyRegion=eastus
+2026-10-29T18:55:44.519Z INFO  [cart-api] ReadItem(cartId=ct-9288, region=australiaeast) completed in 8 ms — 200
+2026-10-29T19:01:23.310Z WARN  [cart-api] CosmosException 429 (substatus 3200) on POST /cart/add — activity 00000000-0000-0000-0000-000000000008, retryAfterMs 905, partitionKeyRegion=eastus
+2026-10-29T19:06:40.115Z INFO  [cart-api] sre-thread: dashboard shows plenty of headroom — proposal to increase throughput to 60000 RU/s or switch to autoscale pending review

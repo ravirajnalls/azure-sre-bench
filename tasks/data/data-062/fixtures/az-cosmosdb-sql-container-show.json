@@ -1,0 +1,35 @@
+{
+  "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-shop-prod/providers/Microsoft.DocumentDB/databaseAccounts/cosmos-shopcart-prod/sqlDatabases/shopdb/containers/cartitems",
+  "name": "cartitems",
+  "type": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
+  "properties": {
+    "resource": {
+      "id": "cartitems",
+      "partitionKey": {
+        "paths": [
+          "/region"
+        ],
+        "kind": "Hash",
+        "version": 1
+      },
+      "indexingPolicy": {
+        "indexingMode": "consistent",
+        "automatic": true,
+        "includedPaths": [
+          {
+            "path": "/*",
+            "indexes": []
+          }
+        ],
+        "excludedPaths": [
+          {
+            "path": "/\"_etag\"/?"
+          }
+        ]
+      }
+    },
+    "options": {
+      "throughput": 30000
+    }
+  }
+}
