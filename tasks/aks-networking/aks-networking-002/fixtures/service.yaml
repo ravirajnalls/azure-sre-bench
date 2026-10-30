@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: storefront
+  namespace: shop
+  uid: 00000000-0000-0000-0000-000000000002
+  resourceVersion: "8841203"
+  creationTimestamp: "2026-08-14T11:03:07Z"
+  labels:
+    app.kubernetes.io/name: storefront
+    app.kubernetes.io/part-of: shop
+spec:
+  type: ClusterIP
+  selector:
+    app: storefront
+    tier: web
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 8080
