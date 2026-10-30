@@ -263,6 +263,39 @@ mocked-HTTP test (`tests/test_foundry_agent.py`) proves the full
 agent → thread → run → tool round-trip against a fake Foundry project without
 any Azure credentials.
 
+## Run the native tool-use baselines (Claude and GPT)
+
+`agents/native_tool_agent.py` runs the ReAct baseline's identical investigation
+loop — same `list_files`/`read_file` tools, same system prompt, same 12-step
+budget — but speaks each provider's **native tool-calling API** directly instead
+of the OpenAI-compatible chat shim: the **Anthropic Messages API** for Claude
+(`tool_use`/`tool_result` content blocks) and the **OpenAI Responses API** for
+GPT (flat function tools, `function_call_output` items). Because tools and step
+limits are identical by construction, the leaderboard compares Claude, GPT, and
+the shim on equal footing:
+
+```bash
+export NATIVE_PROVIDER="anthropic"       # or "openai"
+export ANTHROPIC_API_KEY="..."           # sent as the x-api-key header
+export ANTHROPIC_MODEL="claude-sonnet-4-5"
+# Optional: ANTHROPIC_BASE_URL (default https://api.anthropic.com)
+
+export NATIVE_PROVIDER="openai"
+export OPENAI_API_KEY="..."              # bearer token
+export OPENAI_MODEL="gpt-5"
+# Optional: OPENAI_BASE_URL (default https://api.openai.com/v1)
+
+python -m bench run --agent agents/native_tool_agent.py --task tasks/aks-networking/aks-networking-001
+```
+
+As with every baseline, any failure — missing credentials, unreachable
+provider, non-JSON reply — prints `{}` and exits 0, which the runner records as
+a graded FAIL rather than a crash. The mocked-HTTP tests
+(`tests/test_native_tool_agent.py`) drive both native wire formats end to end
+without live keys, and the sweep config (`sweeps/baseline.yaml`) carries
+`native-tool-agent-claude` and `native-tool-agent-gpt` entries that skip
+themselves with a recorded `missing-env` reason until credentials exist.
+
 ## License
 
 Azure SRE Bench is dual-licensed:
