@@ -1,0 +1,19 @@
+id: aks-networking-003
+title: "LoadBalancer service stuck Pending / new pods can't get IPs"
+category: aks-networking
+difficulty: medium
+tags:
+  - aks
+  - azure-cni
+  - subnet
+  - ip-exhaustion
+  - kubernetes
+symptom: >
+  After scaling the checkout-api deployment from 2 to 6 replicas this
+  morning, the new pods in the orders namespace have been stuck in
+  ContainerCreating for over an hour, and the newly created checkout
+  LoadBalancer Service still shows no external IP. The long-running
+  partner-api LoadBalancer keeps serving on its address, existing pods are
+  unaffected, all three cluster nodes report Ready, image pulls succeed,
+  and there are no node-pressure or crash-loop events. Paged by the
+  "pods stuck in ContainerCreating" alert at 08:41 UTC.

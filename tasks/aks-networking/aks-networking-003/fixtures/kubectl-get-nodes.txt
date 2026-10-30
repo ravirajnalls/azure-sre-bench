@@ -1,0 +1,4 @@
+NAME                                 STATUS   ROLES   AGE   VERSION    INTERNAL-IP   EXTERNAL-IP   OS-IMAGE                         KERNEL-VERSION     CONTAINER-RUNTIME
+aks-nodepool1-00000001-vmss000000    Ready    agent   42d   v1.29.7    10.224.0.4    <none>        Ubuntu 22.04.4 LTS               5.15.0-1072-azure  containerd://1.7.27+azure-1
+aks-nodepool1-00000002-vmss000000    Ready    agent   42d   v1.29.7    10.224.0.5    <none>        Ubuntu 22.04.4 LTS               5.15.0-1072-azure  containerd://1.7.27+azure-1
+aks-nodepool1-00000003-vmss000000    Ready    agent   42d   v1.29.7    10.224.0.6    <none>        Ubuntu 22.04.4 LTS               5.15.0-1072-azure  containerd://1.7.27+azure-1

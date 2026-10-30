@@ -1,0 +1,5 @@
+NAME            TYPE           CLUSTER-IP     EXTERNAL-IP    PORT(S)                      AGE
+cart            ClusterIP      10.240.7.64    <none>         80/TCP                       5d
+checkout        LoadBalancer   10.240.12.87   <pending>      80:31203/TCP,443:30671/TCP   66m
+orders-api      ClusterIP      10.240.9.131   <none>         8080/TCP                     42d
+partner-api     LoadBalancer   10.240.5.221   203.0.113.42   8443:31789/TCP               42d

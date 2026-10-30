@@ -1,0 +1,9 @@
+{
+  "root_cause": [
+    ["subnet"],
+    ["ip exhaustion", "out of ip", "exhausted", "no available ip", "insufficient ip"]
+  ],
+  "fix": [
+    ["larger subnet", "overlay", "cni overlay", "reduce maxpods", "new node pool subnet"]
+  ]
+}
