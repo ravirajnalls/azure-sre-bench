@@ -79,7 +79,7 @@ def test_cli_leaderboard_prints_table(tmp_path, capsys):
     seed_run(tmp_path, "naive", [record("t1", 1.0, True)])
     assert main(["leaderboard", "--results-root", str(tmp_path)]) == 0
     out = capsys.readouterr().out
-    assert "| 1 | naive | 1/1" in out
+    assert "| 1 | naive | runner | 1/1" in out
 
 
 def test_update_readme_splices_only_the_block(tmp_path):
