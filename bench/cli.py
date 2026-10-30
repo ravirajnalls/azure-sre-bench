@@ -4,7 +4,8 @@ Issue #1 scaffolded the subcommand surface; `validate` and `list` are live as of
 issue #2, `grade` as of issue #3, `run` as of issue #4, `site` as of issue #40,
 `leaderboard` as of issue #41, `catalog` as of issue #42, `verify` as of issue
 #118, `submit` and `prompt` as of issue #124, `new` as of issue #120,
-`mcp-serve` as of issue #123, and `sweep` as of issue #125: the full
+`mcp-serve` as of issue #123, `sweep` as of issue #125, and `export` as of
+issue #117: the full
 subcommand surface is implemented.
 """
 
@@ -16,13 +17,14 @@ import sys
 from pathlib import Path
 
 from bench import __version__
+from bench.export import SUPPORTED_FORMATS
 from bench.grader import grade
 from bench.heldout import ENCRYPTED_SUFFIX, HeldoutKeyError, load_hidden_json
 from bench.tasks import difficulty_distribution, load_tasks
 
 SUBCOMMANDS = (
     "validate", "list", "grade", "run", "verify", "submit", "prompt", "site",
-    "leaderboard", "catalog", "new", "mcp-serve", "sweep",
+    "leaderboard", "catalog", "new", "mcp-serve", "sweep", "export",
 )
 
 IMPLEMENTED = SUBCOMMANDS
@@ -140,6 +142,28 @@ def build_parser() -> argparse.ArgumentParser:
                     "where submit_answer writes the contract JSON "
                     "(default: $BENCH_MCP_ANSWER_FILE or ./bench-mcp-answer.json)"
                 ),
+            )
+        elif name == "export":
+            export_parser = sub.add_parser(
+                name,
+                help="export the public dataset, eval-side rubrics, and dataset card (issue #117)",
+            )
+            export_parser.add_argument(
+                "--format",
+                dest="format",
+                choices=SUPPORTED_FORMATS,
+                default="jsonl",
+                help="export format (default: jsonl)",
+            )
+            export_parser.add_argument(
+                "--out",
+                default="dist",
+                help="output directory (default: dist)",
+            )
+            export_parser.add_argument(
+                "--tasks-root",
+                default="tasks",
+                help="task discovery root (default: ./tasks)",
             )
         elif name == "verify":
             verify_parser = sub.add_parser(
@@ -383,6 +407,34 @@ def cmd_verify(args: argparse.Namespace) -> int:
     return 0 if not report["errors"] and not report["mismatches"] else 1
 
 
+def cmd_export(args: argparse.Namespace) -> int:
+    """Export the public dataset, eval-side file, and dataset card (issue #117)."""
+    from bench.export import export_dataset  # deferred: keeps --help cheap
+
+    summary = export_dataset(Path(args.tasks_root), Path(args.out))
+    for path in summary.files:
+        print(f"wrote {path}")
+    notes = []
+    if summary.heldout_skipped:
+        notes.append(
+            f"{summary.heldout_skipped} held-out task(s) excluded from the public export"
+        )
+    if summary.eval_locked:
+        notes.append(
+            f"{summary.eval_locked} held-out task(s) missing from the eval file "
+            "(no usable HELDOUT_KEY)"
+        )
+    if summary.invalid_skipped:
+        notes.append(f"{summary.invalid_skipped} invalid task(s) skipped")
+    for note in notes:
+        print(f"note: {note}", file=sys.stderr)
+    print(
+        f"exported {summary.public_count} public task(s) and "
+        f"{summary.eval_count} eval record(s)"
+    )
+    return 0
+
+
 def cmd_leaderboard(args: argparse.Namespace) -> int:
     """Print the markdown leaderboard table from `--results-root` (issue #41)."""
     from bench.leaderboard import leaderboard_markdown  # deferred: keeps --help cheap
@@ -444,6 +496,8 @@ def main(argv: list[str] | None = None) -> int:
             from bench.mcp_server import cmd_mcp_serve  # deferred: keeps --help cheap
 
             return cmd_mcp_serve(args)
+        if args.command == "export":
+            return cmd_export(args)
         root = Path(getattr(args, "root", "tasks"))
         if args.command == "validate":
             return cmd_validate(root)
