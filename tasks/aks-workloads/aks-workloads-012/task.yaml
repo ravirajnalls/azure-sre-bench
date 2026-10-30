@@ -1,0 +1,19 @@
+id: aks-workloads-012
+title: catalog-api pods restart every ~40s after a cache warm-up release
+category: aks-workloads
+difficulty: easy
+tags:
+  - aks
+  - aks-workloads
+  - kubernetes
+  - probes
+  - crashloopbackoff
+symptom: |
+  Twenty minutes after rolling out catalog-api v2.7.1 with its new cache
+  warm-up step, every catalog-api pod in the catalog namespace is in
+  CrashLoopBackOff with restart counts climbing into the dozens, and the
+  catalog availability dashboard is flatlined at zero — no pod has ever
+  served a request. Pods die roughly 40 seconds after each start, well
+  before the warm-up banner in the logs clears. The products database the
+  warm-up reads from shows no errors or slow queries, and memory and CPU on
+  the catalog pods look completely normal.

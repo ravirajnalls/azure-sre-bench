@@ -1,0 +1,9 @@
+{
+  "root_cause": [
+    ["liveness"],
+    ["warm", "startup", "initialdelay", "initial delay"]
+  ],
+  "fix": [
+    ["startupprobe", "startup probe", "initialdelayseconds", "initial delay seconds"]
+  ]
+}
