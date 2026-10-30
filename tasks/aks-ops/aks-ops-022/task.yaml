@@ -1,0 +1,15 @@
+id: aks-ops-022
+title: StatefulSet pod stays Pending while its PVC is Bound
+category: aks-ops
+difficulty: medium
+tags:
+  - aks-ops
+  - aks
+  - storage
+  - statefulset
+  - kubernetes
+symptom: |
+  A new ledger-db StatefulSet was rolled out to the finance namespace about
+  thirty minutes ago and its first pod is still Pending. The PVC backing the
+  pod reports Bound, and every node shows plenty of spare CPU and memory.
+  No node pools were changed and no cluster upgrade is in progress.

@@ -1,0 +1,11 @@
+{
+  "root_cause": "The managed-csi-premium-zonal StorageClass uses volumeBindingMode: Immediate, so the disk was provisioned immediately in zone eastus-3 before any pod was scheduled. Every node in the cluster runs in eastus-1 or eastus-2, so the PV's zone node affinity can never be satisfied — the scheduler rejects all nodes with a volume node affinity conflict and the pod stays Pending even though the PVC is Bound.",
+  "evidence": [
+    "storageclass.yaml: managed-csi-premium-zonal sets volumeBindingMode: Immediate with zoned Premium_LRS",
+    "kubectl-get-pv.yaml: PV pvc-00000000-0000-0000-0000-000000000002 nodeAffinity requires topology.disk.csi.azure.com/zone eastus-3",
+    "kubectl-describe-pod.txt: FailedScheduling — 0/4 nodes are available: 4 node(s) had volume node affinity conflict",
+    "kubectl-get-nodes-zones.txt: all nodes run in eastus-1 or eastus-2",
+    "az-aks-nodepool-list.json: both node pools span availabilityZones 1 and 2 only"
+  ],
+  "fix": "Change the managed-csi-premium-zonal StorageClass (or the ledger-db PVC's storage class) to use volumeBindingMode: WaitForFirstConsumer so the disk is provisioned in the zone of the node that first mounts it, delete the Bound PVC so it is re-created under the corrected class, and let the StatefulSet recreate pod ledger-db-0; alternatively add zone 3 to the node pool."
+}
