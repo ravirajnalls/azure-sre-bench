@@ -1,0 +1,4 @@
+# Intentional cross-file inconsistencies — each names this task's planted root cause.
+# The SecretProviderClass pins the wrong tenant (...009); Key Vault and the az
+# fixtures use ...001. That tenant mismatch is the bug.
+tenant_guid: 00000000-0000-0000-0000-000000000009
