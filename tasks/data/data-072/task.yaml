@@ -1,0 +1,24 @@
+id: data-072
+canary: 00000000-0000-0000-0000-000000000114  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
+title: Certificate expiry cascade across the prod data tier
+category: data
+difficulty: medium
+tags:
+  - data
+  - keyvault
+  - certificate-expiry
+  - mtls
+  - redis
+  - azure-sql
+  - alert-triage
+kind: alert-triage
+symptom: |
+  At 09:15 UTC this morning the prod data tier started failing as one: the
+  order API returns 5xx on roughly a third of requests, SQL connections
+  refuse to authenticate, Redis clients throw TLS handshake errors, the
+  checkout queue backlog is growing, the nightly synthetic checkout journey
+  fails at its first data-tier step, and App Gateway marks the API backends
+  unhealthy. No deploy has gone out since Tuesday, and restarting nothing
+  has helped so far. Seven alerts are active in the channel — this has to
+  be one underlying failure. Pick the single alert that started it all and
+  classify the remaining alerts it explains.

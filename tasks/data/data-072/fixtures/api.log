@@ -1,0 +1,18 @@
+2026-10-30T09:15:02.114Z INFO  orders-api.pool - connection pool warm-up complete (redis=ok sql=ok tls_client_cert=app-mtls-client from keyvault kv-prod-shared-01)
+2026-10-30T09:15:47.338Z WARN  redis.client - TLS handshake failed to rediscache-session-prod.redis.cache.windows.net:6380: certificate has expired (cert app-mtls-client, notAfter 2026-10-30T09:15:00Z) — retry 1/5
+2026-10-30T09:15:47.401Z WARN  redis.client - TLS handshake failed to rediscache-session-prod.redis.cache.windows.net:6380: certificate has expired — retry 2/5
+2026-10-30T09:15:47.655Z ERROR redis.client - giving up after 5 handshake attempts: certificate has expired (SSL_CERTIFICATE_VERIFY_FAILED)
+2026-10-30T09:15:48.012Z ERROR sql.connection - login to sqldb-orders-prod.database.windows.net failed: TLS client authentication rejected — certificate has expired (server requires client cert)
+2026-10-30T09:16:20.774Z ERROR http.server - GET /api/orders/checkout 500 upstream_connect_error (redis handshake failed) latency=5012ms
+2026-10-30T09:16:21.001Z ERROR http.server - GET /api/orders/history 500 upstream_connect_error (sql login failed) latency=4988ms
+2026-10-30T09:16:59.230Z WARN  http.server - GET /api/orders/checkout 503 circuit_open for redis half of requests latency=40ms
+2026-10-30T09:17:41.556Z WARN  appgw.probe - health probe /healthz failing on all backend servers: TLS handshake error CERT_HAS_EXPIRED
+2026-10-30T09:18:05.889Z ERROR redis.client - reconnect storm: 100% of new connections fail handshake before AUTH (certificate has expired)
+2026-10-30T09:18:32.442Z ERROR sql.connection - login failure rate 100% over last 3 minutes; certificate-based client auth is the only auth mode configured
+2026-10-30T09:19:14.902Z ERROR http.server - HTTP 5xx rate 31% over last 5 minutes (baseline 0.4%); failures cluster on /api/orders/* endpoints
+2026-10-30T09:20:03.117Z WARN  queue.consumer - consumer orders-checkout-worker-2: 0 messages processed in 5 minutes (redis session lookup fails before consume)
+2026-10-30T09:21:47.660Z WARN  queue.consumer - active message count 48,112 and climbing; consumer success rate near zero since 09:15
+2026-10-30T09:22:15.508Z ERROR http.server - POST /api/orders/checkout 500 upstream_connect_error latency=5009ms
+2026-10-30T09:23:02.221Z ERROR synthetic.runner - checkout journey step 2/5 (place order) failed from all 4 probe regions: redis session lookup unavailable
+2026-10-30T09:23:40.109Z WARN  redis.client - TLS handshake failed to rediscache-session-prod.redis.cache.windows.net:6380: certificate has expired — retry 1/5
+2026-10-30T09:24:02.833Z ERROR sql.connection - login to sqldb-orders-prod.database.windows.net failed: TLS client authentication rejected — certificate has expired

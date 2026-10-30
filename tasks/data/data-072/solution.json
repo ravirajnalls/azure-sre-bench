@@ -1,0 +1,17 @@
+{
+  "root_alert": "ALT-06",
+  "symptom_alerts": [
+    "ALT-01",
+    "ALT-02",
+    "ALT-03",
+    "ALT-04",
+    "ALT-05",
+    "ALT-07"
+  ],
+  "reasoning": "ALT-06 fired first, seven days before the storm, when the app-mtls-client certificate entered its 7-day expiry window, and it never cleared. The Key Vault fixture confirms the cert expired 2026-10-30T09:15Z — the exact minute the cascade starts — and its policy has no auto-renewal (self issuer, email-only lifetime action). api.log shows mTLS handshakes failing from 09:15:47, so every downstream alert follows: Redis (ALT-03), SQL client-auth logins (ALT-02), App Gateway probes (ALT-07), then API 5xx (ALT-01), the queue backlog (ALT-04), and the synthetic journey (ALT-05).",
+  "evidence_files": [
+    "alerts.json",
+    "keyvault-certificate-show.json",
+    "api.log"
+  ]
+}
