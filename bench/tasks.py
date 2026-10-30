@@ -57,6 +57,12 @@ from bench.remediation import (
 )
 from bench.sim import COMMANDS_FILENAME
 from bench.sim.sim_cli import parse_entries
+from bench.timeline import (
+    EVENTS_FILENAME,
+    KIND_TIMELINE,
+    ORDER_KEY,
+    rubric_order,
+)
 
 REQUIRED_KEYS = ("id", "title", "category", "difficulty", "tags", "symptom")
 
@@ -294,7 +300,7 @@ def _validate_config(config: dict, task_dir: Path) -> list[str]:
     return errors
 
 
-def _validate_fixtures(task_dir: Path) -> list[str]:
+def _validate_fixtures(task_dir: Path, config: dict | None = None) -> list[str]:
     errors: list[str] = []
     fixtures_dir = task_dir / "fixtures"
     if not fixtures_dir.is_dir():
@@ -310,9 +316,15 @@ def _validate_fixtures(task_dir: Path) -> list[str]:
         (path for path in entries if path.name == COMMANDS_FILENAME), None
     )
     files = [path for path in entries if path.name not in metadata_files]
-    if not MIN_FIXTURES <= len(files) <= MAX_FIXTURES:
+    # A timeline task bundles its evidence as one events export (issue #146):
+    # its single fixtures/events.json stands in for the per-incident evidence
+    # files, so only the upper bound applies there. The events file's own
+    # structural rules are enforced by _load_timeline_events.
+    kind = config.get("kind") if isinstance(config, dict) else None
+    min_files = 1 if kind == KIND_TIMELINE else MIN_FIXTURES
+    if not min_files <= len(files) <= MAX_FIXTURES:
         errors.append(
-            f"fixtures/ must contain {MIN_FIXTURES}-{MAX_FIXTURES} files, found {len(files)}"
+            f"fixtures/ must contain {min_files}-{MAX_FIXTURES} files, found {len(files)}"
         )
 
     for fixture in files:
@@ -530,6 +542,82 @@ def _validate_postmortem_rubric(data: dict) -> list[str]:
     return errors
 
 
+def _validate_timeline_rubric(data: dict, task_dir: Path) -> list[str]:
+    """Shape rules for a timeline rubric's `order` and its events (issue #146).
+
+    The reference order must be a non-empty list of unique event-id strings,
+    every id must exist in `fixtures/events.json`, and the events fixture
+    itself must be well-formed: an `events` list of objects with unique
+    non-empty string ids, a timestamp (string or null — partial timelines are
+    the point) and a non-empty summary.
+    """
+    order = rubric_order(data)
+    if not order:
+        return [
+            f"expected.json: '{ORDER_KEY}' must be a non-empty list of unique "
+            "event-id strings"
+        ]
+    errors: list[str] = []
+    events, event_errors = _load_timeline_events(task_dir)
+    errors.extend(event_errors)
+    if events is not None:
+        known = {event.get("id") for event in events}
+        missing = [event_id for event_id in order if event_id not in known]
+        if missing:
+            errors.append(
+                f"expected.json: '{ORDER_KEY}' references event ids missing from "
+                f"{EVENTS_FILENAME}: {', '.join(missing)}"
+            )
+    return errors
+
+
+def _load_timeline_events(task_dir: Path) -> tuple[list | None, list[str]]:
+    """Parse `fixtures/events.json` for a timeline task (issue #146).
+
+    Returns the event list, or None with the structural errors that made it
+    unloadable — the reference-order cross-check only runs when the events
+    parsed.
+    """
+    path = task_dir / "fixtures" / EVENTS_FILENAME
+    if not path.is_file():
+        return None, [f"timeline task requires fixtures/{EVENTS_FILENAME}"]
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        return None, [f"fixtures/{EVENTS_FILENAME} does not parse: {exc}"]
+    events = data.get("events") if isinstance(data, dict) else None
+    if not isinstance(events, list) or not events:
+        return None, [
+            f"fixtures/{EVENTS_FILENAME}: 'events' must be a non-empty list"
+        ]
+    errors: list[str] = []
+    seen: set[str] = set()
+    for index, event in enumerate(events):
+        label = f"fixtures/{EVENTS_FILENAME}: events[{index}]"
+        if not isinstance(event, dict):
+            errors.append(f"{label} must be an object")
+            continue
+        event_id = event.get("id")
+        if not (isinstance(event_id, str) and event_id.strip()):
+            errors.append(f"{label}: 'id' must be a non-empty string")
+        elif event_id in seen:
+            errors.append(f"{label}: duplicate event id '{event_id}'")
+        else:
+            seen.add(event_id)
+        timestamp = event.get("timestamp")
+        if timestamp is not None and not (
+            isinstance(timestamp, str) and timestamp.strip()
+        ):
+            errors.append(f"{label}: 'timestamp' must be a string or null")
+        summary = event.get("summary")
+        if not (isinstance(summary, str) and summary.strip()):
+            errors.append(f"{label}: 'summary' must be a non-empty string")
+        source = event.get("source")
+        if not (isinstance(source, str) and source.strip()):
+            errors.append(f"{label}: 'source' must be a non-empty string")
+    return events, errors
+
+
 def _validate_expected_data(
     data: dict, task_dir: Path, config: dict | None = None
 ) -> list[str]:
@@ -560,6 +648,8 @@ def _validate_expected_data(
                 "expected.json: 'fix' must be a non-empty list "
                 "of non-empty string lists"
             )
+    elif kind == KIND_TIMELINE:
+        errors.extend(_validate_timeline_rubric(data, task_dir))
     else:
         for rubric_field in ("root_cause", "fix"):
             value = data.get(rubric_field)
@@ -926,7 +1016,7 @@ def inspect_task(task_dir: Path) -> TaskResult:
             else:
                 result.errors.append("task.yaml must contain a mapping")
 
-    result.errors.extend(_validate_fixtures(task_dir))
+    result.errors.extend(_validate_fixtures(task_dir, result.config))
     task_id = (
         str(result.config.get("id"))
         if isinstance(result.config, dict) and result.config.get("id")

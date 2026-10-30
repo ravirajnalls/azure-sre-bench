@@ -50,6 +50,7 @@ from bench.preincident import (
     is_pre_incident_review,
 )
 from bench.safety import find_violations, global_rules, rubric_unsafe_rules
+from bench.timeline import KIND_TIMELINE, ORDER_KEY, grade_timeline, is_timeline
 
 KIND_REMEDIATION = "remediation"
 KIND_DIAGNOSIS = "diagnosis"
@@ -59,6 +60,7 @@ KINDS = (
     KIND_ATTRIBUTION,
     KIND_PRE_INCIDENT_REVIEW,
     KIND_POSTMORTEM,
+    KIND_TIMELINE,
 )
 
 # The answer's patch map: {fixture path: full new file content}.
@@ -439,17 +441,20 @@ def grade_for_task(
 
     A rubric that declares `checks` triggers remediation grading, a
     `culprit` string triggers attribution grading, a `findings` list
-    triggers pre-incident grading, and a `required_facts` list triggers
-    postmortem grading even when the task config is missing or unmarked
-    (manual submits, unit tests): silently skipping a kind's half of the
-    contract would inflate the score. The validator keeps repo tasks
-    consistent — a kind and its rubric shape ship together.
+    triggers pre-incident grading, a `required_facts` list triggers postmortem
+    grading, and an `order` list triggers timeline grading even when the task
+    config is missing or unmarked (manual submits, unit tests): silently
+    skipping a kind's half of the contract would inflate the score. The
+    validator keeps repo tasks consistent — a kind and its rubric shape ship
+    together.
     """
     rubric_dict = rubric if isinstance(rubric, dict) else {}
     if is_pre_incident_review(task) or isinstance(rubric_dict.get("findings"), list):
         return grade_pre_incident_review(answer, rubric)
     if is_postmortem(task) or isinstance(rubric_dict.get(FACTS_KEY), list):
         return grade_postmortem(answer, rubric)
+    if is_timeline(task) or isinstance(rubric_dict.get(ORDER_KEY), list):
+        return grade_timeline(answer, rubric)
     if is_remediation(task) or isinstance(rubric_dict.get("checks"), list):
         return grade_remediation(answer, rubric, Path(task_dir))
     if is_attribution(task) or isinstance(rubric.get("culprit"), str):
