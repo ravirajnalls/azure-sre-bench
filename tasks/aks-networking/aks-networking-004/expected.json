@@ -1,0 +1,10 @@
+{
+  "root_cause": [
+    ["networkpolicy", "network policy", "netpol"],
+    ["deny", "denied", "denies", "blocking", "blocks"]
+  ],
+  "fix": [
+    ["allow", "ingress rule", "allowing ingress"],
+    ["5432"]
+  ]
+}
