@@ -1,0 +1,18 @@
+2026-10-30T09:12:36.9042Z ##[section]Starting: Deploy checkout-api (run 20261030.1)
+2026-10-30T09:12:36.9318Z ##[command]az login --use-oidc --allow-no-subscriptions
+2026-10-30T09:12:36.9881Z [uses OIDC federated token exchange: acquired ADO token, exchanging client assertion via pipelines-prod app registration]
+2026-10-30T09:12:37.0142Z Federated token exchange: client assertion accepted for issuer https://vstoken.dev.azure.com/... subject 8cf8.../build
+2026-10-30T09:12:37.4019Z ERROR: AADSTS53003: Blocked by Conditional Access policies. The sign-in was blocked because a Conditional Access policy required a compliant device. Policy: Require compliant device - All cloud apps (v2). Trace: 6f3c... CorrelationId: 0b3e1c...
+2026-10-30T09:12:37.4044Z ##[error]Script failed with exit code 1: az login --use-oidc --allow-no-subscriptions
+2026-10-30T09:12:37.4051Z ##[section]Finishing: Deploy checkout-api (FAILED)
+2026-10-30T09:19:04.8821Z ##[section]Starting: Publish release-infra artifacts (run 20261030.2)
+2026-10-30T09:19:05.0302Z [service connection: release-infra, authentication: OIDC]
+2026-10-30T09:19:05.1184Z ERROR: AADSTS53003: Blocked by Conditional Access policies. Policy: Require compliant device - All cloud apps (v2).
+2026-10-30T09:19:05.1201Z ##[error]Script failed with exit code 1
+2026-10-30T09:19:05.1209Z ##[section]Finishing: Publish release-infra artifacts (FAILED)
+2026-10-30T09:31:21.7734Z ##[section]Starting: Deploy checkout-api (re-run after credential re-sync)
+2026-10-30T09:31:22.0098Z [federated credential re-sync verified against pipelines-prod app registration]
+2026-10-30T09:31:22.1106Z Federated token exchange: client assertion accepted for issuer https://vstoken.dev.azure.com/... subject 8cf8.../build
+2026-10-30T09:31:22.5102Z ERROR: AADSTS53003: Blocked by Conditional Access policies. Policy: Require compliant device - All cloud apps (v2).
+2026-10-30T09:31:22.5139Z ##[error]Script failed with exit code 1: az login --use-oidc --allow-no-subscriptions
+2026-10-30T09:31:22.5147Z ##[section]Finishing: Deploy checkout-api (FAILED)

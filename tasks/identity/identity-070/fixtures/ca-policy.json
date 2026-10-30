@@ -1,0 +1,64 @@
+{
+  "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#identity/conditionalAccess/policies",
+  "provenance": "az rest --method GET --url 'https://graph.microsoft.com/v1.0/identity/conditionalAccess/policies' (exported 2026-10-30T10:02:00Z)",
+  "value": [
+    {
+      "id": "ca-00000000-0000-0000-0000-000000000001",
+      "displayName": "Require compliant device - All cloud apps (v2)",
+      "state": "enabled",
+      "createdDateTime": "2025-11-04T13:12:00Z",
+      "modifiedDateTime": "2026-10-30T08:45:00Z",
+      "lastModifiedByChange": "CHG-0815",
+      "conditions": {
+        "applications": {
+          "includeApplications": ["All"],
+          "excludeApplications": []
+        },
+        "users": {
+          "includeUsers": ["All"],
+          "excludeUsers": ["svc-breakglass@contoso.com"],
+          "includeGroups": [],
+          "excludeGroups": []
+        },
+        "clientApplications": {
+          "includeServicePrincipals": [],
+          "excludeServicePrincipals": []
+        },
+        "platforms": null,
+        "signInRiskLevels": [],
+        "userRiskLevels": []
+      },
+      "grantControls": {
+        "operator": "AND",
+        "builtInControls": ["compliantDevice", "approvedApplication"],
+        "customAuthenticationFactors": [],
+        "termsOfUse": []
+      },
+      "sessionControls": null
+    },
+    {
+      "id": "ca-00000000-0000-0000-0000-000000000002",
+      "displayName": "MFA for admins - privileged roles",
+      "state": "enabled",
+      "modifiedDateTime": "2026-05-19T11:03:00Z",
+      "conditions": {
+        "applications": {
+          "includeApplications": ["All"],
+          "excludeApplications": []
+        },
+        "users": {
+          "includeUsers": ["PrivilegedRoles"],
+          "excludeUsers": []
+        },
+        "clientApplications": {
+          "includeServicePrincipals": [],
+          "excludeServicePrincipals": []
+        }
+      },
+      "grantControls": {
+        "operator": "AND",
+        "builtInControls": ["mfa"]
+      }
+    }
+  ]
+}

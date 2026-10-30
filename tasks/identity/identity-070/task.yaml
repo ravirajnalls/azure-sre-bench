@@ -1,0 +1,23 @@
+id: identity-070
+canary: 00000000-0000-0000-0000-000000000114  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
+title: Every prod pipeline fails Azure login minutes after overnight changes
+category: identity
+difficulty: medium
+tags:
+  - entra-id
+  - conditional-access
+  - change-attribution
+  - workload-identity
+  - azure-devops
+kind: change-attribution
+symptom: |
+  At 09:12 UTC this morning every production Azure DevOps pipeline started
+  failing at its first Azure step: az login --use-oidc returns AADSTS53003
+  ("Blocked by Conditional Access") for the pipelines-prod workload identity,
+  and nothing has shipped since. The pipelines themselves are unchanged —
+  same yaml, same app registration, same federated credential flow — and the
+  identity team says the credential "looks fine" in the portal. Six changes
+  went in overnight across Entra ID, Key Vault, and the ADO projects; on-call
+  re-ran pipelines and re-synced the federated credential with no effect.
+  Name the exact change that broke pipeline authentication and how to unblock
+  it.

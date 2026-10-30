@@ -1,0 +1,15 @@
+{
+  "culprit": "CHG-0815",
+  "reasoning": "Every failed sign-in from 09:12:37Z onward names the policy 'Require compliant device - All cloud apps (v2)'. ca-policy.json shows it with includeApplications: ['All'], modifiedDateTime 08:45Z, lastModifiedByChange CHG-0815 - the only Conditional Access change. The first failure is 27 minutes after it applied, when the morning's first pipeline run signed in. The 01:30 credential edit touched only a description, and the OIDC exchange succeeds before each block. The remaining changes are retention, staging-green yaml, an unrelated vault, and owner metadata.",
+  "fix": "Exclude the pipelines-prod workload identity from the device-trust policy: add its appId to excludeServicePrincipals on 'Require compliant device - All cloud apps (v2)' (or scope includeApplications back down until workload identities are supported). Then re-run the pipelines and verify sign-ins succeed.",
+  "evidence": [
+    "signin-logs.kql.csv: AADSTS53003 failures from 09:12:37Z on four service principals, all naming policy 'Require compliant device - All cloud apps (v2)'; a compliant-device user sign-in at 09:15:02Z succeeds",
+    "ca-policy.json: policy state enabled with includeApplications ['All'], empty excludeServicePrincipals, modifiedDateTime 2026-10-30T08:45:00Z, lastModifiedByChange CHG-0815",
+    "changes.json: CHG-0815 applied 08:45Z expanded the policy to All cloud apps; CHG-0802 is a description-only federated credential edit and CHG-0821 postdates nothing relevant (retention/badge only)",
+    "pipeline-log.txt: federated token exchange succeeds ('client assertion accepted') before every AADSTS53003 block, including the 09:31 re-run after the credential re-sync"
+  ],
+  "evidence_files": [
+    "signin-logs.kql.csv",
+    "ca-policy.json"
+  ]
+}

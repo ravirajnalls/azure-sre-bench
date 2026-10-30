@@ -1,0 +1,27 @@
+{
+  "culprit": "CHG-0815",
+  "fix": [
+    [
+      "exclude",
+      "exempt",
+      "exclusion",
+      "carve",
+      "narrow"
+    ],
+    [
+      "workload identit",
+      "service principal",
+      "managed identit",
+      "pipelines-prod",
+      "app registration"
+    ]
+  ],
+  "distractors": [
+    [
+      "CHG-0802",
+      "federated credential",
+      "federated"
+    ]
+  ],
+  "max_chars": 600
+}

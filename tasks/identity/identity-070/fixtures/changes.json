@@ -1,0 +1,66 @@
+{
+  "window": "2026-10-29T20:00:00Z/2026-10-30T09:12:00Z",
+  "environment": "prod (Entra ID tenant + shared Azure DevOps project platform-prod)",
+  "changes": [
+    {
+      "id": "CHG-0789",
+      "applied_at": "2026-10-29T22:14:00Z",
+      "service": "entra-id/app-registration-pipelines-prod",
+      "title": "Rotate app registration owners for pipelines-prod",
+      "actor": "id-governance@contoso.com",
+      "source": "Entra portal (governance ticket GOV-4471)",
+      "diff": "owners: [svc-identity-admin@contoso.com] -> [svc-identity-admin@contoso.com, a.lindqvist@contoso.com]",
+      "notes": "Quarterly ownership rotation. Ownership metadata only — credentials, redirect URIs and federated identity model untouched."
+    },
+    {
+      "id": "CHG-0802",
+      "applied_at": "2026-10-30T01:30:00Z",
+      "service": "entra-id/app-registration-pipelines-prod",
+      "title": "Edit federated credential on pipelines-prod",
+      "actor": "id-governance@contoso.com",
+      "source": "Entra portal (governance ticket GOV-4483)",
+      "diff": "federatedIdentityCredentials: description 'prod pipeline credential' -> 'prod pipeline credential (managed centrally)'",
+      "notes": "Description-only edit for inventory hygiene. Issuer, subject, audiences and the credential's token-exchange path are unchanged."
+    },
+    {
+      "id": "CHG-0795",
+      "applied_at": "2026-10-30T03:05:00Z",
+      "service": "key-vault/kv-infra-secrets",
+      "title": "Restrict kv-infra-secrets firewall to corp ranges",
+      "actor": "netops@contoso.com",
+      "source": "az keyvault update (runbook RB-208)",
+      "diff": "networkAcls: defaultAction Allow -> Deny; virtualNetworkRules += corp-vnet-3",
+      "notes": "kv-infra-secrets holds infra team secrets only. Pipeline variable groups read from kv-prod-shared, a different vault with unchanged ACLs."
+    },
+    {
+      "id": "CHG-0809",
+      "applied_at": "2026-10-30T07:20:00Z",
+      "service": "ado/platform-prod/templates",
+      "title": "Refactor azure-pipelines.yml stage templates",
+      "actor": "release-eng@contoso.com",
+      "source": "PR #9127 (platform-prod)",
+      "diff": "stages extracted to templates/stages-v2.yml; jobs renamed deploy -> deploy-webapp",
+      "notes": "Mechanical template refactor. AzureCLI@2 login steps and service connections untouched; ran green in the staging project at 07:41."
+    },
+    {
+      "id": "CHG-0821",
+      "applied_at": "2026-10-30T08:55:00Z",
+      "service": "ado/platform-prod/project-settings",
+      "title": "Tune pipeline retention and badge settings",
+      "actor": "release-eng@contoso.com",
+      "source": "ADO project settings UI",
+      "diff": "runs retention: 30 days -> 60 days; public badge access: off -> private",
+      "notes": "Retention and badge visibility only — no execution, agent pool or service connection setting touched."
+    },
+    {
+      "id": "CHG-0815",
+      "applied_at": "2026-10-30T08:45:00Z",
+      "service": "entra-id/conditional-access",
+      "title": "Expand 'Require compliant device' policy to All cloud apps",
+      "actor": "sec-eng@contoso.com",
+      "source": "Graph API (device-trust rollout ticket SEC-2209)",
+      "diff": "includeApplications: ['00000000-0000-0000-0000-000000000003'] -> ['All']; clientApplications/excludeServicePrincipals: [] -> []",
+      "notes": "Phase 2 of the device-trust rollout: the policy previously covered one legacy CRM app only and now targets All cloud apps. Workload-identity sign-ins were not excluded because the policy was assumed to apply to interactive users."
+    }
+  ]
+}
