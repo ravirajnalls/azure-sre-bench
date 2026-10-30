@@ -1,0 +1,38 @@
+name: Results digest
+
+# Weekly digest of benchmark results (issue #166): rebuilds the aggregate
+# snapshot of results/ and opens or updates the pinned "Results digest" issue
+# summarizing new tasks, new agents, and score changes since the previous
+# digest. Manual dispatch lets maintainers post a digest on demand.
+
+on:
+  schedule:
+    # Mondays 06:00 UTC.
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: results-digest
+  cancel-in-progress: false
+
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Post the weekly digest
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python scripts/results_digest.py
