@@ -1,0 +1,16 @@
+NAMESPACE   LAST SEEN   TYPE      REASON                OBJECT                                       MESSAGE
+payments    29m         Warning   Evicted               pod/payments-api-6d8f9c7b5-lm83w             The node was low on resource: ephemeral-storage. Container payments-api in pod payments-api-6d8f9c7b5-lm83w was evicted.
+payments    29m         Normal    Killing               pod/payments-api-6d8f9c7b5-lm83w             Stopping container payments-api
+payments    29m         Warning   FailedScheduling      pod/payments-api-6d8f9c7b5-tj4cw             0/4 nodes are available: 1 node(s) had untolerated taint {node.kubernetes.io/disk-pressure: }, 3 node(s) didn't match pod scheduling rules.
+payments    47m         Warning   Evicted               pod/payments-worker-5b7d4c9f88-h2vqz         The node was low on resource: ephemeral-storage. Container payments-worker in pod payments-worker-5b7d4c9f88-h2vqz was evicted.
+payments    47m         Normal    Killing               pod/payments-worker-5b7d4c9f88-h2vqz         Stopping container payments-worker
+payments    63m         Warning   Evicted               pod/payments-sync-74c9d6b8f5-s9xmw           The node was low on resource: ephemeral-storage. Container payments-sync in pod payments-sync-74c9d6b8f5-s9xmw was evicted.
+kube-system 79m        Warning   Evicted               pod/legacy-audit-agent-fx9hq                 The node was low on resource: ephemeral-storage. Container legacy-audit-agent in pod legacy-audit-agent-fx9hq was evicted.
+kube-system 78m        Normal    SuccessfulCreate      daemonset/legacy-audit-agent                 Created pod: legacy-audit-agent-k7dpr
+kube-system 78m        Normal    Scheduled             pod/legacy-audit-agent-k7dpr                 Successfully assigned kube-system/legacy-audit-agent-k7dpr to aks-npuser-27489013-vmss000001
+payments    3h          Normal    SuccessfulCreate      replicaset/payments-api-6d8f9c7b5            Created pod: payments-api-6d8f9c7b5-x2k9v
+payments    3h          Normal    Scheduled             pod/payments-api-6d8f9c7b5-x2k9v             Successfully assigned payments/payments-api-6d8f9c7b5-x2k9v to aks-npuser-27489013-vmss000001
+payments    3h          Normal    Pulled                pod/payments-api-6d8f9c7b5-x2k9v             Container image "itops.azurecr.io/payments-api:2026.10.2" already present on machine
+payments    3h          Normal    SuccessfulCreate      replicaset/payments-worker-5b7d4c9f88        Created pod: payments-worker-5b7d4c9f88-qm4tr
+payments    3h          Normal    Scheduled             pod/payments-worker-5b7d4c9f88-qm4tr         Successfully assigned payments/payments-worker-5b7d4c9f88-qm4tr to aks-npuser-27489013-vmss000001
+payments    3h          Normal    SuccessfulCreate      replicaset/payments-ui-6b6d84c9c7            Created pod: payments-ui-6b6d84c9c7-dp4nt

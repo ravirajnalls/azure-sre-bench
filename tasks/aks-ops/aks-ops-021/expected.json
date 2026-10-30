@@ -1,0 +1,9 @@
+{
+  "root_cause": [
+    ["disk pressure", "diskpressure", "disk full"],
+    ["legacy-audit-agent", "audit-debug", "hostpath"]
+  ],
+  "fix": [
+    ["rotat", "remove the hostpath", "log rotation", "clean"]
+  ]
+}
