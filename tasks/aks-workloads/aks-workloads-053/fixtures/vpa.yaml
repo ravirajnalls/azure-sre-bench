@@ -1,0 +1,24 @@
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: recommendations-api
+  namespace: api
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: recommendations-api
+  updatePolicy:
+    updateMode: Auto
+  resourcePolicy:
+    containerPolicies:
+      - containerName: recommendations-api
+        controlledResources:
+          - cpu
+          - memory
+        minAllowed:
+          cpu: 100m
+          memory: 256Mi
+        maxAllowed:
+          cpu: "2"
+          memory: 4Gi

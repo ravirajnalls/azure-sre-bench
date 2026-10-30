@@ -1,0 +1,12 @@
+# kubectl describe nodes (summary of Conditions across the 6 nodes of aks-prod-weu-02, pool sys-1)
+
+Node            MemoryPressure   DiskPressure   PIDPressure   Ready    Allocatable cpu   Allocatable mem   Allocated cpu   Allocated mem
+aks-sys-1-0     False            False          False         True     3920m             15666Mi           41%             47%
+aks-sys-1-1     False            False          False         True     3920m             15666Mi           38%             44%
+aks-sys-1-2     False            False          False         True     3920m             15666Mi           44%             51%
+aks-sys-1-3     False            False          False         True     3920m             15666Mi           39%             46%
+aks-sys-1-4     False            False          False         True     3920m             15666Mi           43%             49%
+aks-sys-1-5     False            False          False         True     3920m             15666Mi           37%             45%
+
+No node reports any pressure condition. Kubelet eviction thresholds are at
+defaults and have not fired on any node in the past 7 days.

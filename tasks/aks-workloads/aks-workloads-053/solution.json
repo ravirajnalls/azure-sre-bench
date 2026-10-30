@@ -1,0 +1,17 @@
+{
+  "root_cause": "Two autoscalers fight over the same signal: the VPA runs with updateMode Auto and controlledResources covering cpu, so it keeps rewriting the pods' CPU requests and evicting pods to apply them (vpa-recommender.log), while the HPA scales replicas on CPU utilization measured against those same requests at a 60% target (hpa.yaml). Every request change swings the utilization ratio (kubectl-get-hpa-watch.txt), the HPA rescales, and the changed replica set feeds the VPA new usage data — a closed feedback loop.",
+  "evidence": [
+    "vpa.yaml: updateMode Auto with controlledResources [cpu, memory] on recommendations-api",
+    "hpa.yaml: HPA scales the same deployment on Resource cpu Utilization at 60% — a target computed against the pods' current CPU requests",
+    "kubectl-get-hpa-watch.txt: target percentage oscillates between ~26% and ~151% of the 60% target while replicas swing 3<->9, the signature of a moving denominator",
+    "vpa-recommender.log: cpu requests rewritten repeatedly (250m->900m->1.1->350m->1.2) with pod evictions after each update",
+    "kubectl-get-events.txt: VPA eviction events interleaved with HPA scale-ups on nearly the same timestamps",
+    "node-pressure.txt: all pressure conditions False on every node — rules out node resource pressure as the eviction source"
+  ],
+  "fix": "Break the feedback loop by giving each autoscaler a disjoint signal: restrict the VPA to memory (resourcePolicy.containerPolicies[].controlledResources: [memory]) so the CPU requests the HPA measures stop moving, or set updatePolicy.updateMode: Off and size CPU manually; alternatively keep the VPA on cpu and re-point the HPA at a custom metric (e.g. requests-per-second) that does not depend on VPA-managed requests.",
+  "evidence_files": [
+    "vpa.yaml",
+    "hpa.yaml",
+    "kubectl-get-hpa-watch.txt"
+  ]
+}

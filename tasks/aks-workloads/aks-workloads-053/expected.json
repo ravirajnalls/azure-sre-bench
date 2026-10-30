@@ -1,0 +1,13 @@
+{
+  "root_cause": [
+    ["vpa", "vertical pod autoscaler"],
+    ["hpa", "horizontal pod autoscaler"],
+    ["cpu"]
+  ],
+  "fix": [
+    ["controlledresources", "memory only", "updatemode off", "custom metric"]
+  ],
+  "distractors": [
+    ["MemoryPressure", "DiskPressure", "node pressure", "kubelet eviction thresholds"]
+  ]
+}

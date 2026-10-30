@@ -1,0 +1,10 @@
+LAST SEEN   TYPE      REASON                    OBJECT                                      MESSAGE
+4m          Warning   Evicted                   pod/recommendations-api-7c4d9f8b6c-2xkqz    VPA evicted pod to apply resource recommendation (cpu request 350m -> 1.2)
+4m          Normal    SuccessfulDelete          replicaset/recommendations-api-7c4d9f8b6c   Deleted pod: recommendations-api-7c4d9f8b6c-2xkqz
+4m          Normal    SuccessfulCreate          replicaset/recommendations-api-5f8b2d9c4    Created pod: recommendations-api-5f8b2d9c4-q7m2v
+3m          Normal    ScalingReplicaSet         deployment/recommendations-api              Scaled up replica set recommendations-api-5f8b2d9c4 to 9
+3m          Normal    SuccessfulCreate          horizontalpodautoscaler/recommendations-api Required duration exceeded, scaling up from 3 to 9
+2m          Warning   Evicted                   pod/recommendations-api-5f8b2d9c4-q7m2v     VPA evicted pod to apply resource recommendation (cpu request 900m -> 350m)
+2m          Normal    SuccessfulDelete          replicaset/recommendations-api-5f8b2d9c4    Deleted pod: recommendations-api-5f8b2d9c4-q7m2v
+1m          Normal    ScalingReplicaSet         deployment/recommendations-api              Scaled down replica set recommendations-api-5f8b2d9c4 to 4
+1m          Normal    SuccessfulCreate          horizontalpodautoscaler/recommendations-api Required duration exceeded, scaling up from 4 to 8
