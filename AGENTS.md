@@ -22,7 +22,8 @@ tasks/<category>/<task-id>/
 ```
 
 Categories: `aks-networking`, `aks-identity`, `aks-workloads`, `aks-ops`, `networking`,
-`identity`, `app-service`, `key-vault`, `ado-pipelines`, `cost`, `monitoring`.
+`identity`, `app-service`, `key-vault`, `ado-pipelines`, `cost`, `monitoring`,
+`data`, `messaging`, `edge`, `serverless`.
 
 ## Fixtures
 
