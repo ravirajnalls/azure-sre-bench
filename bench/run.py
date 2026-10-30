@@ -23,6 +23,7 @@ from pathlib import Path
 import yaml
 
 from bench.grader import cap_evidence, grade
+from bench.heldout import HeldoutKeyError, load_hidden_json, split_of
 from bench.sim import COMMANDS_ENV, COMMANDS_FILENAME, LOG_ENV, LOG_FILENAME, SIM_DIR
 
 TASKS_DIR = Path("tasks")
@@ -152,6 +153,18 @@ def _read_text(path: Path) -> str:
         return ""
 
 
+def _load_rubric(task_dir: Path, task: dict) -> dict:
+    """The hidden rubric for a task, decrypting held-out tasks (issue #115).
+
+    A held-out task without a usable HELDOUT_KEY raises `HeldoutKeyError` —
+    that is an operator error, never an agent failure, so it is not graded;
+    `run_tasks` skips such tasks. Public tasks keep the lenient legacy read.
+    """
+    if split_of(task) == "heldout":
+        return load_hidden_json(task_dir, "expected.json", config=task)
+    return _load_json(task_dir / "expected.json")
+
+
 def run_task(
     task_dir: Path,
     agent_command: str,
@@ -209,9 +222,10 @@ def run_task(
         shutil.rmtree(workspace, ignore_errors=True)
 
     answer = parse_answer(stdout)
-    result = grade(answer, _load_json(task_dir / "expected.json"))
+    result = grade(answer, _load_rubric(task_dir, task))
     record = {
         "task": task_id,
+        "split": split_of(task),
         "elapsed_s": elapsed_s,
         "answer": cap_evidence(answer),
         "stderr_tail": stderr[-STDERR_TAIL_BYTES:],
@@ -243,14 +257,25 @@ def run_tasks(
     """Run a sequence of tasks, printing per-task lines and a final summary."""
     results_root = Path(results_root or RESULTS_DIR)
     passed = 0
+    skipped = 0
     for task_dir in task_dirs:
-        record = run_task(task_dir, agent_command, name, timeout, results_root)
+        try:
+            record = run_task(task_dir, agent_command, name, timeout, results_root)
+        except HeldoutKeyError as exc:
+            # A held-out task without HELDOUT_KEY cannot be graded; skipping
+            # keeps key-less contributors running their public tasks (issue #115).
+            print(f"SKIP {task_dir.name}: {exc}")
+            skipped += 1
+            continue
         mark = "PASS" if record["passed"] else "FAIL"
         print(
             f"{mark} {record['task']} score={record['score']} {record['elapsed_s']}s"
         )
         passed += bool(record["passed"])
-    print(f"{name}: {passed}/{len(task_dirs)} passed")
+    summary = f"{name}: {passed}/{len(task_dirs)} passed"
+    if skipped:
+        summary += f", {skipped} skipped (locked held-out)"
+    print(summary)
     return 0
 
 
@@ -265,6 +290,13 @@ def cmd_run(args: argparse.Namespace) -> int:
         ]
         if not task_dirs:
             print(f"Unknown task: {args.task}", file=sys.stderr)
+            return 2
+    if args.split != "all":
+        task_dirs = [d for d in task_dirs if split_of(load_task(d)) == args.split]
+        if args.task is not None and not task_dirs:
+            print(
+                f"Task {args.task} is not in the '{args.split}' split.", file=sys.stderr
+            )
             return 2
     if not args.all_tasks and args.task is None:
         print("Specify --task <id> or --all.", file=sys.stderr)

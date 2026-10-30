@@ -16,6 +16,7 @@ from pathlib import Path
 
 from bench import __version__
 from bench.grader import grade
+from bench.heldout import ENCRYPTED_SUFFIX, HeldoutKeyError, load_hidden_json
 from bench.tasks import difficulty_distribution, load_tasks
 
 SUBCOMMANDS = (
@@ -73,6 +74,12 @@ def build_parser() -> argparse.ArgumentParser:
                 "--tasks-root",
                 default="tasks",
                 help="task discovery root (default: ./tasks)",
+            )
+            run_parser.add_argument(
+                "--split",
+                choices=("public", "heldout", "all"),
+                default="all",
+                help="restrict the run to one split (default: all)",
             )
         elif name == "submit":
             submit_parser = sub.add_parser(
@@ -231,9 +238,16 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def find_task_dir(task_id: str, tasks_root: Path | str = "tasks") -> Path:
-    """Locate a task directory by ID under the given tasks root."""
+    """Locate a task directory by ID under the given tasks root.
+
+    Held-out tasks store their rubric encrypted (expected.json.age), so either
+    form of the rubric identifies the task (issue #115).
+    """
     for candidate in sorted(Path(tasks_root).rglob(task_id)):
-        if candidate.is_dir() and (candidate / "expected.json").is_file():
+        if candidate.is_dir() and (
+            (candidate / "expected.json").is_file()
+            or (candidate / f"expected.json{ENCRYPTED_SUFFIX}").is_file()
+        ):
             return candidate
     raise FileNotFoundError(
         f"no task directory named '{task_id}' with expected.json under {tasks_root}/"
@@ -244,9 +258,13 @@ def cmd_grade(args: argparse.Namespace) -> int:
     """Grade `--answer` against the task's expected.json and print the result JSON."""
     try:
         task_dir = find_task_dir(args.task)
-        rubric = json.loads((task_dir / "expected.json").read_text(encoding="utf-8"))
+        from bench.run import load_task  # deferred: keeps --help cheap
+
+        # A directory without task.yaml (grader-only test trees) is simply public.
+        task = load_task(task_dir) if (task_dir / "task.yaml").is_file() else {}
+        rubric = load_hidden_json(task_dir, "expected.json", config=task)
         answer = json.loads(Path(args.answer).read_text(encoding="utf-8"))
-    except (FileNotFoundError, json.JSONDecodeError) as exc:
+    except (FileNotFoundError, json.JSONDecodeError, HeldoutKeyError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2
     print(json.dumps(grade(answer, rubric), indent=2))
@@ -269,7 +287,7 @@ def cmd_submit(args: argparse.Namespace) -> int:
         record = submit_answer(
             args.task, answer, args.agent, results_root=Path(args.results_root)
         )
-    except (FileNotFoundError, ValueError) as exc:
+    except (FileNotFoundError, ValueError, HeldoutKeyError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2
     print(json.dumps(record, indent=2))

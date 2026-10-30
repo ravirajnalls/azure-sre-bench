@@ -23,6 +23,7 @@ import pytest
 import yaml
 
 from bench.grader import grade
+from bench.heldout import SPLIT_HELDOUT, heldout_key, load_hidden_json, split_of
 from bench.run import run_task
 from bench.tasks import CANARY_GUID, inspect_task, load_tasks
 
@@ -543,6 +544,33 @@ def _load_json_file(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def _config_of(task_dir: Path) -> dict:
+    return yaml.safe_load((task_dir / "task.yaml").read_text(encoding="utf-8")) or {}
+
+
+def _load_rubric_pair(task_dir: Path) -> tuple[dict, dict]:
+    """Decrypt-or-skip: a task's (solution, expected) pair (issue #115, spec D4).
+
+    Public tasks read the plaintext files as before. Held-out tasks decrypt
+    with HELDOUT_KEY when it is set and skip otherwise — structure is still
+    validated key-free by test_task_validates_clean.
+    """
+    config = _config_of(task_dir)
+    if split_of(config) != SPLIT_HELDOUT:
+        return (
+            _load_json_file(task_dir / "solution.json"),
+            _load_json_file(task_dir / "expected.json"),
+        )
+    if not heldout_key():
+        pytest.skip(
+            f"{_task_label(task_dir)} is held-out; set HELDOUT_KEY to check its rubric"
+        )
+    return (
+        load_hidden_json(task_dir, "solution.json", config=config),
+        load_hidden_json(task_dir, "expected.json", config=config),
+    )
+
+
 @pytest.mark.parametrize("task_dir", _discovered_task_dirs(), ids=_task_label)
 def test_task_validates_clean(task_dir: Path):
     """Integrity invariant: `validate(task) == []`."""
@@ -556,10 +584,8 @@ def test_task_validates_clean(task_dir: Path):
 @pytest.mark.parametrize("task_dir", _discovered_task_dirs(), ids=_task_label)
 def test_reference_solution_passes_own_task(task_dir: Path):
     """Integrity invariant (solvability): solution.json scores passed == True."""
-    result = grade(
-        _load_json_file(task_dir / "solution.json"),
-        _load_json_file(task_dir / "expected.json"),
-    )
+    solution, expected = _load_rubric_pair(task_dir)
+    result = grade(solution, expected)
     assert result["passed"], (
         f"reference solution for {_task_label(task_dir)} does not pass its own "
         f"rubric (score={result['score']}):\n{json.dumps(result['detail'], indent=2)}"
@@ -569,6 +595,11 @@ def test_reference_solution_passes_own_task(task_dir: Path):
 @pytest.mark.parametrize("task_dir", _discovered_task_dirs(), ids=_task_label)
 def test_naive_agent_does_not_pass(task_dir: Path, tmp_path: Path):
     """Integrity invariant (non-triviality): the naive guess agent must fail."""
+    config = _config_of(task_dir)
+    if split_of(config) == SPLIT_HELDOUT and not heldout_key():
+        pytest.skip(
+            f"{_task_label(task_dir)} is held-out; set HELDOUT_KEY to check its rubric"
+        )
     record = run_task(
         task_dir, NAIVE_AGENT_CMD, name="naive-check", results_root=tmp_path
     )
@@ -582,8 +613,8 @@ def test_naive_agent_does_not_pass(task_dir: Path, tmp_path: Path):
 def test_symptom_does_not_leak_root_cause(task_dir: Path):
     """Integrity invariant (no leaks): the symptom alone must not match every
     root_cause group."""
-    config = yaml.safe_load((task_dir / "task.yaml").read_text(encoding="utf-8"))
-    rubric = _load_json_file(task_dir / "expected.json")
+    config = _config_of(task_dir)
+    _, rubric = _load_rubric_pair(task_dir)
     result = grade({"root_cause": str(config.get("symptom", ""))}, rubric)
     entries = result["detail"]["root_cause"]
     matched = [entry["matched"] for entry in entries if entry["matched"] is not None]

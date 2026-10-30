@@ -14,6 +14,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from bench.heldout import SPLIT_HELDOUT, SPLIT_PUBLIC
+
 RESULTS_DIR = Path("results")
 START_MARKER = "<!-- leaderboard -->"
 END_MARKER = "<!-- /leaderboard -->"
@@ -73,6 +75,22 @@ def aggregate_run(name: str, records: list[dict]) -> dict:
     }
 
 
+def split_runs(runs: dict[str, list[dict]]) -> dict[str, dict[str, list[dict]]]:
+    """Group run records by their task split (issue #115).
+
+    Returns split -> run name -> records, so public and held-out scores rank
+    separately; records written before the split existed default to public.
+    """
+    grouped: dict[str, dict[str, list[dict]]] = {}
+    for name, records in runs.items():
+        for record in records:
+            split = str(record.get("split") or "")
+            if split not in (SPLIT_PUBLIC, SPLIT_HELDOUT):
+                split = SPLIT_PUBLIC
+            grouped.setdefault(split, {}).setdefault(name, []).append(record)
+    return grouped
+
+
 def rank_rows(runs: dict[str, list[dict]]) -> list[dict]:
     """Aggregate every run and sort by passed desc, then mean score desc."""
     rows = [aggregate_run(name, records) for name, records in runs.items()]
@@ -96,8 +114,18 @@ def markdown_table(rows: list[dict]) -> str:
 
 
 def leaderboard_markdown(results_root: Path) -> str:
-    """Full pipeline: results folder -> ranked markdown table."""
-    return markdown_table(rank_rows(collect_records(results_root)))
+    """Full pipeline: results folder -> ranked markdown, one table per split.
+
+    The public split renders first, exactly as pre-split leaderboards did; the
+    held-out table appears only when held-out results exist (issue #115).
+    """
+    grouped = split_runs(collect_records(results_root))
+    sections = [markdown_table(rank_rows(grouped.get(SPLIT_PUBLIC, {})))]
+    heldout = grouped.get(SPLIT_HELDOUT)
+    if heldout:
+        sections.append("### Held-out split\n")
+        sections.append(markdown_table(rank_rows(heldout)))
+    return "\n".join(sections)
 
 
 def update_readme(readme_path: Path, table: str) -> None:
