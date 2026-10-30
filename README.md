@@ -1,6 +1,8 @@
 # Azure SRE Bench
 
-An open benchmark for evaluating AI agents on **Azure and AKS incident diagnosis**.
+**An open benchmark for AI SRE agents on Azure, built entirely by agents in one day.**
+
+Azure SRE Bench evaluates AI agents on **Azure and AKS incident diagnosis**.
 Agents receive a symptom and a folder of realistic evidence (kubectl output, `az` CLI
 output, logs, KQL results) and must return a structured diagnosis. Scoring is done
 against hidden keyword-group rubrics, so an agent cannot pass by guessing — it has to
@@ -34,6 +36,9 @@ python -m bench run --agent agents/naive.py --task tasks/aks-networking/aks-netw
 
 The CLI is invoked as a Python module: `python -m bench <subcommand>`. See
 `python -m bench --help` for the full command list.
+
+For a 2-minute walkthrough — task count, a live `bench run`, and the leaderboard —
+see [docs/DEMO.md](docs/DEMO.md).
 
 ## Task layout
 
@@ -124,3 +129,16 @@ If the call fails, the credentials are missing, or the reply isn't JSON, the age
 prints `{}` and exits 0 — the runner records that task as a graded FAIL rather than
 crashing. The mocked-HTTP test (`tests/test_llm_agent.py`) proves the contract JSON
 reaches stdout without a live provider.
+
+## Contributing
+
+The benchmark grows one task at a time, and every task follows the same conventions:
+
+1. **Read [AGENTS.md](AGENTS.md)** — it is the authoritative authoring guide: PR
+   rules, folder layout, fixture requirements, symptom rules, and rubric format.
+   CI validates the mechanical rules; reviewers hold the rest.
+2. **Open an issue first.** Use the [new task template](
+   .github/ISSUE_TEMPLATE/new-task.md) — it captures the category, difficulty, the
+   symptom, the hidden root cause, and the red herring before any code is written.
+3. **One task per PR.** Branch `task/<task-id>`, touch only that task's folder, and
+   run `python -m bench validate` before pushing.
