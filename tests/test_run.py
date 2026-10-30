@@ -463,3 +463,69 @@ def test_workspace_never_contains_explainer(tmp_path):
     assert "symptom.md" in listing
     assert "explainer.md" not in listing
     assert "spoiler-giveaway" not in record["answer"]["evidence"][0]
+
+
+
+# --- repeated runs (issue #162) ----------------------------------------------
+
+
+def test_run_task_repeat_index_writes_indexed_files(tmp_path):
+    cmd = write_agent(
+        tmp_path,
+        'import json; print(json.dumps({"root_cause": "x", "evidence": [], "fix": "y"}))',
+    )
+    record = runner.run_task(
+        TEST_TASK, cmd, name="rep", results_root=tmp_path, repeat_index=2
+    )
+    run_dir = tmp_path / "rep"
+    assert (run_dir / "monitoring-901.2.json").exists()
+    assert not (run_dir / "monitoring-901.json").exists()
+    assert record["repeat"] == 2
+    assert record["task"] == "monitoring-901"
+
+
+def test_run_tasks_repeat_runs_each_task_n_times(tmp_path, capsys):
+    cmd = write_agent(
+        tmp_path,
+        'import json; print(json.dumps({"root_cause": "x", "evidence": [], "fix": "y"}))',
+    )
+    exit_code = runner.run_tasks(
+        [TEST_TASK], cmd, name="rep", results_root=tmp_path, repeat=3
+    )
+    assert exit_code == 0
+    written = sorted(p.name for p in (tmp_path / "rep").glob("monitoring-901.*.json"))
+    assert written == [
+        "monitoring-901.0.json",
+        "monitoring-901.1.json",
+        "monitoring-901.2.json",
+    ]
+    out = capsys.readouterr().out
+    assert "[run 0]" in out and "[run 2]" in out
+    assert "3 repeats per task" in out
+
+
+def test_run_tasks_single_run_keeps_plain_filenames(tmp_path):
+    cmd = write_agent(
+        tmp_path,
+        'import json; print(json.dumps({"root_cause": "x", "evidence": [], "fix": "y"}))',
+    )
+    runner.run_tasks([TEST_TASK], cmd, name="solo", results_root=tmp_path)
+    assert (tmp_path / "solo" / "monitoring-901.json").exists()
+    assert not list((tmp_path / "solo").glob("monitoring-901.*.json"))
+
+
+def test_cmd_run_rejects_non_positive_repeat(tmp_path):
+    import argparse
+
+    args = argparse.Namespace(
+        agent="true",
+        task=None,
+        all_tasks=True,
+        name="x",
+        timeout=1,
+        tasks_root=str(tmp_path),
+        split="all",
+        release=None,
+        repeat=0,
+    )
+    assert runner.cmd_run(args) == 2

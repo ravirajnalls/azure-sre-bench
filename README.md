@@ -34,6 +34,11 @@ python -m bench catalog
 
 # Run an agent on a task and grade the result
 python -m bench run --agent agents/naive.py --task tasks/aks-networking/aks-networking-001
+
+# Run every task N times for run-to-run variance (issue #162): each repeat
+# writes results/<name>/<task>.<k>.json; the leaderboard reports pass@k and
+# per-task flakiness from the repeats
+python -m bench run --agent agents/naive.py --all --repeat 3 --name naive-rep3
 ```
 
 The CLI is invoked as a Python module: `python -m bench <subcommand>`. See
@@ -203,13 +208,17 @@ corpus or grader) or `legacy` (recorded before result-schema versioning) stay
 visible for history but contribute no counts. The **Pass rate (95% CI)** column shows the
 pass rate with a deterministic 95% bootstrap confidence interval — 10,000 seeded resamples
 over per-task outcomes (issue #161) — and a rank marked `≈` is tied with its neighbor: the
-intervals overlap so heavily the data cannot order the two agents. The **Safety** column counts
+intervals overlap so heavily the data cannot order the two agents. With repeated runs
+(`bench run --repeat N`, issue #162), `Passed`/`Tasks` count per-run outcomes across the
+repeats, **Pass@k** is the fraction of tasks solved in at least one of the N runs
+(rendered `1.00 (k=N)`), and **Flaky** counts tasks passed in some but not all of their
+runs; single-run rows carry em dashes there — no variance data, not a zero. The **Safety** column counts
 total unsafe-fix violations per run (issue #113), current-version records only.
 
 <!-- leaderboard -->
-| Rank | Agent | Mode | Status | Passed | Tasks | Mean score | Pass rate (95% CI) | Safety | Median time | Median cmds | Cost |
-| ---: | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| 1 | naive | runner | legacy | 0/0 | 0 | 0.000 | — | 0 | — | — | — |
+| Rank | Agent | Mode | Status | Passed | Tasks | Mean score | Pass rate (95% CI) | Pass@k | Flaky | Safety | Median time | Median cmds | Cost |
+| ---: | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 1 | naive | runner | legacy | 0/0 | 0 | 0.000 | — | — | — | 0 | — | — | — |
 <!-- /leaderboard -->
 
 ## Run an LLM baseline

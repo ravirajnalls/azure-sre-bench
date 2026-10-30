@@ -232,8 +232,14 @@ def run_task(
     timeout: int = DEFAULT_TIMEOUT_S,
     results_root: Path | None = None,
     release: str | None = None,
+    repeat_index: int | None = None,
 ) -> dict:
-    """Run one agent against one task and write `results/<name>/<task-id>.json`."""
+    """Run one agent against one task and write `results/<name>/<task-id>.json`.
+
+    With `repeat_index` (issue #162), the record lands in
+    `results/<name>/<task-id>.<k>.json` instead and carries a `repeat` stamp —
+    one file per repeat, so single-run results stay byte-compatible.
+    """
     results_root = Path(results_root or RESULTS_DIR)
     task_dir = Path(task_dir)
     task = load_task(task_dir)
@@ -320,6 +326,10 @@ def run_task(
     # leaderboard versions can group results by the corpus they scored.
     if release is not None:
         record["release"] = release
+    # Issue #162: repeated runs stamp their index so the loaders can group
+    # `<task>.<k>.json` files into one task's run set without parsing names.
+    if repeat_index is not None:
+        record["repeat"] = repeat_index
     # Efficiency metrics (issue #112): the sim-CLI count comes from the
     # runner's own command trace; the file-read count from the agent's own
     # accounting (`files_read` in the answer). Either may be absent.
@@ -334,9 +344,12 @@ def run_task(
 
     out_dir = Path(results_root) / name
     out_dir.mkdir(parents=True, exist_ok=True)
+    # Repeats (issue #162) suffix the run index so every repeat keeps its own
+    # record and command trace; the single-run names are untouched.
+    stem = task_id if repeat_index is None else f"{task_id}.{repeat_index}"
     if commands_log.strip():
-        (out_dir / f"{task_id}.commands.log").write_text(commands_log, encoding="utf-8")
-    (out_dir / f"{task_id}.json").write_text(
+        (out_dir / f"{stem}.commands.log").write_text(commands_log, encoding="utf-8")
+    (out_dir / f"{stem}.json").write_text(
         json.dumps(record, indent=2) + "\n", encoding="utf-8"
     )
     return record
@@ -349,28 +362,47 @@ def run_tasks(
     timeout: int = DEFAULT_TIMEOUT_S,
     results_root: Path | None = None,
     release: str | None = None,
+    repeat: int = 1,
 ) -> int:
-    """Run a sequence of tasks, printing per-task lines and a final summary."""
+    """Run a sequence of tasks, printing per-task lines and a final summary.
+
+    With `repeat > 1` (issue #162) every task runs that many times, each run
+    writing its own `<task>.<k>.json` record; per-run lines carry a `[run k]`
+    suffix so repeat runs read unambiguously.
+    """
     results_root = Path(results_root or RESULTS_DIR)
+    repeat = max(1, repeat)
     passed = 0
     skipped = 0
     for task_dir in task_dirs:
         try:
-            record = run_task(
-                task_dir, agent_command, name, timeout, results_root, release
-            )
+            records = [
+                run_task(
+                    task_dir,
+                    agent_command,
+                    name,
+                    timeout,
+                    results_root,
+                    release,
+                    repeat_index=k if repeat > 1 else None,
+                )
+                for k in range(repeat)
+            ]
         except HeldoutKeyError as exc:
             # A held-out task without HELDOUT_KEY cannot be graded; skipping
             # keeps key-less contributors running their public tasks (issue #115).
+            # One line per task, not per repeat — the key check is repeat-independent.
             print(f"SKIP {task_dir.name}: {exc}")
             skipped += 1
             continue
-        mark = "PASS" if record["passed"] else "FAIL"
-        print(
-            f"{mark} {record['task']} score={record['score']} {record['elapsed_s']}s"
-        )
-        passed += bool(record["passed"])
-    summary = f"{name}: {passed}/{len(task_dirs)} passed"
+        for k, record in enumerate(records):
+            mark = "PASS" if record["passed"] else "FAIL"
+            suffix = f" [run {k}]" if repeat > 1 else ""
+            print(f"{mark} {record['task']} score={record['score']} {record['elapsed_s']}s{suffix}")
+            passed += bool(record["passed"])
+    summary = f"{name}: {passed}/{len(task_dirs) * repeat} passed"
+    if repeat > 1:
+        summary += f" ({repeat} repeats per task)"
     if skipped:
         summary += f", {skipped} skipped (locked held-out)"
     print(summary)
@@ -412,4 +444,10 @@ def cmd_run(args: argparse.Namespace) -> int:
         frozen_ids = {task["id"] for task in manifest["tasks"]}
         task_dirs = [d for d in task_dirs if str(load_task(d).get("id")) in frozen_ids]
         print(f"Release {release_name}: {len(frozen_ids)} tasks in manifest")
-    return run_tasks(task_dirs, args.agent, args.name, args.timeout, release=release_name)
+    repeat = getattr(args, "repeat", 1)
+    if repeat is None or repeat < 1:
+        print("--repeat must be at least 1", file=sys.stderr)
+        return 2
+    return run_tasks(
+        task_dirs, args.agent, args.name, args.timeout, release=release_name, repeat=repeat
+    )
