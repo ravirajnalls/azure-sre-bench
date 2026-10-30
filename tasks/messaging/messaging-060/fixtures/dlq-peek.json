@@ -1,0 +1,26 @@
+[
+  {
+    "messageId": "00000000-0000-0000-0000-000000000005",
+    "deliveryCount": 3,
+    "deadLetterReason": "MaxDeliveryCountExceeded",
+    "deadLetterErrorDescription": "Microsoft.Azure.Messaging.MessagingException: failed to deserialize OrderCreated payload — JsonException: expected property 'amountCents' (number), found legacy property 'amount' (string). At Orders.Messages.OrderCreated.Deserialize(OrderCreatedArgs args)",
+    "enqueuedTime": "2026-10-29T08:41:03Z",
+    "deadLetteredTime": "2026-10-29T08:46:19Z"
+  },
+  {
+    "messageId": "00000000-0000-0000-0000-000000000006",
+    "deliveryCount": 3,
+    "deadLetterReason": "MaxDeliveryCountExceeded",
+    "deadLetterErrorDescription": "Microsoft.Azure.Messaging.MessagingException: failed to deserialize OrderCreated payload — JsonException: expected property 'amountCents' (number), found legacy property 'amount' (string). At Orders.Messages.OrderCreated.Deserialize(OrderCreatedArgs args)",
+    "enqueuedTime": "2026-10-29T08:41:07Z",
+    "deadLetteredTime": "2026-10-29T08:46:23Z"
+  },
+  {
+    "messageId": "00000000-0000-0000-0000-000000000007",
+    "deliveryCount": 3,
+    "deadLetterReason": "MaxDeliveryCountExceeded",
+    "deadLetterErrorDescription": "Microsoft.Azure.Messaging.MessagingException: failed to deserialize OrderCreated payload — JsonException: expected property 'amountCents' (number), found legacy property 'amount' (string). At Orders.Messages.OrderCreated.Deserialize(OrderCreatedArgs args)",
+    "enqueuedTime": "2026-10-29T08:41:11Z",
+    "deadLetteredTime": "2026-10-29T08:46:27Z"
+  }
+]

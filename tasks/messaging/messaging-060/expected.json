@@ -1,0 +1,12 @@
+{
+  "root_cause": [
+    ["schema", "deserializ", "message contract", "amountCents"],
+    ["maxdeliverycount", "max delivery count", "delivery count", "maxdeliverycountexceeded"]
+  ],
+  "fix": [
+    ["roll back", "rollback", "schema", "resubmit"]
+  ],
+  "distractors": [
+    ["throttl", "server busy"]
+  ]
+}

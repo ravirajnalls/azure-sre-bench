@@ -1,0 +1,15 @@
+{
+  "root_cause": "The orders-consumer 2.7.0 deploy (2026-10-28) changed the expected message schema: OrderCreated now requires 'amountCents' and no longer accepts the legacy 'amount' field. Every message in flight fails deserialization (consumer.log); after the queue's maxDeliveryCount of 3 failed deliveries, Service Bus moves each message to the dead-letter queue with reason MaxDeliveryCountExceeded (dlq-peek.json) — the DLQ grows by thousands per hour while nothing is processed.",
+  "evidence": [
+    "az-servicebus-queue-show.json: deadLetterMessageCount 42318 with activeMessageCount 14 and maxDeliveryCount 3 — the DLQ is where the throughput went",
+    "dlq-peek.json: every peeked message has DeadLetterReason MaxDeliveryCountExceeded with a deserialization error in DeadLetterErrorDescription",
+    "consumer.log: 2.7.0 worker repeatedly fails 'expected property amountCents, found legacy amount' at attempts 1/3, 2/3, 3/3",
+    "deploy-history.json: 2.7.0 (2026-10-28) narrowed the OrderCreated contract one day before the failures began",
+    "namespace-metrics.csv: zero throttled requests and no server-busy errors across the incident window — the namespace is not rate limiting"
+  ],
+  "fix": "Roll back orders-consumer to 2.6.3 (or deploy a reader that accepts both the legacy 'amount' and the new 'amountCents' schema), then resubmit the dead-lettered messages back to the orders queue so the backlog drains; coordinate the producer/consumer contract change separately.",
+  "evidence_files": [
+    "dlq-peek.json",
+    "deploy-history.json"
+  ]
+}
