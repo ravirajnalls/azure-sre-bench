@@ -22,7 +22,7 @@ from pathlib import Path
 
 import yaml
 
-from bench.grader import grade
+from bench.grader import cap_evidence, grade
 from bench.sim import COMMANDS_ENV, COMMANDS_FILENAME, LOG_ENV, LOG_FILENAME, SIM_DIR
 
 TASKS_DIR = Path("tasks")
@@ -213,7 +213,7 @@ def run_task(
     record = {
         "task": task_id,
         "elapsed_s": elapsed_s,
-        "answer": answer,
+        "answer": cap_evidence(answer),
         "stderr_tail": stderr[-STDERR_TAIL_BYTES:],
         "score": result["score"],
         "passed": result["passed"],

@@ -16,7 +16,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from bench.grader import grade
+from bench.grader import cap_evidence, grade
 
 ANSWER_CONTRACT = {
     "root_cause": "str (required) — the specific technical cause of the incident",
@@ -109,7 +109,7 @@ def submit_answer(
         "mode": "manual",
         "agent": agent,
         "elapsed_s": None,
-        "answer": answer,
+        "answer": cap_evidence(answer),
         "stderr_tail": "",
         "score": result["score"],
         "passed": result["passed"],

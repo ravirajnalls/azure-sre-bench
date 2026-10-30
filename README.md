@@ -94,12 +94,17 @@ a FAIL result, not a crash.
 ```
 
 - Each inner list is one **concept group**; the answer matches the group when any
-  alternative appears as a case-insensitive substring of the field text (for
-  `root_cause`, the joined `evidence` list is appended to the text searched).
+  alternative appears as a case-insensitive substring of the field text.
 - Score = matched groups ÷ total groups (partial credit). A task **passes** when every
-  group matches.
+  group matches and no limit is violated.
 - Synonyms live in the same group so alternative phrasings score; groups stay specific
-  enough that a generic guess scores zero. Evidence alone never earns `fix` credit.
+  enough that a generic guess scores zero.
+- `evidence` is never searched (issue #93): the diagnosis must be stated in `root_cause`
+  and `fix` themselves, not merely cited. Evidence is still stored with the result,
+  capped at 8 items × 300 characters — overflow is ignored, not an error.
+- Volume caps: a `root_cause` or `fix` over 600 characters earns no credit and fails
+  with reason `answer_too_long`. A task may raise the cap with a `max_chars` key in
+  `expected.json`. The result `detail` carries a `reasons` list naming each failure.
 
 ## Leaderboard
 
