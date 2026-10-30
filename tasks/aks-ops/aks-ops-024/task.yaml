@@ -1,0 +1,15 @@
+id: aks-ops-024
+title: Container logs missing in Log Analytics
+category: aks-ops
+difficulty: medium
+tags:
+  - aks-ops
+  - aks
+  - monitoring
+  - container-insights
+  - log-analytics
+symptom: |
+  The ContainerLogV2 table in the prod Log Analytics workspace has had zero
+  rows for this cluster since it was rebuilt last week. The Container Insights
+  agent pods report Running on every node, and dashboards that query the same
+  workspace for other clusters keep updating normally.

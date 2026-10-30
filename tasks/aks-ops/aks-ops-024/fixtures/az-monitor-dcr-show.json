@@ -1,0 +1,55 @@
+{
+  "description": "Container insights log collection for prod AKS clusters",
+  "dataFlows": [
+    {
+      "destinations": ["omsagent"],
+      "outputStream": null,
+      "streams": [
+        "Microsoft-ContainerLogV2",
+        "Microsoft-KubeEvents",
+        "Microsoft-KubePodInventory",
+        "Microsoft-Perf"
+      ]
+    }
+  ],
+  "dataSources": {
+    "extensions": [
+      {
+        "extensionName": "ContainerInsights",
+        "extensionSettings": {
+          "logCollectionInterval": "1m",
+          "logCollectionVerbosity": "Standard"
+        },
+        "inputDataSources": [],
+        "name": "ContainerInsightsExtension",
+        "streams": [
+          "Microsoft-ContainerLogV2",
+          "Microsoft-KubeEvents",
+          "Microsoft-KubePodInventory"
+        ]
+      }
+    ]
+  },
+  "destinations": {
+    "logAnalytics": [
+      {
+        "name": "omsagent",
+        "schemaMapping": {},
+        "workspaceId": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-prod-01/providers/microsoft.operationalinsights/workspaces/law-prod-01",
+        "workspaceResourceId": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-prod-01/providers/microsoft.operationalinsights/workspaces/law-prod-01"
+      }
+    ]
+  },
+  "etag": "00000000-0000-0000-0000-000000000004",
+  "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-prod-01/providers/microsoft.insights/datacollectionrules/dcr-container-insights",
+  "immutabilityPolicy": {
+    "state": "Unlocked"
+  },
+  "kind": "Linux",
+  "location": "eastus",
+  "name": "dcr-container-insights",
+  "provisioningState": "Succeeded",
+  "resourceGroup": "rg-prod-01",
+  "tags": {},
+  "type": "Microsoft.Insights/dataCollectionRules"
+}
