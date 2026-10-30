@@ -1,0 +1,13 @@
+{
+  "root_cause": [
+    ["authorized ip ranges", "authorizedipranges", "apiServerAccessProfile", "api server ip allowlist", "ip ranges"],
+    ["nat gateway", "nat", "agent pool egress ip", "public ip", "192.0.2.55"]
+  ],
+  "fix": [
+    ["--api-server-authorized-ip-ranges", "api-server-authorized-ip-ranges", "authorizedIpRanges", "authorized ip ranges"],
+    ["add the ip", "add 192.0.2.55", "add the nat gateway ip", "add the agent pool ip", "192.0.2.55"]
+  ],
+  "distractors": [
+    ["service connection", "serviceprincipal", "sp-retail-prod-deploy", "service principal", "arm service connection", "expired secret", "authentication"]
+  ]
+}

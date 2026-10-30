@@ -1,0 +1,14 @@
+{
+  "root_cause": "The cluster's API server authorized IP ranges (203.0.113.10/32, 198.51.100.0/24 in az-aks-show.json) do not include the new agent pool's egress address — the NAT gateway public IP 192.0.2.55 (az-network-public-ip-show-natgw.json, applied by vmss-agents.json) — so API server connections from retail-deploy-agents are dropped at the control plane and kubectl i/o-times-out, while VPN laptops succeed because 203.0.113.10/32 is the VPN range.",
+  "evidence": [
+    "az-aks-show.json: apiServerAccessProfile.authorizedIpRanges lists only 203.0.113.10/32 and 198.51.100.0/24",
+    "az-network-public-ip-show-natgw.json: the agents' NAT gateway egress IP is 192.0.2.55, absent from the authorized ranges",
+    "pipeline-log.txt: kubectl from selfhosted-azdo-egress-0 i/o-times-out dialing the API server FQDN; the VPN-based laptop run succeeds",
+    "service-connection.json: the ARM service connection validates fine (red herring — auth is not reached)"
+  ],
+  "fix": "Add the agent pool's NAT gateway public IP 192.0.2.55/32 to the cluster's authorized IP ranges (az aks update --api-server-authorized-ip-ranges with the existing ranges plus 192.0.2.55/32, or its stable /24) so API server traffic from retail-deploy-agents is allowed.",
+  "evidence_files": [
+    "az-aks-show.json",
+    "az-network-public-ip-show-natgw.json"
+  ]
+}

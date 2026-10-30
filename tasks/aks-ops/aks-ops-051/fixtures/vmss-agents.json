@@ -1,0 +1,11 @@
+{
+  "name": "vmss-selfhosted-azdo",
+  "location": "eastus2",
+  "vmSize": "Standard_D4s_v5",
+  "subnet": "snet-azdo-agents",
+  "natGateway": {
+    "id": "/subscriptions/00000000-0000-0000-0000-00000000000a/resourceGroups/rg-agent-egress/providers/Microsoft.Network/natGateways/natgw-agents"
+  },
+  "publicIps": [],
+  "outbound": "All instance egress SNATs through the subnet's NAT gateway (pip-natgw-agents, 192.0.2.55). No instance-level public IPs."
+}

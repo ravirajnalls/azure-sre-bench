@@ -1,0 +1,14 @@
+{
+  "id": "/subscriptions/00000000-0000-0000-0000-00000000000a/resourcegroups/rg-retail-prod/providers/Microsoft.ContainerService/managedClusters/retail-prod-aks",
+  "name": "retail-prod-aks",
+  "location": "eastus2",
+  "fqdn": "retail-prod-06ab0cfb.hcp.eastus2.azmk8s.io",
+  "apiServerAccessProfile": {
+    "enablePrivateCluster": false,
+    "authorizedIpRanges": [
+      "203.0.113.10/32",
+      "198.51.100.0/24"
+    ]
+  },
+  "provisioningState": "Succeeded"
+}

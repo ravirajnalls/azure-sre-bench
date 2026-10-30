@@ -1,0 +1,10 @@
+2026-10-29T02:05:01Z ##[section]Starting: Deploy billing-api to retail-prod-aks (staging)
+2026-10-29T02:05:02Z Agent name: selfhosted-azdo-egress-0 (pool: retail-deploy-agents)
+2026-10-29T02:05:03Z Task: AzureCLI > kubectl apply -f manifests/staging
+2026-10-29T02:05:03Z == kubectl config current-context ==
+2026-10-29T02:05:03Z retail-prod-aks-admin (via az aks get-credentials --subscription 00000000-0000-0000-0000-00000000000a)
+2026-10-29T02:05:33Z Error: Get "https://retail-prod-06ab0cfb.hcp.eastus2.azmk8s.io:443/apps/v1/deployments": dial tcp 20.53.10.7:443: i/o timeout
+2026-10-29T02:05:33Z Retried 3x with backoff — every attempt times out at 30s
+2026-10-29T02:05:34Z ##[error]Deployment failed: kubectl apply could not reach the API server
+2026-10-29T02:05:35Z ##[section]Finishing: Deploy billing-api (FAILED)
+# Same pipeline run on a laptop agent (pool: vpn-developers) succeeded at 02:06.
