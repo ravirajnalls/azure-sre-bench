@@ -1,0 +1,20 @@
+id: aks-ops-050
+canary: 00000000-0000-0000-0000-000000000114  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
+title: kubectl logs and exec time out on every pod while get and apply work
+category: aks-ops
+difficulty: hard
+tags:
+  - aks-ops
+  - konnectivity
+  - azure-firewall
+  - egress
+  - kubernetes
+symptom: |
+  Since roughly 01:30 this morning, kubectl logs, kubectl exec, kubectl
+  attach, and kubectl port-forward fail against every pod on retail-prod-aks
+  with the same dial timeout to 10.240.0.35:10250, on nodes that were
+  rebooted and nodes that were not. Everything that talks only to the API
+  server — get, describe, apply, delete — behaves normally, and the
+  checkout-api pods themselves answer on their readiness probes. The
+  on-call already tried draining and restarting the node; it changed
+  nothing.

@@ -1,0 +1,14 @@
+# kubectl get pods -n checkout   (control-plane access is fine)
+NAME                              READY   STATUS    RESTARTS   AGE
+checkout-api-7d9f8c6b5-x2v7q      1/1     Running   0          4d3h
+checkout-api-7d9f8c6b5-t8mzp      1/1     Running   0          4d3h
+
+# kubectl logs checkout-api-7d9f8c6b5-x2v7q -n checkout
+Error from server: Get "https://retail-prod-06ab0cfb.hcp.eastus2.azmk8s.io:443/api/v1/namespaces/checkout/pods/checkout-api-7d9f8c6b5-x2v7q/log": dial tcp 10.240.0.35:10250: i/o timeout
+
+# kubectl exec -it checkout-api-7d9f8c6b5-x2v7q -n checkout -- sh
+error: Internal error occurred: error executing command in container: exec: dial tcp 10.240.0.35:10250: i/o timeout
+
+# kubectl attach, kubectl port-forward, and kubectl cp show the same
+# dial tcp 10.240.0.35:10250 timeout. kubectl get/describe/apply are all
+# unaffected — no errors from the API server itself.

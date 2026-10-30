@@ -1,0 +1,48 @@
+{
+  "root_cause": [
+    [
+      "konnectivity",
+      "konnectivity agent",
+      "konnectivity-agent",
+      "tunnel",
+      "konnectivity server"
+    ],
+    [
+      "azure firewall",
+      "firewall",
+      "application rule",
+      "egress",
+      "deny rule",
+      "unapproved-endpoints"
+    ],
+    [
+      "hcp.eastus2.azmk8s.io",
+      "azmk8s.io",
+      "hcp fqdn",
+      "api server fqdn",
+      "port 443"
+    ]
+  ],
+  "fix": [
+    [
+      "allow",
+      "allowlist",
+      "add an application rule",
+      "allow rule",
+      "firewall rule",
+      "azmk8s.io",
+      "hcp",
+      "azurekubernetesservice",
+      "AzureKubernetesService"
+    ]
+  ],
+  "distractors": [
+    [
+      "kubelet",
+      "kubelet down",
+      "kubelet not running",
+      "kubelet unhealthy",
+      "node problem"
+    ]
+  ]
+}

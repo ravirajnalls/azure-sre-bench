@@ -1,0 +1,10 @@
+TimeGenerated,Protocol,SourceIp,DestinationIp,DestinationPort,Fqdn,Action,RuleCollectionGroupName,RuleCollectionName,RuleName
+2026-10-28T01:30:04Z,TCP,10.20.1.12,,443,retail-prod-06ab0cfb.hcp.eastus2.azmk8s.io,Deny,AKS-Egress,Unapproved-Endpoints,block-unapproved-egress
+2026-10-28T01:31:00Z,TCP,10.20.1.12,,443,retail-prod-06ab0cfb.hcp.eastus2.azmk8s.io,Deny,AKS-Egress,Unapproved-Endpoints,block-unapproved-egress
+2026-10-28T01:31:05Z,TCP,10.20.1.13,,443,retail-prod-06ab0cfb.hcp.eastus2.azmk8s.io,Deny,AKS-Egress,Unapproved-Endpoints,block-unapproved-egress
+2026-10-28T01:31:12Z,TCP,10.20.1.12,,443,retail-prod-06ab0cfb.hcp.eastus2.azmk8s.io,Deny,AKS-Egress,Unapproved-Endpoints,block-unapproved-egress
+2026-10-28T01:32:01Z,TCP,10.20.1.12,,443,retail-prod-06ab0cfb.hcp.eastus2.azmk8s.io,Deny,AKS-Egress,Unapproved-Endpoints,block-unapproved-egress
+2026-10-28T01:32:09Z,TCP,10.20.1.13,,443,retail-prod-06ab0cfb.hcp.eastus2.azmk8s.io,Deny,AKS-Egress,Unapproved-Endpoints,block-unapproved-egress
+# Application rule collection "Unapproved-Endpoints" denies all FQDNs not in
+# an allow list; no application rule exists for *.hcp.eastus2.azmk8s.io.
+# management-api and *.blob.core.windows.net rules exist and show Allow.
