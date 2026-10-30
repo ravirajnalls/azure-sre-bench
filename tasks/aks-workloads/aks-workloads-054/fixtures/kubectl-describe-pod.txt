@@ -1,0 +1,18 @@
+# kubectl describe pod -n finance ledger-reconcile-29251150-mq4bb (job pod, 2026-10-30 02:30 run)
+
+Name:             ledger-reconcile-29251150-mq4bb
+Namespace:        finance
+Status:           Pending
+Created:          2026-10-30T02:30:04Z
+
+Events:
+  Type     Reason         Age    From                Message
+  ----     ------         ----   ----                -------
+  Normal   Scheduled      5m     default-scheduler   Successfully assigned finance/ledger-reconcile-29251150-mq4bb to aks-sys-2-1
+  Warning  Failed         5m     kubelet             Failed to pull image "crfinprod.azurecr.io/finance/ledger-reconcile@sha256:a3f9c2e1b7d4058693a1c0f2e6d4b8a7c5e9f1d3b2a4c6e8f0d2b4a6c8e0f2d4": failed to resolve reference "crfinprod.azurecr.io/finance/ledger-reconcile@sha256:a3f9c2e1b7d4058693a1c0f2e6d4b8a7c5e9f1d3b2a4c6e8f0d2b4a6c8e0f2d4": crfinprod.azurecr.io/finance/ledger-reconcile@sha256:a3f9c2e1b7d4058693a1c0f2e6d4b8a7c5e9f1d3b2a4c6e8f0d2b4a6c8e0f2d4: not found
+  Warning  Failed         5m     kubelet             Error response from daemon: manifest unknown: manifest unknown
+  Normal   BackOff        4m     kubelet             Back-off pulling image "crfinprod.azurecr.io/finance/ledger-reconcile@sha256:a3f9c2e1b7d4058693a1c0f2e6d4b8a7c5e9f1d3b2a4c6e8f0d2b4a6c8e0f2d4"
+  Warning  Failed         4m     kubelet             Error: ErrImagePull
+
+# Same error every nightly run since 2026-10-23. No auth-related errors
+# ("unauthorized", "authentication required") appear in any pull event.

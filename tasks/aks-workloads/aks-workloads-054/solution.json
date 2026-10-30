@@ -1,0 +1,16 @@
+{
+  "root_cause": "The CronJob pins its image by digest (@sha256:a3f9c2e1... in cronjob.yaml). The prod tag was re-pushed on 2026-10-23, leaving that older digest untagged, and the weekly ACR purge task added on 2026-10-20 (acr purge --filter 'finance/ledger-reconcile:.*' --untagged --ago 30d) then deleted untagged manifests older than 30 days — the referenced digest no longer exists in crfinprod, so kubelet's pull returns 'manifest unknown' every night. The two surviving manifests in az-acr-repository-show-manifests.json (prod, v2.4.1) carry different digests, confirming the pinned one is gone.",
+  "evidence": [
+    "cronjob.yaml: image is pinned by digest @sha256:a3f9c2e1b7d4058693a1c0f2e6d4b8a7c5e9f1d3b2a4c6e8f0d2b4a6c8e0f2d4",
+    "kubectl-describe-pod.txt: every nightly pull fails with 'manifest unknown' — the reference itself does not resolve, not an authentication or network error",
+    "acr-task-purge.yaml: scheduled 'acr purge --untagged --ago 30d' over finance/ledger-reconcile, cron 03:00 Sundays (first run 2026-10-25, after the tag re-push)",
+    "az-acr-repository-show-manifests.json: the repository's surviving manifests are sha256:c7e2... (tag prod, created 2026-10-23) and sha256:e1b0... (tag v2.4.1) — the pinned digest is absent",
+    "az-role-assignment-list-acr.json: the node identity holds AcrPull on crfinprod, so pull credentials are fine"
+  ],
+  "fix": "Re-push a current build and give it a stable tag, move the CronJob to that tag (e.g. crfinprod.azurecr.io/finance/ledger-reconcile:prod) instead of the deleted digest, and make the purge rule safe for referenced images (keep tagged manifests — add keep-tags or drop --untagged, or exclude the digest/tag the CronJob pins) so scheduled cleanup can never again delete a manifest that a workload references.",
+  "evidence_files": [
+    "cronjob.yaml",
+    "kubectl-describe-pod.txt",
+    "acr-task-purge.yaml"
+  ]
+}

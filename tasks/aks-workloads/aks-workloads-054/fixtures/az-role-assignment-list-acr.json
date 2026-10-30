@@ -1,0 +1,17 @@
+[
+  {
+    "canDelegate": false,
+    "condition": null,
+    "conditionVersion": null,
+    "createdOn": "2026-04-08T13:37:55.220144Z",
+    "id": "/subscriptions/00000000-0000-0000-0000-000000000002/resourcegroups/rg-fin-prod/providers/Microsoft.ContainerRegistry/registries/crfinprod/providers/Microsoft.Authorization/roleAssignments/00000000-0000-0000-0000-000000000006",
+    "name": "00000000-0000-0000-0000-000000000006",
+    "principalId": "00000000-0000-0000-0000-000000000004",
+    "principalType": "ServicePrincipal",
+    "roleDefinitionId": "/subscriptions/00000000-0000-0000-0000-000000000002/providers/Microsoft.Authorization/roleDefinitions/00000000-0000-0000-0000-000000000007",
+    "roleDefinitionName": "AcrPull",
+    "scope": "/subscriptions/00000000-0000-0000-0000-000000000002/resourcegroups/rg-fin-prod/providers/Microsoft.ContainerRegistry/registries/crfinprod",
+    "type": "Microsoft.Authorization/roleAssignments",
+    "updatedOn": "2026-04-08T13:37:55.220144Z"
+  }
+]
