@@ -310,6 +310,108 @@ def test_invalid_max_chars_is_rejected(tmp_path: Path, bad):
     assert "expected.json: 'max_chars' must be a positive integer" in result.errors
 
 
+# --- distractor groups (issue #94) -------------------------------------------
+
+
+def patch_expected(task_dir: Path, **changes: object) -> None:
+    """Rewrite expected.json with the given field changes (None deletes the key)."""
+    path = task_dir / "expected.json"
+    data = json.loads(path.read_text(encoding="utf-8"))
+    for key, value in changes.items():
+        if value is None:
+            data.pop(key, None)
+        else:
+            data[key] = value
+    path.write_text(json.dumps(data), encoding="utf-8")
+
+
+def test_fixture_task_has_grounded_distractors(tmp_path: Path):
+    """The data task models the distractor shape: no errors, no warnings."""
+    copy_task(tmp_path)
+    result = load_one(tmp_path)
+    assert result.errors == []
+    assert result.warnings == []
+
+
+def test_missing_distractors_warns(tmp_path: Path):
+    task_dir = copy_task(tmp_path)
+    patch_expected(task_dir, distractors=None)
+    result = load_one(tmp_path)
+    assert result.errors == []
+    assert any(
+        "no 'distractors' groups" in warning for warning in result.warnings
+    )
+
+
+@pytest.mark.parametrize(
+    "bad", ["nope", 42, [], ["flat"], [["ok"], []], [[5]], [[""]], [[None]]]
+)
+def test_malformed_distractors_are_rejected(tmp_path: Path, bad):
+    task_dir = copy_task(tmp_path)
+    patch_expected(task_dir, distractors=bad)
+    result = load_one(tmp_path)
+    assert (
+        "expected.json: 'distractors' must be a non-empty list of "
+        "non-empty string lists" in result.errors
+    )
+
+
+def test_distractor_equal_to_root_cause_alternative_rejected(tmp_path: Path):
+    task_dir = copy_task(tmp_path)
+    patch_expected(task_dir, distractors=[["traffic spike"]])
+    result = load_one(tmp_path)
+    assert any("overlaps" in error for error in result.errors)
+
+
+def test_distractor_containing_root_cause_alternative_rejected(tmp_path: Path):
+    # Substring overlap in either direction: "peak traffic spike" contains the
+    # graded "peak traffic" and would drag correct answers into the trap.
+    task_dir = copy_task(tmp_path)
+    patch_expected(task_dir, distractors=[["peak traffic spike"]])
+    result = load_one(tmp_path)
+    assert any(
+        "overlaps" in error and "peak traffic" in error for error in result.errors
+    )
+
+
+def test_root_cause_contained_in_distractor_rejected(tmp_path: Path):
+    task_dir = copy_task(tmp_path)
+    patch_expected(task_dir, distractors=[["appgw and ingress saturation"]])
+    result = load_one(tmp_path)
+    assert any(
+        "overlaps" in error and "ingress saturation" in error
+        for error in result.errors
+    )
+
+
+def test_ungrounded_distractor_warns(tmp_path: Path):
+    task_dir = copy_task(tmp_path)
+    patch_expected(task_dir, distractors=[["dns misconfiguration"]])
+    result = load_one(tmp_path)
+    assert result.errors == []
+    assert any(
+        "distractor group 0 has no alternative found in any fixture" in warning
+        for warning in result.warnings
+    )
+
+
+def test_each_grounded_distractor_group_is_accepted(tmp_path: Path):
+    task_dir = copy_task(tmp_path)
+    # "appgw" appears in the metrics fixture, "upstream" in the log fixture.
+    patch_expected(task_dir, distractors=[["appgw"], ["upstream-connection-failed"]])
+    result = load_one(tmp_path)
+    assert result.errors == []
+    assert not any("distractor" in warning for warning in result.warnings)
+
+
+def test_distractor_rules_do_not_shadow_expected_json_errors(tmp_path: Path):
+    task_dir = copy_task(tmp_path)
+    patch_expected(task_dir, root_cause=[], distractors="nope")
+    result = load_one(tmp_path)
+    assert any("'root_cause' must be" in error for error in result.errors)
+    assert any("'distractors' must be" in error for error in result.errors)
+
+
 def test_missing_solution_json(tmp_path: Path):
     task_dir = copy_task(tmp_path)
     (task_dir / "solution.json").unlink()

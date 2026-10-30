@@ -125,7 +125,8 @@ Format:
 ```json
 {
   "root_cause": [["alternative A1", "alternative A2"], ["concept B"], ...],
-  "fix": [["fix alternative 1", "fix alternative 2"], ...]
+  "fix": [["fix alternative 1", "fix alternative 2"], ...],
+  "distractors": [["wrong cause 1", "wrong cause synonym"], ...]
 }
 ```
 
@@ -139,6 +140,32 @@ Format:
 - Keep groups **specific enough that a generic guess fails**: "configuration error" as
   a group alternative is too broad; the resource and the specific misconfiguration are
   what earn credit.
+
+### Distractor groups (issue #94)
+
+Every task must define **at least one distractor group** naming the wrong cause its
+red-herring fixture suggests — the plausible-but-wrong diagnosis an investigator who
+stops too early would write:
+
+- Quote the **specific signal from the fixture** (the validator warns when no
+  alternative of a group appears in any fixture), not a generic phrase: the resource,
+  the misleading log line, or the healthy-but-suspicious component.
+- A distractor alternative must **never overlap a root_cause alternative** — the
+  validator rejects substring overlap in either direction, because a distractor
+  containing (or contained in) a graded alternative would fail correct answers.
+- Matching any distractor group fails the task with reason `named_distractor`, even
+  when every root_cause and fix group matches — blaming the red herring is not a
+  solution. Distractors are matched against the stated `root_cause` only; `fix` and
+  `evidence` never trigger one, and a distractor match costs no score, only `passed`.
+- The reference `solution.json` must rule the distractor out (or never mention it);
+  the solvability CI check enforces that a reference answer never matches its own
+  distractors.
+
+Example — for a task whose red herring is a healthy-looking RBAC role assignment:
+
+```json
+"distractors": [["missing Key Vault Secrets User role", "rbac misconfiguration"]]
+```
 
 ## Reference answer (`solution.json`)
 

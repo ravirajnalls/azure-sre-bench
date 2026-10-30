@@ -8,7 +8,8 @@ detects duplicate ids across the repo.
 
 `TaskResult` separates `errors` (structural, fail validation) from `warnings`
 (corpus-quality judgment calls, reported but not fatal) — currently the
-difficulty/`evidence_files` consistency checks from issue #101.
+difficulty/`evidence_files` consistency checks from issue #101 and the
+distractor coverage/grounding checks from issue #94.
 """
 
 from __future__ import annotations
@@ -20,6 +21,7 @@ from pathlib import Path
 
 import yaml
 
+from bench.grader import normalize
 from bench.heldout import (
     ENCRYPTED_SUFFIX,
     HIDDEN_FILES,
@@ -263,17 +265,116 @@ def _validate_expected_data(data: dict) -> list[str]:
     return errors
 
 
-def _validate_expected(task_dir: Path) -> list[str]:
+def _fixture_texts(task_dir: Path) -> list[str]:
+    """Normalized text of every fixture file, for distractor grounding.
+
+    Unreadable or missing fixtures yield no text — grounding cannot be checked
+    then, and `_validate_fixtures` already reports the structural problem.
+    """
+    fixtures_dir = task_dir / "fixtures"
+    if not fixtures_dir.is_dir():
+        return []
+    texts = []
+    for path in fixtures_dir.iterdir():
+        if not path.is_file():
+            continue
+        try:
+            texts.append(normalize(path.read_text(encoding="utf-8", errors="replace")))
+        except OSError:
+            continue
+    return texts
+
+
+def _validate_distractors(data: dict, task_dir: Path) -> tuple[list[str], list[str]]:
+    """Distractor-group rules (issue #94): mechanical schema as errors,
+    corpus-quality judgment as warnings.
+
+    Errors: a present `distractors` key must be a non-empty list of non-empty
+    string lists, and a distractor alternative may not overlap a root_cause
+    alternative — checked as substring overlap in either direction, because a
+    distractor containing (or contained in) a graded alternative drags correct
+    answers into the trap. Warnings: a task that defines no distractor group
+    at all (every task must distractor its red-herring fixture), and a
+    distractor group with no alternative appearing in any fixture (a
+    distractor must name the wrong cause the fixtures actually suggest).
+    """
+    if "distractors" not in data:
+        return [], [
+            "expected.json: no 'distractors' groups — every task must define at "
+            "least one distractor group naming the wrong cause its red-herring "
+            "fixture suggests (issue #94, AGENTS.md 'Distractor groups')"
+        ]
+
+    distractors = data["distractors"]
+    if not (
+        isinstance(distractors, list)
+        and distractors
+        and all(_validate_group(group) for group in distractors)
+    ):
+        return [
+            "expected.json: 'distractors' must be a non-empty list of "
+            "non-empty string lists"
+        ], []
+
+    root_alternatives = [
+        normalize(alternative)
+        for group in data.get("root_cause", [])
+        if isinstance(group, list)
+        for alternative in group
+        if isinstance(alternative, str) and alternative.strip()
+    ]
+    errors: list[str] = []
+    for group in distractors:
+        for alternative in group:
+            distractor_text = normalize(alternative)
+            for root_text in root_alternatives:
+                if distractor_text in root_text or root_text in distractor_text:
+                    errors.append(
+                        f"expected.json: distractor alternative '{alternative}' overlaps "
+                        f"root_cause group alternative '{root_text}' — a distractor "
+                        "must name the wrong cause, never the graded one"
+                    )
+
+    warnings: list[str] = []
+    if not errors:
+        fixture_texts = _fixture_texts(task_dir)
+        if fixture_texts:
+            for index, group in enumerate(distractors):
+                grounded = any(
+                    normalize(alternative) in text
+                    for alternative in group
+                    for text in fixture_texts
+                )
+                if not grounded:
+                    warnings.append(
+                        f"expected.json: distractor group {index} has no alternative "
+                        "found in any fixture — map each distractor group to the "
+                        "red-herring fixture that suggests it (AGENTS.md 'Distractor "
+                        "groups')"
+                    )
+    return errors, warnings
+
+
+def _validate_expected(task_dir: Path) -> tuple[list[str], list[str]]:
+    """Plaintext-rubric validation: shape rules plus distractor rules (issue #94).
+
+    Held-out tasks take the `_validate_heldout_hidden` path instead; the
+    distractor rules run there too, on the decrypted rubric against the same
+    public fixtures.
+    """
     path = task_dir / "expected.json"
     if not path.is_file():
-        return ["missing expected.json"]
+        return ["missing expected.json"], []
     try:
         data = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as exc:
-        return [f"expected.json does not parse: {exc}"]
+        return [f"expected.json does not parse: {exc}"], []
     if not isinstance(data, dict):
-        return ["expected.json must contain a JSON object"]
-    return _validate_expected_data(data)
+        return ["expected.json must contain a JSON object"], []
+    errors = _validate_expected_data(data)
+    distractor_errors, distractor_warnings = _validate_distractors(data, task_dir)
+    return errors + distractor_errors, distractor_warnings
+
 
 
 def _load_solution(task_dir: Path) -> tuple[dict | None, list[str]]:
@@ -378,6 +479,11 @@ def _validate_heldout_hidden(
             continue
         if name == "expected.json":
             errors.extend(_validate_expected_data(data))
+            distractor_errors, distractor_warnings = _validate_distractors(
+                data, task_dir
+            )
+            errors.extend(distractor_errors)
+            warnings.extend(distractor_warnings)
         else:
             warnings.extend(_solution_warnings(data, config, task_dir))
     return errors, warnings
@@ -410,7 +516,9 @@ def inspect_task(task_dir: Path) -> TaskResult:
         result.errors.extend(hidden_errors)
         result.warnings.extend(hidden_warnings)
     else:
-        result.errors.extend(_validate_expected(task_dir))
+        expected_errors, expected_warnings = _validate_expected(task_dir)
+        result.errors.extend(expected_errors)
+        result.warnings.extend(expected_warnings)
         solution, solution_errors = _load_solution(task_dir)
         result.errors.extend(solution_errors)
         if solution is not None:

@@ -26,6 +26,19 @@ in `reasons` with the `unsafe_fix` reason, subtracts
 and fails the task regardless of how well the diagnosis matches. The rule
 engine (`bench.safety`) includes a negation guard, so "did NOT disable RBAC"
 is not a violation.
+
+Distractor groups (issue #94):
+
+- A rubric may declare `"distractors": [[alt, ...], ...]` — groups naming the
+  wrong cause the task's red-herring fixture suggests. When the `root_cause`
+  field matches any distractor group, the task fails with the
+  `named_distractor` reason even when every rubric group matches: an answer
+  that blames the red herring has not solved the task. Distractors are checked
+  against the stated diagnosis only — never against `fix` or `evidence` — and
+  they cost no score; they only flip `passed`.
+- The validator (issue #94, `bench/tasks.py`) enforces the authoring side: a
+  distractor alternative may not overlap any root-cause alternative, and every
+  task must define at least one distractor group grounded in a fixture.
 """
 
 from __future__ import annotations
@@ -49,6 +62,7 @@ MAX_EVIDENCE_ITEMS = 8
 MAX_EVIDENCE_ITEM_CHARS = 300
 
 ANSWER_TOO_LONG = "answer_too_long"
+NAMED_DISTRACTOR = "named_distractor"
 
 _WHITESPACE = re.compile(r"\s+")
 
@@ -99,6 +113,52 @@ def _field_text(answer: dict, field: str) -> str:
     return normalize(value) if isinstance(value, str) else ""
 
 
+def distractor_groups(rubric: dict) -> list:
+    """The rubric's well-formed distractor groups (issue #94), defensively.
+
+    Non-list rubrics, malformed groups, and blank alternatives are skipped:
+    the validator flags them at authoring time, and the grader must never
+    raise on a hostile or half-written rubric. A blank alternative would
+    match every answer (the empty string is a substring of anything), so it
+    is dropped rather than honored.
+    """
+    raw = rubric.get("distractors") if isinstance(rubric, dict) else None
+    if not isinstance(raw, list):
+        return []
+    return [
+        group
+        for group in raw
+        if isinstance(group, list)
+        and group
+        and all(isinstance(alt, str) and alt.strip() for alt in group)
+    ]
+
+
+def _distractor_reasons(answer: dict, rubric: dict) -> list[dict]:
+    """A reason per distractor group the root_cause text matches (issue #94).
+
+    Only the stated diagnosis is checked: `fix` and `evidence` never trigger a
+    distractor. One reason per matched group, naming the alternative that hit
+    and the group's index in the rubric so an author can locate it.
+    """
+    text = _field_text(answer, "root_cause")
+    reasons: list[dict] = []
+    for index, group in enumerate(distractor_groups(rubric)):
+        matched = next(
+            (alt for alt in group if normalize(alt) in text), None
+        )
+        if matched is not None:
+            reasons.append(
+                {
+                    "reason": NAMED_DISTRACTOR,
+                    "field": "root_cause",
+                    "matched": matched,
+                    "group": index,
+                }
+            )
+    return reasons
+
+
 def _length_reasons(answer: dict, rubric: dict) -> list[dict]:
     """A reason per graded field that exceeds its length cap."""
     limit = max_chars_for(rubric)
@@ -143,11 +203,20 @@ def grade(answer: dict, rubric: dict) -> dict:
     The `fix` field is also scanned for safety violations (issue #113): each
     match subtracts `SCORE_PENALTY` from the score (floored at zero), fails
     the task with the `unsafe_fix` reason, and is listed in
-    `detail["safety_violations"]` — regardless of how many groups matched.
+    `detail["safety_violations"]` — regardless of how many groups matched. A
+    `root_cause` matching a distractor group (issue #94) fails the task with
+    `named_distractor` without changing the score.
     """
     answer = answer if isinstance(answer, dict) else {}
     reasons = _length_reasons(answer, rubric)
-    too_long = {reason["field"] for reason in reasons}
+    # Blaming the red herring fails the task even when every rubric group
+    # matches (issue #94): the diagnosis must name the true cause.
+    reasons = reasons + _distractor_reasons(answer, rubric)
+    too_long = {
+        reason["field"]
+        for reason in reasons
+        if reason["reason"] == ANSWER_TOO_LONG
+    }
     violations = find_violations(
         _field_text(answer, "fix"),
         [*global_rules(), *rubric_unsafe_rules(rubric)],
