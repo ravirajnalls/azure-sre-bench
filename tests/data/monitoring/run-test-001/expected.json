@@ -1,0 +1,4 @@
+{
+  "root_cause": [["connection string", "secret rotation"], ["probe deployment"]],
+  "fix": [["rotate the secret", "update the connection string", "update the secret"]]
+}

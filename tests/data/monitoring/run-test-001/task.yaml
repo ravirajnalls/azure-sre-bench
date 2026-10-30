@@ -1,0 +1,11 @@
+id: monitoring-901
+title: "Test incident: probe availability alert on synthetic cluster"
+category: monitoring
+difficulty: easy
+tags:
+  - test-fixture
+symptom: >
+  Synthetically generated symptom for runner tests. The availability alert for
+  the probe deployment on cluster test-probe fired for 20 minutes, and 5xx
+  responses from the probe endpoint rose sharply. No other services report
+  errors.

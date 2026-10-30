@@ -1,0 +1,6 @@
+// Availability and auth failures for probe-api, last hour
+requests
+| where timestamp > ago(1h) and appName == "probe-api"
+| summarize failures = count() by resultCode, bin(timestamp, 5m)
+| where resultCode == "401" or resultCode startswith "5"
+| order by timestamp asc
