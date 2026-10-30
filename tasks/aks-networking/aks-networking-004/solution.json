@@ -1,0 +1,12 @@
+{
+  "root_cause": "The security hardening change applied a default-deny-all NetworkPolicy to the billing namespace, and no NetworkPolicy was added to allow ingress to postgres on 5432, so billing-api's connections to postgres are dropped.",
+  "evidence": [
+    "kubectl-get-networkpolicy.yaml: default-deny-all NetworkPolicy (podSelector: {}, policyTypes Ingress) created 2026-10-30T09:18:44Z, minutes before the timeouts began",
+    "kubectl-get-networkpolicy.yaml: the only NetworkPolicy in the namespace is the default-deny — nothing allows ingress to postgres on 5432",
+    "billing-api.log: PSQLException connect timed out to postgres.billing.svc.cluster.local:5432 while DNS resolution of the same name succeeds",
+    "kubectl-get-pods-show-labels.txt: billing-api and postgres pods are all Running and Ready, so this is not a pod-level failure",
+    "kubectl-get-svc-postgres.yaml: postgres Service selector and port 5432 are correct (red herring)",
+    "postgres.log: postgres healthy with no connection attempts logged (red herring)"
+  ],
+  "fix": "Add a NetworkPolicy in the billing namespace that allows ingress from pods labeled app=billing-api to postgres pods on TCP port 5432."
+}
