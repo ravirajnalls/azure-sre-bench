@@ -1,0 +1,22 @@
+[
+  {
+    "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-prod-01/providers/Microsoft.ContainerService/managedClusters/aks-prod-eu/maintenanceConfigurations/default",
+    "name": "default",
+    "type": "Microsoft.ContainerService/managedClusters/maintenanceConfigurations",
+    "properties": {
+      "maintenanceWindow": {
+        "startTime": "04:00",
+        "dayOfWeek": "Sunday",
+        "schedule": {
+          "weekly": {
+            "intervalWeeks": 1
+          }
+        },
+        "durationHours": 4,
+        "utcOffset": "+00:00"
+      },
+      "maintenanceWindowType": "Default",
+      "notAllowedTime": []
+    }
+  }
+]

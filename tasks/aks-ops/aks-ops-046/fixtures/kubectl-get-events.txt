@@ -1,0 +1,21 @@
+LAST SEEN   TYPE      REASON                  OBJECT                                   MESSAGE
+3m          Normal    NodeHasSufficientPID    node/aks-prodeu-vmss000012               Node aks-prodeu-vmss000012 status is now: NodeHasSufficientPID
+3m          Normal    Starting                node/aks-prodeu-vmss000012               Starting kubelet.
+3m          Normal    NodeAllocatableEnforced node/aks-prodeu-vmss000012               Updated Node Allocatable limit across pods
+4m          Normal    NodeReady               node/aks-prodeu-vmss000012               Node aks-prodeu-vmss000012 status is now: NodeReady
+4m          Normal    RegisteredNode          node/aks-prodeu-vmss000012               Node aks-prodeu-vmss000012 event: RegisteredNode
+4m          Normal    Starting                node/aks-prodeu-vmss000012               kubelet restart (upgrade in progress)
+4m          Normal    Starting                node/aks-prodeu-vmss000012               Starting kube-proxy.
+12m         Warning   Draining                node/aks-prodeu-vmss000012               Node aks-prodeu-vmss000012 is being drained: automatic node OS image upgrade
+12m         Normal    Killing                 pod/storefront-web-6c9b7d8f4-mrn2v       Stopping container storefront-web
+12m         Normal    Killing                 pod/storefront-web-6c9b7d8f4-kj8qt       Stopping container storefront-web
+12m         Warning   Evicted                 pod/catalog-api-5f7d9c6b8-h2wpn          Node aks-prodeu-vmss000012 was drained due to automatic node OS image upgrade
+12m         Warning   Evicted                 pod/catalog-api-5f7d9c6b8-v6kdr          Node aks-prodeu-vmss000012 was drained due to automatic node OS image upgrade
+13m         Warning   NodeNotReady            node/aks-prodeu-vmss000012               Node aks-prodeu-vmss000012 status is now: NodeNotReady
+13m         Normal    NodeNotSchedulable      node/aks-prodeu-vmss000012               Node aks-prodeu-vmss000012 status is now: NodeNotSchedulable
+3d          Warning   Draining                node/aks-prodeu-vmss000014               Node aks-prodeu-vmss000014 is being drained: automatic node OS image upgrade
+3d          Warning   Evicted                 pod/storefront-web-6c9b7d8f4-rs5xk       Node aks-prodeu-vmss000014 was drained due to automatic node OS image upgrade
+3d          Warning   NodeNotReady            node/aks-prodeu-vmss000014               Node aks-prodeu-vmss000014 status is now: NodeNotReady
+10d         Warning   Draining                node/aks-prodeu-vmss000011               Node aks-prodeu-vmss000011 is being drained: automatic node OS image upgrade
+10d         Warning   Evicted                 pod/catalog-api-5f7d9c6b8-m4tqv          Node aks-prodeu-vmss000011 was drained due to automatic node OS image upgrade
+10d         Warning   NodeNotReady            node/aks-prodeu-vmss000011               Node aks-prodeu-vmss000011 status is now: NodeNotReady

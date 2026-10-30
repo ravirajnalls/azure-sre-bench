@@ -1,0 +1,14 @@
+{
+  "root_cause": "The cluster runs with autoUpgradeProfile.nodeOSUpgradeChannel set to NodeImage (az-aks-show.json), so AKS upgrades node OS images automatically, and there is no aksManagedNodeOSUpgradeSchedule maintenance configuration (az-aks-maintenanceconfiguration-list.json shows only the 'default' config, which governs cluster upgrades, not node OS images). With no maintenance window constraining the NodeImage channel, upgrades run in the default window and land on Tuesday mid-mornings, draining nodes and evicting pods during business hours.",
+  "evidence": [
+    "az-aks-show.json: autoUpgradeProfile has nodeOSUpgradeChannel: NodeImage — automatic node OS image upgrades are enabled for the cluster",
+    "az-aks-maintenanceconfiguration-list.json: the only maintenance configuration is 'default' (Sunday 04:00, for cluster upgrades); no aksManagedNodeOSUpgradeSchedule exists to constrain node OS image upgrades, so they run whenever AKS schedules them",
+    "aks-activity-log.json: 'Automatic node OS image upgrade started' operations on channel NodeImage were triggered by 'Microsoft Container Service (auto-upgrade)' at 08:55Z (09:55 local) on two consecutive Tuesdays",
+    "kubectl-get-events.txt: nodes were drained for 'automatic node OS image upgrade', went NodeNotReady, and storefront/catalog pods were evicted, matching the weekly eviction alerts"
+  ],
+  "fix": "Create an aksManagedNodeOSUpgradeSchedule maintenance configuration (az aks maintenanceconfiguration add --cluster-name aks-prod-eu --name aksManagedNodeOSUpgradeSchedule ...) with an off-hours window — e.g. daily or weekly starting 01:00 local with a multi-hour duration — so node OS image upgrades and their node drains happen outside business hours. Note the existing 'default' configuration does not apply to the NodeImage channel; the node-OS schedule must be created explicitly. Until the window exists, expect Tuesday upgrades to keep evicting pods whenever a new node image ships.",
+  "evidence_files": [
+    "az-aks-show.json",
+    "az-aks-maintenanceconfiguration-list.json"
+  ]
+}
