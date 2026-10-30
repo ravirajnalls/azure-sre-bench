@@ -1,9 +1,25 @@
 {
   "root_cause": [
-    ["tenantid", "tenant id", "tenant"],
-    ["secretproviderclass", "secret provider class"]
+    ["tenantid", "tenant id", "tenant", "00000000-0000-0000-0000-000000000009"],
+    [
+      "secretproviderclass",
+      "secret provider class",
+      "azure-reports-kv"
+    ]
   ],
   "fix": [
-    ["tenantid", "tenant id"]
+    ["tenantid", "tenant id", "00000000-0000-0000-0000-000000000009"]
+  ],
+  "distractors": [
+    [
+      "key vault secrets user",
+      "missing key vault secrets user",
+      "vault access policy"
+    ],
+    [
+      "clientid",
+      "workload identity",
+      "00000000-0000-0000-0000-000000000003"
+    ]
   ]
 }

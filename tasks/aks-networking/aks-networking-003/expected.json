@@ -1,9 +1,13 @@
 {
   "root_cause": [
-    ["subnet"],
+    ["subnet", "snet-aks-nodes", "10.224.0.0/24"],
     ["ip exhaustion", "out of ip", "exhausted", "no available ip", "insufficient ip"]
   ],
   "fix": [
     ["larger subnet", "overlay", "cni overlay", "reduce maxpods", "new node pool subnet"]
+  ],
+  "distractors": [
+    ["partner-api", "load balancer allocation", "external-ip pending"],
+    ["servicecidr", "service cidr exhaustion", "10.240.0.0/16"]
   ]
 }

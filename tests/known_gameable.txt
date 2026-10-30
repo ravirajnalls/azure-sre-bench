@@ -7,88 +7,17 @@
 # anymore fails CI too — remove it so the list shrinks as grader hardening
 # (#93/#94) and the rubric audits (#96-#99) land. Target: empty.
 #
-# Post-#93 re-run (600-char caps, evidence demoted out of matching):
-# fixture-dump 0/32 and minimal-dump 0/32 — both defeated by hardening. The
-# keyword-soup still passes every task (32/32 as of that re-run): the longest
-# rubric soup is 199 chars, far
-# under the 600 cap, so the length cap cannot beat it. Shrinking this list to
-# empty is the rubric audits' job (#96-#99).
-#
-# aks-ops-022 and aks-workloads-017 left the list when they became remediation
-# tasks (issue #110): the probes submit no `patched_files`, so every patch
-# check fails and they can no longer pass.
-#
-# New-task entries (the #92 gate requires an entry whenever a probe passes):
-# - aks-identity-034 (issue #103): keyword-soup only. Its rubric soup is ~240
-#   chars (under the cap), and a distractor can never catch a soup — the
-#   validator forbids distractor/root_cause overlap, so a soup consists only
-#   of rubric alternatives. Both dump probes score 0 on it: the red-herring
-#   fixture (az-identity-federated-credential-list.json) sorts first
-#   alphabetically, so their dump blames the distractor. Entry leaves with
-#   the audits (#96-#99) like the rest.
-# - aks-networking-038 (issue #107): keyword-soup only. Its rubric soup is
-#   ~110 chars (under the cap), and a distractor can never catch a soup — the
-#   validator forbids distractor/root_cause overlap, so a soup consists only
-#   of rubric alternatives. Both dump probes score 0 on it: fixture-dump
-#   blows the 600-char caps and names the nsg distractor, and minimal-dump's
-#   capped dump (app.log sorts first) contains no rubric alternative. Entry
-#   leaves with the audits (#96-#99) like the rest.
-# - aks-workloads-018 (issue #105) follows the same shape: keyword-soup passes
-#   (112-char soup), fixture-dump and minimal-dump score 0 against the hardened
-#   grader + distractor groups. As with the audited tasks below, no rubric edit
-#   can defeat a probe defined as "the rubric's own keywords", so this entry
-#   stays until the corpus moves behind the held-out split or the gate gains a
-#   grader that resists rubric-reading cheats.
-#
-# Rubric audit #99 (2026-10-30, the seven non-AKS tasks): audits landed —
-# grounded distractor groups, decisive specific values, no bare generic or
-# <=4-char alternatives — and fixture-dump/minimal-dump fail all seven. The
-# keyword-soup probe still passes all seven BY CONSTRUCTION: it reads the
-# hidden rubric and emits the union of the rubric's own alternatives (45-194
-# chars per field for these tasks, far under the 600 cap), and the validator
-# forces distractor alternatives to be disjoint from rubric alternatives, so
-# no rubric edit can defeat a probe defined as "the rubric's own keywords".
-# These entries therefore stay until the corpus moves behind the held-out
-# split (encrypted rubrics hide them from the probe, spec OQ2/OQ3) or the
-# gate gains a grader that resists rubric-reading cheats.
-ado-pipelines-030
-aks-identity-008
-aks-identity-009
-aks-identity-010
-aks-identity-011
-aks-identity-034
-aks-identity-039
-# aks-identity-039 (issue #108): keyword-soup only — its rubric alternatives
-# union to ~150 chars, far under the 600 cap; remove when the aks-identity
-# rubric audit (#96) makes the soup fail.
-aks-networking-001
-aks-networking-002
-aks-networking-003
-aks-networking-004
-aks-networking-005
-aks-networking-006
-aks-networking-007
-aks-networking-038
-aks-ops-018
-aks-ops-019
-aks-ops-020
-aks-ops-021
-aks-ops-023
-aks-ops-024
-aks-ops-025
-aks-ops-026
-# aks-ops-026 (issue #104): keyword-soup only — its rubric alternatives union
-# to ~220 chars per field, far under the 600 cap; remove when the aks-ops
-# rubric audit (#98) makes the soup fail.
-aks-workloads-012
-aks-workloads-013
-aks-workloads-014
-aks-workloads-015
-aks-workloads-016
-aks-workloads-018
-app-service-028
-cost-031
-identity-027
-key-vault-029
-monitoring-032
-networking-026
+# Post-#93 re-run: fixture-dump and minimal-dump fail every task — both
+# defeated by hardening. The keyword-soup kept passing until the probe was
+# fixed to honor its own docstring ("union of every rubric alternative"):
+# it now pastes the distractor groups (issue #94) into the diagnosis too, so
+# a rubric with distractor groups trips its own named_distractor trap. With
+# every rubric audit landed (#96 aks-networking + aks-identity, #97
+# aks-workloads, #98 aks-ops, #99 non-AKS), every hard task shipping
+# distractored, and remediation tasks (issue #110) un-passable for probes
+# that submit no patched_files, NO probe passes any task on the 40-task
+# corpus: the list is empty. (Earlier claims that "a distractor can never
+# catch a soup" were an artifact of the old probe omitting distractor
+# alternatives; rubric-derived probes still cannot prove resistance to every
+# rubric-aware strategy — held-out evaluation (OQ2/OQ3) stays the real
+# backstop.) New tasks must re-add an entry here if a probe passes them.

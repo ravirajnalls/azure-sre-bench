@@ -1,13 +1,14 @@
 {
   "root_cause": [
     ["selector", "label"],
-    ["tier"],
+    ["tier", "tier: web", "tier=web"],
     ["endpoint", "no endpoints", "does not match", "doesn't match", "mismatch"]
   ],
   "fix": [
     ["tier: frontend", "tier=frontend", "match the pod labels", "update the selector"]
   ],
   "distractors": [
-    ["nginx", "ingress controller", "ingress-nginx", "no live upstreams"]
+    ["nginx", "ingress controller", "ingress-nginx", "no live upstreams"],
+    ["restart loop", "crash loop", "restarts"]
   ]
 }

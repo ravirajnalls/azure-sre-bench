@@ -44,9 +44,21 @@ def soup(groups: object) -> str:
 
 
 def soup_answer(rubric: dict) -> dict:
-    """Contract-shaped answer that covers every alternative of every group."""
+    """Contract-shaped answer that covers every alternative of every group.
+
+    Distractor groups (issue #94) are pasted into the diagnosis too: the cheat
+    dumps the whole hidden rubric, distractors included, and so trips its own
+    distractor trap. That is the mechanism by which the rubric audits
+    (#96-#99) shrink the gameability list — a distractor may never overlap a
+    root_cause alternative (validator), so no rubric edit could otherwise make
+    this probe fail. A cheater deliberate enough to filter the distractor
+    groups out is writing a targeted diagnosis, which is the honest behavior
+    the gate exists to demand.
+    """
     return {
-        "root_cause": soup(rubric.get("root_cause")),
+        "root_cause": soup(
+            [*(rubric.get("root_cause") or []), *(rubric.get("distractors") or [])]
+        ),
         "evidence": [],  # no fixture was read — there is nothing real to cite
         "fix": soup(rubric.get("fix")),
     }
