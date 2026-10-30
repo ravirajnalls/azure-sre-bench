@@ -1,0 +1,18 @@
+{
+  "name": "telemetry",
+  "id": "/subscriptions/00000000-0000-0000-0000-000000000002/resourceGroups/rg-telemetry-prod/providers/Microsoft.EventHub/namespaces/eh-telemetry-prod/eventhubs/telemetry",
+  "type": "Microsoft.EventHub/Namespaces/EventHubs",
+  "location": "westeurope",
+  "partitionCount": 4,
+  "partitionIds": [
+    "0",
+    "1",
+    "2",
+    "3"
+  ],
+  "messageRetentionInDays": 2,
+  "sizeLimitInBytes": 33554432,
+  "status": "Active",
+  "createdAt": "2025-11-02T10:00:00Z",
+  "updatedAt": "2026-09-15T07:30:12Z"
+}

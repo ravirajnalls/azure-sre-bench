@@ -1,0 +1,10 @@
+{
+  "namespace": "eh-telemetry-prod",
+  "sku": "Standard",
+  "throughputUnits": 4,
+  "ingressUtilizationPercent": 38,
+  "egressUtilizationPercent": 51,
+  "throttledRequestsLast24h": 0,
+  "quotaExceededErrorsLast24h": 0,
+  "status": "Active"
+}

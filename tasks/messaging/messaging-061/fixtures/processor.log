@@ -1,0 +1,16 @@
+2026-10-29T13:00:01Z INFO  [telemetry-processor] EventProcessorClient starting: eventhub telemetry, namespace eh-telemetry-prod, group telemetry-processors, instance telemetry-processor-000
+2026-10-29T13:00:02Z INFO  [telemetry-processor-000] claimed ownership of partition 0 (group telemetry-processors) — pump started
+2026-10-29T13:00:02Z INFO  [telemetry-processor-004] instance up, competing for partitions (group telemetry-processors)
+2026-10-29T13:00:04Z INFO  [telemetry-processor-008] instance up, competing for partitions (group telemetry-processors)
+2026-10-29T13:00:05Z INFO  [telemetry-processor-012] instance up, competing for partitions (group telemetry-processors)
+2026-10-29T13:00:30Z INFO  [telemetry-processor-001] no partitions assigned; waiting for ownership changes
+2026-10-29T13:00:30Z INFO  [telemetry-processor-002] no partitions assigned; waiting for ownership changes
+2026-10-29T13:00:31Z INFO  [telemetry-processor-005] no partitions assigned; waiting for ownership changes
+2026-10-29T13:00:31Z INFO  [telemetry-processor-007] no partitions assigned; waiting for ownership changes
+2026-10-29T13:00:32Z INFO  [telemetry-processor-013] no partitions assigned; waiting for ownership changes
+2026-10-29T13:00:32Z INFO  [telemetry-processor-015] no partitions assigned; waiting for ownership changes
+2026-10-29T14:00:10Z INFO  [telemetry-processor-000] partition 0: processing event batch of 500, last sequence 8821344
+2026-10-29T14:00:12Z INFO  [telemetry-processor-004] no partitions assigned; waiting for ownership changes
+2026-10-29T14:00:15Z INFO  [telemetry-processor-012] no partitions assigned; waiting for ownership changes
+2026-10-30T01:59:58Z INFO  [telemetry-processor-000] partition 0: processing event batch of 500, last sequence 9022110
+2026-10-30T01:59:59Z INFO  [telemetry-processor-009] no partitions assigned; waiting for ownership changes

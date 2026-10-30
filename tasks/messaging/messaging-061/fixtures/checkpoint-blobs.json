@@ -1,0 +1,30 @@
+[
+  {
+    "container": "eventprocessor",
+    "blob": "telemetry/telemetry-processors/0/checkpoint",
+    "sequenceNumber": 9022110,
+    "offset": "1186200640",
+    "lastModified": "2026-10-30T01:59:58Z"
+  },
+  {
+    "container": "eventprocessor",
+    "blob": "telemetry/telemetry-processors/1/checkpoint",
+    "sequenceNumber": 8991321,
+    "offset": "1173386240",
+    "lastModified": "2026-10-30T01:59:57Z"
+  },
+  {
+    "container": "eventprocessor",
+    "blob": "telemetry/telemetry-processors/2/checkpoint",
+    "sequenceNumber": 8984410,
+    "offset": "1170104320",
+    "lastModified": "2026-10-30T01:59:57Z"
+  },
+  {
+    "container": "eventprocessor",
+    "blob": "telemetry/telemetry-processors/3/checkpoint",
+    "sequenceNumber": 9007744,
+    "offset": "1179736064",
+    "lastModified": "2026-10-30T01:59:58Z"
+  }
+]
