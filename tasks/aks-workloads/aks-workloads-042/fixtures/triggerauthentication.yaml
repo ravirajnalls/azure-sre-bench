@@ -1,0 +1,7 @@
+apiVersion: keda.sh/v1alpha1
+kind: TriggerAuthentication
+metadata:
+  name: invoice-worker-auth
+  namespace: billing
+spec:
+  workloadIdentity: {}

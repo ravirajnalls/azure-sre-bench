@@ -1,0 +1,3 @@
+NAME                      REFERENCE                  TARGETS          MINPODS   MAXPODS   REPLICAS
+keda-hpa-invoice-worker   Deployment/invoice-worker   <unknown>/5      0         12        0
+keda-hpa-order-archiver   Deployment/order-archiver   2/5 (avg)        0         4         1

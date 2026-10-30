@@ -1,0 +1,18 @@
+[
+  {
+    "id": "/subscriptions/00000000-0000-0000-0000-000000000002/resourcegroups/rg-aks-prod-eus-01/providers/Microsoft.ManagedIdentity/userAssignedIdentities/keda-operator-mi",
+    "name": "keda-operator-mi",
+    "location": "eastus",
+    "clientId": "00000000-0000-0000-0000-000000000001",
+    "principalId": "00000000-0000-0000-0000-000000000001",
+    "tags": {}
+  },
+  {
+    "id": "/subscriptions/00000000-0000-0000-0000-000000000002/resourcegroups/rg-invoices-prod/providers/Microsoft.ManagedIdentity/userAssignedIdentities/invoice-worker-mi",
+    "name": "invoice-worker-mi",
+    "location": "eastus",
+    "clientId": "00000000-0000-0000-0000-000000000002",
+    "principalId": "00000000-0000-0000-0000-000000000002",
+    "tags": {}
+  }
+]

@@ -1,0 +1,32 @@
+[
+  {
+    "canDelegate": false,
+    "condition": null,
+    "conditionVersion": null,
+    "createdOn": "2026-05-12T10:44:02.318871Z",
+    "id": "/subscriptions/00000000-0000-0000-0000-000000000002/resourcegroups/rg-invoices-prod/providers/microsoft.servicebus/namespaces/sb-invoices-prod/providers/Microsoft.Authorization/roleAssignments/00000000-0000-0000-0000-000000000007",
+    "name": "00000000-0000-0000-0000-000000000007",
+    "principalId": "00000000-0000-0000-0000-000000000002",
+    "principalType": "User",
+    "roleDefinitionId": "/subscriptions/00000000-0000-0000-0000-000000000002/providers/Microsoft.Authorization/roleDefinitions/00000000-0000-0000-0000-000000000008",
+    "roleDefinitionName": "Azure Service Bus Data Receiver",
+    "scope": "/subscriptions/00000000-0000-0000-0000-000000000002/resourcegroups/rg-invoices-prod/providers/microsoft.servicebus/namespaces/sb-invoices-prod",
+    "type": "Microsoft.Authorization/roleAssignments",
+    "updatedOn": "2026-05-12T10:44:02.318871Z"
+  },
+  {
+    "canDelegate": false,
+    "condition": null,
+    "conditionVersion": null,
+    "createdOn": "2026-05-12T10:45:19.004122Z",
+    "id": "/subscriptions/00000000-0000-0000-0000-000000000002/resourcegroups/rg-invoices-prod/providers/microsoft.servicebus/namespaces/sb-invoices-prod/providers/Microsoft.Authorization/roleAssignments/00000000-0000-0000-0000-000000000006",
+    "name": "00000000-0000-0000-0000-000000000006",
+    "principalId": "00000000-0000-0000-0000-000000000003",
+    "principalType": "User",
+    "roleDefinitionId": "/subscriptions/00000000-0000-0000-0000-000000000002/providers/Microsoft.Authorization/roleDefinitions/00000000-0000-0000-0000-000000000009",
+    "roleDefinitionName": "Azure Service Bus Data Sender",
+    "scope": "/subscriptions/00000000-0000-0000-0000-000000000002/resourcegroups/rg-invoices-prod/providers/microsoft.servicebus/namespaces/sb-invoices-prod",
+    "type": "Microsoft.Authorization/roleAssignments",
+    "updatedOn": "2026-05-12T10:45:19.004122Z"
+  }
+]

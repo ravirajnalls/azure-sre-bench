@@ -1,0 +1,19 @@
+id: aks-workloads-042
+canary: 00000000-0000-0000-0000-000000000114  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
+title: KEDA ScaledObject never scales invoice-worker out of zero
+category: aks-workloads
+difficulty: hard
+tags:
+  - aks-workloads
+  - aks
+  - kubernetes
+  - keda
+  - autoscaling
+  - servicebus
+symptom: |
+  The billing namespace's invoice-worker Deployment has sat at 0 replicas all
+  morning while the invoice Service Bus queue holds over 40,000 undelivered
+  messages, so no invoices are going out. The deployment was healthy when it
+  was last up, no rollouts or cluster changes have happened this week, and the
+  billing namespace's other workloads behave normally. An engineer already
+  bounced the deployment with no effect.

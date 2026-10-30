@@ -1,0 +1,16 @@
+{
+  "root_cause": "The TriggerAuthentication (billing/invoice-worker-auth) declares workloadIdentity with no identityId, so the KEDA operator fetches Service Bus metrics with its own keda-operator-mi identity (client 00000000-0000-0000-0000-000000000001). That identity has no role on sb-invoices-prod — the only Azure Service Bus Data Receiver assignment is on the invoice-worker-mi app identity (client 00000000-0000-0000-0000-000000000002) — so every trigger poll is rejected with 401 unauthorized, the HPA target reports <unknown>, and invoice-worker never scales above 0 replicas.",
+  "evidence": [
+    "triggerauthentication.yaml: spec.workloadIdentity is an empty block — no identityId, so KEDA authenticates as the operator's own identity",
+    "keda-operator.log: token acquired for client 00000000-0000-0000-0000-000000000001 and every poll of invoice-queue returns 401 InvalidAuthorizationToken without a 'Listen' claim",
+    "az-role-assignment-list.json: the only Azure Service Bus Data Receiver assignment on sb-invoices-prod is principal 00000000-0000-0000-0000-000000000002",
+    "az-identity-list.json: 00000000-0000-0000-0000-000000000001 is keda-operator-mi and 00000000-0000-0000-0000-000000000002 is invoice-worker-mi — the role went to the app identity, not the operator's",
+    "kubectl-get-hpa.txt: keda-hpa-invoice-worker target is <unknown> and REPLICAS is 0, the signature of failed metric fetches, not of no load"
+  ],
+  "fix": "Either grant Azure Service Bus Data Receiver on sb-invoices-prod to the keda-operator-mi identity, or set spec.workloadIdentity.identityId in the TriggerAuthentication to invoice-worker-mi's clientId (00000000-0000-0000-0000-000000000002) so KEDA polls as the identity that already holds the role; then verify the HPA target stops reporting <unknown> and replicas scale with the queue.",
+  "evidence_files": [
+    "triggerauthentication.yaml",
+    "keda-operator.log",
+    "az-role-assignment-list.json"
+  ]
+}

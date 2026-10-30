@@ -1,0 +1,12 @@
+{
+  "root_cause": [
+    ["keda operator", "operator identity", "keda-operator-mi"],
+    ["service bus data receiver", "data receiver", "no role assignment", "401", "unauthorized"]
+  ],
+  "fix": [
+    ["service bus data receiver", "role assignment", "identityid"]
+  ],
+  "distractors": [
+    ["invoice queue is stuck", "queue backlog", "activeMessageCount"]
+  ]
+}
