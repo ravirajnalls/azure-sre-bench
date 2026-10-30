@@ -7,5 +7,9 @@
     "ingress-nginx-controller.log: repeated 'No live upstreams' for shop-storefront-80",
     "kubectl-get-pods.txt: all storefront pods Running and Ready (red herring)"
   ],
-  "fix": "Update the service selector to tier: frontend so it matches the pod labels and the service regains endpoints."
+  "fix": "Update the service selector to tier: frontend so it matches the pod labels and the service regains endpoints.",
+  "evidence_files": [
+    "service.yaml",
+    "deployment.yaml"
+  ]
 }

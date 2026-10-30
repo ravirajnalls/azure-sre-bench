@@ -7,5 +7,9 @@
     "kubectl-rollout-status.txt: rollout exceeds its progress deadline because the new replica never turns Ready",
     "Dockerfile.diff: base image bump node:20.11.1-slim to node:20.15.0-slim is innocent (red herring), but the diff also shows EXPOSE moving from 3000 to 8080"
   ],
-  "fix": "Update the readiness probe (and the declared containerPort) in the profile-svc Deployment to port 8080 to match the new image's listen port, then re-run the rollout: kubectl set probe port to 8080 in tasks manifests and let the deployment roll again."
+  "fix": "Update the readiness probe (and the declared containerPort) in the profile-svc Deployment to port 8080 to match the new image's listen port, then re-run the rollout: kubectl set probe port to 8080 in tasks manifests and let the deployment roll again.",
+  "evidence_files": [
+    "deployment.yaml",
+    "profile-svc.log"
+  ]
 }

@@ -7,5 +7,8 @@
     "security-scan-finding.json: SEC-2026-1042 flags public IP 20.162.44.128 against finance/ledger-internal",
     "nsg-rules.json: inbound security rules allow only VNet traffic and deny the internet (red herring - the NSG is not how the service became public)"
   ],
-  "fix": "Correct the annotation to service.beta.kubernetes.io/azure-load-balancer-internal: \"true\" so the service reconciles onto the internal load balancer and the public IP is released."
+  "fix": "Correct the annotation to service.beta.kubernetes.io/azure-load-balancer-internal: \"true\" so the service reconciles onto the internal load balancer and the public IP is released.",
+  "evidence_files": [
+    "service.yaml"
+  ]
 }

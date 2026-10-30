@@ -7,5 +7,9 @@
     "az-acr-repository-show-tags.json: tag payments-api:2.7.1 exists in the registry, ruling out a missing image",
     "az-acr-show.json: registry is Healthy with provisioningState Succeeded, ruling out a registry-side outage"
   ],
-  "fix": "Grant the new cluster's kubelet identity the AcrPull role on acrcontosoprod, e.g. az aks update --attach-acr acrcontosoprod --resource-group rg-contoso-prod --name aks-contoso-prod, or create the role assignment manually for identityProfile.kubeletidentity.objectId 00000000-0000-0000-0000-00000000000c."
+  "fix": "Grant the new cluster's kubelet identity the AcrPull role on acrcontosoprod, e.g. az aks update --attach-acr acrcontosoprod --resource-group rg-contoso-prod --name aks-contoso-prod, or create the role assignment manually for identityProfile.kubeletidentity.objectId 00000000-0000-0000-0000-00000000000c.",
+  "evidence_files": [
+    "az-aks-show.json",
+    "az-role-assignment-list-acr.json"
+  ]
 }

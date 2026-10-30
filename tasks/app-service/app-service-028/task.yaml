@@ -1,7 +1,7 @@
 id: app-service-028
 title: Custom container returns 503 after image deploy
 category: app-service
-difficulty: easy
+difficulty: medium
 tags:
   - app-service
   - azure

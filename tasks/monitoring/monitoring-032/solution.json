@@ -7,5 +7,10 @@
     "alert-history.json: the AlertsManagementResources query over the incident window returns zero rows, confirming the rule never fired",
     "az-monitor-action-group-show.json: action group ag-prod-oncall is enabled with all receivers Enabled, ruling out the notification path"
   ],
-  "fix": "Rewrite the rule so the query's aggregation and the threshold use the same units: either switch to count semantics — e.g. summarize countif(toint(resultCode) >= 500) per bin(TimeGenerated, 5m) against the existing threshold of 50 — or keep an average and express the threshold as a percentage, multiplying avg(is5xx) by 100 and setting the threshold to 0.5 (0.5%)."
+  "fix": "Rewrite the rule so the query's aggregation and the threshold use the same units: either switch to count semantics — e.g. summarize countif(toint(resultCode) >= 500) per bin(TimeGenerated, 5m) against the existing threshold of 50 — or keep an average and express the threshold as a percentage, multiplying avg(is5xx) by 100 and setting the threshold to 0.5 (0.5%).",
+  "evidence_files": [
+    "az-monitor-scheduled-query-show.json",
+    "alert-query.kql",
+    "kql-5xx-per-5min.csv"
+  ]
 }

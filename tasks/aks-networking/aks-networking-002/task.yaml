@@ -1,7 +1,7 @@
 id: aks-networking-002
 title: "Ingress returns 502 for /shop after a release"
 category: aks-networking
-difficulty: easy
+difficulty: medium
 tags:
   - aks
   - ingress

@@ -7,5 +7,9 @@
     "aks-activity-log.json: four VM deletions on aks-npspot-00000001 between 02:07:41 and 02:08:03 UTC, caller Azure Platform Infrastructure, subStatus Evicted",
     "kubectl-get-pdb.txt: payments-api PDB shows Allowed disruptions 0 with 4 healthy pods, yet all four were evicted — the red herring that rules out the PDB as a protection"
   ],
-  "fix": "Keep the workload off spot, or at least spread it: remove the spot toleration (or add nodeAffinity / nodeSelector requiring a regular pool) so payments-api only lands on npuser, and add topologySpreadConstraints so replicas never share a single failure domain; if spot is desired for cost, run a mixed strategy with a minimum number of replicas pinned to the regular pool. Note the PDB cannot prevent spot evictions."
+  "fix": "Keep the workload off spot, or at least spread it: remove the spot toleration (or add nodeAffinity / nodeSelector requiring a regular pool) so payments-api only lands on npuser, and add topologySpreadConstraints so replicas never share a single failure domain; if spot is desired for cost, run a mixed strategy with a minimum number of replicas pinned to the regular pool. Note the PDB cannot prevent spot evictions.",
+  "evidence_files": [
+    "deployment.yaml",
+    "aks-activity-log.json"
+  ]
 }

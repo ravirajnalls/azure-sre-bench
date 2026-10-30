@@ -7,5 +7,9 @@
     "cluster-autoscaler-status.txt: ScaleUp NoActivity with log lines 'pod didn't trigger scale-up: 1 insufficient memory'",
     "kubectl-top-nodes.txt: nodes under 7% memory used — the pods are not Pending because the cluster is full"
   ],
-  "fix": "Reduce the ml-scorer memory request below the node allocatable (e.g. shard the model across smaller pods), or move the pool to a larger VM SKU (e.g. Standard_D16s_v5) or add a new node pool with bigger nodes so a node can fit the 30Gi pod."
+  "fix": "Reduce the ml-scorer memory request below the node allocatable (e.g. shard the model across smaller pods), or move the pool to a larger VM SKU (e.g. Standard_D16s_v5) or add a new node pool with bigger nodes so a node can fit the 30Gi pod.",
+  "evidence_files": [
+    "deployment.yaml",
+    "kubectl-describe-node-allocatable.txt"
+  ]
 }

@@ -7,5 +7,8 @@
     "backend.tf: the azurerm backend targets stprodtfstate001/tfstate/prod.terraform.tfstate",
     "az-storage-account-network-rules.json: networkRuleSet defaultAction 'Allow' with no restrictions, so network access is ruled out"
   ],
-  "fix": "Break the stale lease on prod.terraform.tfstate with 'az storage blob lease break' (or 'terraform force-unlock' using the lock ID 00000000-0000-0000-0000-000000000003 from the pipeline log) against the tfstate container of stprodtfstate001, then re-run the infra-prod pipeline; no Terraform code change is needed."
+  "fix": "Break the stale lease on prod.terraform.tfstate with 'az storage blob lease break' (or 'terraform force-unlock' using the lock ID 00000000-0000-0000-0000-000000000003 from the pipeline log) against the tfstate container of stprodtfstate001, then re-run the infra-prod pipeline; no Terraform code change is needed.",
+  "evidence_files": [
+    "az-storage-blob-show.json"
+  ]
 }

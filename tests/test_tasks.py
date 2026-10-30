@@ -289,6 +289,108 @@ def test_malformed_solution_json(tmp_path: Path):
     )
 
 
+# --- solution.json evidence_files and difficulty agreement (issue #101) -------
+
+
+def patch_solution(task_dir: Path, **changes: object) -> None:
+    """Rewrite solution.json with the given field changes (None deletes the key)."""
+    path = task_dir / "solution.json"
+    data = json.loads(path.read_text(encoding="utf-8"))
+    for key, value in changes.items():
+        if value is None:
+            data.pop(key, None)
+        else:
+            data[key] = value
+    path.write_text(json.dumps(data), encoding="utf-8")
+
+
+def test_valid_fixture_task_has_no_warnings(tmp_path: Path):
+    result = inspect_task(copy_task(tmp_path))
+    assert result.warnings == []
+
+
+def test_missing_evidence_files_warns(tmp_path: Path):
+    task_dir = copy_task(tmp_path)
+    patch_solution(task_dir, evidence_files=None)
+    result = load_one(tmp_path)
+    assert result.errors == []
+    assert any(
+        "'evidence_files' must be a non-empty list" in warning
+        for warning in result.warnings
+    )
+
+
+def test_evidence_files_entry_not_in_fixtures_warns(tmp_path: Path):
+    task_dir = copy_task(tmp_path)
+    patch_solution(task_dir, evidence_files=["kubectl-logs-ingress.txt", "ghost.txt"])
+    result = load_one(tmp_path)
+    assert result.errors == []
+    assert any(
+        "evidence_files not found in fixtures/: ghost.txt" in warning
+        for warning in result.warnings
+    )
+
+
+def test_easy_with_two_evidence_files_warns(tmp_path: Path):
+    task_dir = copy_task(tmp_path)
+    patch_solution(
+        task_dir,
+        evidence_files=["kubectl-logs-ingress.txt", "az-monitor-metrics.json"],
+    )
+    result = load_one(tmp_path)
+    assert result.errors == []
+    assert any(
+        "difficulty 'easy' expects 1 evidence_files, found 2" in warning
+        for warning in result.warnings
+    )
+
+
+def test_medium_with_one_evidence_file_warns(tmp_path: Path):
+    task_dir = copy_task(tmp_path)
+    patch_yaml(task_dir, difficulty="medium")
+    result = load_one(tmp_path)
+    assert result.errors == []
+    assert any(
+        "difficulty 'medium' expects 2 evidence_files, found 1" in warning
+        for warning in result.warnings
+    )
+
+
+def test_hard_with_two_evidence_files_is_accepted(tmp_path: Path):
+    """Hard may rest on two files when a misleading signal justifies it — the
+    validator cannot check the justification, so it must not warn (issue #101)."""
+    task_dir = copy_task(tmp_path)
+    patch_yaml(task_dir, difficulty="hard")
+    patch_solution(
+        task_dir,
+        evidence_files=["kubectl-logs-ingress.txt", "az-monitor-metrics.json"],
+    )
+    result = load_one(tmp_path)
+    assert result.errors == []
+    assert result.warnings == []
+
+
+def test_hard_with_one_evidence_file_warns(tmp_path: Path):
+    task_dir = copy_task(tmp_path)
+    patch_yaml(task_dir, difficulty="hard")
+    result = load_one(tmp_path)
+    assert result.errors == []
+    assert any(
+        warning.startswith("difficulty 'hard' expects 3+ evidence_files")
+        for warning in result.warnings
+    )
+
+
+def test_warnings_do_not_fail_validation(tmp_path: Path):
+    """Warnings are corpus-quality signals: exit stays 0 while they surface."""
+    task_dir = copy_task(tmp_path)
+    patch_solution(task_dir, evidence_files=None)
+    proc = run_cli("validate", "tasks", cwd=tmp_path)
+    assert proc.returncode == 0
+    assert f"WARN tasks/monitoring/{task_dir.name}" in proc.stdout
+    assert "1/1 tasks valid, 1 warning" in proc.stdout
+
+
 # --- duplicate ids across the repo ------------------------------------------
 
 
@@ -326,8 +428,9 @@ def test_validate_success_exit_zero(tmp_path: Path):
     copy_task(tmp_path)
     proc = run_cli("validate", "tasks", cwd=tmp_path)
     assert proc.returncode == 0
-    assert "1/1 tasks valid" in proc.stdout
+    assert "1/1 tasks valid, 0 warnings" in proc.stdout
     assert "FAIL" not in proc.stdout
+    assert "WARN" not in proc.stdout
 
 
 def test_validate_failure_exit_nonzero_with_fail_lines(tmp_path: Path):
@@ -365,6 +468,14 @@ def test_list_on_empty_root_is_quiet_success(tmp_path: Path):
     proc = run_cli("list", "tasks", cwd=tmp_path)
     assert proc.returncode == 0
     assert proc.stdout == ""
+
+
+def test_list_stats_prints_distribution(tmp_path: Path):
+    """Issue #101: the difficulty distribution is printed by `bench list --stats`."""
+    copy_task(tmp_path)
+    proc = run_cli("list", "--stats", "tasks", cwd=tmp_path)
+    assert proc.returncode == 0
+    assert "1 tasks: 1 easy, 0 medium, 0 hard" in proc.stdout
 
 # --- Per-task integrity checks (issue #5) ------------------------------------
 #

@@ -1,7 +1,7 @@
 id: aks-workloads-012
 title: catalog-api pods restart every ~40s after a cache warm-up release
 category: aks-workloads
-difficulty: easy
+difficulty: medium
 tags:
   - aks
   - aks-workloads

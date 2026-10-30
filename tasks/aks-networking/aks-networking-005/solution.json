@@ -7,5 +7,9 @@
     "azfw-application-rule-log.kql.csv: Denied entries (no rule matched) for mcr.microsoft.com and data.mcr.microsoft.com while login.microsoftonline.com and blob endpoints are Allowed",
     "kubectl-describe-pod.txt: ImagePull timeout dialing mcr.microsoft.com:443 for the istio sidecar while the ACR image pulled successfully over its private endpoint"
   ],
-  "fix": "Add an application rule collection to the firewall policy that allows the AzureKubernetesService FQDN tag (or explicit allow rules for mcr.microsoft.com and *.data.mcr.microsoft.com) over HTTPS for the AKS subnet sources, so node image pulls from MCR succeed again."
+  "fix": "Add an application rule collection to the firewall policy that allows the AzureKubernetesService FQDN tag (or explicit allow rules for mcr.microsoft.com and *.data.mcr.microsoft.com) over HTTPS for the AKS subnet sources, so node image pulls from MCR succeed again.",
+  "evidence_files": [
+    "az-network-route-table-show.json",
+    "az-network-firewall-policy-rule-collection.json"
+  ]
 }

@@ -7,5 +7,9 @@
     "az-network-vnet-show.json: dhcpOptions.dnsServers is empty, so the VNet uses Azure-provided DNS (red herring)",
     "kubectl-get-pods-kube-system.txt: both CoreDNS pods Running with no restarts (red herring)"
   ],
-  "fix": "Remove the '.' server block from the coredns-custom ConfigMap so CoreDNS falls back to the Azure-provided resolver 168.63.129.16, or point the forward at a working upstream, then let CoreDNS reload."
+  "fix": "Remove the '.' server block from the coredns-custom ConfigMap so CoreDNS falls back to the Azure-provided resolver 168.63.129.16, or point the forward at a working upstream, then let CoreDNS reload.",
+  "evidence_files": [
+    "kubectl-get-cm-coredns-custom.yaml",
+    "kubectl-logs-coredns.txt"
+  ]
 }

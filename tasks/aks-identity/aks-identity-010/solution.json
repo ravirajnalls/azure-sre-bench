@@ -7,5 +7,9 @@
     "az-ad-group-member-check.json: the forbidden user's object id is a member of grp-sre-oncall, ruling out missing group membership",
     "kubectl-error.txt: Forbidden on pods, deployments, and logs in payments with the user shown as object id 00000000-0000-0000-0000-000000000004"
   ],
-  "fix": "Assign the Azure Kubernetes Service RBAC Reader role (or Azure Kubernetes Service RBAC Writer if the group needs write access) to grp-sre-oncall at the payments namespace scope, e.g. az role assignment create --assignee 00000000-0000-0000-0000-000000000003 --role 'Azure Kubernetes Service RBAC Reader' --scope <cluster-id>/namespaces/payments; the Kubernetes RoleBinding needs no change."
+  "fix": "Assign the Azure Kubernetes Service RBAC Reader role (or Azure Kubernetes Service RBAC Writer if the group needs write access) to grp-sre-oncall at the payments namespace scope, e.g. az role assignment create --assignee 00000000-0000-0000-0000-000000000003 --role 'Azure Kubernetes Service RBAC Reader' --scope <cluster-id>/namespaces/payments; the Kubernetes RoleBinding needs no change.",
+  "evidence_files": [
+    "az-aks-show.json",
+    "az-role-assignment-list.json"
+  ]
 }

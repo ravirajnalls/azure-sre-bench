@@ -7,5 +7,9 @@
     "az-role-assignment-list.json: the service principal has Contributor on rg-platform-prod, ruling out RBAC",
     "service-connection.json: sc-prod-deploy uses WorkloadIdentityFederation with the matching service principal id"
   ],
-  "fix": "Update the federated credential subject to sc://contoso/PlatformEng/sc-prod-deploy (az ad app federated-credential update) so it matches the renamed project's token subject."
+  "fix": "Update the federated credential subject to sc://contoso/PlatformEng/sc-prod-deploy (az ad app federated-credential update) so it matches the renamed project's token subject.",
+  "evidence_files": [
+    "az-ad-app-federated-credential-list.json",
+    "pipeline-log.txt"
+  ]
 }

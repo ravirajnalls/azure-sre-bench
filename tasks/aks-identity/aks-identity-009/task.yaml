@@ -1,7 +1,7 @@
 id: aks-identity-009
 title: Image pulls from acrcontosoprod fail with 401 after cluster recreation
 category: aks-identity
-difficulty: easy
+difficulty: medium
 tags:
   - aks-identity
   - kubelet-identity

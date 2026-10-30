@@ -7,5 +7,9 @@
     "app-log.txt: gunicorn listening on 0.0.0.0:5000 with /healthz returning 200 before App Service kills the container",
     "az-webapp-show.json: site state Running and availabilityState Normal — the plan and host are healthy (red herring)"
   ],
-  "fix": "Update the WEBSITES_PORT app setting on app-quotes from 80 to 5000 to match the port the new image listens on, then restart the app."
+  "fix": "Update the WEBSITES_PORT app setting on app-quotes from 80 to 5000 to match the port the new image listens on, then restart the app.",
+  "evidence_files": [
+    "az-webapp-config-appsettings.json",
+    "Dockerfile"
+  ]
 }

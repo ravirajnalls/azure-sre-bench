@@ -46,6 +46,30 @@ The symptom describes what on-call sees — alerts, user reports, dashboard move
 and **must not name the root cause**. It should be specific enough to start an
 investigation, never specific enough to end one.
 
+## Difficulty rubric
+
+Difficulty is objective, declared in `task.yaml` and checked against the reference
+answer's `evidence_files` (issue #101):
+
+- **easy** — the cause is visible in **one fixture** (the symptom may supply
+  context, but one fixture contains the decisive fact or mismatch).
+- **medium** — **two fixtures must connect** to prove the cause (e.g. a
+  manifest's configuration against another file's observed behavior).
+- **hard** — **3+ fixtures**, a **misleading signal** (a fixture that actively
+  points at a plausible wrong cause and must be argued away), or **two
+  interacting faults**.
+
+`solution.json` lists them under `evidence_files`: the minimal set of fixture
+files needed to prove the root cause — **the load-bearing subset only**. Red
+herrings and confirmatory background never go in, even when the evidence prose
+cites them.
+
+The validator warns when the declared difficulty disagrees with
+`len(evidence_files)` — `easy` expects exactly 1, `medium` exactly 2, and
+`hard` 3+ (or exactly 2 when a misleading signal or two interacting faults
+justify it, which the validator cannot check; reviewers must). Warnings are
+reported by `bench validate` and must be resolved before merge.
+
 ## Rubric (`expected.json`)
 
 Format:

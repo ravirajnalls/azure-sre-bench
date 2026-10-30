@@ -7,5 +7,8 @@
     "kubectl-get-nodes-show-labels.txt: the single gpu01 node is Ready and carries the matching agentpool label, so the selector itself is satisfied",
     "nvidia-device-plugin.log: device plugin registered one healthy GPU — the GPU hardware is not the problem"
   ],
-  "fix": "Add a matching toleration to the video-transcoder pod spec: tolerations: [{key: sku, operator: Equal, value: gpu, effect: NoSchedule}] so its pods can schedule onto the tainted gpu01 node pool."
+  "fix": "Add a matching toleration to the video-transcoder pod spec: tolerations: [{key: sku, operator: Equal, value: gpu, effect: NoSchedule}] so its pods can schedule onto the tainted gpu01 node pool.",
+  "evidence_files": [
+    "kubectl-describe-pod.txt"
+  ]
 }

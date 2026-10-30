@@ -6,5 +6,8 @@
     "az-role-assignment-list.json: no role assignment on the kv-reports scope for principalId 00000000-0000-0000-0000-000000000003",
     "function.log: secrets get fails with inner error code ForbiddenByRbac for appName=func-reports-gen"
   ],
-  "fix": "Grant the function app's managed identity the Key Vault Secrets User role on kv-reports — add a role assignment on the vault scope, since access policies are ignored while enableRbacAuthorization is true."
+  "fix": "Grant the function app's managed identity the Key Vault Secrets User role on kv-reports — add a role assignment on the vault scope, since access policies are ignored while enableRbacAuthorization is true.",
+  "evidence_files": [
+    "az-keyvault-show.json"
+  ]
 }

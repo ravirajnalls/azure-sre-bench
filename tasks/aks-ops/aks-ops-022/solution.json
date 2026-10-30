@@ -7,5 +7,9 @@
     "kubectl-get-nodes-zones.txt: all nodes run in eastus-1 or eastus-2",
     "az-aks-nodepool-list.json: both node pools span availabilityZones 1 and 2 only"
   ],
-  "fix": "Change the managed-csi-premium-zonal StorageClass (or the ledger-db PVC's storage class) to use volumeBindingMode: WaitForFirstConsumer so the disk is provisioned in the zone of the node that first mounts it, delete the Bound PVC so it is re-created under the corrected class, and let the StatefulSet recreate pod ledger-db-0; alternatively add zone 3 to the node pool."
+  "fix": "Change the managed-csi-premium-zonal StorageClass (or the ledger-db PVC's storage class) to use volumeBindingMode: WaitForFirstConsumer so the disk is provisioned in the zone of the node that first mounts it, delete the Bound PVC so it is re-created under the corrected class, and let the StatefulSet recreate pod ledger-db-0; alternatively add zone 3 to the node pool.",
+  "evidence_files": [
+    "kubectl-get-pv.yaml",
+    "kubectl-get-nodes-zones.txt"
+  ]
 }

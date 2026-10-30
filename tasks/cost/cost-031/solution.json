@@ -7,5 +7,8 @@
     "az-vm-list.json: the fleet is still exactly buildagent-01 through buildagent-04, all running — the VM count never grew",
     "az-storage-account-list.json: the single artifact storage account is healthy Standard_LRS and costs under $10/month"
   ],
-  "fix": "Delete the 48 unattached OS disks (for each disk with diskState Unattached: az disk delete --resource-group rg-buildagents --name <disk>, or loop over az disk list --query '[?diskState==\"Unattached\"].name' --output tsv), and change replace-agents.sh to delete the detached OS disk after each az vm delete — or pass --force-deletion — so weekly image rollouts stop accumulating disks."
+  "fix": "Delete the 48 unattached OS disks (for each disk with diskState Unattached: az disk delete --resource-group rg-buildagents --name <disk>, or loop over az disk list --query '[?diskState==\"Unattached\"].name' --output tsv), and change replace-agents.sh to delete the detached OS disk after each az vm delete — or pass --force-deletion — so weekly image rollouts stop accumulating disks.",
+  "evidence_files": [
+    "az-disk-list.json"
+  ]
 }

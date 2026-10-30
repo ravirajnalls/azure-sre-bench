@@ -1,7 +1,7 @@
 id: aks-workloads-017
 title: HPA never scales out while checkout-api pods are CPU-pegged
 category: aks-workloads
-difficulty: easy
+difficulty: medium
 tags:
   - aks-workloads
   - aks
