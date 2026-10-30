@@ -1,0 +1,12 @@
+{
+  "root_cause": [
+    ["scale out", "scale-out limit", "max scale", "websitescaleout", "functionsappscale", "instance limit", "scale cap"],
+    ["terraform", "cost guardrail", "cost-guardrails", "wildcard", "guardrails module"]
+  ],
+  "fix": [
+    ["raise", "increase", "remove", "appsettings", "unset"]
+  ],
+  "distractors": [
+    ["host.json", "concurrency", "scale controller", "stuck"]
+  ]
+}

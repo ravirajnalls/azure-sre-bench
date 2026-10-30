@@ -1,0 +1,8 @@
+date,actor,change,scope,result
+2026-10-28T02:14:00Z,terraform-bot,terraform apply — cost-guardrails module v0.9; sets WEBSITE_MAX_DYNAMIC_APPLICATION_SCALE_OUT=5 and host.json function concurrency 16->32,applied to all resource groups matching rg-shop-* (wildcard catch in module defaults),applied
+2026-10-28T02:19:37Z,s.finney,comment on PR #2213: "scale cap is meant for sandbox slots; prod apps were caught by the rg-shop-* wildcard — flagged for follow-up",repo infra/cost-guardrails,acknowledged not fixed
+2026-10-30T12:31:10Z,a.ibarra,redeploy of func-order-webhook-prod (image unchanged) and host restart — suspected stuck scale controller / concurrency regression from the host.json change,no change: instances still cap at 5,suspected
+# iac diff (from the apply plan):
+# + site_config { pre_warmed_instance_count = 0 }
+# + app_settings { WEBSITE_MAX_DYNAMIC_APPLICATION_SCALE_OUT = "5" }
+# + host.json { "version": "2.0", "function": { "concurrency": 32 } }

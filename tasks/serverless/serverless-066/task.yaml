@@ -1,0 +1,18 @@
+id: serverless-066
+canary: 00000000-0000-0000-0000-000000000114  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
+title: Azure Functions stops scaling out at peak after the cost-guardrail change
+category: serverless
+difficulty: medium
+tags:
+  - serverless
+  - azure-functions
+  - consumption-plan
+  - scale-out
+  - app-settings
+symptom: |
+  The order-webhook Functions app (func-order-webhook-prod, Consumption
+  plan) stops scaling out during the lunch-hour peak: instance count
+  plateaus while the service-bus backlog grows and requests start
+  returning 503s. Before Oct 28 the same peak scaled to ~14 instances;
+  now it never exceeds five. Restarts and the usual redeploy have not
+  helped.

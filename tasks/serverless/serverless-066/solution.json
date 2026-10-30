@@ -1,0 +1,14 @@
+{
+  "evidence": [
+    "scale-metrics.csv: instances plateau at exactly 5 while the service-bus backlog climbs from 4290 to 49980 and 503s accrue — the same peak window one week earlier scaled to 14 instances, so demand and per-instance throughput are unchanged; a hard ceiling at 5 is the signature of an explicit cap",
+    "appsettings.json: WEBSITE_MAX_DYNAMIC_APPLICATION_SCALE_OUT=5 — the platform-scale-out cap on the Consumption-plan app",
+    "infra-changes.csv: the Oct 28 terraform apply of the cost-guardrails module set the cap, intended for sandbox slots, but its rg-shop-* wildcard caught prod apps; the deployer's own PR comment flags exactly this",
+    "infra-changes.csv: the Oct 30 redeploy and restart to 'rule out a stuck scale controller' changed nothing — the controller is scaling fine up to the cap it was given"
+  ],
+  "root_cause": "The Functions app cannot exceed 5 instances because the cost-guardrails terraform module (v0.9, applied Oct 28) set the scale-out limit WEBSITE_MAX_DYNAMIC_APPLICATION_SCALE_OUT=5 on prod apps by mistake — its sandbox-only cap leaked through an rg-shop-* resource-group wildcard (infra-changes.csv). The autoscaling machinery is healthy, but its target is capped, so the lunch-hour peak plateaus at 5 instances while the service-bus backlog and 503s grow.",
+  "fix": "Raise the cap for the prod app to the real headroom — az functionapp config appsettings update --name func-order-webhook-prod -g rg-shop-prod --settings WEBSITE_MAX_DYNAMIC_APPLICATION_SCALE_OUT=30 (or unset it to fall back to the Consumption-plan default) — and confirm instances scale past 5 with the backlog draining. Then fix the guardrail module so the sandbox cap cannot wildcard-match prod resource groups, and make the module's scope an explicit list.",
+  "evidence_files": [
+    "appsettings.json",
+    "infra-changes.csv"
+  ]
+}
