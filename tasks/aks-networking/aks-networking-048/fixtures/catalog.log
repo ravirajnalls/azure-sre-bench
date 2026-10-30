@@ -1,0 +1,7 @@
+10.0.5.10 - - [28/Oct/2026:09:02:01 +0000] "GET / HTTP/1.1" 404 153 "-" "Azure-Application-Gateway/HealthProbe"
+10.0.5.10 - - [28/Oct/2026:09:02:31 +0000] "GET / HTTP/1.1" 404 153 "-" "Azure-Application-Gateway/HealthProbe"
+10.0.5.10 - - [28/Oct/2026:09:03:01 +0000] "GET / HTTP/1.1" 404 153 "-" "Azure-Application-Gateway/HealthProbe"
+10.244.1.31 - - [28/Oct/2026:09:02:15 +0000] "GET /healthz HTTP/1.1" 200 2 "-" "kube-probe/1.29"
+10.244.1.31 - - [28/Oct/2026:09:02:45 +0000] "GET /healthz HTTP/1.1" 200 2 "-" "kube-probe/1.29"
+10.0.2.44 - - [28/Oct/2026:09:03:10 +0000] "GET /api/v1/products HTTP/1.1" 200 4311 "-" "checkout-svc/2.1"
+10.0.5.10 - - [28/Oct/2026:09:03:31 +0000] "GET / HTTP/1.1" 404 153 "-" "Azure-Application-Gateway/HealthProbe"

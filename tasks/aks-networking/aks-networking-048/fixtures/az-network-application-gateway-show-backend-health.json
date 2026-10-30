@@ -1,0 +1,43 @@
+{
+  "backendAddressPools": [
+    {
+      "name": "catalog-pool",
+      "backendAddresses": [
+        { "fqdn": null, "ipAddress": "10.0.2.21" },
+        { "fqdn": null, "ipAddress": "10.0.2.22" }
+      ]
+    }
+  ],
+  "backendHttpSettingsCollection": [
+    {
+      "name": "default-http-settings",
+      "port": 8080,
+      "protocol": "Http",
+      "requestTimeout": 30,
+      "probe": "default-probe"
+    }
+  ],
+  "probes": [
+    {
+      "name": "default-probe",
+      "protocol": "Http",
+      "host": "10.0.2.21",
+      "path": "/",
+      "interval": 30,
+      "timeout": 30,
+      "unhealthyThreshold": 3
+    }
+  ],
+  "backendHealth": [
+    {
+      "server": "10.0.2.21",
+      "httpStatus": "404",
+      "message": "Probe returned HTTP 404 Not Found; backend marked Unhealthy"
+    },
+    {
+      "server": "10.0.2.22",
+      "httpStatus": "404",
+      "message": "Probe returned HTTP 404 Not Found; backend marked Unhealthy"
+    }
+  ]
+}

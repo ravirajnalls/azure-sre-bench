@@ -1,0 +1,12 @@
+{
+  "root_cause": [
+    ["health probe", "backend probe", "probe path", "probe"],
+    ["/healthz", "404", "default path /", "404 on /"]
+  ],
+  "fix": [
+    ["health-probe-path", "health probe path", "/healthz", "annotation"]
+  ],
+  "distractors": [
+    ["network security group", "nsg"]
+  ]
+}

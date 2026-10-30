@@ -1,0 +1,25 @@
+{
+  "nsg-aks-backend": {
+    "subnet": "snet-appgw-backend",
+    "securityRules": [
+      {
+        "name": "allow-appgw-to-backends-8080",
+        "priority": 100,
+        "direction": "Inbound",
+        "access": "Allow",
+        "protocol": "Tcp",
+        "sourceAddressPrefix": "10.0.5.0/24",
+        "destinationPortRange": "8080"
+      },
+      {
+        "name": "allow-internet-80-443",
+        "priority": 110,
+        "direction": "Inbound",
+        "access": "Allow",
+        "protocol": "Tcp",
+        "sourceAddressPrefix": "Internet",
+        "destinationPortRange": "80,443"
+      }
+    ]
+  }
+}
