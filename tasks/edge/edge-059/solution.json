@@ -1,0 +1,15 @@
+{
+  "root_cause": "The 2026-10-29 policy update added an inbound set-header with exists-action=delete for Authorization at the API level, so APIM strips the caller's bearer token from every request before forwarding it; the backend therefore sees no auth header and returns 401 even though the tokens themselves are valid.",
+  "evidence": [
+    "apim-policy.xml: inbound set-header name=\"Authorization\" exists-action=\"delete\" added in the 2026-10-29T21:40:12Z revision",
+    "apim-trace.json: the gateway request carries Authorization Bearer, the policy entry lists set-header Authorization delete, and the forwarded backend request has no Authorization header — backend answers 401",
+    "backend.log: every gateway-sourced call is '401 missing Authorization header' while the peered internal path returns 201",
+    "token-claims.json: signature valid, not expired, audience and scope match — the token is not the problem",
+    "apim-product-policy.xml: product policy only sets rate-limit-by-key 100/60s — calls fail with 401, not 429 (red herring)"
+  ],
+  "fix": "Remove the inbound set-header Authorization exists-action=delete from the API-level policy (or change it to exists-action=override with no value so the caller's original Authorization header passes through), then redeploy and confirm the trace shows the bearer token reaching the backend.",
+  "evidence_files": [
+    "apim-policy.xml",
+    "apim-trace.json"
+  ]
+}

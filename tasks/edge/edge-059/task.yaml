@@ -1,0 +1,20 @@
+id: edge-059
+canary: 00000000-0000-0000-0000-000000000114  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
+title: "API Management strips the auth header"
+category: edge
+difficulty: medium
+tags:
+  - edge
+  - azure
+  - api-management
+  - policies
+  - authentication
+symptom: |
+  Yesterday evening a policy update went out on the orders-api product in
+  API Management, and since then every call made through APIM to the
+  orders backend is rejected with 401 Unauthorized. The same calls with
+  the same tokens succeed when sent directly to the backend hostname,
+  bypassing APIM. Mobile and partner integrations are all failing, and
+  the on-call token investigation found the tokens themselves are valid:
+  not expired, right audience, right scopes. Paged by the apim-401-rate
+  alert at 22:15 UTC.

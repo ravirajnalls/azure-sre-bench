@@ -1,0 +1,15 @@
+# orders-api backend log — 2026-10-30 (UTC)
+# auth middleware rejects requests without a Bearer token
+2026-10-30T21:57:31.220Z WARN  [auth] POST /v1/orders 401 missing Authorization header
+2026-10-30T21:57:33.011Z INFO  [http] GET /v1/healthz 200 4ms
+2026-10-30T21:57:38.556Z WARN  [auth] GET /v1/orders/8841 401 missing Authorization header
+2026-10-30T21:58:04.455Z WARN  [auth] POST /v1/orders 401 missing Authorization header
+2026-10-30T21:58:09.120Z WARN  [auth] GET /v1/orders/9001 401 missing Authorization header
+2026-10-30T21:58:15.781Z WARN  [auth] POST /v1/orders 401 missing Authorization header
+2026-10-30T21:59:02.338Z INFO  [http] GET /v1/healthz 200 3ms
+2026-10-30T21:59:44.007Z WARN  [auth] DELETE /v1/orders/8102 401 missing Authorization header
+2026-10-30T22:00:18.442Z WARN  [auth] POST /v1/orders 401 missing Authorization header
+# note: the handful of successful POSTs in this window came over the peered
+# internal path (10.30.2.x), not through the APIM gateway
+2026-10-30T21:58:41.903Z INFO  [http] POST /v1/orders 201 84ms remote=10.30.2.15
+2026-10-30T22:01:12.318Z INFO  [http] POST /v1/orders 201 79ms remote=10.30.2.15

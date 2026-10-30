@@ -1,0 +1,21 @@
+{
+  "token": "eyJ0eXAiOiJKV1QiLCJub25jZSI6IjAwMDAwMDAwLTAwMDAtMDAwMC0wMDAwLTAwMDAwMDAwMDAwNSJ9",
+  "algorithm": "RS256",
+  "issuer": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000007/v2.0",
+  "audience": "api://orders-api",
+  "claims": {
+    "aud": "api://orders-api",
+    "iss": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000007/v2.0",
+    "iat": 1796075884,
+    "exp": 1796083084,
+    "scp": ["Orders.ReadWrite"],
+    "sub": "partner-integration-04"
+  },
+  "validatedAt": "2026-10-30T21:58:04Z",
+  "validation": {
+    "signatureValid": true,
+    "expired": false,
+    "audienceMatches": true,
+    "scopeSufficient": true
+  }
+}

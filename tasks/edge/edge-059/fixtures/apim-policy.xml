@@ -1,0 +1,22 @@
+<!-- API-level inbound policy for apim-prod / orders-api (revision of 2026-10-29T21:40:12Z) -->
+<policies>
+  <inbound>
+    <base />
+    <!-- ticket OPS-4471: stop forwarding vendor correlation headers upstream -->
+    <set-header name="X-Vendor-Correlation" exists-action="delete" />
+    <set-header name="X-Client-Id" exists-action="delete" />
+    <!-- also normalize auth: drop whatever the caller sent, backend mints its own
+         session from the subscription key (see APIM-88 in the change ticket) -->
+    <set-header name="Authorization" exists-action="delete" />
+    <set-backend-service base-url="https://orders-api.internal.contoso-apps.com" />
+  </inbound>
+  <backend>
+    <base />
+  </backend>
+  <outbound>
+    <base />
+  </outbound>
+  <on-error>
+    <base />
+  </on-error>
+</policies>

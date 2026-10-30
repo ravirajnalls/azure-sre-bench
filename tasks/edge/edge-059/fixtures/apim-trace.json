@@ -1,0 +1,42 @@
+{
+  "traceId": "9a41c0de-0000-0000-0000-000000000005",
+  "source": "az apim api trace --apim-name apim-prod --api orders-api",
+  "capturedAt": "2026-10-30T21:58:04Z",
+  "entries": [
+    {
+      "type": "request",
+      "source": "gateway",
+      "method": "POST",
+      "url": "https://apim-prod.azure-api.net/orders-api/v1/orders",
+      "headers": {
+        "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJub25jZSI6IjAwMDAwMDAwLTAwMDAtMDAwMC0wMDAwLTAwMDAwMDAwMDAwNSJ9",
+        "Ocp-Apim-Subscription-Key": "00000000-0000-0000-0000-000000000006",
+        "X-Vendor-Correlation": "ven-88412"
+      }
+    },
+    {
+      "type": "policy",
+      "source": "inbound",
+      "apiPolicyApplied": ["set-header X-Vendor-Correlation delete", "set-header X-Client-Id delete", "set-header Authorization delete", "set-backend-service"],
+      "timestamp": "2026-10-30T21:58:04.312Z"
+    },
+    {
+      "type": "request",
+      "source": "backend",
+      "method": "POST",
+      "url": "https://orders-api.internal.contoso-apps.com/v1/orders",
+      "headers": {
+        "Ocp-Apim-Subscription-Key": "00000000-0000-0000-0000-000000000006"
+      },
+      "note": "Authorization header absent on the forwarded request"
+    },
+    {
+      "type": "response",
+      "source": "backend",
+      "status": 401,
+      "reason": "Unauthorized",
+      "headers": { "WWW-Authenticate": "Bearer" },
+      "timestamp": "2026-10-30T21:58:04.455Z"
+    }
+  ]
+}

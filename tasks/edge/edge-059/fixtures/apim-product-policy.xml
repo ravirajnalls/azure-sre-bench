@@ -1,0 +1,17 @@
+<!-- Product-level policy for apim-prod / product orders-api-partners -->
+<policies>
+  <inbound>
+    <base />
+    <rate-limit-by-key calls="100" renewal-period="60" increment-condition="success"
+                       counter-key="@(context.Request.IpAddress)" />
+  </inbound>
+  <backend>
+    <base />
+  </backend>
+  <outbound>
+    <base />
+  </outbound>
+  <on-error>
+    <base />
+  </on-error>
+</policies>
