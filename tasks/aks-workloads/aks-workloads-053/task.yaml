@@ -1,0 +1,19 @@
+id: aks-workloads-053
+canary: 00000000-0000-0000-0000-000000000114  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
+title: VPA and HPA fight over recommendations-api's CPU requests
+category: aks-workloads
+difficulty: hard
+tags:
+  - aks-workloads
+  - aks
+  - kubernetes
+  - hpa
+  - vpa
+  - autoscaling
+symptom: |
+  Since the platform team reconciled the autoscaling manifests on Monday, the
+  recommendations-api in the api namespace has been unstable: its replica
+  count jumps up and down every few minutes, the pods' resource requests
+  change on nearly the same cadence, and p99 latency spikes during each swing.
+  Rolling the service back to the previous release did not help — the swings
+  continued on the old build too.

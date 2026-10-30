@@ -1,0 +1,8 @@
+2026-10-27T09:01:12.441Z INFO recommender Updated recommendation api/recommendations-api container recommendations-api: cpu request 250m -> 900m, memory request 512Mi -> 1Gi
+2026-10-27T09:06:40.118Z INFO updater Evicting 3 pods in api/recommendations-api to apply resource recommendations (updateMode=Auto)
+2026-10-27T09:06:41.507Z INFO recommender Updated recommendation api/recommendations-api container recommendations-api: cpu request 900m -> 1.1
+2026-10-27T09:12:38.229Z INFO updater Evicting 4 pods in api/recommendations-api to apply resource recommendations (updateMode=Auto)
+2026-10-27T09:12:39.882Z INFO recommender Updated recommendation api/recommendations-api container recommendations-api: cpu request 1.1 -> 350m
+2026-10-28T02:44:10.663Z INFO recommender Recommendation uncertainty for api/recommendations-api is high (variance in usage after replica changes)
+2026-10-28T02:44:11.092Z INFO recommender Updated recommendation api/recommendations-api container recommendations-api: cpu request 350m -> 1.2
+2026-10-28T02:49:37.741Z INFO updater Evicting 5 pods in api/recommendations-api to apply resource recommendations (updateMode=Auto)

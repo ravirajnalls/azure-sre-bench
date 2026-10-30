@@ -1,0 +1,11 @@
+NAME                 REFERENCE                        TARGETS        MINPODS   MAXPODS   REPLICAS
+recommendations-api  Deployment/recommendations-api   cpu: 44%/60%   3         15        3
+recommendations-api  Deployment/recommendations-api   cpu: 138%/60%  3         15        4
+recommendations-api  Deployment/recommendations-api   cpu: 26%/60%   3         15        9
+recommendations-api  Deployment/recommendations-api   cpu: 151%/60%  3         15        4
+recommendations-api  Deployment/recommendations-api   cpu: 31%/60%   3         15        8
+recommendations-api  Deployment/recommendations-api   cpu: 122%/60%  3         15        5
+recommendations-api  Deployment/recommendations-api   cpu: 36%/60%   3         15        9
+recommendations-api  Deployment/recommendations-api   cpu: 143%/60%  3         15        4
+recommendations-api  Deployment/recommendations-api   cpu: 29%/60%   3         15        7
+recommendations-api  Deployment/recommendations-api   cpu: 130%/60%  3         15        3
