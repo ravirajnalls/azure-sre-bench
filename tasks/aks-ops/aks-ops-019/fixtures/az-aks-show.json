@@ -1,0 +1,55 @@
+{
+  "aadProfile": {
+    "enableAzureRbac": false,
+    "managed": true
+  },
+  "agentPoolProfiles": [
+    {
+      "count": 3,
+      "enableAutoScaling": true,
+      "maxCount": 6,
+      "minCount": 3,
+      "mode": "System",
+      "name": "syspool",
+      "nodeImageVersion": "AKSUbuntu-2204gen2containerd-202610.02.0",
+      "orchestratorVersion": "1.29.7",
+      "osDiskSizeGB": 128,
+      "osType": "Linux",
+      "vmSize": "Standard_D4s_v5"
+    },
+    {
+      "count": 4,
+      "enableAutoScaling": true,
+      "maxCount": 10,
+      "minCount": 4,
+      "mode": "User",
+      "name": "apppool",
+      "nodeImageVersion": "AKSUbuntu-2204gen2containerd-202610.02.0",
+      "orchestratorVersion": "1.29.7",
+      "osDiskSizeGB": 256,
+      "osType": "Linux",
+      "vmSize": "Standard_D8s_v5"
+    }
+  ],
+  "azurePortalFQDN": "aks-edge-prod-portal.westeurope.cx.ext.azure.com",
+  "dnsPrefix": "aks-edge-prod",
+  "fqdn": "aks-edge-prod.westeurope.cloudapp.azure.com",
+  "id": "/subscriptions/00000000-0000-0000-0000-000000000003/resourcegroups/rg-edge-prod/providers/Microsoft.ContainerService/managedClusters/aks-edge-prod",
+  "identity": {
+    "principalId": "00000000-0000-0000-0000-00000000000d",
+    "tenantId": "00000000-0000-0000-0000-000000000001",
+    "type": "SystemAssigned"
+  },
+  "kubernetesVersion": "1.29.7",
+  "location": "westeurope",
+  "maxAgentPools": 10,
+  "name": "aks-edge-prod",
+  "networkProfile": {
+    "networkPlugin": "azure",
+    "networkPolicy": "cilium",
+    "serviceCidr": "10.241.0.0/16"
+  },
+  "provisioningState": "Succeeded",
+  "resourceGroup": "rg-edge-prod",
+  "type": "Microsoft.ContainerService/managedClusters"
+}
