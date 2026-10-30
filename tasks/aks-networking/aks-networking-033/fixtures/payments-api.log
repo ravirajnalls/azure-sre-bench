@@ -1,0 +1,27 @@
+2026-10-28T13:59:58Z INFO  payments-api req_id=6c01 partner_call url=https://payments-partner.fabrikambank.example/v1/settlements latency_ms=118 status=200
+2026-10-28T14:00:03Z INFO  payments-api req_id=6c02 partner_call url=https://payments-partner.fabrikambank.example/v1/settlements latency_ms=104 status=200
+2026-10-28T14:00:11Z WARN  payments-api req_id=6c03 partner_call url=https://payments-partner.fabrikambank.example/v1/settlements error="connect timeout after 10s" attempt=1
+2026-10-28T14:00:11Z INFO  payments-api req_id=6c03 partner_call url=https://payments-partner.fabrikambank.example/v1/settlements latency_ms=21047 status=200 attempt=2
+2026-10-28T14:01:27Z WARN  payments-api req_id=6c17 partner_call url=https://payments-partner.fabrikambank.example/v1/settlements error="connect timeout after 10s" attempt=1
+2026-10-28T14:01:27Z ERROR payments-api req_id=6c17 partner_call failed after retries error="connect timeout after 10s" attempts=2
+2026-10-28T14:03:44Z INFO  payments-api req_id=6c31 partner_call url=https://payments-partner.fabrikambank.example/v1/settlements latency_ms=121 status=200
+2026-10-28T14:05:02Z WARN  payments-api req_id=6c40 partner_call url=https://payments-partner.fabrikambank.example/v1/settlements error="connect timeout after 10s" attempt=1
+2026-10-28T14:05:02Z INFO  payments-api req_id=6c40 partner_call url=https://payments-partner.fabrikambank.example/v1/settlements latency_ms=21230 status=200 attempt=2
+2026-10-28T14:06:38Z WARN  payments-api req_id=6c44 partner_call url=https://payments-partner.fabrikambank.example/v1/settlements error="connect timeout after 10s" attempt=1
+2026-10-28T14:06:38Z ERROR payments-api req_id=6c44 partner_call failed after retries error="connect timeout after 10s" attempts=2
+2026-10-28T14:09:15Z INFO  payments-api req_id=6c52 partner_call url=https://payments-partner.fabrikambank.example/v1/settlements latency_ms=109 status=200
+2026-10-28T14:12:03Z WARN  payments-api req_id=6c61 partner_call url=https://payments-partner.fabrikambank.example/v1/settlements error="connect timeout after 10s" attempt=1
+2026-10-28T14:12:03Z INFO  payments-api req_id=6c61 partner_call url=https://payments-partner.fabrikambank.example/v1/settlements latency_ms=21198 status=200 attempt=2
+2026-10-28T14:14:57Z INFO  payments-api req_id=6c68 partner_call url=https://payments-partner.fabrikambank.example/v1/settlements latency_ms=115 status=200
+2026-10-28T14:17:41Z WARN  payments-api req_id=6c72 partner_call url=https://payments-partner.fabrikambank.example/v1/settlements error="connect timeout after 10s" attempt=1
+2026-10-28T14:17:41Z ERROR payments-api req_id=6c72 partner_call failed after retries error="connect timeout after 10s" attempts=2
+2026-10-28T14:21:09Z INFO  payments-api req_id=6c80 partner_call url=https://payments-partner.fabrikambank.example/v1/settlements latency_ms=123 status=200
+2026-10-28T14:24:36Z WARN  payments-api req_id=6c87 partner_call url=https://payments-partner.fabrikambank.example/v1/settlements error="connect timeout after 10s" attempt=1
+2026-10-28T14:24:36Z INFO  payments-api req_id=6c87 partner_call url=https://payments-partner.fabrikambank.example/v1/settlements latency_ms=21260 status=200 attempt=2
+2026-10-28T14:28:52Z INFO  payments-api req_id=6c91 partner_call url=https://payments-partner.fabrikambank.example/v1/settlements latency_ms=107 status=200
+2026-10-28T14:31:20Z WARN  payments-api req_id=6c99 partner_call url=https://payments-partner.fabrikambank.example/v1/settlements error="connect timeout after 10s" attempt=1
+2026-10-28T14:31:20Z ERROR payments-api req_id=6c99 partner_call failed after retries error="connect timeout after 10s" attempts=2
+2026-10-28T15:32:10Z INFO  payments-api req_id=6d45 partner_call url=https://payments-partner.fabrikambank.example/v1/settlements latency_ms=112 status=200
+2026-10-28T15:47:33Z INFO  payments-api req_id=6d51 partner_call url=https://payments-partner.fabrikambank.example/v1/settlements latency_ms=120 status=200
+2026-10-28T15:58:02Z INFO  payments-api req_id=6d58 partner_call url=https://payments-partner.fabrikambank.example/v1/settlements latency_ms=116 status=200
+# 14:00-15:00 window: 187 connect timeouts on 4,102 partner calls (~4.6%); ledger calls unaffected.

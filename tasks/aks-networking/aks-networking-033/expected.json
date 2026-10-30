@@ -1,0 +1,50 @@
+{
+  "root_cause": [
+    [
+      "snat",
+      "source network address translation",
+      "snat port exhaustion",
+      "snat ports exhausted",
+      "snat port exhaustion on the cluster's outbound load balancer",
+      "exhausted snat ports on the standard load balancer outbound ip"
+    ],
+    [
+      "port exhaustion",
+      "ports exhausted",
+      "outbound ports exhausted",
+      "allocated outbound ports exhausted",
+      "allocatedoutboundports 0 leaves the default 1024 ports per node",
+      "default 1024 snat ports per node are exhausted by connection churn"
+    ],
+    [
+      "high connection churn",
+      "connection churn",
+      "no connection reuse",
+      "no http keep-alive in the payments api http client",
+      "short-lived outbound connections",
+      "each partner call opens a new outbound connection",
+      "connections are never reused"
+    ]
+  ],
+  "fix": [
+    [
+      "nat gateway",
+      "azure nat gateway",
+      "managed nat gateway",
+      "switch the cluster outbound type to a managed nat gateway",
+      "configure a nat gateway for the aks subnet"
+    ],
+    [
+      "allocated outbound ports",
+      "increase allocated outbound ports",
+      "raise allocatedoutboundports in the load balancer profile",
+      "add outbound ip addresses",
+      "additional managed outbound ips",
+      "increase the outbound ip count"
+    ]
+  ],
+  "distractors": [
+    ["partner outage", "partner-side incident", "degraded partner api"],
+    ["cpu usage", "high cpu", "cpu saturation", "node cpu pressure"]
+  ]
+}
