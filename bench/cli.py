@@ -1,9 +1,9 @@
 """Command-line interface for Azure SRE Bench.
 
 Issue #1 scaffolded the subcommand surface; `validate` and `list` are live as of
-issue #2, `grade` as of issue #3, `run` as of issue #4, and `catalog` as of
-issue #42. The remaining subcommands land with the reporting layer
-(issues #40-#41).
+issue #2, `grade` as of issue #3, `run` as of issue #4, `leaderboard` as of
+issue #41, and `catalog` as of issue #42. The remaining subcommand lands with
+the reporting layer (issue #40).
 """
 
 from __future__ import annotations
@@ -19,7 +19,7 @@ from bench.tasks import load_tasks
 
 SUBCOMMANDS = ("validate", "list", "grade", "run", "site", "leaderboard", "catalog")
 
-IMPLEMENTED = ("validate", "list", "grade", "run", "catalog")
+IMPLEMENTED = ("validate", "list", "grade", "run", "leaderboard", "catalog")
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -174,6 +174,8 @@ def main(argv: list[str] | None = None) -> int:
             from bench.catalog import cmd_catalog  # deferred: keeps --help cheap
 
             return cmd_catalog(root, Path(args.output))
+        if args.command == "leaderboard":
+            return cmd_leaderboard(args)
         return cmd_list(root)
     print(
         f"'bench {args.command}' is not implemented yet; "
