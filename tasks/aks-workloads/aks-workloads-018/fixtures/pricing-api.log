@@ -1,0 +1,20 @@
+2026-10-30T13:29:58.104Z  INFO 1 [http-nio-8080-exec-11] c.pricing.QuoteController   : GET /api/v2/quote?sku=SKU-88214&region=eu 200 in 512 ms
+2026-10-30T13:30:02.317Z  INFO 1 [http-nio-8080-exec-4]  c.pricing.QuoteController   : GET /api/v2/quote?sku=SKU-10429&region=eu 200 in 743 ms
+2026-10-30T13:30:07.559Z  INFO 1 [http-nio-8080-exec-19] c.pricing.QuoteController   : GET /api/v2/quote?sku=SKU-33071&region=eu 200 in 1102 ms
+2026-10-30T13:30:11.872Z  INFO 1 [http-nio-8080-exec-7]  c.pricing.QuoteController   : GET /api/v2/quote?sku=SKU-51206&region=eu 200 in 1640 ms
+2026-10-30T13:30:16.209Z  INFO 1 [http-nio-8080-exec-15] c.pricing.QuoteController   : GET /api/v2/quote?sku=SKU-77438&region=eu 200 in 1985 ms
+2026-10-30T13:30:21.464Z  WARN 1 [http-nio-8080-exec-2]  c.pricing.QuoteController   : slow request threshold exceeded (2000 ms): quote sku=SKU-90152 took 2371 ms
+2026-10-30T13:30:27.098Z  INFO 1 [http-nio-8080-exec-8]  c.pricing.QuoteController   : GET /api/v2/quote?sku=SKU-61577&region=eu 200 in 2204 ms
+2026-10-30T13:30:33.731Z  INFO 1 [http-nio-8080-exec-13] c.pricing.QuoteController   : GET /api/v2/quote?sku=SKU-20948&region=eu 200 in 1897 ms
+2026-10-30T13:40:01.552Z  INFO 1 [http-nio-8080-exec-5]  c.pricing.QuoteController   : GET /api/v2/quote?sku=SKU-47210&region=eu 200 in 2416 ms
+2026-10-30T13:40:08.913Z  WARN 1 [http-nio-8080-exec-16] c.pricing.QuoteController   : slow request threshold exceeded (2000 ms): quote sku=SKU-66083 took 2812 ms
+2026-10-30T13:40:15.247Z  INFO 1 [http-nio-8080-exec-3]  c.pricing.QuoteController   : GET /api/v2/quote?sku=SKU-55396&region=eu 200 in 2560 ms
+2026-10-30T13:40:22.608Z  INFO 1 [http-nio-8080-exec-12] c.pricing.QuoteController   : GET /api/v2/quote?sku=SKU-73125&region=eu 200 in 2145 ms
+2026-10-30T13:40:30.115Z  INFO 1 [jstat-gc-summary]    c.pricing.GcHealth          : GC summary window (10m): 143 collections, total pause 402 ms, longest pause 11 ms, alloc rate steady
+2026-10-30T13:50:01.930Z  INFO 1 [http-nio-8080-exec-10] c.pricing.QuoteController   : GET /api/v2/quote?sku=SKU-15842&region=eu 200 in 2493 ms
+2026-10-30T13:50:09.415Z  WARN 1 [http-nio-8080-exec-18] c.pricing.QuoteController   : slow request threshold exceeded (2000 ms): quote sku=SKU-88230 took 3077 ms
+2026-10-30T13:50:16.702Z  INFO 1 [jstat-gc-summary]    c.pricing.GcHealth          : GC summary window (10m): 138 collections, total pause 391 ms, longest pause 9 ms, alloc rate steady
+2026-10-30T14:00:02.288Z  INFO 1 [http-nio-8080-exec-6]  c.pricing.QuoteController   : GET /api/v2/quote?sku=SKU-34019&region=eu 200 in 2764 ms
+2026-10-30T14:00:10.651Z  WARN 1 [http-nio-8080-exec-14] c.pricing.QuoteController   : slow request threshold exceeded (2000 ms): quote sku=SKU-70256 took 3192 ms
+2026-10-30T14:00:18.034Z  INFO 1 [http-nio-8080-exec-1]  c.pricing.QuoteController   : GET /api/v2/quote?sku=SKU-44791&region=eu 200 in 2985 ms
+2026-10-30T14:00:25.490Z  INFO 1 [jstat-gc-summary]    c.pricing.GcHealth          : GC summary window (10m): 141 collections, total pause 398 ms, longest pause 10 ms, alloc rate steady

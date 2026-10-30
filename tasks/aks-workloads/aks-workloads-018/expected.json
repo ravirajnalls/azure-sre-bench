@@ -1,0 +1,14 @@
+{
+  "root_cause": [
+    ["throttling", "throttled", "cfs throttling", "container_cpu_cfs_throttled_periods_total"],
+    ["cpu limit", "limits.cpu", "limit of 500m"]
+  ],
+  "fix": [
+    ["raise the cpu limit", "remove the cpu limit", "increase the cpu limit", "raise cpu limit", "remove cpu limit"]
+  ],
+  "distractors": [
+    ["memory pressure", "memory"],
+    ["hpa max", "maxpods", "maxpods cap"],
+    ["average cpu", "avg cpu"]
+  ]
+}

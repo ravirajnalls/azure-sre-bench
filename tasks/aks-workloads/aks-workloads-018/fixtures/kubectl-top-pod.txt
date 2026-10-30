@@ -1,0 +1,13 @@
+NAME                            CPU(cores)   MEMORY(bytes)
+pricing-api-7d9f4b6c8c-b5cwr    219m         541Mi
+pricing-api-7d9f4b6c8c-f8qjd    215m         538Mi
+pricing-api-7d9f4b6c8c-g7ktp    221m         544Mi
+pricing-api-7d9f4b6c8c-j3hfx    230m         549Mi
+pricing-api-7d9f4b6c8c-k9mvt    224m         542Mi
+pricing-api-7d9f4b6c8c-m4xbn    217m         539Mi
+pricing-api-7d9f4b6c8c-n9dzm    226m         546Mi
+pricing-api-7d9f4b6c8c-p4rbs    229m         548Mi
+pricing-api-7d9f4b6c8c-s2vyq    218m         540Mi
+pricing-api-7d9f4b6c8c-t6vls    222m         543Mi
+pricing-api-7d9f4b6c8c-w8nqd    228m         547Mi
+pricing-api-7d9f4b6c8c-x2k7q    225m         545Mi

@@ -1,0 +1,10 @@
+NAME          REFERENCE                TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
+pricing-api   Deployment/pricing-api   91%/70%   4         12        12         3d4h
+
+Events:
+  Type    Reason             Age    from                       Message
+  ----    ------             ----   ----                       -------
+  Normal  SuccessfulScaleUp  24m    horizontal-pod-autoscaler  (combined from similar events): Scaling active pods from 10 to 12
+  Normal  SuccessfulScaleUp  41m    horizontal-pod-autoscaler  Scaling active pods from 8 to 10
+  Normal  SuccessfulScaleUp  58m    horizontal-pod-autoscaler  Scaling active pods from 6 to 8
+  Normal  SuccessfulScaleUp  74m    horizontal-pod-autoscaler  Scaling active pods from 4 to 6
