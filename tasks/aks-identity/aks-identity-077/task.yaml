@@ -1,0 +1,25 @@
+id: aks-identity-077
+canary: 00000000-0000-0000-0000-000000000114  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
+kind: postmortem
+title: Write the blameless postmortem for the namespace-move outage
+category: aks-identity
+difficulty: hard
+tags:
+  - aks-identity
+  - workload-identity
+  - federated-credential
+  - postmortem
+symptom: >-
+  Last night's namespace move of orders-api (from default to orders) caused a
+  47-minute customer-impacting outage on kv-orders-prod secret reads; the
+  incident has been resolved and the old credential is still in place for the
+  rollback window. Write the blameless postmortem from the evidence in
+  fixtures/ — the original diagnostic snapshots (az show, federated-credential
+  list, role-assignment list, kubectl deployment/SA/logs), plus the resolved
+  runbook in resolution.log and the on-call discussion in chat-timeline.txt.
+  Return JSON with a single "postmortem" key holding the full markdown
+  document. The document must contain all six sections — Summary, Impact,
+  Timeline, Root Cause, Contributing Factors, and Action Items — and stay
+  within 300-1500 words. The write-up is blameless: it must not blame Key
+  Vault or RBAC (both were verified healthy) and must not name any individual
+  as at fault.

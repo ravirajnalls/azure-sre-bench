@@ -1,0 +1,21 @@
+# Incident channel #inc-2026-1030-118 — orders-api (excerpt, times UTC)
+
+22:16  pagerduty: orders-api 5xx spike (P2)
+22:18  alex.f: on it — pods are Running, this is request-time
+22:20  alex.f: it's the Key Vault reads, 403 on GetSecret
+22:23  priya.k: vault side looks clean, no error spikes on kv-orders-prod
+22:27  priya.k: the role assignment for id-orders-api-prod is still there and
+       unchanged, so I doubt the data plane
+22:32  alex.f: thinking token exchange — the workload moved namespaces last
+       night, the projected SA token subject changed with it
+22:42  priya.k: confirmed — the federated credential on the identity still
+       names system:serviceaccount:default:orders-api, the old namespace.
+       Token exchange can't match it.
+22:45  alex.f: adding a second FIC for system:serviceaccount:orders:orders-api,
+       keeping the old credential until the rollback window closes
+22:59  alex.f: FIC created
+23:02  priya.k: rollout restarted, tokens re-issued
+23:04  alex.f: 500s stopped at 23:03. 47 minutes of impact. Closing the channel
+       after the postmortem doc lands.
+23:06  priya.k: for the writeup: nobody's fault — the move runbook just has no
+       step for federated credentials. Let's fix the runbook, not the people.

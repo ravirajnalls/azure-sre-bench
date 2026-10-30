@@ -22,6 +22,7 @@
 | aks-identity-034 | Workload identity token missing on new inventory-svc pods after rollout | hard | aks-identity, workload-identity, deployment, rollout |
 | aks-identity-039 | Image pulls fail after the container registry moved to private endpoint | hard | aks-identity, azure-container-registry, private-link, private-dns, image-pull |
 | aks-identity-049 | media-processor gets permission denied writing to its Azure Files volume after the storage hardening change | medium | aks-identity, azure-files, csi-driver, mountoptions, permissions |
+| aks-identity-077 | Write the blameless postmortem for the namespace-move outage | hard | aks-identity, workload-identity, federated-credential, postmortem |
 
 ## aks-networking
 
