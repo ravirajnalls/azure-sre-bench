@@ -88,6 +88,7 @@
 | ID | Title | Difficulty | Tags |
 | --- | --- | --- | --- |
 | monitoring-032 | High 5xx rate alert never fires during a 15-minute 5xx spike | hard | monitoring, azure-monitor, scheduled-query-alert, kql, log-analytics |
+| monitoring-040 | Container logs and traces stop reaching Log Analytics every afternoon | hard | monitoring, log-analytics, daily-cap, ingestion, azure-monitor-agent, kql |
 
 ## networking
 

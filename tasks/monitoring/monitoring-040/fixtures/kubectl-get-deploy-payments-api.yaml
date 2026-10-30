@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payments-api
+  namespace: payments
+  labels:
+    app.kubernetes.io/name: payments-api
+    app.kubernetes.io/part-of: payments
+spec:
+  replicas: 6
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: payments-api
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: payments-api
+    spec:
+      serviceAccountName: payments-api
+      containers:
+        - name: payments-api
+          image: acrcontosoprod.azurecr.io/payments-api:2026.10.24
+          ports:
+            - containerPort: 8080
+              name: http
+          env:
+            - name: LOG_LEVEL
+              value: debug
+            - name: LOG_FORMAT
+              value: json
+            - name: REDIS_URL
+              value: redis://redis-master.payments.svc.cluster.local:6379
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 5
