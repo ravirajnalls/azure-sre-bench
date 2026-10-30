@@ -1,0 +1,16 @@
+id: aks-workloads-016
+title: Pods never become Ready after a base image bump
+category: aks-workloads
+difficulty: easy
+tags:
+  - aks-workloads
+  - aks
+  - kubernetes
+  - deployment
+  - rolling-update
+symptom: |
+  After moving profile-svc to a new base image this morning, the new pods in the
+  profiles namespace come up Running but never leave 0/1, and the rollout has
+  been stuck at its progress deadline for the last ten minutes. The previous
+  release served traffic fine, no autoscaling or node-pool changes were made,
+  and CPU and memory on the new pods look quiet.
