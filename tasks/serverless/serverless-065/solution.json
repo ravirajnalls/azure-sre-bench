@@ -1,0 +1,14 @@
+{
+  "evidence": [
+    "az-containerapp-show.json: ingress.traffic is a manual split — checkout-api--sv-3 (latest, v2.4.1) at 75% and checkout-api--sv-1 at 25%; the app is in multiple-revisions mode, so weights persist until changed",
+    "revision-list.json: sv-1 (image v2.3.9, the old pricing engine) is still active with trafficWeight 25; sv-2 is deactivated at 0; sv-3 runs v2.4.1 at 75",
+    "deploy-history.csv: the Oct 29 blue-green cutover was aborted at 50/50 and pinned by hand; the v2.4.1 deploy's traffic update zeroed sv-2 but never touched sv-1's pinned 25",
+    "support-tickets.log: the old fee appears for ~1 in 4 sessions, session-sticky, unaffected by restarts or redeploys — a routing ratio, not a replica or image problem"
+  ],
+  "root_cause": "The stale pricing is served by revision sv-1 (image v2.3.9), which still receives 25% of ingress traffic: the Oct 29 blue-green cutover was aborted at 50/50 and its weights were pinned manually, and the subsequent v2.4.1 deploy's traffic update zeroed sv-2 but left sv-1's pinned 25% in place. In multiple-revisions mode the ingress keeps splitting traffic by weight indefinitely — az-containerapp-show.json shows the live 75/25 split and revision-list.json shows sv-1 still active.",
+  "fix": "Drain the old revision: set sv-3 to 100% of ingress traffic (az containerapp ingress traffic update --revision-weight checkout-api--sv-3=100, or --traffic-weight with latest-revision) and deactivate sv-1. Longer term: cut overs blue-green via single --target-port style cutover or ensure the deploy tooling zeroes ALL non-latest revision weights, and gate manual traffic pinning behind an explicit expiry so an aborted cutover cannot leak stale revisions into production.",
+  "evidence_files": [
+    "az-containerapp-show.json",
+    "revision-list.json"
+  ]
+}

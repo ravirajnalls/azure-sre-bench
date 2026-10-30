@@ -1,0 +1,9 @@
+date,actor,change,result
+2026-10-27T14:03:22Z,deploy-bot,deploy v2.3.9 (checkout-api--sv-1),deployed
+2026-10-29T08:47:05Z,deploy-bot,deploy v2.4.0 (checkout-api--sv-2) — pricing engine 2026.10-v1,deployed
+2026-10-29T08:55:30Z,j.moreau,blue-green cutover started — traffic moved sv-1 -> sv-2 in 25% steps,cutover paused at 50% (error-budget alert fired)
+2026-10-29T09:12:40Z,j.moreau,cutover aborted — traffic pinned sv-1=50 sv-2=50 manually via ingress traffic update,pinned
+2026-10-29T09:14:18Z,deploy-bot,deploy v2.4.1 (checkout-api--sv-3) — pricing engine 2026.10-v2,deployed
+2026-10-29T09:15:02Z,deploy-bot,ingress traffic update --revision-weight checkout-api--sv-3=75 (assumed the split was with the previous latest revision sv-2),applied; sv-2 -> 0 but sv-1 kept its pinned 25% — split now sv-3=75 sv-1=25
+2026-10-29T09:40:00Z,j.moreau,redeployed v2.4.1 again to rule out image pull caching (no change),no change
+2026-10-30T06:00:11Z,k8s,regular platform maintenance restarts,restarted both active revisions

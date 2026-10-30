@@ -1,0 +1,12 @@
+{
+  "root_cause": [
+    ["traffic split", "traffic weight", "revision weight", "ingress traffic", "25%"],
+    ["sv-1", "old revision"]
+  ],
+  "fix": [
+    ["traffic", "100", "deactivate", "single revision", "set weight"]
+  ],
+  "distractors": [
+    ["image pull", "image cache", "stale image", "restart"]
+  ]
+}
