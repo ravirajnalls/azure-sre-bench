@@ -120,8 +120,11 @@ Format:
 ```
 
 - Each inner list is one **concept group**; a group matches when any alternative is a
-  case-insensitive substring of the graded field text (for `root_cause`, the joined
-  `evidence` list is appended to the searched text).
+  case-insensitive substring of the graded field text. `evidence` is never searched
+  (issue #93) — state the diagnosis in the field itself, not merely cite it.
+- A graded field over 600 characters earns no credit and fails the task with reason
+  `answer_too_long`; a task may raise the cap with a `max_chars` key in `expected.json`.
+  Keep reference answers comfortably under the cap.
 - Include synonyms in the same group so legitimate phrasings score.
 - Keep groups **specific enough that a generic guess fails**: "configuration error" as
   a group alternative is too broad; the resource and the specific misconfiguration are

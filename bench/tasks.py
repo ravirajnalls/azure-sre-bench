@@ -236,6 +236,14 @@ def _validate_expected(task_dir: Path) -> list[str]:
                 f"expected.json: '{rubric_field}' must be a non-empty list "
                 "of non-empty string lists"
             )
+    # The grader falls back to its default when max_chars is malformed
+    # (defensive at runtime); here it is an authoring error worth flagging.
+    if "max_chars" in data and not (
+        isinstance(data["max_chars"], int)
+        and not isinstance(data["max_chars"], bool)
+        and data["max_chars"] > 0
+    ):
+        errors.append("expected.json: 'max_chars' must be a positive integer")
     return errors
 
 

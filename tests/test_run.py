@@ -15,6 +15,7 @@ from pathlib import Path
 
 import pytest
 
+from bench import grader
 from bench import run as runner
 from bench.grader import grade
 
@@ -77,6 +78,25 @@ def test_log_lines_before_json_still_grade(tmp_path):
 
     assert record["passed"] is True
     assert record["score"] == 1.0
+
+
+def test_stored_evidence_is_capped(tmp_path):
+    """Issue #93: result storage caps evidence at 8 items x 300 chars — overflow
+    is ignored, never an error, and never an error channel into grading."""
+    dump_cmd = write_agent(
+        tmp_path,
+        "import json\n"
+        "print(json.dumps({"
+        '"root_cause": "Expired connection string secret",'
+        ' "evidence": [f"item-{i}: " + "x" * 400 for i in range(12)],'
+        ' "fix": "rotate the secret"}))\n',
+    )
+    record = runner.run_task(TEST_TASK, dump_cmd, results_root=tmp_path)
+
+    stored = record["answer"]["evidence"]
+    assert len(stored) == grader.MAX_EVIDENCE_ITEMS
+    assert all(len(item) <= grader.MAX_EVIDENCE_ITEM_CHARS for item in stored)
+    assert stored[0].startswith("item-0:")
 
 
 def test_naive_agent_scores_zero(tmp_path):

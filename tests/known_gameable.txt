@@ -6,6 +6,12 @@
 # a gameable task missing here fails CI, and an entry that no probe passes
 # anymore fails CI too — remove it so the list shrinks as grader hardening
 # (#93/#94) and the rubric audits (#96-#99) land. Target: empty.
+#
+# Post-#93 re-run (600-char caps, evidence demoted out of matching):
+# fixture-dump 0/32 and minimal-dump 0/32 — both defeated by hardening. The
+# keyword-soup still passes 32/32: the longest rubric soup is 199 chars, far
+# under the 600 cap, so the length cap cannot beat it. Shrinking this list to
+# empty is the rubric audits' job (#96-#99).
 ado-pipelines-030
 aks-identity-008
 aks-identity-009

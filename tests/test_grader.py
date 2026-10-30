@@ -4,6 +4,7 @@ import json
 
 import pytest
 
+from bench import grader
 from bench.grader import grade, normalize
 
 RUBRIC = {
@@ -87,12 +88,15 @@ def test_missing_and_nonstring_fields_count_as_empty():
     assert result["passed"] is False
 
 
-def test_evidence_only_match_for_root_cause():
-    # root_cause says nothing; only the evidence citation carries a group keyword.
+def test_evidence_alone_never_satisfies_root_cause():
+    # Issue #93: evidence no longer participates in root-cause matching — the
+    # diagnosis must be stated in the field itself, not merely cited.
     answer = {"root_cause": "", "evidence": ["logs show the fic error"], "fix": "x"}
     result = grade(answer, RUBRIC)
-    matched = [entry for entry in result["detail"]["root_cause"] if entry["matched"]]
-    assert [entry["matched"] for entry in matched] == ["fic"]
+    assert all(
+        entry["matched"] is None for entry in result["detail"]["root_cause"]
+    )
+    assert result["passed"] is False
 
 
 def test_fix_is_never_matched_from_evidence():
@@ -114,8 +118,120 @@ def test_empty_rubric_never_passes():
     assert grade({"root_cause": "x", "fix": "y"}, {}) == {
         "score": 0.0,
         "passed": False,
-        "detail": {"root_cause": [], "fix": []},
+        "detail": {"root_cause": [], "fix": [], "reasons": []},
     }
+
+
+# --- Volume caps and failure reasons (issue #93) -----------------------------
+
+
+def saturated_root_cause() -> str:
+    """Over the 600-char cap while containing every root_cause keyword."""
+    return ("federated identity credential subject default namespace " * 20).strip()
+
+
+def test_root_cause_over_cap_fails_with_answer_too_long():
+    answer = full_answer()
+    answer["root_cause"] = saturated_root_cause()
+    assert len(answer["root_cause"]) > grader.DEFAULT_MAX_CHARS
+
+    result = grade(answer, RUBRIC)
+    assert result["passed"] is False
+    assert result["detail"]["reasons"] == [
+        {
+            "reason": "answer_too_long",
+            "field": "root_cause",
+            "length": len(answer["root_cause"]),
+            "limit": grader.DEFAULT_MAX_CHARS,
+        }
+    ]
+    # An over-cap field earns no credit, even saturated with the keywords.
+    assert all(entry["matched"] is None for entry in result["detail"]["root_cause"])
+    # The legal field is still graded: 2 of 5 groups match.
+    assert result["score"] == 0.4
+
+
+def test_fix_over_cap_fails_with_answer_too_long():
+    answer = full_answer()
+    answer["fix"] = "restart everything and monitor closely " * 20
+    result = grade(answer, RUBRIC)
+    assert result["passed"] is False
+    assert result["detail"]["reasons"][0]["field"] == "fix"
+    assert result["detail"]["reasons"][0]["reason"] == "answer_too_long"
+
+
+def test_field_exactly_at_the_cap_is_legal():
+    answer = full_answer()
+    prefix = "stale federated identity credential subject pinned to the default namespace"
+    answer["root_cause"] = (
+        prefix + " " + "x" * (grader.DEFAULT_MAX_CHARS - len(prefix) - 1)
+    )
+    assert len(answer["root_cause"]) == grader.DEFAULT_MAX_CHARS
+
+    result = grade(answer, RUBRIC)
+    assert result["passed"] is True
+    assert result["detail"]["reasons"] == []
+
+
+def test_max_chars_override_raises_the_cap():
+    rubric = {**RUBRIC, "max_chars": 800}
+    answer = full_answer()
+    answer["root_cause"] = "federated identity subject namespace " + "x" * 700
+    assert grader.DEFAULT_MAX_CHARS < len(answer["root_cause"]) <= 800
+
+    result = grade(answer, rubric)
+    assert result["passed"] is True
+    assert result["detail"]["reasons"] == []
+
+
+def test_max_chars_override_limit_recorded_in_reason():
+    rubric = {**RUBRIC, "max_chars": 700}
+    answer = full_answer()
+    answer["root_cause"] = saturated_root_cause()
+
+    result = grade(answer, rubric)
+    assert result["detail"]["reasons"][0]["limit"] == 700
+
+
+def test_invalid_max_chars_falls_back_to_default():
+    for bad in (0, -5, "800", None, True, 12.5):
+        assert grader.max_chars_for({"max_chars": bad}) == grader.DEFAULT_MAX_CHARS
+
+
+def test_over_cap_field_fails_task_even_when_all_groups_match():
+    # The issue's rule: over 600 characters the task fails — a matching field
+    # cannot rescue an answer that violates the cap on the other field.
+    rubric = {"fix": [["restart"]]}
+    answer = {
+        "root_cause": "x" * 601,
+        "evidence": [],
+        "fix": "restart the deployment",
+    }
+    result = grade(answer, rubric)
+    assert result["score"] == 1.0
+    assert result["passed"] is False
+    assert result["detail"]["reasons"][0]["reason"] == "answer_too_long"
+
+
+def test_cap_evidence_truncates_count_and_item_length():
+    answer = {"evidence": [f"item-{i}: " + "y" * 400 for i in range(12)]}
+    capped = grader.cap_evidence(answer)
+    assert len(capped["evidence"]) == grader.MAX_EVIDENCE_ITEMS
+    assert all(
+        len(item) == grader.MAX_EVIDENCE_ITEM_CHARS for item in capped["evidence"]
+    )
+    assert capped["evidence"][0].startswith("item-0:")
+    assert capped["evidence"][7].startswith("item-7:")
+
+
+def test_cap_evidence_leaves_legal_and_absent_evidence_unchanged():
+    legal = {"root_cause": "r", "evidence": ["a", "b"], "fix": "f"}
+    assert grader.cap_evidence(legal) == legal
+    assert grader.cap_evidence({"root_cause": "r"}) == {"root_cause": "r"}
+    assert grader.cap_evidence({"evidence": "not a list"}) == {
+        "evidence": "not a list"
+    }
+    assert grader.cap_evidence({}) == {}
 
 
 def test_normalize():

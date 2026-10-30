@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 """Adversarial probe: the minimum-effort dump, capped for issue #93 (spec D1).
 
-Like `fixture_dump.py` but truncated to the length limits issue #93 proposes
-for the hardened grader — root_cause/fix at most 600 characters, evidence at
-most 8 items of 300 characters. It is the cheapest answer that would still be
-*legal* after grader hardening lands, so the gameability gate can tell the
-difference between "#93 beats the uncapped dump" and "#93 beats dumping".
+Like `fixture_dump.py` but truncated to the grader's length limits (issue #93) —
+root_cause/fix at most 600 characters, evidence at most 8 items of 300
+characters. It is the cheapest answer that is still *legal* under the caps, so
+the gameability gate can tell the difference between "#93 beats the uncapped
+dump" and "#93 beats dumping".
 
-The caps below mirror the issue-#93 proposal; keep them in sync with #93's
-constants when that lands (they are not enforced by the grader yet).
+The caps below mirror the grader's constants (`bench/grader.py`, issue #93,
+where they are enforced); keep them in sync if the defaults change.
 
 This is a probe for the CI gameability gate (`tests/test_gameability.py`),
 not a baseline; its results land under `results/adversarial-*` and are

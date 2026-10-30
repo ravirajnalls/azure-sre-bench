@@ -290,6 +290,25 @@ def test_rubric_group_must_be_non_empty_string_list(tmp_path: Path):
     )
 
 
+def test_valid_max_chars_override_is_accepted(tmp_path: Path):
+    task_dir = copy_task(tmp_path)
+    data = json.loads((task_dir / "expected.json").read_text(encoding="utf-8"))
+    data["max_chars"] = 800
+    (task_dir / "expected.json").write_text(json.dumps(data), encoding="utf-8")
+    result = load_one(tmp_path)
+    assert result.errors == []
+
+
+@pytest.mark.parametrize("bad", [0, -5, "800", True, 2.5, [600]])
+def test_invalid_max_chars_is_rejected(tmp_path: Path, bad):
+    task_dir = copy_task(tmp_path)
+    data = json.loads((task_dir / "expected.json").read_text(encoding="utf-8"))
+    data["max_chars"] = bad
+    (task_dir / "expected.json").write_text(json.dumps(data), encoding="utf-8")
+    result = load_one(tmp_path)
+    assert "expected.json: 'max_chars' must be a positive integer" in result.errors
+
+
 def test_missing_solution_json(tmp_path: Path):
     task_dir = copy_task(tmp_path)
     (task_dir / "solution.json").unlink()
