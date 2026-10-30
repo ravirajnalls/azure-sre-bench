@@ -56,6 +56,17 @@ def test_load_results_skips_corrupt_files(tmp_path: Path):
     assert [r["task"] for r in runs["naive"]] == ["monitoring-001"]
 
 
+def test_load_results_skips_adversarial_runs(tmp_path: Path):
+    """Adversarial probe runs (issue #92) never render as agents on the site."""
+    write_run(
+        tmp_path, "adversarial-keyword-soup", [record("monitoring-001", 1.0, True)]
+    )
+    write_run(tmp_path, "naive", [record("monitoring-001", 0.0, False)])
+
+    runs = load_results(tmp_path)
+    assert list(runs) == ["naive"]
+
+
 # --- aggregate -------------------------------------------------------------
 
 
