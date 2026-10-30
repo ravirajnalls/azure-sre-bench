@@ -1,0 +1,24 @@
+{
+  "name": "invoice-queue",
+  "id": "/subscriptions/00000000-0000-0000-0000-000000000002/resourceGroups/rg-invoices-prod/providers/Microsoft.ServiceBus/namespaces/sb-invoices-prod/queues/invoice-queue",
+  "type": "Microsoft.ServiceBus/Namespaces/Queues",
+  "location": "eastus",
+  "countDetails": {
+    "activeMessageCount": 40112,
+    "deadLetterMessageCount": 0,
+    "scheduledMessageCount": 0,
+    "transferMessageCount": 0,
+    "transferDeadLetterMessageCount": 0
+  },
+  "messageCount": 40112,
+  "maxDeliveryCount": 10,
+  "lockDuration": "PT2M",
+  "maxSizeInMegabytes": 8192,
+  "requiresDuplicateDetection": false,
+  "requiresSession": false,
+  "deadLetteringOnMessageExpiration": false,
+  "status": "Active",
+  "enableBatchedOperations": true,
+  "createdAt": "2026-03-14T11:02:10.44Z",
+  "updatedAt": "2026-09-01T16:20:33.91Z"
+}

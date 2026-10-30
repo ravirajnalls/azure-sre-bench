@@ -1,0 +1,21 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: invoice-worker
+  namespace: billing
+  labels:
+    app.kubernetes.io/managed-by: keda
+spec:
+  scaleTargetRef:
+    name: invoice-worker
+  minReplicaCount: 0
+  maxReplicaCount: 12
+  cooldownPeriod: 300
+  pollingInterval: 30
+  triggers:
+    - type: azure-servicebus
+      metadata:
+        queueName: invoice-queue
+        messageCount: "5"
+      authenticationRef:
+        name: invoice-worker-auth
