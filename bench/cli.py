@@ -2,8 +2,8 @@
 
 Issue #1 scaffolded the subcommand surface; `validate` and `list` are live as of
 issue #2, `grade` as of issue #3, `run` as of issue #4, `site` as of issue #40,
-`leaderboard` as of issue #41, and `catalog` as of issue #42: the full
-subcommand surface is implemented.
+`leaderboard` as of issue #41, `catalog` as of issue #42, and `new` as of
+issue #120: the full subcommand surface is implemented.
 """
 
 from __future__ import annotations
@@ -19,7 +19,7 @@ from bench.tasks import difficulty_distribution, load_tasks
 
 SUBCOMMANDS = (
     "validate", "list", "grade", "run", "verify", "submit", "prompt", "site",
-    "leaderboard", "catalog",
+    "leaderboard", "catalog", "new",
 )
 
 IMPLEMENTED = SUBCOMMANDS
@@ -119,6 +119,25 @@ def build_parser() -> argparse.ArgumentParser:
                 help="run folder to verify, e.g. results/naive",
             )
             verify_parser.add_argument(
+                "--tasks-root",
+                default="tasks",
+                help="task discovery root (default: ./tasks)",
+            )
+        elif name == "new":
+            new_parser = sub.add_parser(
+                name,
+                help="scaffold the next free task ID for a category (issue #120)",
+            )
+            new_parser.add_argument(
+                "category",
+                help="task category, e.g. aks-networking (see AGENTS.md)",
+            )
+            new_parser.add_argument(
+                "--title",
+                required=True,
+                help='one-line task title, e.g. "Ingress 502 after cert rotation"',
+            )
+            new_parser.add_argument(
                 "--tasks-root",
                 default="tasks",
                 help="task discovery root (default: ./tasks)",
@@ -298,6 +317,23 @@ def cmd_leaderboard(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_new(args: argparse.Namespace) -> int:
+    """Scaffold the next free task ID for a category (issue #120)."""
+    from bench.new import scaffold_task  # deferred: keeps --help cheap
+
+    try:
+        task_dir = scaffold_task(Path(args.tasks_root), args.category, args.title)
+    except ValueError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 2
+    print(f"Scaffolded {task_dir}")
+    print("Next steps:")
+    print("  1. Replace every <REPLACE-ME-...> placeholder (see CONTRIBUTING.md).")
+    print("  2. Check with: python -m bench validate")
+    print("  3. Verify integrity with: pytest -q")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
@@ -329,6 +365,8 @@ def main(argv: list[str] | None = None) -> int:
         root = Path(getattr(args, "root", "tasks"))
         if args.command == "validate":
             return cmd_validate(root)
+        if args.command == "new":
+            return cmd_new(args)
         if args.command == "catalog":
             from bench.catalog import cmd_catalog  # deferred: keeps --help cheap
 
