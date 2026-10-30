@@ -697,3 +697,12 @@ def _task_dirs(tasks_root: Path) -> list[tuple[str, Path]]:
             task_dir = task_yaml.parent
             task_dirs.append((task_dir.name, task_dir))
     return sorted(task_dirs)
+
+
+# Sibling checkers live in their own modules and are bound into CHECKS here,
+# from this module's tail: bench.tasks imports bench.lint_k8s directly, so the
+# checker cannot import this module at load time — its functions import the
+# shared Finding/severity helpers lazily instead.
+from bench.lint_k8s import check_k8s_fixtures as _k8s_check  # noqa: E402,F401
+
+CHECKS["k8s"] = _k8s_check

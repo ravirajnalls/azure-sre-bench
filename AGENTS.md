@@ -135,6 +135,26 @@ the spoiler-collapsed Learn page (`bench site` → `site/learn.html`).
 The filled example is `tasks/aks-identity/aks-identity-008/explainer.md`;
 `bench new` scaffolds the six-heading skeleton.
 
+## K8s fixture lint (`fixtures/.lintignore`, issue #150)
+
+`bench lint-fixtures --check k8s` structurally validates every Kubernetes YAML
+fixture (manifests and `kubectl get -o yaml` output) against the cluster
+version in the task's `fixtures/az-aks-show.json` (default 1.31.1), using the
+offline kubernetes-json-schema schemas shipped by the `kubernetes-validate`
+pip package (the same registry kubeconform resolves). Findings are
+warning-severity, so the CI job is warning-only by construction.
+
+- A fixture that is invalid against the task's cluster version — including
+  API versions removed by the upgrade the task depicts (e.g. aks-ops-019's
+  `autoscaling/v2beta2` HPA and `policy/v1beta1` PDB) — is a **violation**.
+- To ship an intentionally invalid fixture, list its filename in the task's
+  `fixtures/.lintignore` (one name per line, `#` comments). The file is
+  authoring metadata: excluded from the agent workspace, the fixture count,
+  and the GUID scan.
+- YAML without `apiVersion`/`kind` (application config) is skipped; custom
+  resources with no upstream schema are skipped, matching kubeconform's
+  `-ignore-missing-schemas`.
+
 ## Difficulty rubric
 
 Difficulty is objective, declared in `task.yaml` and checked against the reference

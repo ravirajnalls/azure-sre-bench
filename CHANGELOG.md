@@ -5,6 +5,16 @@ based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions
 are cut as git tags (`v<major>.<minor>`) with a frozen release manifest in
 `releases/` (issue #116).
 
+## [Unreleased]
+
+- **K8s fixture lint (issue #150).** `bench lint-fixtures --check k8s`
+  structurally validates every Kubernetes YAML fixture against the task's
+  stated cluster version (`az-aks-show.json` `kubernetesVersion`, default
+  1.31.1) using the offline kubernetes-json-schema schemas
+  (`kubernetes-validate` pip package; kubeconform-equivalent). Removed-API
+  fixtures are allowlisted via per-task `fixtures/.lintignore`; findings are
+  warning-severity, so the CI job reports violations without failing.
+
 ## [0.1.0] - 2026-10-30
 
 First versioned release: the phase-2 corpus and integrity work, frozen as

@@ -22,6 +22,7 @@ from pathlib import Path
 import yaml
 
 from bench.attribution import KIND_ATTRIBUTION
+from bench.fixture_lint import LINTIGNORE_FILENAME
 from bench.grader import normalize, rubric_sha256
 from bench.heldout import (
     ENCRYPTED_SUFFIX,
@@ -295,8 +296,13 @@ def _validate_fixtures(task_dir: Path) -> list[str]:
     entries = sorted(path for path in fixtures_dir.iterdir() if path.is_file())
     # `_commands.yaml` configures the simulated CLIs (issue #111), so it is not
     # evidence: exempt from the fixture count and the placeholder-GUID rule.
-    commands_file = next((path for path in entries if path.name == COMMANDS_FILENAME), None)
-    files = [path for path in entries if path != commands_file]
+    # `.lintignore` allowlists intentionally invalid fixtures for the k8s
+    # fixture lint (issue #150) — authoring metadata, not evidence either.
+    metadata_files = {COMMANDS_FILENAME, LINTIGNORE_FILENAME}
+    commands_file = next(
+        (path for path in entries if path.name == COMMANDS_FILENAME), None
+    )
+    files = [path for path in entries if path.name not in metadata_files]
     if not MIN_FIXTURES <= len(files) <= MAX_FIXTURES:
         errors.append(
             f"fixtures/ must contain {MIN_FIXTURES}-{MAX_FIXTURES} files, found {len(files)}"
