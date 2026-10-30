@@ -14,9 +14,19 @@ import sys
 from pathlib import Path
 
 import pytest
+import yaml
 
 from bench import GRADER_VERSION
-from bench.site import aggregate, load_results, render_html, task_category
+from bench.site import (
+    aggregate,
+    is_open_source,
+    load_agent_metadata_map,
+    load_results,
+    render_html,
+    safe_repo_url,
+    task_category,
+    task_difficulties,
+)
 
 
 def record(task: str, score: float, passed: bool) -> dict:
@@ -113,6 +123,8 @@ def test_aggregate_one_run(tmp_path: Path):
             "median_commands": None,
             "total_cost_usd": None,
             "status": "current",
+            "mode": "runner",
+            "metadata": None,
         }
     ]
     assert [b["category"] for b in agg["by_category"]] == [
@@ -151,6 +163,8 @@ def test_aggregate_many_runs_and_missing_cells(tmp_path: Path):
         "median_commands": None,
         "total_cost_usd": None,
         "status": "current",
+        "mode": "runner",
+        "metadata": None,
     }
     assert by_agent["react"]["total"] == 1
     # react never ran cost-001: the heatmap cell must be "none", not a failure.
@@ -174,7 +188,7 @@ def test_render_escapes_untrusted_text():
     agg = aggregate({"naive": [record("monitoring-001", 0.0, False)]})
     agg["agents"] = ['<script>alert("x")</script>']
     html_text = render_html(agg)
-    assert "<script>" not in html_text
+    assert "<script>alert(" not in html_text
     assert "&lt;script&gt;" in html_text
 
 
@@ -271,6 +285,8 @@ def test_aggregate_marks_stale_and_legacy_cells_and_counts_current_only():
             "median_commands": None,
             "total_cost_usd": None,
             "status": "current",
+            "mode": "runner",
+            "metadata": None,
         }
     ]
     heatmap = {row["task"]: row["cells"] for row in agg["heatmap"]}
@@ -341,9 +357,11 @@ def test_aggregate_and_render_efficiency_metrics():
     assert "<td class=\"num\">4.0s</td>" in html_text
     assert "<td class=\"num\">6</td>" in html_text
     assert "<td class=\"num\">$0.0700</td>" in html_text
-    # Four em dashes: three in sparse's overall row, plus its missing
-    # cost-001 cell in the by-category table.
-    assert html_text.count('<td class="num none">&mdash;</td>') == 4
+    # Three em dashes in sparse's overall row; the missing cost-001 cell in
+    # the by-category table is a dash too, but now carries the agent's
+    # data-agent key for the issue-#119 column filter, so it renders apart.
+    assert html_text.count('<td class="num none">&mdash;</td>') == 3
+    assert '<td class="num none" data-agent="sparse">&mdash;</td>' in html_text
 
 
 def test_render_escapes_efficiency_free_rows_without_crashing():
@@ -351,5 +369,180 @@ def test_render_escapes_efficiency_free_rows_without_crashing():
     html_text = render_html(
         aggregate({"legacy-agent": [{"task": "monitoring-001", "score": 1.0, "passed": True}]})
     )
-    # Three overall dashes plus the agent's by-category cell.
-    assert html_text.count('<td class="num none">&mdash;</td>') == 4
+    # Three overall dashes; the agent's by-category cell is a dash too, but
+    # attributed with data-agent for the issue-#119 column filter.
+    assert html_text.count('<td class="num none">&mdash;</td>') == 3
+    assert '<td class="num none" data-agent="legacy-agent">&mdash;</td>' in html_text
+
+
+# --- agent metadata and filters (issue #119) ----------------------------------
+
+
+def agent_yaml(**overrides) -> str:
+    """A minimal-valid #118 descriptor; overrides replace named fields."""
+    fields = {
+        "name": "react",
+        "version": "0.3.1",
+        "model": "gpt-4o",
+        "provider": "openai",
+        "framework": "langchain",
+        "open-source": "yes",
+        "command": "python -m my_agent.bench_runner",
+        "date": "2026-01-15",
+        "contact": "you@example.com",
+        **overrides,
+    }
+    return yaml.safe_dump(fields)
+
+
+def write_metadata(results_root: Path, run_name: str, text: str | None) -> None:
+    run_dir = results_root / run_name
+    run_dir.mkdir(parents=True, exist_ok=True)
+    if text is not None:
+        (run_dir / "agent.yaml").write_text(text, encoding="utf-8")
+
+
+def test_load_agent_metadata_map_keeps_valid_and_skips_invalid(tmp_path: Path):
+    write_metadata(tmp_path, "good", agent_yaml())
+    write_metadata(tmp_path, "bad", agent_yaml(date="not-a-date"))
+    write_metadata(tmp_path, "absent", None)
+
+    metadata = load_agent_metadata_map(tmp_path)
+
+    assert set(metadata) == {"good"}
+    assert metadata["good"]["model"] == "gpt-4o"
+
+
+def test_load_agent_metadata_map_missing_root(tmp_path: Path):
+    assert load_agent_metadata_map(tmp_path / "nope") == {}
+
+
+def test_task_difficulties_reads_task_yaml_and_skips_bad(tmp_path: Path):
+    task_dir = tmp_path / "monitoring-001"
+    task_dir.mkdir()
+    (task_dir / "task.yaml").write_text(
+        yaml.safe_dump({"id": "monitoring-001", "difficulty": "easy"}),
+        encoding="utf-8",
+    )
+    broken = tmp_path / "monitoring-002"
+    broken.mkdir()
+    (broken / "task.yaml").write_text(": [unclosed", encoding="utf-8")
+
+    difficulties = task_difficulties(tmp_path)
+
+    assert difficulties == {"monitoring-001": "easy"}
+
+
+def test_safe_repo_url_only_allows_http_s():
+    assert safe_repo_url("https://github.com/you/agent") == "https://github.com/you/agent"
+    assert safe_repo_url("http://example.com/x") == "http://example.com/x"
+    assert safe_repo_url("javascript:alert(1)") is None
+    assert safe_repo_url("data:text/html,hi") is None
+    assert safe_repo_url(42) is None
+    assert safe_repo_url(None) is None
+
+
+def test_is_open_source_defaults_closed():
+    assert is_open_source({"open-source": "yes"}) is True
+    assert is_open_source({"open-source": True}) is True
+    assert is_open_source({"open-source": "no"}) is False
+    assert is_open_source({}) is False
+    assert is_open_source(None) is False
+
+
+def test_render_with_agent_metadata_links_and_subtitle():
+    results = {"react": [record("monitoring-001", 1.0, True)]}
+    metadata = {
+        "react": yaml.safe_load(
+            agent_yaml(repository="https://github.com/you/my-agent")
+        )
+    }
+    html_text = render_html(aggregate(results, agent_metadata=metadata))
+
+    assert '<a href="https://github.com/you/my-agent">react</a>' in html_text
+    assert "gpt-4o · openai · langchain · 0.3.1" in html_text
+    assert "you@example.com" in html_text
+    assert 'data-open-source="1"' in html_text
+    assert 'data-mode="runner"' in html_text
+
+
+def test_render_without_agent_metadata_still_renders(tmp_path: Path):
+    html_text = render_html(
+        aggregate({"no-meta": [record("monitoring-001", 1.0, True)]})
+    )
+    assert "no-meta" in html_text
+    # No descriptor: the name is plain text, nothing leaks a raw None.
+    assert "<a href=" not in html_text.split("<h2>Overall</h2>")[1].split("</h2>")[1][:400]
+    assert ">None<" not in html_text
+
+
+def test_render_manual_mode_record_flags_the_row():
+    manual = {**record("monitoring-001", 1.0, True), "mode": "manual"}
+    html_text = render_html(aggregate({"chat": [manual]}))
+    assert 'data-mode="manual"' in html_text
+
+
+def test_render_includes_filter_controls_and_script():
+    results = {"a": [record("monitoring-001", 1.0, True)]}
+    html_text = render_html(aggregate(results))
+    assert 'id="filter-category"' in html_text
+    assert 'id="filter-difficulty"' in html_text
+    assert 'id="filter-mode"' in html_text
+    assert 'id="filter-oss"' in html_text
+    assert "<script>" in html_text
+
+
+def test_aggregate_heatmap_rows_carry_category_and_difficulty():
+    results = {"a": [record("monitoring-001", 1.0, True)]}
+    agg = aggregate(results, difficulties={"monitoring-001": "easy"})
+    assert agg["heatmap"][0]["category"] == "monitoring"
+    assert agg["heatmap"][0]["difficulty"] == "easy"
+    # Without a difficulty map the row must say unknown, never crash.
+    assert aggregate(results)["heatmap"][0]["difficulty"] == "unknown"
+
+
+def test_render_bakes_filter_keys_into_heatmap_rows():
+    results = {"a": [record("monitoring-001", 1.0, True)]}
+    html_text = render_html(
+        aggregate(results, difficulties={"monitoring-001": "easy"})
+    )
+    assert 'data-category="monitoring"' in html_text
+    assert 'data-difficulty="easy"' in html_text
+
+
+def test_render_javascript_url_repo_is_not_linked():
+    results = {"evil": [record("monitoring-001", 1.0, True)]}
+    metadata = {"evil": yaml.safe_load(agent_yaml(repository="javascript:alert(1)"))}
+    html_text = render_html(aggregate(results, agent_metadata=metadata))
+    assert 'href="javascript:' not in html_text
+
+
+def test_cli_site_bakes_difficulty_from_tasks_root(tmp_path: Path):
+    """`bench site` reads difficulty from --tasks-root (issue #119)."""
+    write_run(tmp_path / "results", "a", [record("monitoring-001", 1.0, True)])
+    task_dir = tmp_path / "tasks" / "monitoring-001"
+    task_dir.mkdir(parents=True)
+    (task_dir / "task.yaml").write_text(
+        yaml.safe_dump({"id": "monitoring-001", "difficulty": "medium"}),
+        encoding="utf-8",
+    )
+    out = tmp_path / "out" / "index.html"
+    proc = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "bench",
+            "site",
+            "--results-root",
+            str(tmp_path / "results"),
+            "--tasks-root",
+            str(tmp_path / "tasks"),
+            "--out",
+            str(out),
+        ],
+        capture_output=True,
+        text=True,
+        cwd=Path(__file__).resolve().parent.parent,
+    )
+    assert proc.returncode == 0, proc.stderr
+    assert 'data-difficulty="medium"' in out.read_text(encoding="utf-8")

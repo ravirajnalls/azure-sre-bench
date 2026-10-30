@@ -47,6 +47,7 @@ or invalid field fails `bench verify`.
 | `command` | string | The exact command a reproducer would run. |
 | `date` | date | Run date, `YYYY-MM-DD`. |
 | `contact` | string | Email or GitHub handle for questions about the run. |
+| `repository` | string, optional | http(s) URL of the agent's public repo. The leaderboard site links the agent's name to it (issue #119); anything that is not an http/https URL is ignored. |
 
 Example:
 
@@ -60,6 +61,7 @@ open-source: yes
 command: python -m my_agent.bench_runner
 date: 2026-01-15
 contact: you@example.com
+repository: https://github.com/you/my-agent
 ```
 
 ## Result record schema (version 1)
