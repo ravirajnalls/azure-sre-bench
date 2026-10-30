@@ -1,0 +1,15 @@
+2026-10-30T07:02:10.441 Function.App Started: func-reports-gen (version 4.1036.1, host id 00000000-0000-0000-0000-000000000006)
+2026-10-30T07:02:10.772 Function.HttpTriggerStartup Succeeded. Hosting environment: Production. Azure Functions Core version: 4.1036.1
+2026-10-30T07:02:11.008 Function.ReportGen Executing 'Functions.ReportGen' (Reason='Timer trigger fired at 2026-10-30T07:02:11.008', Id=00000000-0000-0000-0000-000000000009)
+2026-10-30T07:02:11.331 Function.ReportGen INFO  [secret] fetching secret reporting-db-conn from vault kv-reports
+2026-10-30T07:02:11.912 Function.ReportGen ERROR [secret] Azure.RequestFailedException: Operation returned an invalid status code 'Forbidden'
+   at Azure.Security.KeyVault.Secrets.KeyVaultPipeline.SendRequestAsync(...)
+2026-10-30T07:02:11.912 Function.ReportGen ERROR [secret] The user, group or application 'appName=func-reports-gen;id=00000000-0000-0000-0000-000000000003' does not have secrets get permission on key vault 'kv-reports;location=westeurope'. For more information on the Azure RBAC permission model, please visit https://learn.microsoft.com/azure/key-vault/general/rbac-quickstart
+2026-10-30T07:02:11.913 Function.ReportGen ERROR [secret] Inner error code: ForbiddenByRbac. HTTP 403.
+2026-10-30T07:02:11.914 Function.ReportGen INFO  [secret] Managed identity token acquired successfully from App Service endpoint (principal id 00000000-0000-0000-0000-000000000003)
+2026-10-30T07:02:11.915 Function.ReportGen Failed: 'Functions.ReportGen' (Id='00000000-0000-0000-0000-000000000009'). Exception: Azure.RequestFailedException: Operation returned an invalid status code 'Forbidden'
+2026-10-30T07:02:12.401 Function.ReportGen Executing 'Functions.ReportGen' (Reason='Timer trigger fired at 2026-10-30T07:02:12.401', Id=00000000-0000-0000-0000-00000000000a)
+2026-10-30T07:02:12.889 Function.ReportGen ERROR [secret] The user, group or application 'appName=func-reports-gen;id=00000000-0000-0000-0000-000000000003' does not have secrets get permission on key vault 'kv-reports;location=westeurope'. Inner error code: ForbiddenByRbac. HTTP 403.
+2026-10-30T07:02:12.890 Function.ReportGen Failed: 'Functions.ReportGen' (Id='00000000-0000-0000-0000-00000000000a')
+2026-10-30T07:02:13.104 Host.Results.Queue Sending failure result to WebJobs dashboard
+2026-10-30T07:05:00.727 Function.App Alert: FunctionReportGenFailures count=6 over threshold=2 in the last 5 minutes

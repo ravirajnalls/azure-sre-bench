@@ -1,0 +1,12 @@
+[
+  {
+    "application": null,
+    "objectId": "00000000-0000-0000-0000-000000000003",
+    "permissions": {
+      "certificates": [],
+      "keys": [],
+      "secrets": ["Get", "List"]
+    },
+    "tenantId": "00000000-0000-0000-0000-000000000001"
+  }
+]

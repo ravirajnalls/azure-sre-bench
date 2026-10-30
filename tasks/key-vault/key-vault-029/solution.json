@@ -1,0 +1,10 @@
+{
+  "root_cause": "The vault kv-reports uses the Azure RBAC permission model (enableRbacAuthorization is true), so the legacy access policy on the vault is ignored. The function app's managed identity has no role assignment on the vault, so every secrets get is denied with 403 ForbiddenByRbac.",
+  "evidence": [
+    "az-keyvault-show.json: properties.enableRbacAuthorization is true on kv-reports",
+    "az-keyvault-access-policy.json: an access policy grants the managed identity Get and List on secrets, but access policies are not evaluated under the RBAC permission model",
+    "az-role-assignment-list.json: no role assignment on the kv-reports scope for principalId 00000000-0000-0000-0000-000000000003",
+    "function.log: secrets get fails with inner error code ForbiddenByRbac for appName=func-reports-gen"
+  ],
+  "fix": "Grant the function app's managed identity the Key Vault Secrets User role on kv-reports — add a role assignment on the vault scope, since access policies are ignored while enableRbacAuthorization is true."
+}

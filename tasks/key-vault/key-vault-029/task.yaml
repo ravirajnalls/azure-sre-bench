@@ -1,0 +1,16 @@
+id: key-vault-029
+title: Function app gets 403 reading secrets from Key Vault despite an access policy
+category: key-vault
+difficulty: easy
+tags:
+  - key-vault
+  - rbac
+  - access-policy
+  - managed-identity
+  - function-app
+symptom: >-
+  The function app func-reports-gen went live this morning and every run fails when
+  it fetches its database connection string from the Key Vault kv-reports. Nothing
+  in the function app changed this week, and the vault has an access policy that
+  grants the function app's managed identity Get and List on secrets. The failure
+  is permanent, not throttling — every single attempt returns 403.
