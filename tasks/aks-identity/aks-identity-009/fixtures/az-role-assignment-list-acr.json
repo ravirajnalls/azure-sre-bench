@@ -1,0 +1,16 @@
+[
+  {
+    "condition": null,
+    "conditionVersion": null,
+    "createdOn": "2026-06-11T08:47:52.3102214Z",
+    "id": "/subscriptions/00000000-0000-0000-0000-000000000002/resourcegroups/rg-contoso-prod/providers/Microsoft.ContainerRegistry/registries/acrcontosoprod/providers/Microsoft.Authorization/roleAssignments/00000000-0000-0000-0000-000000000007",
+    "name": "00000000-0000-0000-0000-000000000007",
+    "principalId": "00000000-0000-0000-0000-000000000009",
+    "principalType": "ServicePrincipal",
+    "roleDefinitionId": "/subscriptions/00000000-0000-0000-0000-000000000002/providers/Microsoft.Authorization/roleDefinitions/00000000-0000-0000-0000-000000000008",
+    "roleDefinitionName": "AcrPull",
+    "scope": "/subscriptions/00000000-0000-0000-0000-000000000002/resourcegroups/rg-contoso-prod/providers/Microsoft.ContainerRegistry/registries/acrcontosoprod",
+    "type": "Microsoft.Authorization/roleAssignments",
+    "updatedOn": "2026-06-11T08:47:52.3102214Z"
+  }
+]

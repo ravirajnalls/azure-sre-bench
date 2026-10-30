@@ -1,0 +1,55 @@
+{
+  "aadProfile": {
+    "enableAzureRbac": true,
+    "managed": true
+  },
+  "agentPoolProfiles": [
+    {
+      "count": 3,
+      "enableAutoScaling": true,
+      "maxCount": 8,
+      "minCount": 3,
+      "mode": "System",
+      "name": "nodepool1",
+      "nodeImageVersion": "AKSUbuntu-2204gen2containerd-202610.02.0",
+      "orchestratorVersion": "1.29.7",
+      "osDiskSizeGB": 128,
+      "osType": "Linux",
+      "vmSize": "Standard_D4s_v5"
+    }
+  ],
+  "azurePortalFQDN": "aks-contoso-prod-portal.westeurope.cx.ext.azure.com",
+  "creationTimestamp": "2026-10-29T23:41:18.2076123Z",
+  "dnsPrefix": "aks-contoso-prod",
+  "fqdn": "aks-contoso-prod.westeurope.cloudapp.azure.com",
+  "id": "/subscriptions/00000000-0000-0000-0000-000000000002/resourcegroups/rg-contoso-prod/providers/Microsoft.ContainerService/managedClusters/aks-contoso-prod",
+  "identity": {
+    "principalId": "00000000-0000-0000-0000-00000000000d",
+    "tenantId": "00000000-0000-0000-0000-000000000001",
+    "type": "SystemAssigned"
+  },
+  "identityProfile": {
+    "kubeletidentity": {
+      "clientId": "00000000-0000-0000-0000-000000000003",
+      "objectId": "00000000-0000-0000-0000-00000000000c",
+      "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000002/resourcegroups/MC_rg-contoso-prod_aks-contoso-prod_westeurope/providers/Microsoft.ManagedIdentity/userAssignedIdentities/aks-contoso-prod-agentpool"
+    }
+  },
+  "kubernetesVersion": "1.29.7",
+  "location": "westeurope",
+  "maxAgentPools": 10,
+  "name": "aks-contoso-prod",
+  "networkProfile": {
+    "networkPlugin": "azure",
+    "networkPolicy": "cilium",
+    "serviceCidr": "10.241.0.0/16"
+  },
+  "nodeResourceGroup": "MC_rg-contoso-prod_aks-contoso-prod_westeurope",
+  "provisioningState": "Succeeded",
+  "resourceGroup": "rg-contoso-prod",
+  "sku": {
+    "name": "Base",
+    "tier": "Standard"
+  },
+  "type": "Microsoft.ContainerService/managedClusters"
+}

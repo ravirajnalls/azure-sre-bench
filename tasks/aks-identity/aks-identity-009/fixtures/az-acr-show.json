@@ -1,0 +1,50 @@
+{
+  "adminUserEnabled": false,
+  "anonymousPullEnabled": false,
+  "creationDate": "2026-03-02T11:05:40.7339118Z",
+  "dataEndpointEnabled": false,
+  "encryption": {
+    "status": "disabled"
+  },
+  "id": "/subscriptions/00000000-0000-0000-0000-000000000002/resourcegroups/rg-contoso-prod/providers/Microsoft.ContainerRegistry/registries/acrcontosoprod",
+  "location": "westeurope",
+  "loginServer": "acrcontosoprod.azurecr.io",
+  "name": "acrcontosoprod",
+  "networkRuleBypassOptions": "AzureServices",
+  "networkRuleSet": {
+    "defaultAction": "Allow",
+    "ipRules": [],
+    "virtualNetworkRules": []
+  },
+  "policies": {
+    "azurePolicy": {
+      "status": "disabled"
+    },
+    "quarantinePolicy": {
+      "status": "disabled"
+    },
+    "retentionPolicy": {
+      "days": 30,
+      "lastUpdatedTime": "2026-03-02T11:07:12.0048819Z",
+      "status": "disabled"
+    },
+    "trustPolicy": {
+      "status": "disabled",
+      "type": "Notary"
+    }
+  },
+  "privateEndpointConnections": [],
+  "provisioningState": "Succeeded",
+  "publicNetworkAccess": "Enabled",
+  "resourceGroup": "rg-contoso-prod",
+  "sku": {
+    "name": "Standard",
+    "tier": "Standard"
+  },
+  "status": {
+    "displayStatus": "Healthy",
+    "message": "Registry is healthy.",
+    "timestamp": "2026-10-30T06:24:11.8823011Z"
+  },
+  "type": "Microsoft.ContainerRegistry/registries"
+}
