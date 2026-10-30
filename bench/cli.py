@@ -3,8 +3,9 @@
 Issue #1 scaffolded the subcommand surface; `validate` and `list` are live as of
 issue #2, `grade` as of issue #3, `run` as of issue #4, `site` as of issue #40,
 `leaderboard` as of issue #41, `catalog` as of issue #42, `verify` as of issue
-#118, `submit` and `prompt` as of issue #124, `new` as of issue #120, and
-`mcp-serve` as of issue #123: the full subcommand surface is implemented.
+#118, `submit` and `prompt` as of issue #124, `new` as of issue #120,
+`mcp-serve` as of issue #123, and `sweep` as of issue #125: the full
+subcommand surface is implemented.
 """
 
 from __future__ import annotations
@@ -21,7 +22,7 @@ from bench.tasks import difficulty_distribution, load_tasks
 
 SUBCOMMANDS = (
     "validate", "list", "grade", "run", "verify", "submit", "prompt", "site",
-    "leaderboard", "catalog", "new", "mcp-serve",
+    "leaderboard", "catalog", "new", "mcp-serve", "sweep",
 )
 
 IMPLEMENTED = SUBCOMMANDS
@@ -219,6 +220,37 @@ def build_parser() -> argparse.ArgumentParser:
                 action="store_true",
                 help="print the difficulty distribution after the task list",
             )
+        elif name == "sweep":
+            sweep_parser = sub.add_parser(
+                name,
+                help="run a configured list of agents across the corpus (issue #125)",
+            )
+            sweep_parser.add_argument(
+                "--config",
+                default="sweeps/baseline.yaml",
+                help="sweep config file (default: sweeps/baseline.yaml)",
+            )
+            sweep_parser.add_argument(
+                "--tasks-root",
+                default="tasks",
+                help="task discovery root (default: ./tasks)",
+            )
+            sweep_parser.add_argument(
+                "--results-root",
+                default="results",
+                help="results root directory (default: ./results)",
+            )
+            sweep_parser.add_argument(
+                "--timeout",
+                type=int,
+                default=None,
+                help="per-task timeout override in seconds",
+            )
+            sweep_parser.add_argument(
+                "--dry-run",
+                action="store_true",
+                help="print the sweep plan without running anything",
+            )
         elif name == "catalog":
             catalog_parser = sub.add_parser(
                 name, help="render the task catalog to a Markdown file"
@@ -389,6 +421,10 @@ def main(argv: list[str] | None = None) -> int:
             from bench.run import cmd_run  # deferred: keeps --help cheap
 
             return cmd_run(args)
+        if args.command == "sweep":
+            from bench.sweep import cmd_sweep  # deferred: keeps --help cheap
+
+            return cmd_sweep(args)
         if args.command == "submit":
             return cmd_submit(args)
         if args.command == "prompt":

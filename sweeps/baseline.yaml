@@ -1,0 +1,75 @@
+# Baseline sweep plan (issue #125).
+#
+# Run every entry with:
+#   python -m bench sweep --config sweeps/baseline.yaml
+#
+# Rule-based agents run anywhere. The LLM/ReAct/Foundry entries need real
+# credentials (LLM_BASE_URL / LLM_API_KEY / LLM_MODEL and Foundry equivalents),
+# which are not configured in CI — those entries declare `requires_env` and are
+# skipped with a recorded `missing-env` reason until the variables exist. The
+# sweep therefore completes end to end today, producing rule-based results plus
+# an explicit, machine-readable record of the credential gap. See
+# docs/RESULTS.md for the protocol and the findings template.
+sweep:
+  name: baseline-v0.1
+  timeout: 600
+  agents:
+    # Rule-based baselines — no credentials, always run.
+    - name: naive
+      command: python agents/naive.py
+      framework: none
+      model: none
+      provider: none
+
+    # Adversarial probes (issue #92). They never read fixtures; any task they
+    # pass is gameable and belongs in tests/known_gameable.txt until the
+    # rubric audits (#96-#99) remove it.
+    - name: adversarial-keyword-soup
+      command: python agents/adversarial/keyword_soup.py
+      adversarial: true
+    - name: adversarial-fixture-dump
+      command: python agents/adversarial/fixture_dump.py
+      adversarial: true
+    - name: adversarial-minimal-dump
+      command: python agents/adversarial/minimal_dump.py
+      adversarial: true
+
+    # LLM baselines — three models per the issue: a Foundry deployment, an
+    # open-weights model, and a hosted frontier model. Skipped (recorded as
+    # missing-env) until credentials are approved.
+    - name: llm-agent-foundry-gpt-4o
+      command: python agents/llm_agent.py
+      model: gpt-4o
+      provider: azure-ai-foundry
+      framework: single-shot-llm
+      requires_env: [LLM_BASE_URL, LLM_API_KEY, LLM_MODEL]
+      env:
+        LLM_MODEL: gpt-4o
+
+    - name: llm-agent-llama-70b
+      command: python agents/llm_agent.py
+      model: llama-3.3-70b-instruct
+      provider: openai-compatible
+      framework: single-shot-llm
+      open-source: yes
+      requires_env: [LLM_BASE_URL, LLM_API_KEY, LLM_MODEL]
+      env:
+        LLM_MODEL: llama-3.3-70b-instruct
+
+    - name: react-agent-foundry-gpt-4o
+      command: python agents/react_agent.py
+      model: gpt-4o
+      provider: azure-ai-foundry
+      framework: react-tools
+      requires_env: [LLM_BASE_URL, LLM_API_KEY, LLM_MODEL]
+      env:
+        LLM_MODEL: gpt-4o
+
+    - name: foundry-agent-gpt-4o
+      command: python agents/foundry_agent.py
+      model: gpt-4o
+      provider: azure-ai-foundry
+      framework: foundry-agents-api
+      requires_env: [FOUNDRY_ENDPOINT, FOUNDRY_API_KEY, FOUNDRY_MODEL]
+      env:
+        FOUNDRY_MODEL: gpt-4o
