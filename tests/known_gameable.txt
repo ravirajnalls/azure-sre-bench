@@ -14,26 +14,18 @@
 # under the 600 cap, so the length cap cannot beat it. Shrinking this list to
 # empty is the rubric audits' job (#96-#99).
 #
-# aks-ops audit (#98) re-run: the keyword-soup probe was corrected to union
-# EVERY rubric alternative (its spec definition), including distractor groups
-# — the mechanical cheat cannot tell trap words from real ones, which is how
-# the distractor defense (#94) is meant to catch it. This supersedes the
-# earlier "a distractor can never catch a soup" reasoning in the entry
-# comments below (that held only under the old probe, which unioned
-# root_cause/fix but not distractors). With the corrected probe and the
-# audited rubrics, keyword-soup passes 22/32, fixture-dump 0/32, minimal-dump
-# 0/32. Removed as no-probe-passes-anymore: aks-ops-018..025 (audited by #98)
-# and aks-identity-008, aks-networking-002 (their #158 distractors now defeat
-# the corrected probe; their full rubric audits remain #96's work).
-#
 # New-task entries (the #92 gate requires an entry whenever a probe passes):
 # - aks-identity-034 (issue #103): keyword-soup only. Its rubric soup is ~240
-#   chars (under the cap); the red-herring fixture
-#   (az-identity-federated-credential-list.json) sorts first alphabetically,
-#   so the dump probes blame the distractor. Entry leaves with the audits
-#   (#96-#99) like the rest.
+#   chars (under the cap), and a distractor can never catch a soup — the
+#   validator forbids distractor/root_cause overlap, so a soup consists only
+#   of rubric alternatives. Both dump probes score 0 on it: the red-herring
+#   fixture (az-identity-federated-credential-list.json) sorts first
+#   alphabetically, so their dump blames the distractor. Entry leaves with
+#   the audits (#96-#99) like the rest.
 # - aks-networking-038 (issue #107): keyword-soup only. Its rubric soup is
-#   ~110 chars (under the cap). Both dump probes score 0 on it: fixture-dump
+#   ~110 chars (under the cap), and a distractor can never catch a soup — the
+#   validator forbids distractor/root_cause overlap, so a soup consists only
+#   of rubric alternatives. Both dump probes score 0 on it: fixture-dump
 #   blows the 600-char caps and names the nsg distractor, and minimal-dump's
 #   capped dump (app.log sorts first) contains no rubric alternative. Entry
 #   leaves with the audits (#96-#99) like the rest.
@@ -56,6 +48,7 @@
 # split (encrypted rubrics hide them from the probe, spec OQ2/OQ3) or the
 # gate gains a grader that resists rubric-reading cheats.
 ado-pipelines-030
+aks-identity-008
 aks-identity-009
 aks-identity-010
 aks-identity-011
@@ -65,12 +58,21 @@ aks-identity-039
 # union to ~150 chars, far under the 600 cap; remove when the aks-identity
 # rubric audit (#96) makes the soup fail.
 aks-networking-001
+aks-networking-002
 aks-networking-003
 aks-networking-004
 aks-networking-005
 aks-networking-006
 aks-networking-007
 aks-networking-038
+aks-ops-018
+aks-ops-019
+aks-ops-020
+aks-ops-021
+aks-ops-022
+aks-ops-023
+aks-ops-024
+aks-ops-025
 aks-ops-026
 # aks-ops-026 (issue #104): keyword-soup only — its rubric alternatives union
 # to ~220 chars per field, far under the 600 cap; remove when the aks-ops
