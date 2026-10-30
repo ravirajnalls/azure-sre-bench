@@ -1,0 +1,8 @@
+2026-10-26T02:16:01Z INFO  reports-api pool: init_size=20, max_size=200, idle=18, in_use=2 — warm
+2026-10-26T02:58:44Z WARN  reports-api pool: wait queue depth 41 (avg wait 610 ms) — requests queuing for a connection
+2026-10-26T03:10:02Z WARN  reports-api pool: wait queue depth 138 (avg wait 2400 ms)
+2026-10-26T03:10:02Z INFO  reports-api pool: in_use=200/200, idle=0 — saturated
+2026-10-27T09:41:18Z INFO  reports-api: query timeout handler fired 112 times in last hour; raised command timeout 30s -> 60s as stopgap
+2026-10-28T14:22:09Z INFO  reports-api pool: in_use=200/200, idle=0 — saturated
+2026-10-29T11:05:33Z INFO  dba-thread: pool metrics tracked since Monday look like a symptom, not a cause — connections are held while queries run; check what the queries are doing
+2026-10-29T15:48:51Z INFO  reports-api pool: pool exhaustion begins and ends with the slow-query window; no leak detected (connections always returned to pool)

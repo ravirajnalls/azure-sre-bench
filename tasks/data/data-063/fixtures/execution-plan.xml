@@ -1,0 +1,54 @@
+<ShowPlanXML xmlns="http://schemas.microsoft.com/sqlserver/2004/07/showplan" xmlns:sp="http://schemas.microsoft.com/sqlserver/2004/07/showplan/plan">
+  <BatchSequence>
+    <Batch>
+      <Statements>
+        <StmtSimple StatementCompId="1" StatementEstRows="18411" StatementOptmLevel="TRIVIAL" QueryHash="0x9A31F2B4C0D7E188" QueryPlanHash="0x4C71B2D0A9F35E12">
+          <StatementSetOptions ANSI_NULLS="true" ANSI_PADDING="true" ANSI_WARNINGS="true" />
+          <QueryPlan DegreeOfParallelism="8" MemoryGrant="1048576" CachedPlanSize="328">
+            <Statements>
+              <StmtSimple>
+                <QueryPlan>
+                  <RelOp NodeId="0" PhysicalOp="Sort" LogicalOp="Sort" EstimateRows="18411" EstimateIO="0.0112613" EstimateCPU="0.000941">
+                    <OutputList>
+                      <ColumnReference Column="OrderId" />
+                      <ColumnReference Column="CreatedAtUtc" />
+                      <ColumnReference Column="TotalAmount" />
+                    </OutputList>
+                    <Sort Distinct="false" OrderBy="CreatedAtUtc DESC">
+                      <RelOp NodeId="1" PhysicalOp="Clustered Index Scan" LogicalOp="Clustered Index Scan" EstimateRows="18411" EstimateIO="712.444" EstimateCPU="98.2071">
+                        <OutputList>
+                          <ColumnReference Column="OrderId" />
+                          <ColumnReference Column="CustomerId" />
+                          <ColumnReference Column="CreatedAtUtc" />
+                          <ColumnReference Column="TotalAmount" />
+                        </OutputList>
+                        <IndexScan Ordered="false" Scanning="Full scan" ForceSeek="false" ForceScan="false">
+                          <Object Database="[shop]" Schema="[dbo]" Table="[Orders]" Index="[PK_Orders]" IndexKind="Clustered" Storage="RowStore" />
+                          <Predicate>
+                            <ScalarOperator ScalarString="[shop].[dbo].[Orders].[CustomerId] = @CustomerId">
+                              <Compare CompareOp="EQ">
+                                <Identifier>
+                                  <ColumnReference Table="[shop].[dbo].[Orders]" Column="CustomerId" />
+                                </Identifier>
+                                <Identifier>
+                                  <ColumnReference Column="@CustomerId" />
+                                </Identifier>
+                              </Compare>
+                            </ScalarOperator>
+                          </Predicate>
+                        </IndexScan>
+                      </RelOp>
+                    </Sort>
+                  </RelOp>
+                  <Warnings>
+                    <SpillToTempDb SpillLevel="1" />
+                  </Warnings>
+                </QueryPlan>
+              </StmtSimple>
+            </Statements>
+          </QueryPlan>
+        </StmtSimple>
+      </Statements>
+    </Batch>
+  </BatchSequence>
+</ShowPlanXML>

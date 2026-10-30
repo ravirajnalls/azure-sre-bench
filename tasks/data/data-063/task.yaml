@@ -1,0 +1,16 @@
+id: data-063
+canary: 00000000-0000-0000-0000-000000000114  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
+title: Azure SQL timeouts after Monday's schema migration
+category: data
+difficulty: medium
+tags:
+  - data
+  - azure-sql
+  - index
+  - query-store
+  - execution-plan
+symptom: |
+  reports-api queries against the orders database started timing out after
+  Monday's scheduled schema migration; nothing in the API changed. DTU on
+  sqldb-orders-prod has been pegged at 100% for long stretches and stays
+  high even in off-peak hours.
