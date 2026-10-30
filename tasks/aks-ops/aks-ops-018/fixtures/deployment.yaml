@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ledger-writer
+  namespace: finance
+  labels:
+    app.kubernetes.io/name: ledger-writer
+    app.kubernetes.io/part-of: ledger
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ledger-writer
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: ledger-writer
+    spec:
+      containers:
+        - name: ledger-writer
+          image: acrprod01.azurecr.io/ledger-writer:2.7.3
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10

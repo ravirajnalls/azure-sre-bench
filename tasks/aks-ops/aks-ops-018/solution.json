@@ -1,0 +1,12 @@
+{
+  "root_cause": "The PodDisruptionBudget ledger-writer in the finance namespace sets minAvailable: 2 while the ledger-writer Deployment runs replicas: 2, so the budget permits zero allowed disruptions. The AKS node drain cannot evict either ledger-writer pod, the drain blocks forever, and the 1.30 -> 1.31 upgrade stalls on the first cordoned node. The SchedulingDisabled node itself is healthy — it is simply cordoned by the upgrade and waiting for eviction.",
+  "evidence": [
+    "pdb.yaml: ledger-writer PDB in the finance namespace sets minAvailable: 2",
+    "deployment.yaml: ledger-writer Deployment runs replicas: 2",
+    "kubectl-get-pdb.txt: ledger-writer shows MIN AVAILABLE 2 and ALLOWED DISRUPTIONS 0",
+    "aks-activity-log.json: drain of aks-npuser-31214664-vmss000000 fails with 'Cannot evict pod as it would violate the pod's disruption budget' for finance/ledger-writer pods",
+    "kubectl-get-nodes.txt: aks-npuser-31214664-vmss000000 is Ready but SchedulingDisabled (cordoned), all other nodes Ready — nodes are healthy, eviction is what is blocked",
+    "az-aks-show.json: cluster provisioningState Upgrading with the npuser agent pool still on 1.30.6"
+  ],
+  "fix": "Make one ledger-writer pod evictable: increase the ledger-writer Deployment to at least 3 replicas, or relax the PDB to minAvailable: 1 / maxUnavailable: 1 so the budget allows one disruption. Then let the upgrade resume (or cordon and drain aks-npuser-31214664-vmss000000 again) and the 1.31.1 upgrade will proceed through the remaining nodes."
+}

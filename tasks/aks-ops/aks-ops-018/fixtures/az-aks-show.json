@@ -1,0 +1,77 @@
+{
+  "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-prod-01/providers/Microsoft.ContainerService/managedClusters/aks-prod-eus-01",
+  "location": "eastus",
+  "name": "aks-prod-eus-01",
+  "type": "Microsoft.ContainerService/managedClusters",
+  "kubernetesVersion": "1.31.1",
+  "provisioningState": "Upgrading",
+  "powerState": {
+    "code": "Running"
+  },
+  "dnsPrefix": "aks-prod-eus-01",
+  "fqdn": "aks-prod-eus-01-00000000.hcp.eastus.azmk8s.io",
+  "sku": {
+    "name": "Basic",
+    "tier": "Standard"
+  },
+  "networkProfile": {
+    "networkPlugin": "azure",
+    "networkPolicy": "calico",
+    "networkPluginMode": null,
+    "serviceCidr": "10.0.0.0/16",
+    "dnsServiceIp": "10.0.0.10",
+    "podCidr": null,
+    "loadBalancerSku": "standard"
+  },
+  "agentPoolProfiles": [
+    {
+      "name": "systempool",
+      "count": 1,
+      "vmSize": "Standard_D4ads_v5",
+      "osType": "Linux",
+      "osSKU": "AzureLinux",
+      "mode": "System",
+      "orchestratorVersion": "1.31.1",
+      "currentOrchestratorVersion": "1.31.1",
+      "provisioningState": "Succeeded",
+      "powerState": {
+        "code": "Running"
+      },
+      "upgradeSettings": {
+        "maxSurge": "33%",
+        "nodeSoakDurationInMinutes": 0
+      }
+    },
+    {
+      "name": "npuser",
+      "count": 3,
+      "vmSize": "Standard_D8ads_v5",
+      "osType": "Linux",
+      "osSKU": "Ubuntu",
+      "mode": "User",
+      "orchestratorVersion": "1.31.1",
+      "currentOrchestratorVersion": "1.30.6",
+      "provisioningState": "Upgrading",
+      "powerState": {
+        "code": "Running"
+      },
+      "upgradeSettings": {
+        "maxSurge": "1",
+        "nodeSoakDurationInMinutes": 0
+      }
+    }
+  ],
+  "upgradeSettings": {
+    "overrideSettings": {
+      "untilKubernetesVersion": "1.31.1",
+      "controlPlaneOnly": false
+    }
+  },
+  "maxAgentPools": 100,
+  "enableRBAC": true,
+  "nodeResourceGroup": "MC_rg-prod-01_aks-prod-eus-01_eastus",
+  "identity": {
+    "type": "SystemAssigned"
+  },
+  "createdTime": "2025-11-14T10:22:00.0000000Z"
+}
