@@ -590,3 +590,62 @@ def test_readme_carries_canary():
     """The README must carry the fixed training-corpus canary (issue #114)."""
     readme = Path(__file__).parent.parent / "README.md"
     assert CANARY_GUID in readme.read_text(encoding="utf-8")
+
+
+# --- simulated-CLI commands file (issue #111) --------------------------------
+
+VALID_COMMANDS_YAML = (
+    "commands:\n"
+    "  - command: kubectl get pods -n web\n"
+    "    stdout: 'pod-a'\n"
+)
+
+
+def write_commands_file(task_dir: Path, content: str) -> None:
+    (task_dir / "fixtures" / "_commands.yaml").write_text(content, encoding="utf-8")
+
+
+def test_commands_file_is_exempt_from_guid_rule(tmp_path: Path):
+    """A real GUID in the sim config is configuration, not a leaked secret."""
+    task_dir = copy_task(tmp_path)
+    write_commands_file(
+        task_dir, f"commands:\n  - command: kubectl get pod\n    stdout: '{REAL_GUID}'\n"
+    )
+    result = load_one(tmp_path)
+    assert result.errors == []
+
+
+def test_commands_file_does_not_count_toward_fixture_minimum(tmp_path: Path):
+    """Only evidence files count: 1 fixture + _commands.yaml is still too few."""
+    task_dir = copy_task(tmp_path)
+    (task_dir / "fixtures" / "az-monitor-metrics.json").unlink()
+    write_commands_file(task_dir, VALID_COMMANDS_YAML)
+    result = load_one(tmp_path)
+    assert any("found 1" in error for error in result.errors)
+
+
+def test_valid_commands_file_has_no_errors(tmp_path: Path):
+    task_dir = copy_task(tmp_path)
+    write_commands_file(task_dir, VALID_COMMANDS_YAML)
+    result = load_one(tmp_path)
+    assert result.errors == []
+
+
+def test_commands_file_shape_violations_are_reported(tmp_path: Path):
+    task_dir = copy_task(tmp_path)
+    write_commands_file(task_dir, "commands:\n  - stdout: 'no command key'\n")
+    result = load_one(tmp_path)
+    assert (
+        "fixtures/_commands.yaml: command #0 must have a non-empty 'command' string"
+        in result.errors
+    )
+
+
+def test_commands_file_invalid_yaml_is_reported(tmp_path: Path):
+    task_dir = copy_task(tmp_path)
+    write_commands_file(task_dir, "commands: [unclosed\n")
+    result = load_one(tmp_path)
+    assert any(
+        error.startswith("fixtures/_commands.yaml: invalid YAML")
+        for error in result.errors
+    )

@@ -1,3 +1,4 @@
+
 """Runner tests for `bench run` and the naive baseline agent (issue #4).
 
 Uses a synthetic task under tests/data/ and throwaway agent scripts so the real
@@ -8,6 +9,7 @@ exercised end to end.
 from __future__ import annotations
 
 import json
+import shutil
 import sys
 from pathlib import Path
 
@@ -221,3 +223,88 @@ def test_test_task_solution_passes_own_rubric():
 )
 def test_parse_answer_parametrized(stdout, expected):
     assert runner.parse_answer(stdout) == expected
+
+
+# --- simulated kubectl/az CLIs (issue #111) ----------------------------------
+
+SIM_COMMANDS_YAML = """\
+commands:
+  - command: kubectl get pods -n payments
+    stdout: |
+      payments-7d9f4b6c8c-x2k   0/1   CrashLoopBackOff
+"""
+
+KUBECTL_AGENT = """
+import json, subprocess
+proc = subprocess.run(
+    ["kubectl", "-n", "payments", "get", "pods"], capture_output=True, text=True
+)
+print(json.dumps({
+    "root_cause": proc.stdout.strip(),
+    "evidence": [f"returncode={proc.returncode}"],
+    "fix": ""
+}))
+"""
+
+
+def sim_task(tmp_path: Path) -> Path:
+    """The synthetic run-test task plus a `_commands.yaml` for the sim CLIs."""
+    dest = tmp_path / "tasks" / "monitoring" / "run-test-001"
+    shutil.copytree(TEST_TASK, dest)
+    (dest / "fixtures" / "_commands.yaml").write_text(SIM_COMMANDS_YAML, encoding="utf-8")
+    return dest
+
+
+def test_sim_clis_reach_agent_and_commands_log_lands_in_results(tmp_path):
+    cmd = write_agent(tmp_path, KUBECTL_AGENT)
+    record = runner.run_task(
+        sim_task(tmp_path), cmd, name="sim-run", results_root=tmp_path
+    )
+
+    # The agent invoked the shim with reordered flags and got the canned stdout.
+    assert (
+        record["answer"]["root_cause"]
+        == "payments-7d9f4b6c8c-x2k   0/1   CrashLoopBackOff"
+    )
+    assert record["commands"] == ["kubectl -n payments get pods"]
+    sidecar = tmp_path / "sim-run" / "monitoring-901.commands.log"
+    assert sidecar.read_text() == "kubectl -n payments get pods\n"
+
+
+def test_commands_log_captured_before_workspace_cleanup(tmp_path):
+    """Even a timed-out run keeps its trace: the log is read before the finally."""
+    body = (
+        "import subprocess, time\n"
+        "subprocess.run(['kubectl', 'get', 'pods'], capture_output=True, text=True)\n"
+        "print('investigating...', flush=True)\n"
+        "time.sleep(30)\n"
+    )
+    record = runner.run_task(
+        sim_task(tmp_path), write_agent(tmp_path, body), timeout=2, results_root=tmp_path
+    )
+
+    assert record["timed_out"] is True
+    assert record["commands"] == ["kubectl get pods"]
+
+
+def test_workspace_never_contains_commands_file(tmp_path):
+    body = (
+        "import json, os\n"
+        "print(json.dumps({'root_cause': ' '.join(sorted(os.listdir('fixtures'))),"
+        " 'evidence': [], 'fix': ''}))\n"
+    )
+    record = runner.run_task(
+        sim_task(tmp_path), write_agent(tmp_path, body), results_root=tmp_path
+    )
+
+    listing = record["answer"]["root_cause"]
+    assert "app-insights-query.kql" in listing
+    assert "_commands.yaml" not in listing
+
+
+def test_task_without_commands_file_records_no_commands(tmp_path):
+    cmd = write_agent(tmp_path, LISTING_AGENT)
+    record = runner.run_task(TEST_TASK, cmd, name="plain", results_root=tmp_path)
+
+    assert record["commands"] == []
+    assert not (tmp_path / "plain" / "monitoring-901.commands.log").exists()

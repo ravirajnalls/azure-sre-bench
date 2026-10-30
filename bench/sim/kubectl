@@ -1,0 +1,18 @@
+#!/usr/bin/env python3
+"""Simulated `kubectl` for benchmark agents (issue #111).
+
+Engine and matching rules: bench/sim/sim_cli.py. The runner puts this shim on
+PATH and points BENCH_SIM_COMMANDS at the task's fixtures/_commands.yaml.
+"""
+
+import sys
+from pathlib import Path
+
+# The shim is a standalone executable: make the repo root importable so the
+# engine can be loaded as the package module `bench.sim.sim_cli`.
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+
+from bench.sim.sim_cli import main
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:], tool="kubectl"))

@@ -52,6 +52,32 @@ canary: 00000000-0000-0000-0000-000000000114  # Canaries are DO NOT REMOVE — t
 The same GUID appears at the top of the README. The validator rejects any task
 whose `canary` value is missing or does not match; do not remove or alter it.
 
+## Simulated CLIs (`fixtures/_commands.yaml`)
+
+A task may ship `fixtures/_commands.yaml` to give the agent simulated `kubectl`
+and `az` CLIs (issue #111). When the file exists, the runner puts `bench/sim`
+first on the agent's PATH, so `kubectl`/`az` invocations return canned
+responses instead of hitting a real cluster:
+
+```yaml
+commands:
+  - command: kubectl get pods -n payments   # written as the agent would type it
+    stdout: |
+      NAME                      READY   STATUS
+      payments-7d9f4b6c8c-x2k   0/1     CrashLoopBackOff
+    returncode: 0                           # optional, default 0
+    stderr: ""                              # optional
+```
+
+- Matching is **flag-order tolerant** and ignores `-o`/`--output` formats: one
+  entry serves `-o yaml`, `-o json`, and `-o wide`.
+- The **first matching entry wins** — list specific commands before general ones.
+- The file is **not agent-visible evidence**: it never reaches the agent's
+  workspace and is exempt from the fixture count and GUID rules. Keep responses
+  consistent with the fixtures — same names, namespaces, and placeholder GUIDs.
+- Every invocation is logged; the trace lands in
+  `results/<run>/<task-id>.commands.log` and the result's `commands` field.
+
 ## Symptom
 
 The symptom describes what on-call sees — alerts, user reports, dashboard movements —
