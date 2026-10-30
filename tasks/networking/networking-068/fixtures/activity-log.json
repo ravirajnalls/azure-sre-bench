@@ -1,0 +1,33 @@
+[
+  {
+    "eventDataId": "00000000-0000-0000-0000-00000000000e",
+    "operationName": {
+      "value": "Microsoft.Network/dnsZones/delete",
+      "localizedValue": "Delete DNS zone"
+    },
+    "resourceGroupName": "rg-dns",
+    "resourceType": { "value": "dnsZones", "localizedValue": "DNS zones" },
+    "name": { "value": "eu.contoso.com", "localizedValue": "eu.contoso.com" },
+    "caller": "dns-admin@contoso.example",
+    "status": { "value": "Succeeded", "localizedValue": "Succeeded" },
+    "submissionTimestamp": "2026-10-29T14:05:32.718Z",
+    "properties": { "eventCategory": "Administrative" }
+  },
+  {
+    "eventDataId": "00000000-0000-0000-0000-00000000000f",
+    "operationName": {
+      "value": "Microsoft.Network/dnsZones/write",
+      "localizedValue": "Create or update DNS zone"
+    },
+    "resourceGroupName": "rg-dns",
+    "resourceType": { "value": "dnsZones", "localizedValue": "DNS zones" },
+    "name": { "value": "eu.contoso.com", "localizedValue": "eu.contoso.com" },
+    "caller": "dns-admin@contoso.example",
+    "status": { "value": "Succeeded", "localizedValue": "Succeeded" },
+    "submissionTimestamp": "2026-10-29T14:06:19.455Z",
+    "properties": {
+      "eventCategory": "Administrative",
+      "note": "zone re-created from export; records restored from zone file"
+    }
+  }
+]

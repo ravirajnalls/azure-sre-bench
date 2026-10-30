@@ -1,0 +1,16 @@
+{
+  "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-dns/providers/Microsoft.Network/dnsZones/eu.contoso.com",
+  "name": "eu.contoso.com",
+  "type": "Microsoft.Network/dnsZones",
+  "location": "global",
+  "properties": {
+    "maxNumberOfRecordSets": 10000,
+    "numberOfRecordSets": 42,
+    "nameServers": [
+      "ns1-03.azure-dns.com.",
+      "ns2-03.azure-dns.net.",
+      "ns3-03.azure-dns.org.",
+      "ns4-03.azure-dns.info."
+    ]
+  }
+}

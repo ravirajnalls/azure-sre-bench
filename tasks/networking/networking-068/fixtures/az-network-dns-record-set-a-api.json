@@ -1,0 +1,14 @@
+{
+  "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-dns/providers/Microsoft.Network/dnsZones/eu.contoso.com/recordSets/api",
+  "name": "api",
+  "type": "Microsoft.Network/dnsZones/recordSets/A",
+  "etag": "00000000-0000-0000-0000-00000000000c",
+  "properties": {
+    "fqdn": "api.eu.contoso.com.",
+    "TTL": 300,
+    "ARecords": [
+      { "ipv4Address": "10.10.10.10" }
+    ],
+    "targetResource": {}
+  }
+}

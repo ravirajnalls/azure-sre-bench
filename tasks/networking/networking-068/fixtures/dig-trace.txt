@@ -1,0 +1,17 @@
+; public resolution of api.eu.contoso.com — dig +trace from office egress
+; 2026-10-30 06:22:11 UTC
+
+; --- resolve eu.contoso.com NS via the parent (contoso.com) servers
+eu.contoso.com.        172800  IN  NS  ns1-01.azure-dns.com.
+eu.contoso.com.        172800  IN  NS  ns2-01.azure-dns.net.
+eu.contoso.com.        172800  IN  NS  ns3-01.azure-dns.org.
+eu.contoso.com.        172800  IN  NS  ns4-01.azure-dns.info.
+
+; --- query api.eu.contoso.com against those servers
+;; Query #1: api.eu.contoso.com A @ ns1-01.azure-dns.com  -> REFUSED (zone not configured)
+;; Query #2: api.eu.contoso.com A @ ns2-01.azure-dns.net  -> REFUSED (zone not configured)
+;; Query #3: api.eu.contoso.com A @ ns3-01.azure-dns.org  -> timed out
+;; Query #4: api.eu.contoso.com A @ ns4-01.azure-dns.info -> REFUSED (zone not configured)
+
+;; resolution status: SERVFAIL (public resolvers)
+;; internal (corporate) resolver answers the same name from cache/hosts: works

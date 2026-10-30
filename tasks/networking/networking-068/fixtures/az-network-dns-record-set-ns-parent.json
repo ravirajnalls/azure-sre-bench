@@ -1,0 +1,16 @@
+{
+  "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-dns/providers/Microsoft.Network/dnsZones/contoso.com/recordSets/eu",
+  "name": "eu",
+  "type": "Microsoft.Network/dnsZones/recordSets/NS",
+  "etag": "00000000-0000-0000-0000-00000000000b",
+  "properties": {
+    "fqdn": "eu.contoso.com.",
+    "TTL": 172800,
+    "NSRecords": [
+      { "nsdname": "ns1-01.azure-dns.com." },
+      { "nsdname": "ns2-01.azure-dns.net." },
+      { "nsdname": "ns3-01.azure-dns.org." },
+      { "nsdname": "ns4-01.azure-dns.info." }
+    ]
+  }
+}

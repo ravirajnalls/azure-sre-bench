@@ -1,0 +1,15 @@
+{
+  "root_cause": "Recreating the eu.contoso.com zone made Azure DNS assign a new set of name servers (ns1-03.../ns4-03...), but the NS delegation for \"eu\" in the parent contoso.com zone still lists the zone's previous servers (ns1-01.../ns4-01...) — the parent-zone NS record set was never updated, so public resolvers are sent to name servers that no longer host the zone and answer REFUSED.",
+  "evidence": [
+    "az-network-dns-zone-show-eu.json: the recreated zone's nameServers are ns1-03.azure-dns.com. / ns2-03.azure-dns.net. / ns3-03.azure-dns.org. / ns4-03.azure-dns.info.",
+    "az-network-dns-record-set-ns-parent.json: the \"eu\" NS record set in the contoso.com zone still lists ns1-01.azure-dns.com. / ns2-01.azure-dns.net. / ns3-01.azure-dns.org. / ns4-01.azure-dns.info. — the pre-recreation servers",
+    "dig-trace.txt: public path gets the ns1-01... servers from the contoso.com servers, and those servers answer REFUSED for api.eu.contoso.com; internal resolution works because the corporate resolver does not follow the delegation",
+    "activity-log.json: zone delete + re-create on 2026-10-29 by dns-admin — the recreation is what changed the zone's assigned servers",
+    "az-network-dns-record-set-a-api.json: the api A record is present and correct — the in-zone data is not the fault (red herring)"
+  ],
+  "fix": "Update the NS record set for \"eu\" in the parent contoso.com zone to the recreated zone's current name servers (az network dns record-set ns set --zone contoso.com --name eu --record-set-type NS ... with the ns1-03..ns4-03 hosts), let the 172800s TTL age out of public resolver caches, and confirm dig +trace resolves api.eu.contoso.com from the public path.",
+  "evidence_files": [
+    "az-network-dns-zone-show-eu.json",
+    "az-network-dns-record-set-ns-parent.json"
+  ]
+}

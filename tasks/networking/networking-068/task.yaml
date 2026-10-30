@@ -1,0 +1,18 @@
+id: networking-068
+canary: 00000000-0000-0000-0000-000000000114  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
+title: "DNS delegation broken for a subdomain"
+category: networking
+difficulty: medium
+tags:
+  - networking
+  - azure
+  - dns
+symptom: |
+  Public resolution of api.eu.contoso.com stopped working yesterday
+  after the eu.contoso.com zone was recreated during a cleanup of
+  duplicate DNS zones. Everything inside the zone checks out: the api
+  record exists, the zone is signed the same way as before, and the
+  internal resolver still answers fine. Only public resolvers fail.
+  The app team already asked us to "fix the record" — the record
+  they mean is not the problem. Paged by the external-availability
+  probe at 06:20 UTC.

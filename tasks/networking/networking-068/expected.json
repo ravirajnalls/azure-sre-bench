@@ -1,0 +1,12 @@
+{
+  "root_cause": [
+    ["ns", "name server", "delegation"],
+    ["parent", "stale", "not updated", "mismatch"]
+  ],
+  "fix": [
+    ["update the ns", "delegation", "set the ns", "replace the ns"]
+  ],
+  "distractors": [
+    ["arecords", "ipv4address", "10.10.10.10"]
+  ]
+}
