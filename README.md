@@ -435,6 +435,39 @@ adapter reads the `submit_answer` result back and prints it on stdout for gradin
 On any failure — Goose missing, no submission — it prints `{}` and exits 0, graded
 as a FAIL.
 
+## Run OpenHands
+
+`agents/openhands_adapter.py` runs [OpenHands](https://github.com/All-Hands-AI/OpenHands)
+headless directly in the task workspace (issue #170) — no MCP, no benchmark-specific
+code on the agent side. The adapter passes the symptom as the headless task text with
+an instruction to write the final answer to `answer.json` in the workspace root, then
+reads that file back and maps it to stdout for grading. The workspace is the runner's
+isolated per-task directory, so `fixtures/` and `symptom.md` are in place and the
+simulated CLIs the runner put first on PATH resolve for every `kubectl`/`az` the agent
+runs (read-only, mutating commands blocked by the sim).
+
+Runtime requirements:
+
+- OpenHands installed and on PATH (`pip install openhands-ai`, Python 3.12) — or pass
+  a source-checkout entrypoint via `--command "python -m openhands.core.main"`.
+- Credentials in the environment, as OpenHands expects them: `LLM_API_KEY` and
+  `LLM_MODEL`. The adapter passes your environment through and adds only
+  `WORKSPACE_BASE` (pointed at the task workspace) so sandboxed runtimes land in the
+  same directory the local runtime uses as its cwd.
+
+```bash
+export LLM_MODEL="anthropic/claude-sonnet-4-5"
+export LLM_API_KEY="..."
+python -m bench run \
+  --agent "python agents/openhands_adapter.py" \
+  --task aks-identity-008
+```
+
+On any failure — OpenHands missing, no readable `answer.json` — it prints `{}` and
+exits 0, graded as a FAIL. The mocked test (`tests/test_openhands_adapter.py`) proves
+the full chain with a fake headless run: no OpenHands install, network, or API key
+needed.
+
 ## Baseline sweep
 
 One command runs every configured baseline — `naive`, the three adversarial
