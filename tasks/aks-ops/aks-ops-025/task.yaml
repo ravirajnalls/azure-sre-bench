@@ -1,0 +1,15 @@
+id: aks-ops-025
+title: AKS monthly bill doubled while traffic is flat
+category: aks-ops
+difficulty: medium
+tags:
+  - aks-ops
+  - aks
+  - cost
+  - autoscaling
+  - kubernetes
+symptom: |
+  Finance flagged that the aks-contoso-dev cluster's Azure bill doubled month
+  over month while traffic is flat: no new deployments, no new node pools, and
+  application latency is normal. Finance asked on-call to explain the increase
+  before the next budget review.
