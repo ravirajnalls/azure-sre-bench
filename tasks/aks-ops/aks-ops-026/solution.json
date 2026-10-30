@@ -1,0 +1,15 @@
+{
+  "root_cause": "The upgrade of app-pool needs 10 surge nodes: upgradeSettings.maxSurge is 33% on a 30-node pool (33% of 30 rounds up to 10). Each surge node reserves 31 IP addresses from the Azure CNI pod subnet app-subnet (10.20.8.0/22) — one node IP plus up to maxPods 30 pod IPs — so the surge requires 310 free addresses, but the subnet has only 118 available. VMSS creation for the surge nodes fails twice with SubnetIsFull/InsufficientSubnetSize, which is why the upgrade dies about twenty minutes in with a generic provisioning error.",
+  "evidence": [
+    "az-aks-nodepool-show.json: app-pool has count 30, maxPods 30, and upgradeSettings.maxSurge 33% — 33% of 30 rounds up to 10 surge nodes",
+    "az-network-vnet-subnet-show.json: app-subnet is 10.20.8.0/22 and is the pool's vnetSubnetId/podSubnetId under Azure CNI (networkPlugin azure, podCidr null in az-aks-show.json)",
+    "aks-activity-log.json: VMSS create for aks-app-pool-33983453-vmss failed twice with SubnetIsFull — 310 IPs required, 118 available (23 and 45 minutes after the 23:41 upgrade start)",
+    "kubectl-get-pdb.txt: every disruption budget allows disruptions and drains succeeded, ruling the PDBs out"
+  ],
+  "fix": "Lower app-pool's maxSurge from 33% to a fixed small value — e.g. az aks nodepool update --cluster-name prod-aks-eus1 --resource-group rg-prod --name app-pool --max-surge 1 — so the surge reserves only ~31 extra IPs, then rerun the upgrade. Longer term, expand app-subnet to a larger CIDR (e.g. a /21) or migrate the pool to Azure CNI Overlay so pod IPs stop consuming subnet addresses.",
+  "evidence_files": [
+    "aks-activity-log.json",
+    "az-aks-nodepool-show.json",
+    "az-network-vnet-subnet-show.json"
+  ]
+}

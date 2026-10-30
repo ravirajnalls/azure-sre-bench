@@ -47,6 +47,7 @@
 | aks-ops-023 | payments-api full outage during overnight spot evictions | medium | aks-ops, aks, spot, scheduling, kubernetes |
 | aks-ops-024 | Container logs missing in Log Analytics | medium | aks-ops, aks, monitoring, container-insights, log-analytics |
 | aks-ops-025 | AKS monthly bill doubled while traffic is flat | medium | aks-ops, aks, cost, autoscaling, kubernetes |
+| aks-ops-026 | AKS upgrade of the main node pool fails with a generic provisioning error | hard | aks-ops, aks, upgrade, azure-cni, networking |
 | aks-ops-037 | TLS certificate for shop.contoso.com expired and renewal is silently failing | hard | aks-ops, cert-manager, tls, ingress, letsencrypt, kubernetes |
 
 ## aks-workloads

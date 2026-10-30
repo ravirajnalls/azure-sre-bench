@@ -1,0 +1,15 @@
+{
+  "root_cause": [
+    ["surge", "maxsurge", "max surge", "33%"],
+    ["app-subnet", "10.20.8.0/22", "cni subnet", "pod subnet"],
+    ["exhaustion", "exhausted", "insufficient subnet", "insufficient ip", "subnet is full", "subnetisfull", "out of ip addresses", "ran out of ip", "not enough free ip"]
+  ],
+  "fix": [
+    ["lower maxsurge", "reduce maxsurge", "decrease maxsurge", "set maxsurge", "maxsurge 1", "max-surge 1"],
+    ["larger subnet", "bigger subnet", "expand the subnet", "widen the subnet", "grow the subnet", "/21", "/20", "larger cidr"],
+    ["overlay", "cni overlay", "azure cni overlay"]
+  ],
+  "distractors": [
+    ["pdb", "poddisruptionbudget", "pod disruption budget", "disruption budget"]
+  ]
+}
