@@ -1,0 +1,19 @@
+id: aks-networking-044
+canary: 00000000-0000-0000-0000-000000000114  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
+title: "Cilium L7 policy drops one HTTP path"
+category: aks-networking
+difficulty: medium
+tags:
+  - aks
+  - cilium
+  - network-policy
+  - l7
+  - hubble
+symptom: |
+  Since yesterday's policy rollout on aks-prod, the checkout flow's calls to
+  GET /api/v2/orders against orders-api fail with 403 from inside the cluster,
+  while GET /api/v1/orders keeps returning 200 with no latency change. The
+  orders-api pods are Ready and serve both paths when tested from a debug pod
+  in the same namespace with no client policy applied. The v2 endpoint never
+  left staging before the cutover, and both paths live in the same deployment,
+  same service, same port.

@@ -1,0 +1,13 @@
+{
+  "root_cause": "The CiliumNetworkPolicy orders-api-l7 in the store namespace restricts ingress from the bff pods to HTTP GET with path regex /api/v1/.* (fixtures/ciliumnetworkpolicy.yaml). Hubble shows every GET /api/v2/orders from bff DROPPED under that exact rule while GET /api/v1/orders is FORWARDED by the same policy (fixtures/hubble-observe.txt) — the v2 path simply was never added to the L7 allowlist during the rollout. The 403s in fixtures/client.log are Cilium's proxy-level rejections, not an orders-api failure.",
+  "evidence": [
+    "fixtures/ciliumnetworkpolicy.yaml: the only L7 http rule in orders-api-l7 is method GET, path /api/v1/.* — no /api/v2 entry exists anywhere in the policy",
+    "fixtures/hubble-observe.txt: VERDICT=DROPPED on GET /api/v2/orders naming rule=CiliumNetworkPolicy/store/orders-api-l7, while /api/v1/orders VERDICT=FORWARDED through the same policy in the same seconds — same source pod, same destination, same port",
+    "fixtures/client.log: bff sees exactly 403 on /api/v2/orders and 200 on /api/v1/orders, matching the Hubble verdicts"
+  ],
+  "fix": "Extend the CiliumNetworkPolicy's L7 http rules to cover the v2 API — add a path entry for /api/v2/.* (GET) alongside /api/v1/.* in the orders-api-l7 policy's toPorts rules (or broaden the regex to /api/v[12]/.* if versioning is stable). Confirm with hubble observe that GET /api/v2/orders flips from DROPPED to FORWARDED, then re-run the checkout flow.",
+  "evidence_files": [
+    "ciliumnetworkpolicy.yaml",
+    "hubble-observe.txt"
+  ]
+}

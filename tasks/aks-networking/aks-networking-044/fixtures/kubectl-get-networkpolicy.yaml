@@ -1,0 +1,25 @@
+# kubectl get networkpolicy -n store -o yaml
+# Default kubernetes NetworkPolicy for the store namespace (kept permissive for platform tooling)
+apiVersion: networking.k8s.io/v1
+items:
+  - apiVersion: networking.k8s.io/v1
+    kind: NetworkPolicy
+    metadata:
+      name: allow-frontend-to-api
+      namespace: store
+    spec:
+      ingress:
+        - from:
+            - podSelector:
+                matchLabels:
+                  app: bff
+          ports:
+            - port: 8080
+              protocol: TCP
+      podSelector:
+        matchLabels:
+          app: orders-api
+      policyTypes:
+        - Ingress
+kind: List
+metadata: {}

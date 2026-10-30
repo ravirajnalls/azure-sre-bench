@@ -1,0 +1,24 @@
+# kubectl get cnp -n store -o yaml
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: orders-api-l7
+  namespace: store
+  labels:
+    app.kubernetes.io/managed-by: platform-team
+spec:
+  endpointSelector:
+    matchLabels:
+      app: orders-api
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app: bff
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+          rules:
+            http:
+              - method: GET
+                path: /api/v1/.*

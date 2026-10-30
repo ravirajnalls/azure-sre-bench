@@ -1,0 +1,12 @@
+{
+  "root_cause": [
+    ["ciliumnetworkpolicy", "cilium network policy", "l7"],
+    ["/api/v2", "v2 path", "path regex"]
+  ],
+  "fix": [
+    ["/api/v2", "path regex", "allow v2", "update the path", "add the path"]
+  ],
+  "distractors": [
+    ["kubernetes networkpolicy", "allow-frontend-to-api"]
+  ]
+}

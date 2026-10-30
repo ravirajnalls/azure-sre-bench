@@ -1,0 +1,6 @@
+2026-10-28T09:41:02Z [WARN] orders_client: GET https://orders-api.store.svc.cluster.local:8080/api/v2/orders -> 403 (attempt 1/3)
+2026-10-28T09:41:02Z [INFO] orders_client: GET https://orders-api.store.svc.cluster.local:8080/api/v1/orders -> 200 (118ms)
+2026-10-28T09:41:02Z [WARN] orders_client: GET https://orders-api.store.svc.cluster.local:8080/api/v2/orders -> 403 (attempt 2/3)
+2026-10-28T09:41:03Z [WARN] orders_client: GET https://orders-api.store.svc.cluster.local:8080/api/v2/orders -> 403 (attempt 3/3)
+2026-10-28T09:41:03Z [ERROR] checkout_flow: could not load v2 order history for customer 88213; falling back to v1
+2026-10-28T09:41:03Z [INFO] orders_client: GET https://orders-api.store.svc.cluster.local:8080/api/v1/orders -> 200 (97ms)
