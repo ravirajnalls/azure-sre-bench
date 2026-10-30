@@ -1,0 +1,38 @@
+name: Verify results
+
+# Issue #118: third-party result submissions arrive as PRs touching results/.
+# Re-grade every stored answer with the current grader so a tampered or
+# misattributed score cannot merge.
+
+on:
+  pull_request:
+    paths:
+      - "results/**"
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: bench verify every run folder
+        run: |
+          set -e
+          found=0
+          for run_dir in results/*/; do
+            [ -d "$run_dir" ] || continue
+            found=1
+            echo "== $run_dir =="
+            python -m bench verify "$run_dir"
+          done
+          if [ "$found" -ne 1 ]; then
+            echo "no run folders under results/"
+            exit 1
+          fi

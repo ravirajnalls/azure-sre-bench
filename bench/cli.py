@@ -18,7 +18,8 @@ from bench.grader import grade
 from bench.tasks import difficulty_distribution, load_tasks
 
 SUBCOMMANDS = (
-    "validate", "list", "grade", "run", "submit", "prompt", "site", "leaderboard", "catalog"
+    "validate", "list", "grade", "run", "verify", "submit", "prompt", "site",
+    "leaderboard", "catalog",
 )
 
 IMPLEMENTED = SUBCOMMANDS
@@ -104,6 +105,20 @@ def build_parser() -> argparse.ArgumentParser:
                 "--task", required=True, help="task ID, e.g. aks-networking-001"
             )
             prompt_parser.add_argument(
+                "--tasks-root",
+                default="tasks",
+                help="task discovery root (default: ./tasks)",
+            )
+        elif name == "verify":
+            verify_parser = sub.add_parser(
+                name,
+                help="re-grade stored results in a run folder (issue #118)",
+            )
+            verify_parser.add_argument(
+                "run",
+                help="run folder to verify, e.g. results/naive",
+            )
+            verify_parser.add_argument(
                 "--tasks-root",
                 default="tasks",
                 help="task discovery root (default: ./tasks)",
@@ -257,6 +272,24 @@ def cmd_list(root: Path, stats: bool = False) -> int:
     return 0
 
 
+def cmd_verify(args: argparse.Namespace) -> int:
+    """Re-grade every stored result in `args.run` and report mismatches (issue #118)."""
+    from bench.verify import verify_run  # deferred: keeps --help cheap
+
+    report = verify_run(Path(args.run), Path(args.tasks_root))
+    for error in report["errors"]:
+        print(f"ERROR {error}")
+    for mismatch in report["mismatches"]:
+        print(f"MISMATCH {mismatch}")
+    clean = report["checked"] - len(report["mismatches"])
+    print(
+        f"{clean}/{report['checked']} results verified; "
+        f"{len(report['mismatches'])} mismatch(es); "
+        f"{len(report['errors'])} error(s)"
+    )
+    return 0 if not report["errors"] and not report["mismatches"] else 1
+
+
 def cmd_leaderboard(args: argparse.Namespace) -> int:
     """Print the markdown leaderboard table from `--results-root` (issue #41)."""
     from bench.leaderboard import leaderboard_markdown  # deferred: keeps --help cheap
@@ -302,6 +335,8 @@ def main(argv: list[str] | None = None) -> int:
             return cmd_catalog(root, Path(args.output))
         if args.command == "leaderboard":
             return cmd_leaderboard(args)
+        if args.command == "verify":
+            return cmd_verify(args)
         return cmd_list(root, stats=bool(getattr(args, "stats", False)))
     print(
         f"'bench {args.command}' is not implemented yet; "
