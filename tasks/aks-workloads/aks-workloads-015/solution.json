@@ -1,0 +1,11 @@
+{
+  "root_cause": "The gpu01 node pool was created with the taint sku=gpu:NoSchedule and the video-transcoder Deployment has no matching toleration, so the scheduler refuses to place its pods on the GPU node; the remaining three nodes are rejected because the pods' nodeSelector requires the gpu01 pool.",
+  "evidence": [
+    "az-aks-nodepool-show-gpu01.json: gpu01 carries nodeTaints sku=gpu:NoSchedule",
+    "kubectl-describe-pod.txt: FailedScheduling — 0/4 nodes are available: 3 node(s) didn't match Pod's node affinity/selector, 1 node(s) had untolerated taint {sku: gpu}",
+    "deployment.yaml: pod spec sets nodeSelector kubernetes.azure.com/agentpool: gpu01 and has no tolerations",
+    "kubectl-get-nodes-show-labels.txt: the single gpu01 node is Ready and carries the matching agentpool label, so the selector itself is satisfied",
+    "nvidia-device-plugin.log: device plugin registered one healthy GPU — the GPU hardware is not the problem"
+  ],
+  "fix": "Add a matching toleration to the video-transcoder pod spec: tolerations: [{key: sku, operator: Equal, value: gpu, effect: NoSchedule}] so its pods can schedule onto the tainted gpu01 node pool."
+}

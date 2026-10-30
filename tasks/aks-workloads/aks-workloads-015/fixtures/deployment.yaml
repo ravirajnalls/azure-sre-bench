@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: video-transcoder
+  namespace: media
+  uid: 00000000-0000-0000-0000-000000000004
+  resourceVersion: "8851042"
+  generation: 7
+  creationTimestamp: "2026-08-19T14:22:18Z"
+  annotations:
+    deployment.kubernetes.io/revision: "7"
+    kubernetes.io/change-cause: >-
+      release 2026.10.30: pin transcoding workloads to the new gpu01 pool via
+      node selector ahead of the 4K queue rollout
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: video-transcoder
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: video-transcoder
+    spec:
+      nodeSelector:
+        kubernetes.azure.com/agentpool: gpu01
+      containers:
+        - name: transcoder
+          image: mediacr00000001.azurecr.io/video-transcoder:2026.10.29
+          ports:
+            - name: metrics
+              containerPort: 9102
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 9102
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 500m
+              memory: 1Gi
+              nvidia.com/gpu: 1
+            limits:
+              memory: 4Gi
+              nvidia.com/gpu: 1
+      terminationGracePeriodSeconds: 45

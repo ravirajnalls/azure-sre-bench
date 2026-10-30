@@ -1,0 +1,18 @@
+id: aks-workloads-015
+title: Pods Pending on new GPU node pool
+category: aks-workloads
+difficulty: easy
+tags:
+  - aks-workloads
+  - aks
+  - kubernetes
+  - scheduling
+  - gpu
+  - nodepool
+symptom: |
+  Two hours ago a GPU node pool named gpu01 was added to aks-prod-eus-01, and
+  the media namespace's video-transcoder Deployment was switched over to it via
+  a node selector. Both of its pods have been Pending ever since. The new GPU
+  nodes show Ready in the console, the NVIDIA device plugin DaemonSet is
+  running and its logs look clean, and no cluster upgrade or autoscaler
+  activity is in progress.

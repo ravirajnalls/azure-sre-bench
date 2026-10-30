@@ -1,0 +1,27 @@
+{
+  "apiVersion": "2024-03-02",
+  "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-prod-01/providers/Microsoft.ContainerService/managedClusters/aks-prod-eus-01/agentPools/gpu01",
+  "name": "gpu01",
+  "type": "Microsoft.ContainerService/managedClusters/agentPools",
+  "count": 1,
+  "vmSize": "Standard_NC4as_T4_v3",
+  "osType": "Linux",
+  "osSKU": "Ubuntu",
+  "mode": "User",
+  "nodeTaints": [
+    "sku=gpu:NoSchedule"
+  ],
+  "nodeLabels": {
+    "sku": "gpu"
+  },
+  "maxPods": 30,
+  "orchestratorVersion": "1.30.6",
+  "currentOrchestratorVersion": "1.30.6",
+  "enableAutoScaling": false,
+  "enableNodePublicIP": false,
+  "osDiskSizeGB": 128,
+  "provisioningState": "Succeeded",
+  "powerState": {
+    "code": "Running"
+  }
+}
