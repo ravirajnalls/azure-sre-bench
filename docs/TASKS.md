@@ -17,6 +17,7 @@
 | ID | Title | Difficulty | Tags |
 | --- | --- | --- | --- |
 | aks-networking-002 | Ingress returns 502 for /shop after a release | easy | aks, ingress, service-selector, kubernetes |
+| aks-networking-005 | Egress to the internet fails after firewall rollout | medium | aks, aks-networking, azure-firewall, udr, egress |
 
 ## aks-ops
 
