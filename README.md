@@ -410,6 +410,27 @@ prints `{}` and exits 0, graded as a FAIL. The mocked test
 (`tests/test_holmesgpt_adapter.py`) proves the full mapping plus the sim-CLI
 round-trip with a fake `holmes` executable — no HolmesGPT install or API key
 needed.
+## Run Goose
+
+`agents/goose_adapter.py` benchmarks Block's [Goose](https://github.com/block/goose)
+through the same MCP server (issue #169) with no benchmark-specific code on the
+Goose side. The adapter generates a throwaway Goose `config.yaml` — per run, in a
+temp directory handed to Goose via `GOOSE_CONFIG_DIR`, so your real
+`~/.config/goose/config.yaml` is never touched — registering the benchmark server
+as a stdio extension, then runs `goose run --headless -t <symptom + instructions>`:
+
+```bash
+export GOOSE_PROVIDER="openai"          # any provider Goose is configured for
+export GOOSE_MODEL="gpt-4o"             # and its model
+python -m bench run \
+  --agent "python agents/goose_adapter.py" \
+  --task aks-identity-008
+```
+
+Goose investigates through the server's four scoped tools (table above) and the
+adapter reads the `submit_answer` result back and prints it on stdout for grading.
+On any failure — Goose missing, no submission — it prints `{}` and exits 0, graded
+as a FAIL.
 
 ## Baseline sweep
 
