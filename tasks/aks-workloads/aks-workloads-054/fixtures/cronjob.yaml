@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: ledger-reconcile
+  namespace: finance
+spec:
+  schedule: "30 2 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 5
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: ledger-reconcile
+              image: crfinprod.azurecr.io/finance/ledger-reconcile@sha256:a3f9c2e1b7d4058693a1c0f2e6d4b8a7c5e9f1d3b2a4c6e8f0d2b4a6c8e0f2d4
+              imagePullPolicy: IfNotPresent
+              command: ["/app/reconcile", "--nightly"]

@@ -73,6 +73,7 @@
 | aks-workloads-018 | pricing-api p99 latency triples at peak while average CPU looks healthy | hard | aks-workloads, aks, kubernetes, cpu, throttling, latency, hpa |
 | aks-workloads-042 | KEDA ScaledObject never scales invoice-worker out of zero | hard | aks-workloads, aks, kubernetes, keda, autoscaling, servicebus |
 | aks-workloads-053 | VPA and HPA fight over recommendations-api's CPU requests | hard | aks-workloads, aks, kubernetes, hpa, vpa, autoscaling |
+| aks-workloads-054 | nightly ledger-reconcile CronJob fails with ErrImagePull after registry cleanup | hard | aks-workloads, aks, kubernetes, cronjob, acr, container-registry |
 
 ## app-service
 

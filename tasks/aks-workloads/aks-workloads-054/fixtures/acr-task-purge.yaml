@@ -1,0 +1,10 @@
+# Scheduled ACR purge task (runs in crfinprod via `az acr run`), added 2026-10-20
+# as part of the registry hygiene program ("tidy the registry").
+tasks:
+  - name: purge-stale-manifests-weekly
+    cmd: acr purge --filter 'finance/ledger-reconcile:.*' --untagged --keep 5 --ago 30d
+    scheduled:
+      cron: "0 3 * * 0"
+      when:
+        - Sunday
+    disabled: false

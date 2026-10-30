@@ -1,0 +1,19 @@
+id: aks-workloads-054
+canary: 00000000-0000-0000-0000-000000000114  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
+title: nightly ledger-reconcile CronJob fails with ErrImagePull after registry cleanup
+category: aks-workloads
+difficulty: hard
+tags:
+  - aks-workloads
+  - aks
+  - kubernetes
+  - cronjob
+  - acr
+  - container-registry
+symptom: |
+  The nightly ledger-reconcile CronJob in the finance namespace has failed
+  with ErrImagePull every night for the past week — the reconciliation batch
+  never runs and the finance team is reconciling by hand. Nothing about the
+  CronJob changed when it broke. The registry team "tidied" the image
+  registry a few days before the first failure, and the cluster's other
+  workloads keep pulling images without problems.

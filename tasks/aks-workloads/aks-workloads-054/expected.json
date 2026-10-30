@@ -1,0 +1,12 @@
+{
+  "root_cause": [
+    ["digest", "sha256", "pinned by digest", "immutable tag"],
+    ["purge", "untagged", "retention"]
+  ],
+  "fix": [
+    ["re-push", "pin a tag", "pin to a tag", "reference a tag", "use a tag", "switch to a tag", "update the image reference"]
+  ],
+  "distractors": [
+    ["acrpull", "missing AcrPull", "registry credentials", "imagePullSecret", "unauthorized pull"]
+  ]
+}
