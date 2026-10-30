@@ -1,26 +1,35 @@
 [
   {
+    "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-prod-01/providers/Microsoft.KeyVault/vaults/kv-bench0002/providers/Microsoft.Authorization/roleAssignments/00000000-0000-0000-0000-000000000006",
     "name": "Key Vault Secrets User (kv-bench0002/secrets)",
     "principalId": "00000000-0000-0000-0000-000000000005",
     "principalName": "sp-reporting-release",
     "principalType": "ServicePrincipal",
+    "roleDefinitionId": "/subscriptions/00000000-0000-0000-0000-000000000001/providers/Microsoft.Authorization/roleDefinitions/00000000-0000-0000-0000-000000000007",
     "roleDefinitionName": "Key Vault Secrets User",
-    "scope": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-prod-01/providers/Microsoft.KeyVault/vaults/kv-bench0002"
+    "scope": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-prod-01/providers/Microsoft.KeyVault/vaults/kv-bench0002",
+    "type": "Microsoft.Authorization/roleAssignments"
   },
   {
+    "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-prod-01/providers/Microsoft.ContainerRegistry/registries/benchacr0001/providers/Microsoft.Authorization/roleAssignments/00000000-0000-0000-0000-000000000008",
     "name": "AcrPull",
     "principalId": "00000000-0000-0000-0000-000000000005",
     "principalName": "sp-reporting-release",
     "principalType": "ServicePrincipal",
+    "roleDefinitionId": "/subscriptions/00000000-0000-0000-0000-000000000001/providers/Microsoft.Authorization/roleDefinitions/00000000-0000-0000-0000-000000000009",
     "roleDefinitionName": "AcrPull",
-    "scope": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-prod-01/providers/Microsoft.ContainerRegistry/registries/benchacr0001"
+    "scope": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-prod-01/providers/Microsoft.ContainerRegistry/registries/benchacr0001",
+    "type": "Microsoft.Authorization/roleAssignments"
   },
   {
+    "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-prod-01/providers/Microsoft.ContainerService/managedClusters/aks-prod-eus-02/providers/Microsoft.Authorization/roleAssignments/00000000-0000-0000-0000-00000000000a",
     "name": "Azure Kubernetes Service Cluster User Role",
     "principalId": "00000000-0000-0000-0000-000000000005",
     "principalName": "sp-reporting-release",
     "principalType": "ServicePrincipal",
+    "roleDefinitionId": "/subscriptions/00000000-0000-0000-0000-000000000001/providers/Microsoft.Authorization/roleDefinitions/00000000-0000-0000-0000-00000000000b",
     "roleDefinitionName": "Azure Kubernetes Service Cluster User Role",
-    "scope": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-prod-01/providers/Microsoft.ContainerService/managedClusters/aks-prod-eus-02"
+    "scope": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-prod-01/providers/Microsoft.ContainerService/managedClusters/aks-prod-eus-02",
+    "type": "Microsoft.Authorization/roleAssignments"
   }
 ]

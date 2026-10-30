@@ -17,5 +17,25 @@
     "serviceCidr": "10.0.0.0/16",
     "podCidr": "10.240.0.0/16"
   },
-  "provisioningState": "Succeeded"
+  "provisioningState": "Succeeded",
+  "dnsPrefix": "retail-prod-06ab0cfb",
+  "agentPoolProfiles": [
+    {
+      "name": "nodeworker",
+      "mode": "System",
+      "vmSize": "Standard_D4s_v5",
+      "osType": "Linux",
+      "osDiskSizeGb": 128,
+      "count": 3,
+      "maxPods": 110,
+      "type": "VirtualMachineScaleSets",
+      "enableAutoScaling": false,
+      "orchestratorVersion": "1.30.6",
+      "currentOrchestratorVersion": "1.30.6",
+      "provisioningState": "Succeeded",
+      "powerState": {
+        "code": "Running"
+      }
+    }
+  ]
 }

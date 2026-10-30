@@ -555,8 +555,13 @@ def _check_fixture_file(
                     )
                 )
             previous = current
-            if (start_time is not None or klog_stamp is not None) or (
-                stamp is not None and not _is_bin_timestamp(stamp)
+            # Klog headers carry no year, so their synthetic datetime (anchored
+            # to a placeholder year) cannot be compared against ISO dates from
+            # other files — including one would manufacture a decades-wide
+            # "incident window" span. Intra-file ordering above still uses them.
+            if klog_stamp is None and (
+                start_time is not None
+                or (stamp is not None and not _is_bin_timestamp(stamp))
             ):
                 event_times.append(current)
 
