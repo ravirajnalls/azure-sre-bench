@@ -1,0 +1,39 @@
+{
+  "task": "app-service-028",
+  "elapsed_s": 0.017,
+  "answer": {
+    "root_cause": "transient platform issue",
+    "evidence": [],
+    "fix": "restart and monitor"
+  },
+  "stderr_tail": "",
+  "score": 0.0,
+  "passed": false,
+  "detail": {
+    "root_cause": [
+      {
+        "group": [
+          "websites_port",
+          "port"
+        ],
+        "matched": null
+      },
+      {
+        "group": [
+          "5000"
+        ],
+        "matched": null
+      }
+    ],
+    "fix": [
+      {
+        "group": [
+          "websites_port"
+        ],
+        "matched": null
+      }
+    ]
+  },
+  "timed_out": false,
+  "returncode": 0
+}

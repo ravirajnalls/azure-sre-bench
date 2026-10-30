@@ -1,0 +1,35 @@
+{
+  "task": "aks-ops-024",
+  "elapsed_s": 0.027,
+  "answer": {
+    "root_cause": "transient platform issue",
+    "evidence": [],
+    "fix": "restart and monitor"
+  },
+  "stderr_tail": "",
+  "score": 0.0,
+  "passed": false,
+  "detail": {
+    "root_cause": [
+      {
+        "group": [
+          "association",
+          "dcra"
+        ],
+        "matched": null
+      }
+    ],
+    "fix": [
+      {
+        "group": [
+          "association",
+          "dcra",
+          "associate"
+        ],
+        "matched": null
+      }
+    ]
+  },
+  "timed_out": false,
+  "returncode": 0
+}

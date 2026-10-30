@@ -1,0 +1,49 @@
+{
+  "task": "identity-027",
+  "elapsed_s": 0.022,
+  "answer": {
+    "root_cause": "transient platform issue",
+    "evidence": [],
+    "fix": "restart and monitor"
+  },
+  "stderr_tail": "",
+  "score": 0.0,
+  "passed": false,
+  "detail": {
+    "root_cause": [
+      {
+        "group": [
+          "federated credential",
+          "federated identity",
+          "fic"
+        ],
+        "matched": null
+      },
+      {
+        "group": [
+          "subject",
+          "sc://"
+        ],
+        "matched": null
+      },
+      {
+        "group": [
+          "rename",
+          "platformeng"
+        ],
+        "matched": null
+      }
+    ],
+    "fix": [
+      {
+        "group": [
+          "sc://contoso/platformeng/sc-prod-deploy",
+          "update the subject"
+        ],
+        "matched": null
+      }
+    ]
+  },
+  "timed_out": false,
+  "returncode": 0
+}

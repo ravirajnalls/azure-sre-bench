@@ -1,0 +1,42 @@
+{
+  "task": "networking-026",
+  "elapsed_s": 0.023,
+  "answer": {
+    "root_cause": "transient platform issue",
+    "evidence": [],
+    "fix": "restart and monitor"
+  },
+  "stderr_tail": "",
+  "score": 0.0,
+  "passed": false,
+  "detail": {
+    "root_cause": [
+      {
+        "group": [
+          "private dns",
+          "privatelink"
+        ],
+        "matched": null
+      },
+      {
+        "group": [
+          "link",
+          "resolv",
+          "public ip"
+        ],
+        "matched": null
+      }
+    ],
+    "fix": [
+      {
+        "group": [
+          "link",
+          "virtual network link"
+        ],
+        "matched": null
+      }
+    ]
+  },
+  "timed_out": false,
+  "returncode": 0
+}

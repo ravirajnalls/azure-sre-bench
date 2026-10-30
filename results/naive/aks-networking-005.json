@@ -1,0 +1,42 @@
+{
+  "task": "aks-networking-005",
+  "elapsed_s": 0.021,
+  "answer": {
+    "root_cause": "transient platform issue",
+    "evidence": [],
+    "fix": "restart and monitor"
+  },
+  "stderr_tail": "",
+  "score": 0.0,
+  "passed": false,
+  "detail": {
+    "root_cause": [
+      {
+        "group": [
+          "firewall"
+        ],
+        "matched": null
+      },
+      {
+        "group": [
+          "mcr.microsoft.com",
+          "fqdn",
+          "azurekubernetesservice"
+        ],
+        "matched": null
+      }
+    ],
+    "fix": [
+      {
+        "group": [
+          "azurekubernetesservice",
+          "fqdn tag",
+          "allow mcr"
+        ],
+        "matched": null
+      }
+    ]
+  },
+  "timed_out": false,
+  "returncode": 0
+}

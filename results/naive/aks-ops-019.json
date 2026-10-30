@@ -1,0 +1,36 @@
+{
+  "task": "aks-ops-019",
+  "elapsed_s": 0.022,
+  "answer": {
+    "root_cause": "transient platform issue",
+    "evidence": [],
+    "fix": "restart and monitor"
+  },
+  "stderr_tail": "",
+  "score": 0.0,
+  "passed": false,
+  "detail": {
+    "root_cause": [
+      {
+        "group": [
+          "v1beta1",
+          "v2beta2",
+          "deprecated",
+          "removed api"
+        ],
+        "matched": null
+      }
+    ],
+    "fix": [
+      {
+        "group": [
+          "policy/v1",
+          "autoscaling/v2"
+        ],
+        "matched": null
+      }
+    ]
+  },
+  "timed_out": false,
+  "returncode": 0
+}

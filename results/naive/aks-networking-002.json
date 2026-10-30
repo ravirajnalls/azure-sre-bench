@@ -1,0 +1,52 @@
+{
+  "task": "aks-networking-002",
+  "elapsed_s": 0.022,
+  "answer": {
+    "root_cause": "transient platform issue",
+    "evidence": [],
+    "fix": "restart and monitor"
+  },
+  "stderr_tail": "",
+  "score": 0.0,
+  "passed": false,
+  "detail": {
+    "root_cause": [
+      {
+        "group": [
+          "selector",
+          "label"
+        ],
+        "matched": null
+      },
+      {
+        "group": [
+          "tier"
+        ],
+        "matched": null
+      },
+      {
+        "group": [
+          "endpoint",
+          "no endpoints",
+          "does not match",
+          "doesn't match",
+          "mismatch"
+        ],
+        "matched": null
+      }
+    ],
+    "fix": [
+      {
+        "group": [
+          "tier: frontend",
+          "tier=frontend",
+          "match the pod labels",
+          "update the selector"
+        ],
+        "matched": null
+      }
+    ]
+  },
+  "timed_out": false,
+  "returncode": 0
+}

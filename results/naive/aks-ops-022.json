@@ -1,0 +1,45 @@
+{
+  "task": "aks-ops-022",
+  "elapsed_s": 0.025,
+  "answer": {
+    "root_cause": "transient platform issue",
+    "evidence": [],
+    "fix": "restart and monitor"
+  },
+  "stderr_tail": "",
+  "score": 0.0,
+  "passed": false,
+  "detail": {
+    "root_cause": [
+      {
+        "group": [
+          "zone",
+          "topology",
+          "node affinity",
+          "node-affinity"
+        ],
+        "matched": null
+      },
+      {
+        "group": [
+          "immediate",
+          "volumebindingmode",
+          "volume binding mode",
+          "eastus-3"
+        ],
+        "matched": null
+      }
+    ],
+    "fix": [
+      {
+        "group": [
+          "waitforfirstconsumer",
+          "wait for first consumer"
+        ],
+        "matched": null
+      }
+    ]
+  },
+  "timed_out": false,
+  "returncode": 0
+}

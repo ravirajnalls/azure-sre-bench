@@ -1,0 +1,51 @@
+{
+  "task": "aks-identity-008",
+  "elapsed_s": 0.022,
+  "answer": {
+    "root_cause": "transient platform issue",
+    "evidence": [],
+    "fix": "restart and monitor"
+  },
+  "stderr_tail": "",
+  "score": 0.0,
+  "passed": false,
+  "detail": {
+    "root_cause": [
+      {
+        "group": [
+          "federated credential",
+          "federated identity",
+          "fic"
+        ],
+        "matched": null
+      },
+      {
+        "group": [
+          "subject"
+        ],
+        "matched": null
+      },
+      {
+        "group": [
+          "namespace",
+          "default",
+          "orders"
+        ],
+        "matched": null
+      }
+    ],
+    "fix": [
+      {
+        "group": [
+          "system:serviceaccount:orders:orders-api",
+          "subject to orders",
+          "new federated credential",
+          "update the federated"
+        ],
+        "matched": null
+      }
+    ]
+  },
+  "timed_out": false,
+  "returncode": 0
+}

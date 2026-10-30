@@ -1,0 +1,47 @@
+{
+  "task": "ado-pipelines-030",
+  "elapsed_s": 0.022,
+  "answer": {
+    "root_cause": "transient platform issue",
+    "evidence": [],
+    "fix": "restart and monitor"
+  },
+  "stderr_tail": "",
+  "score": 0.0,
+  "passed": false,
+  "detail": {
+    "root_cause": [
+      {
+        "group": [
+          "lease",
+          "blob lease",
+          "state lock",
+          "state-lock",
+          "locked"
+        ],
+        "matched": null
+      },
+      {
+        "group": [
+          "cancel",
+          "canceled"
+        ],
+        "matched": null
+      }
+    ],
+    "fix": [
+      {
+        "group": [
+          "force-unlock",
+          "force unlock",
+          "break the lease",
+          "lease break",
+          "az storage blob lease break"
+        ],
+        "matched": null
+      }
+    ]
+  },
+  "timed_out": false,
+  "returncode": 0
+}

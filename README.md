@@ -102,6 +102,7 @@ runs; ranked by passed tasks, then mean score.
 <!-- leaderboard -->
 | Rank | Agent | Passed | Tasks | Mean score |
 | ---: | --- | ---: | ---: | ---: |
+| 1 | naive | 0/32 | 32 | 0.000 |
 <!-- /leaderboard -->
 
 ## Run an LLM baseline

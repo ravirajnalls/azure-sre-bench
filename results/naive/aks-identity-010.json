@@ -1,0 +1,42 @@
+{
+  "task": "aks-identity-010",
+  "elapsed_s": 0.021,
+  "answer": {
+    "root_cause": "transient platform issue",
+    "evidence": [],
+    "fix": "restart and monitor"
+  },
+  "stderr_tail": "",
+  "score": 0.0,
+  "passed": false,
+  "detail": {
+    "root_cause": [
+      {
+        "group": [
+          "azure rbac"
+        ],
+        "matched": null
+      },
+      {
+        "group": [
+          "role assignment",
+          "no role",
+          "missing role"
+        ],
+        "matched": null
+      }
+    ],
+    "fix": [
+      {
+        "group": [
+          "azure kubernetes service rbac",
+          "rbac reader",
+          "rbac writer"
+        ],
+        "matched": null
+      }
+    ]
+  },
+  "timed_out": false,
+  "returncode": 0
+}

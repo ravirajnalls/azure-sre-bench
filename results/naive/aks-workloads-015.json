@@ -1,0 +1,53 @@
+{
+  "task": "aks-workloads-015",
+  "elapsed_s": 0.022,
+  "answer": {
+    "root_cause": "transient platform issue",
+    "evidence": [],
+    "fix": "restart and monitor"
+  },
+  "stderr_tail": "",
+  "score": 0.0,
+  "passed": false,
+  "detail": {
+    "root_cause": [
+      {
+        "group": [
+          "taint",
+          "tainted",
+          "untolerated taint",
+          "noschedule",
+          "no schedule"
+        ],
+        "matched": null
+      },
+      {
+        "group": [
+          "toleration",
+          "tolerations",
+          "no toleration",
+          "missing toleration"
+        ],
+        "matched": null
+      }
+    ],
+    "fix": [
+      {
+        "group": [
+          "toleration",
+          "tolerations"
+        ],
+        "matched": null
+      },
+      {
+        "group": [
+          "sku",
+          "gpu"
+        ],
+        "matched": null
+      }
+    ]
+  },
+  "timed_out": false,
+  "returncode": 0
+}

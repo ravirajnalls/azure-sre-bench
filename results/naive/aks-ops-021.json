@@ -1,0 +1,45 @@
+{
+  "task": "aks-ops-021",
+  "elapsed_s": 0.027,
+  "answer": {
+    "root_cause": "transient platform issue",
+    "evidence": [],
+    "fix": "restart and monitor"
+  },
+  "stderr_tail": "",
+  "score": 0.0,
+  "passed": false,
+  "detail": {
+    "root_cause": [
+      {
+        "group": [
+          "disk pressure",
+          "diskpressure",
+          "disk full"
+        ],
+        "matched": null
+      },
+      {
+        "group": [
+          "legacy-audit-agent",
+          "audit-debug",
+          "hostpath"
+        ],
+        "matched": null
+      }
+    ],
+    "fix": [
+      {
+        "group": [
+          "rotat",
+          "remove the hostpath",
+          "log rotation",
+          "clean"
+        ],
+        "matched": null
+      }
+    ]
+  },
+  "timed_out": false,
+  "returncode": 0
+}

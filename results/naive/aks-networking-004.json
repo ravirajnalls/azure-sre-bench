@@ -1,0 +1,52 @@
+{
+  "task": "aks-networking-004",
+  "elapsed_s": 0.022,
+  "answer": {
+    "root_cause": "transient platform issue",
+    "evidence": [],
+    "fix": "restart and monitor"
+  },
+  "stderr_tail": "",
+  "score": 0.0,
+  "passed": false,
+  "detail": {
+    "root_cause": [
+      {
+        "group": [
+          "networkpolicy",
+          "network policy",
+          "netpol"
+        ],
+        "matched": null
+      },
+      {
+        "group": [
+          "deny",
+          "denied",
+          "denies",
+          "blocking",
+          "blocks"
+        ],
+        "matched": null
+      }
+    ],
+    "fix": [
+      {
+        "group": [
+          "allow",
+          "ingress rule",
+          "allowing ingress"
+        ],
+        "matched": null
+      },
+      {
+        "group": [
+          "5432"
+        ],
+        "matched": null
+      }
+    ]
+  },
+  "timed_out": false,
+  "returncode": 0
+}

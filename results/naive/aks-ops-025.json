@@ -1,0 +1,45 @@
+{
+  "task": "aks-ops-025",
+  "elapsed_s": 0.027,
+  "answer": {
+    "root_cause": "transient platform issue",
+    "evidence": [],
+    "fix": "restart and monitor"
+  },
+  "stderr_tail": "",
+  "score": 0.0,
+  "passed": false,
+  "detail": {
+    "root_cause": [
+      {
+        "group": [
+          "system pool",
+          "systempool",
+          "nodepool1"
+        ],
+        "matched": null
+      },
+      {
+        "group": [
+          "mincount",
+          "min count",
+          "d16"
+        ],
+        "matched": null
+      }
+    ],
+    "fix": [
+      {
+        "group": [
+          "mincount",
+          "min count",
+          "smaller vm",
+          "d4s"
+        ],
+        "matched": null
+      }
+    ]
+  },
+  "timed_out": false,
+  "returncode": 0
+}

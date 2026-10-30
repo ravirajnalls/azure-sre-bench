@@ -1,0 +1,46 @@
+{
+  "task": "aks-networking-003",
+  "elapsed_s": 0.022,
+  "answer": {
+    "root_cause": "transient platform issue",
+    "evidence": [],
+    "fix": "restart and monitor"
+  },
+  "stderr_tail": "",
+  "score": 0.0,
+  "passed": false,
+  "detail": {
+    "root_cause": [
+      {
+        "group": [
+          "subnet"
+        ],
+        "matched": null
+      },
+      {
+        "group": [
+          "ip exhaustion",
+          "out of ip",
+          "exhausted",
+          "no available ip",
+          "insufficient ip"
+        ],
+        "matched": null
+      }
+    ],
+    "fix": [
+      {
+        "group": [
+          "larger subnet",
+          "overlay",
+          "cni overlay",
+          "reduce maxpods",
+          "new node pool subnet"
+        ],
+        "matched": null
+      }
+    ]
+  },
+  "timed_out": false,
+  "returncode": 0
+}
