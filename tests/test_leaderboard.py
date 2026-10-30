@@ -18,6 +18,7 @@ from bench.leaderboard import (
     collect_records,
     leaderboard_markdown,
     markdown_table,
+    median,
     rank_rows,
     update_readme,
 )
@@ -224,9 +225,10 @@ def test_markdown_table_has_status_column():
     rows = rank_rows({"naive": [versioned("t1")]})
     table = markdown_table(rows)
     assert table.splitlines()[0] == (
-        "| Rank | Agent | Mode | Status | Passed | Tasks | Mean score | Safety |"
+        "| Rank | Agent | Mode | Status | Passed | Tasks | Mean score | Safety"
+        " | Median time | Median cmds | Cost |"
     )
-    assert "| 1 | naive | runner | current | 1/1 | 1 | 1.000 | 0 |" in table
+    assert "| 1 | naive | runner | current | 1/1 | 1 | 1.000 | 0 | — | — | — |" in table
 
 
 def test_leaderboard_markdown_renders_mixed_version_results(tmp_path):
@@ -276,6 +278,78 @@ def test_leaderboard_markdown_renders_mixed_version_results(tmp_path):
 
     table = leaderboard_markdown(results, tasks_root)
     lines = table.splitlines()
-    assert "| 1 | new-agent | runner | current | 1/1 | 1 | 1.000 | 0 |" in lines
-    assert "| 2 | mid-agent | runner | stale | 0/0 | 0 | 0.000 | 0 |" in lines
-    assert "| 3 | old-agent | runner | legacy | 0/0 | 0 | 0.000 | 0 |" in lines
+    assert (
+        "| 1 | new-agent | runner | current | 1/1 | 1 | 1.000 | 0 | — | — | — |"
+        in lines
+    )
+    assert (
+        "| 2 | mid-agent | runner | stale | 0/0 | 0 | 0.000 | 0 | — | — | — |"
+        in lines
+    )
+    assert (
+        "| 3 | old-agent | runner | legacy | 0/0 | 0 | 0.000 | 0 | — | — | — |"
+        in lines
+    )
+
+
+# --- efficiency and cost columns (issue #112) ---------------------------------
+
+
+def test_median_handles_odd_even_and_empty():
+    assert median([3.0]) == 3.0
+    assert median([1.0, 9.0]) == 5.0
+    assert median([4.0, 1.0, 2.0]) == 2.0
+    assert median([]) is None
+
+
+def test_aggregate_run_efficiency_over_current_records_only():
+    """Medians and cost come from current records; stale ones never blend in."""
+    records = [
+        versioned("t1", elapsed_s=10.0, efficiency={"commands_run": 2}, usage={"cost_usd": 0.01}),
+        versioned("t2", elapsed_s=30.0, efficiency={"commands_run": 6}, usage={"cost_usd": 0.03}),
+        # A stale record carrying huge metrics must not move the numbers.
+        {
+            **versioned("t3", elapsed_s=999.0, efficiency={"commands_run": 99}, usage={"cost_usd": 9.99}),
+            "grader_version": GRADER_VERSION + 1,
+        },
+    ]
+    row = aggregate_run("agent", records)
+    assert row["median_elapsed_s"] == 20.0
+    assert row["median_commands"] == 4.0
+    assert row["total_cost_usd"] == pytest.approx(0.04)
+
+
+def test_aggregate_run_absent_metrics_are_none():
+    """Records without telemetry yield None aggregates, rendered as em dashes."""
+    row = aggregate_run("agent", [versioned("t1")])
+    assert row["median_elapsed_s"] is None
+    assert row["median_commands"] is None
+    assert row["total_cost_usd"] is None
+
+
+def test_aggregate_run_metrics_survive_partial_reporting():
+    """Each metric stands alone: a record missing cost still feeds the medians."""
+    records = [
+        versioned("t1", elapsed_s=5.0, efficiency={"commands_run": 1}),
+        versioned("t2", elapsed_s=7.0, usage={"cost_usd": 0.5}),
+    ]
+    row = aggregate_run("agent", records)
+    assert row["median_elapsed_s"] == 6.0
+    assert row["median_commands"] == 1.0
+    assert row["total_cost_usd"] == 0.5
+
+
+def test_markdown_table_renders_efficiency_values():
+    rows = [
+        aggregate_run(
+            "rich",
+            [
+                versioned("t1", elapsed_s=1.0, efficiency={"commands_run": 3}, usage={"cost_usd": 0.0123}),
+                versioned("t2", elapsed_s=2.0, efficiency={"commands_run": 4}, usage={"cost_usd": 0.0}),
+            ],
+        ),
+        aggregate_run("sparse", [versioned("t1")]),
+    ]
+    table = markdown_table(rows)
+    assert "| 1 | rich | runner | current | 2/2 | 2 | 1.000 | 0 | 1.5s | 3.5 | $0.0123 |" in table
+    assert "| 2 | sparse | runner | current | 1/1 | 1 | 1.000 | 0 | — | — | — |" in table

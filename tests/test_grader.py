@@ -425,3 +425,26 @@ def test_extract_usage_absent_or_malformed_yields_none():
     assert grader.extract_usage({"usage": "oops"}) is None
     assert grader.extract_usage({"usage": ["not", "a", "dict"]}) is None
     assert grader.extract_usage({"usage": {"input_tokens": "many"}}) is None
+
+
+# --- file-read accounting (issue #112) -----------------------------------------
+
+
+def test_extract_files_read_counts_unique_string_entries():
+    answer = {"files_read": ["symptom.md", "fixtures/a.log", "fixtures/a.log", 7]}
+    assert grader.extract_files_read(answer) == 2
+
+
+def test_extract_files_read_accepts_plain_count():
+    assert grader.extract_files_read({"files_read": 4}) == 4
+    assert grader.extract_files_read({"files_read": 2.0}) == 2
+
+
+def test_extract_files_read_rejects_noise():
+    assert grader.extract_files_read({}) is None
+    assert grader.extract_files_read({"files_read": []}) is None
+    assert grader.extract_files_read({"files_read": "many"}) is None
+    assert grader.extract_files_read({"files_read": 0}) is None
+    assert grader.extract_files_read({"files_read": -3}) is None
+    assert grader.extract_files_read({"files_read": True}) is None
+    assert grader.extract_files_read({"files_read": [None, [1]]}) is None

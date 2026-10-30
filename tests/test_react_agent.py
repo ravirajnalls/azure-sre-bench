@@ -52,6 +52,8 @@ class _ScriptedHandler(BaseHTTPRequestHandler):
 
     responses: list[dict] = []
     requests: list[dict] = []
+    # Optional per-call usage telemetry (issue #112); None omits the key.
+    usage: dict | None = None
 
     def do_POST(self):
         self.requests.append(
@@ -62,7 +64,10 @@ class _ScriptedHandler(BaseHTTPRequestHandler):
         self._respond(self.responses[index])
 
     def _respond(self, message: dict) -> None:
-        body = json.dumps({"choices": [{"message": message}]}).encode()
+        payload: dict = {"choices": [{"message": message}]}
+        if self.usage is not None:
+            payload["usage"] = self.usage
+        body = json.dumps(payload).encode()
         self.send_response(200)
         self.send_header("Content-Type", "application/json")
         self.send_header("Content-Length", str(len(body)))
@@ -157,7 +162,10 @@ def test_read_file_tool_call_returns_fixture_content(tmp_path):
         server.shutdown()
 
     assert proc.returncode == 0, proc.stderr
-    assert json.loads(proc.stdout) == ANSWER
+    assert json.loads(proc.stdout) == {
+        **ANSWER,
+        "files_read": ["fixtures/kubectl-get-pods.txt"],
+    }
     second_request = _ScriptedHandler.requests[1]
     tool_message = next(m for m in second_request["messages"] if m["role"] == "tool")
     assert "pod probe-api-0 Running" in tool_message["content"]
@@ -301,7 +309,63 @@ def test_execute_tool_lists_files_sorted(tmp_path):
 def test_final_content_parsing(content, expected):
     answer = react_agent.run_agent(
         TEST_TASK,
-        call=lambda messages, tools: _assistant_message(content=content),
+        call=lambda messages, tools: {
+            "choices": [{"message": _assistant_message(content=content)}]
+        },
         max_steps=1,
     )
     assert answer == expected
+
+
+# --- efficiency and cost telemetry (issue #112) --------------------------------
+
+
+def test_usage_accumulates_across_calls_and_files_read_counted(tmp_path):
+    """Per-call provider usage sums into one answer total; served reads count."""
+    (tmp_path / "symptom.md").write_text("probes failing", encoding="utf-8")
+    (tmp_path / "fixtures").mkdir()
+    (tmp_path / "fixtures" / "a.log").write_text("log line", encoding="utf-8")
+
+    _ScriptedHandler.responses = [
+        _assistant_message(
+            tool_calls=[
+                _tool_call("read_file", json.dumps({"path": "fixtures/a.log"}), "c1"),
+                _tool_call("read_file", json.dumps({"path": "fixtures/a.log"}), "c2"),
+            ]
+        ),
+        _assistant_message(content=json.dumps(ANSWER)),
+    ]
+    _ScriptedHandler.usage = {"prompt_tokens": 10, "completion_tokens": 5, "cost": 0.001}
+    server = _start_server(_ScriptedHandler)
+    try:
+        proc = _run_agent(server, tmp_path)
+    finally:
+        server.shutdown()
+        _ScriptedHandler.usage = None
+
+    assert proc.returncode == 0, proc.stderr
+    out = json.loads(proc.stdout)
+    # Two calls: usage sums (issue #112); two served reads of one file count once.
+    assert out["usage"] == {"input_tokens": 20, "output_tokens": 10, "cost_usd": 0.002}
+    assert out["files_read"] == ["fixtures/a.log"]
+
+
+def test_refused_read_is_not_counted_as_files_read(tmp_path):
+    """A read the tool refused is an attempt, not a file read."""
+    _ScriptedHandler.responses = [
+        _assistant_message(
+            tool_calls=[
+                _tool_call("read_file", json.dumps({"path": "../expected.json"}))
+            ]
+        ),
+        _assistant_message(content=json.dumps(ANSWER)),
+    ]
+    server = _start_server(_ScriptedHandler)
+    try:
+        proc = _run_agent(server, TEST_TASK)
+    finally:
+        server.shutdown()
+
+    assert proc.returncode == 0, proc.stderr
+    out = json.loads(proc.stdout)
+    assert "files_read" not in out

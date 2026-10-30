@@ -203,6 +203,28 @@ def extract_usage(answer: dict) -> dict | None:
     return usage or None
 
 
+def extract_files_read(answer: dict) -> int | None:
+    """The file-read count an agent reported alongside its answer (issue #112).
+
+    The runner can count simulated-CLI invocations from its own trace, but file
+    reads are invisible to it — the agent reports them. Accepted shapes: a list
+    (counted as its number of unique string entries, so duplicated reads of one
+    file count once) or a plain positive-number count. Anything else — a wrong
+    type, an empty list, a negative count — yields None, so the efficiency
+    field is simply absent rather than recording nonsense.
+    """
+    raw = answer.get("files_read") if isinstance(answer, dict) else None
+    if isinstance(raw, list):
+        return len({entry for entry in raw if isinstance(entry, str)}) or None
+    if (
+        isinstance(raw, (int, float))
+        and not isinstance(raw, bool)
+        and raw > 0
+    ):
+        return int(raw)
+    return None
+
+
 def _length_reasons(answer: dict, rubric: dict) -> list[dict]:
     """A reason per graded field that exceeds its length cap."""
     limit = max_chars_for(rubric)

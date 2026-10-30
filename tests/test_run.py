@@ -376,9 +376,52 @@ def test_record_promotes_usage_and_derives_efficiency_from_sim_trace(tmp_path):
         "output_tokens": 45,
         "cost_usd": 0.001,
     }
-    # Efficiency metrics (issue #112): the runner derives the sim-CLI count
-    # from its own command trace; per-file reads await agent-side accounting.
+    # Efficiency metrics (issue #112): the sim-CLI count derives from the
+    # command trace; the agent's own files_read accounting merges in.
     assert record["efficiency"] == {"commands_run": 1}
+
+
+def test_record_merges_agent_reported_files_read_into_efficiency(tmp_path):
+    """A `files_read` list in the answer becomes a unique count in efficiency."""
+    agent = write_agent(
+        tmp_path,
+        "import json\n"
+        "print(json.dumps({\n"
+        "    \"root_cause\": \"x\", \"evidence\": [], \"fix\": \"\",\n"
+        "    \"files_read\": [\"symptom.md\", \"fixtures/a.log\", \"fixtures/a.log\"],\n"
+        "}))\n",
+    )
+    record = runner.run_task(TEST_TASK, agent, results_root=tmp_path)
+    assert record["efficiency"] == {"files_read": 2}
+
+
+def test_record_merges_files_read_with_commands_run(tmp_path):
+    """Both telemetry channels land in one efficiency object."""
+    agent = write_agent(
+        tmp_path,
+        "import json, subprocess\n"
+        "subprocess.run([\"kubectl\", \"get\", \"pods\"], capture_output=True)\n"
+        "print(json.dumps({\n"
+        "    \"root_cause\": \"x\", \"evidence\": [], \"fix\": \"\",\n"
+        "    \"files_read\": 3,\n"
+        "}))\n",
+    )
+    record = runner.run_task(
+        sim_task(tmp_path), agent, name="sim-run", results_root=tmp_path
+    )
+    assert record["efficiency"] == {"commands_run": 1, "files_read": 3}
+
+
+def test_record_ignores_bogus_files_read_shapes(tmp_path):
+    """Empty lists, wrong types, and non-positive counts record nothing."""
+    for bogus in ("[]", '""', "0", "-2", "[123]", "None"):
+        agent = write_agent(
+            tmp_path,
+            "import json\n"
+            f"print(json.dumps({{\"root_cause\": \"x\", \"evidence\": [], \"fix\": \"\", \"files_read\": {bogus}}}))\n",
+        )
+        record = runner.run_task(TEST_TASK, agent, results_root=tmp_path)
+        assert "efficiency" not in record, bogus
 
 
 def test_record_without_usage_or_commands_omits_both_keys(tmp_path):

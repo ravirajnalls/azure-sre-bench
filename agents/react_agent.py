@@ -30,7 +30,7 @@ import requests
 if __package__ in (None, ""):  # running as a script: make the repo root importable
     sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from agents.llm_agent import extract_answer, read_truncated  # noqa: E402
+from agents.llm_agent import extract_answer, merge_usage, read_truncated, usage_from_payload  # noqa: E402
 
 MAX_STEPS = 12  # investigation steps before the model is forced to answer
 
@@ -129,7 +129,12 @@ def execute_tool(task_dir: Path, name: str, arguments: str) -> str:
 
 
 def chat(messages: list[dict], tools: list[dict] | None, timeout: int = 120) -> dict:
-    """One chat-completion call; returns the full assistant message."""
+    """One chat-completion call; returns the full response payload.
+
+    The caller reads the assistant message out of `choices[0].message` and the
+    token/cost telemetry out of `usage` (issue #112) — multi-call accumulation
+    happens in `run_agent`.
+    """
     base_url = os.environ["LLM_BASE_URL"].rstrip("/")
     body: dict = {"model": os.environ["LLM_MODEL"], "messages": messages}
     if tools is not None:
@@ -144,7 +149,7 @@ def chat(messages: list[dict], tools: list[dict] | None, timeout: int = 120) -> 
         timeout=timeout,
     )
     response.raise_for_status()
-    return response.json()["choices"][0]["message"]
+    return response.json()
 
 
 def build_user_prompt(task_dir: Path) -> str:
@@ -161,11 +166,19 @@ def build_user_prompt(task_dir: Path) -> str:
 def run_agent(
     task_dir: Path, call: Callable[..., dict] = chat, max_steps: int = MAX_STEPS
 ) -> dict:
-    """Investigation loop; returns the contract dict or {} when the agent fails."""
+    """Investigation loop; returns the contract dict or {} when the agent fails.
+
+    The returned answer also carries the efficiency telemetry issue #112 asks
+    for when it is known: `usage` (token/cost totals summed across calls) and
+    `files_read` (paths successfully served by `read_file`). Both keys are
+    omitted when there is nothing to report.
+    """
     messages: list[dict] = [
         {"role": "system", "content": SYSTEM_PROMPT},
         {"role": "user", "content": build_user_prompt(task_dir)},
     ]
+    usage_total: dict | None = None
+    files_read: list[str] = []
 
     for step in range(max_steps):
         final = step == max_steps - 1
@@ -177,10 +190,12 @@ def run_agent(
                 }
             )
         try:
-            message = call(messages, tools=None if final else TOOLS)
+            payload = call(messages, tools=None if final else TOOLS)
+            message = payload["choices"][0]["message"]
         except Exception:  # noqa: BLE001 — any provider failure must degrade to a graded FAIL
             return {}
 
+        usage_total = merge_usage(usage_total, usage_from_payload(payload))
         messages.append(message)
         tool_calls = message.get("tool_calls") or []
         if not final and tool_calls:
@@ -191,6 +206,22 @@ def run_agent(
                     str(function.get("name", "")),
                     str(function.get("arguments") or ""),
                 )
+                # Count a file read only when the tool actually served content
+                # (issue #112): refusals and argument errors are not reads.
+                try:
+                    served = json.loads(result)
+                except ValueError:
+                    served = {}
+                if (
+                    str(function.get("name", "")) == "read_file"
+                    and isinstance(served, dict)
+                    and "content" in served
+                ):
+                    try:
+                        path = str(json.loads(str(function.get("arguments") or ""))["path"])
+                    except (ValueError, KeyError, TypeError):
+                        path = "?"
+                    files_read.append(path)
                 messages.append(
                     {
                         "role": "tool",
@@ -202,6 +233,12 @@ def run_agent(
 
         answer = extract_answer(str(message.get("content") or ""))
         if answer:
+            if usage_total:
+                answer["usage"] = usage_total
+            if files_read:
+                # Dedupe, keeping first-read order: the list names the files
+                # read, not the read events (the runner counts unique paths).
+                answer["files_read"] = list(dict.fromkeys(files_read))
             return answer
 
     return {}  # never converged within the step budget: a graded FAIL

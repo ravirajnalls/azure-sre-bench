@@ -2,9 +2,10 @@
 
 Reads every run folder under `results/` — one JSON result file per task, as
 written by `bench run` — and renders a single self-contained `site/index.html`:
-an overall table (agent, passed, mean score), a per-category breakdown, and a
-task x agent pass/fail heatmap. No build step, no JavaScript, readable on a
-phone. With zero result folders the page renders an empty state instead of
+an overall table (agent, passed, mean score, and the issue-#112 efficiency
+columns — median time, median commands, total cost), a per-category breakdown,
+and a task x agent pass/fail heatmap. No build step, no JavaScript, readable on
+a phone. With zero result folders the page renders an empty state instead of
 failing, so it can be built before the first benchmark run exists.
 
 Same-version rendering (issue #95): a record graded under a different grader
@@ -26,6 +27,8 @@ from bench.leaderboard import (
     STATUS_LEGACY,
     STATUS_STALE,
     classify_record,
+    is_number,
+    median,
 )
 from bench.tasks import CATEGORIES, current_rubric_hashes
 
@@ -154,6 +157,11 @@ def aggregate(results: dict[str, list[dict]], rubric_hashes: dict[str, str] | No
                 "passed": bool(record.get("passed")),
                 "score": score,
                 "status": classify_record(record, rubric_hashes),
+                # Efficiency/cost telemetry (issue #112): carried so the
+                # overall row can aggregate it; absent keys stay absent.
+                "elapsed_s": record.get("elapsed_s"),
+                "efficiency": record.get("efficiency"),
+                "usage": record.get("usage"),
             }
     tasks = sorted({task for _, task in outcomes})
 
@@ -170,7 +178,34 @@ def aggregate(results: dict[str, list[dict]], rubric_hashes: dict[str, str] | No
             if counted
             else 0.0
         )
-        return {"agent": agent, "passed": passed, "total": len(counted), "mean_score": mean}
+        # Efficiency/cost aggregates (issue #112), over current-version
+        # outcomes only; a metric no record reported renders an em dash.
+        elapsed = [
+            outcome["elapsed_s"]
+            for outcome in counted
+            if is_number(outcome.get("elapsed_s"))
+        ]
+        commands = [
+            outcome["efficiency"]["commands_run"]
+            for outcome in counted
+            if isinstance(outcome.get("efficiency"), dict)
+            and is_number(outcome["efficiency"].get("commands_run"))
+        ]
+        costs = [
+            outcome["usage"]["cost_usd"]
+            for outcome in counted
+            if isinstance(outcome.get("usage"), dict)
+            and is_number(outcome["usage"].get("cost_usd"))
+        ]
+        return {
+            "agent": agent,
+            "passed": passed,
+            "total": len(counted),
+            "mean_score": mean,
+            "median_elapsed_s": median(elapsed),
+            "median_commands": median(commands),
+            "total_cost_usd": sum(costs) if costs else None,
+        }
 
     def agent_status(agent: str) -> str:
         statuses = [
@@ -227,13 +262,27 @@ def _cell(outcome: dict | None) -> str:
     return CELL_PASS if outcome["passed"] else CELL_FAIL
 
 
+def _num_cell(value: float | None, formatted: str | None = None) -> str:
+    """A right-aligned numeric cell; an em dash when the metric is absent."""
+    if value is None:
+        return '<td class="num none">&mdash;</td>'
+    return f'<td class="num">{formatted if formatted is not None else value}</td>'
+
+
 def _summary_row(entry: dict) -> str:
     esc_agent = html.escape(entry["agent"])
+    elapsed = entry.get("median_elapsed_s")
+    commands = entry.get("median_commands")
+    cost = entry.get("total_cost_usd")
     return (
         f"<tr><td>{esc_agent}</td>"
         f'<td>{html.escape(entry.get("status", STATUS_CURRENT))}</td>'
         f'<td class="num">{entry["passed"]}/{entry["total"]}</td>'
-        f'<td class="num">{entry["mean_score"]:.3f}</td></tr>'
+        f'<td class="num">{entry["mean_score"]:.3f}</td>'
+        + _num_cell(elapsed, f"{elapsed:.1f}s" if elapsed is not None else None)
+        + _num_cell(commands, format(commands, "g") if commands is not None else None)
+        + _num_cell(cost, f"${cost:.4f}" if cost is not None else None)
+        + "</tr>"
     )
 
 
@@ -263,7 +312,8 @@ def render_html(agg: dict) -> str:
         parts.append('<div class="tablewrap"><table>')
         parts.append(
             "<tr><th>Agent</th><th>Status</th><th class=num>Passed</th>"
-            "<th class=num>Mean score</th></tr>"
+            "<th class=num>Mean score</th><th class=num>Median time</th>"
+            "<th class=num>Median cmds</th><th class=num>Cost</th></tr>"
         )
         parts.extend(_summary_row(entry) for entry in agg["overall"])
         parts.append("</table></div>")
