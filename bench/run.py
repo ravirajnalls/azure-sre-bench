@@ -29,6 +29,7 @@ from bench.fixture_lint import LINTIGNORE_FILENAME
 from bench.grader import cap_evidence, extract_files_read, extract_usage, grade, rubric_sha256
 from bench.heldout import HeldoutKeyError, load_hidden_json, split_of
 from bench.preincident import is_pre_incident_review
+from bench.postmortem import is_postmortem
 from bench.releases import load_release, verify_release
 from bench.remediation import grade_for_task, is_remediation
 from bench.sim import COMMANDS_ENV, COMMANDS_FILENAME, LOG_ENV, LOG_FILENAME, SIM_DIR
@@ -95,6 +96,18 @@ def prepare_workspace(task_dir: Path, workspace: Path) -> None:
             "when it ships, and the fix to make before merge. Report only "
             "changes that would cause an incident; healthy changes are not "
             "findings.\n"
+        )
+    elif is_postmortem(task):
+        # Issue #148: a postmortem task's answer contract is the full
+        # blameless document — the runner's only agent-facing surface must
+        # carry the shape.
+        symptom_md += (
+            '\nThis is a postmortem task: include a `"postmortem"` string in '
+            "your answer — the complete blameless write-up in markdown. It must "
+            "contain summary, impact, timeline, root cause, contributing factors "
+            "and action items sections, stay between 300 and 1500 words, cover "
+            "every load-bearing fact the evidence supports, and assign no blame "
+            "to people or healthy components.\n"
         )
     elif is_remediation(task):
         # The runner's only agent-facing surface: a remediation task (issue
