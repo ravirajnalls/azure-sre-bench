@@ -14,6 +14,11 @@ the current rubric. Every other record renders `stale` (graded under a
 different grader version or an older rubric) or `legacy` (written before
 those fields existed); a run with no current-version records ranks after all
 current-version runs and carries its status in the table.
+
+Pass-rate confidence intervals (issue #161): every current-version run also
+carries a deterministic 95% bootstrap CI over its per-task outcomes
+(`bench.stats`), and adjacent rows whose point estimates fall inside each
+other's intervals are marked `≈` — the data cannot order them.
 """
 
 from __future__ import annotations
@@ -23,6 +28,7 @@ from pathlib import Path
 
 from bench import GRADER_VERSION
 from bench.heldout import SPLIT_HELDOUT, SPLIT_PUBLIC
+from bench.stats import bootstrap_pass_rate_ci, intervals_overlap_heavily
 from bench.tasks import current_rubric_hashes
 
 RESULTS_DIR = Path("results")
@@ -181,11 +187,26 @@ def aggregate_run(
         status = STATUS_STALE
     else:
         status = STATUS_LEGACY
+    # Pass-rate CI (issue #161): a deterministic 95% bootstrap interval over
+    # the current records' per-task outcomes. Ranking math is unchanged — the
+    # interval informs, it does not order; only None when nothing is graded.
+    pass_rate = passed / len(current) if current else None
+    ci = (
+        bootstrap_pass_rate_ci(
+            [record.get("passed") is True for record in current]
+        )
+        if current
+        else None
+    )
     return {
         "name": name,
         "passed": passed,
         "total": len(current),
         "mean_score": mean_score,
+        "pass_rate": pass_rate,
+        "ci_low": ci[0] if ci else None,
+        "ci_high": ci[1] if ci else None,
+        "tied": False,
         "mode": "manual" if any(r.get("mode") == "manual" for r in records) else "runner",
         "safety_violations": safety,
         "median_elapsed_s": median(elapsed),
@@ -215,7 +236,13 @@ def rank_rows(
     runs: dict[str, list[dict]], rubric_hashes: dict[str, str] | None = None
 ) -> list[dict]:
     """Aggregate every run; current-version runs rank first, then stale, then
-    legacy, each group sorted by passed desc, then mean score desc."""
+    legacy, each group sorted by passed desc, then mean score desc.
+
+    Adjacent rows whose point pass rates fall inside each other's bootstrap
+    intervals are flagged `tied` (issue #161) — the ranking put them in order,
+    but the data cannot actually tell them apart. Only current-version runs
+    carry intervals, so the flag never crosses a status boundary.
+    """
     rows = [aggregate_run(name, records, rubric_hashes) for name, records in runs.items()]
     rows.sort(
         key=lambda row: (
@@ -225,6 +252,16 @@ def rank_rows(
             row["name"],
         )
     )
+    for lower, upper in zip(rows, rows[1:]):
+        if lower["ci_low"] is None or upper["ci_low"] is None:
+            continue
+        if intervals_overlap_heavily(
+            lower["pass_rate"],
+            (lower["ci_low"], lower["ci_high"]),
+            upper["pass_rate"],
+            (upper["ci_low"], upper["ci_high"]),
+        ):
+            lower["tied"] = upper["tied"] = True
     return rows
 
 
@@ -242,19 +279,33 @@ def _fmt_cost(usd: float | None) -> str:
     return f"${usd:.4f}" if usd is not None else "—"
 
 
+def _fmt_ci(row: dict) -> str:
+    """The pass-rate cell: `55.0% (32.4–75.5)`, em dash when no interval."""
+    rate, low, high = (
+        row.get("pass_rate"),
+        row.get("ci_low"),
+        row.get("ci_high"),
+    )
+    if rate is None or low is None or high is None:
+        return "—"
+    return f"{rate * 100:.1f}% ({low * 100:.1f}–{high * 100:.1f})"
+
+
 def markdown_table(rows: list[dict]) -> str:
     """Render ranked rows as a markdown table (headers only when empty)."""
     lines = [
-        "| Rank | Agent | Mode | Status | Passed | Tasks | Mean score | Safety"
-        " | Median time | Median cmds | Cost |",
-        "| ---: | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
+        "| Rank | Agent | Mode | Status | Passed | Tasks | Mean score | Pass rate (95% CI)"
+        " | Safety | Median time | Median cmds | Cost |",
+        "| ---: | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
     ]
     for rank, row in enumerate(rows, start=1):
+        tied = "≈" if row.get("tied") else ""
         lines.append(
-            f"| {rank} | {row['name']} | {row.get('mode', 'runner')}"
+            f"| {rank}{tied} | {row['name']} | {row.get('mode', 'runner')}"
             f" | {row.get('status', STATUS_CURRENT)}"
             f" | {row['passed']}/{row['total']}"
             f" | {row['total']} | {row['mean_score']:.3f}"
+            f" | {_fmt_ci(row)}"
             f" | {row.get('safety_violations', 0)}"
             f" | {_fmt_elapsed(row.get('median_elapsed_s'))}"
             f" | {_fmt_commands(row.get('median_commands'))}"

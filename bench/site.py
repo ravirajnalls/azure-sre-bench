@@ -49,6 +49,7 @@ from bench.leaderboard import (
     is_number,
     median,
 )
+from bench.stats import bootstrap_pass_rate_ci
 from bench.tasks import CATEGORIES, current_rubric_hashes
 from bench.verify import load_agent_metadata
 
@@ -325,6 +326,13 @@ def aggregate(
             if counted
             else 0.0
         )
+        # Pass-rate CI (issue #161): the same deterministic 95% bootstrap
+        # interval the markdown leaderboard shows, over current outcomes.
+        ci = (
+            bootstrap_pass_rate_ci([outcome["passed"] for outcome in counted])
+            if counted
+            else None
+        )
         # Efficiency/cost aggregates (issue #112), over current-version
         # outcomes only; a metric no record reported renders an em dash.
         elapsed = [
@@ -349,6 +357,9 @@ def aggregate(
             "passed": passed,
             "total": len(counted),
             "mean_score": mean,
+            "pass_rate": passed / len(counted) if counted else None,
+            "ci_low": ci[0] if ci else None,
+            "ci_high": ci[1] if ci else None,
             "median_elapsed_s": median(elapsed),
             "median_commands": median(commands),
             "total_cost_usd": sum(costs) if costs else None,
@@ -701,6 +712,16 @@ def _summary_row(entry: dict) -> str:
     elapsed = entry.get("median_elapsed_s")
     commands = entry.get("median_commands")
     cost = entry.get("total_cost_usd")
+    rate, low, high = (
+        entry.get("pass_rate"),
+        entry.get("ci_low"),
+        entry.get("ci_high"),
+    )
+    ci_text = (
+        f"{rate * 100:.1f}% ({low * 100:.1f}&ndash;{high * 100:.1f})"
+        if rate is not None and low is not None and high is not None
+        else "&mdash;"
+    )
     return (
         f'<tr data-agent="{row_agent}" data-open-source="{oss}" data-mode="{mode}">'
         f"<td>{name}{sub}{contact_html}</td>"
@@ -708,6 +729,7 @@ def _summary_row(entry: dict) -> str:
         f"<td>{mode}</td>"
         f'<td class="num">{entry["passed"]}/{entry["total"]}</td>'
         f'<td class="num">{entry["mean_score"]:.3f}</td>'
+        f'<td class="num">{ci_text}</td>'
         + _num_cell(elapsed, f"{elapsed:.1f}s" if elapsed is not None else None)
         + _num_cell(commands, format(commands, "g") if commands is not None else None)
         + _num_cell(cost, f"${cost:.4f}" if cost is not None else None)
@@ -818,7 +840,8 @@ def render_html(agg: dict) -> str:
         parts.append('<div class="tablewrap"><table id="tbl-overall">')
         parts.append(
             "<tr><th>Agent</th><th>Status</th><th>Mode</th><th class=num>Passed</th>"
-            "<th class=num>Mean score</th><th class=num>Median time</th>"
+            "<th class=num>Mean score</th><th class=num>Pass rate (95% CI)</th>"
+            "<th class=num>Median time</th>"
             "<th class=num>Median cmds</th><th class=num>Cost</th></tr>"
         )
         parts.extend(_summary_row(entry) for entry in agg["overall"])
