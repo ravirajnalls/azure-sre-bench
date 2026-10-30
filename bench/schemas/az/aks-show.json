@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "az aks show output (managed cluster). Minimal by design: fields the diagnosis depends on are required with types; everything else is tolerated because az output varies by cluster configuration and az version. Pool profiles embedded in the cluster object are not required to carry provisioningState — the corpus uniformly omits it there and nodepool state is validated by the dedicated nodepool-list/show fixtures. Issue #151.",
+  "type": "object",
+  "required": [
+    "id",
+    "name",
+    "location",
+    "dnsPrefix",
+    "provisioningState",
+    "kubernetesVersion",
+    "networkProfile",
+    "agentPoolProfiles"
+  ],
+  "properties": {
+    "id": { "type": "string" },
+    "name": { "type": "string" },
+    "location": { "type": "string" },
+    "dnsPrefix": { "type": "string" },
+    "provisioningState": { "type": "string" },
+    "kubernetesVersion": { "type": "string" },
+    "networkProfile": { "type": "object" },
+    "agentPoolProfiles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "vmSize"],
+        "properties": {
+          "name": { "type": "string" },
+          "vmSize": { "type": "string" }
+        }
+      }
+    }
+  }
+}

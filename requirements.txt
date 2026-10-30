@@ -1,6 +1,8 @@
 pyyaml>=6.0
 pytest>=8.0
 requests>=2.31
+# JSON Schema validation for `bench lint-fixtures --check az` (issue #151)
+jsonschema>=4.21
 langchain-core>=0.3
 # age-encryption (age-encryption.org/v1) for held-out rubrics (issue #115);
 # keys/ciphertexts stay interoperable with the age CLI

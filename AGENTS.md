@@ -39,6 +39,13 @@ Categories: `aks-networking`, `aks-identity`, `aks-workloads`, `aks-ops`, `netwo
 - **3–7 fixture files**, each under ~150 lines.
 - Only placeholder GUIDs of the form `00000000-0000-0000-0000-00000000000X` (last hex
   digit varies). **No real subscription IDs, tenant IDs, resource IDs, or secrets.**
+- **az JSON fixtures are shape-checked** — `bench lint-fixtures --check az`
+  (issue #151) validates canned `az` output against minimal JSON Schemas in
+  `bench/schemas/az/`, matched by filename prefix (longest prefix wins, so
+  `az-role-assignment-list-acr.json` uses the role-assignment schema). Unknown
+  `az-*` fixtures are skipped with a warning, not failed. The CI step is
+  warning-only; new az fixtures should satisfy the mapped schema or a follow-up
+  fix lands via the fixture-lint issues.
 
 ## Task.yaml canary (issue #114)
 

@@ -4,11 +4,10 @@ Issue #1 scaffolded the subcommand surface; `validate` and `list` are live as of
 issue #2, `grade` as of issue #3, `run` as of issue #4, `site` as of issue #40,
 `leaderboard` as of issue #41, `catalog` as of issue #42, `verify` as of issue
 #118, `submit` and `prompt` as of issue #124, `new` as of issue #120,
-<<<<<<< HEAD
 `mcp-serve` as of issue #123, `sweep` as of issue #125, `export` as of
-issue #117, and `explain` as of issue #149: the full
-subcommand surface is implemented. `bench run --release` (issue #116) checks
-a run against a frozen release manifest in `releases/`.
+issue #117, `explain` as of issue #149, and `lint-fixtures` as of issue #151:
+the full subcommand surface is implemented. `bench run --release` (issue #116)
+checks a run against a frozen release manifest in `releases/`.
 """
 
 from __future__ import annotations
@@ -27,6 +26,7 @@ from bench.tasks import difficulty_distribution, load_tasks
 SUBCOMMANDS = (
     "validate", "list", "grade", "run", "verify", "submit", "prompt", "site",
     "leaderboard", "catalog", "new", "mcp-serve", "sweep", "export", "explain",
+    "lint-fixtures",
 )
 
 IMPLEMENTED = SUBCOMMANDS
@@ -256,6 +256,27 @@ def build_parser() -> argparse.ArgumentParser:
                 "--task", required=True, help="task ID, e.g. aks-identity-008"
             )
             explain_parser.add_argument(
+                "--tasks-root",
+                default="tasks",
+                help="task discovery root (default: ./tasks)",
+            )
+        elif name == "lint-fixtures":
+            from bench.lint_fixtures import CHECKS  # registry of check names
+
+            lf_parser = sub.add_parser(
+                name,
+                help="lint task fixtures with registered checkers (issue #151)",
+            )
+            lf_parser.add_argument(
+                "--check",
+                choices=sorted(CHECKS),
+                default=None,
+                help=(
+                    "which checker to run (default: every registered checker; "
+                    "'az' validates canned az JSON fixtures, issue #151)"
+                ),
+            )
+            lf_parser.add_argument(
                 "--tasks-root",
                 default="tasks",
                 help="task discovery root (default: ./tasks)",
@@ -530,6 +551,10 @@ def main(argv: list[str] | None = None) -> int:
             from bench.sweep import cmd_sweep  # deferred: keeps --help cheap
 
             return cmd_sweep(args)
+        if args.command == "lint-fixtures":
+            from bench.lint_fixtures import cmd_lint_fixtures  # deferred: keeps --help cheap
+
+            return cmd_lint_fixtures(args)
         if args.command == "submit":
             return cmd_submit(args)
         if args.command == "explain":

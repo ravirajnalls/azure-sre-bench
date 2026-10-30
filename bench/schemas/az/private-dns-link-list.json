@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "az network private-dns link list output (virtual network links): a bare JSON array. registrationEnabled and the linked vnet are the diagnosis-bearing fields. Issue #151.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": [
+      "id",
+      "name",
+      "provisioningState",
+      "registrationEnabled",
+      "virtualNetwork"
+    ],
+    "properties": {
+      "id": { "type": "string" },
+      "name": { "type": "string" },
+      "provisioningState": { "type": "string" },
+      "registrationEnabled": { "type": "boolean" },
+      "virtualNetwork": {
+        "type": "object",
+        "required": ["id"],
+        "properties": {
+          "id": { "type": "string" }
+        }
+      }
+    }
+  }
+}
