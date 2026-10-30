@@ -370,3 +370,58 @@ def test_cli_grade_malformed_answer_exits_nonzero(task_tree, tmp_path, capsys):
     bad.write_text("{not json")
     assert main(["grade", "--task", "demo-001", "--answer", str(bad)]) == 2
     assert "error:" in capsys.readouterr().err
+
+
+# --- versioning helpers (issue #95) ------------------------------------------
+
+
+def test_rubric_sha256_is_content_stable():
+    """Key order is canonicalized: the same rubric always hashes the same."""
+    a = {"root_cause": [["x"]], "fix": [["y"]]}
+    b = {"fix": [["y"]], "root_cause": [["x"]]}
+    assert grader.rubric_sha256(a) == grader.rubric_sha256(b)
+
+
+def test_rubric_sha256_separates_content_from_formatting():
+    rubric = {"root_cause": [["x"]], "fix": [["y"]]}
+    reformatted = json.loads(json.dumps(rubric, indent=4))
+    assert grader.rubric_sha256(rubric) == grader.rubric_sha256(reformatted)
+    edited = {"root_cause": [["z"]], "fix": [["y"]]}
+    assert grader.rubric_sha256(rubric) != grader.rubric_sha256(edited)
+
+
+def test_rubric_sha256_of_nonsense_is_hash_of_empty_rubric():
+    """Defensive: a non-dict rubric hashes as the empty rubric, never raises."""
+    assert grader.rubric_sha256(None) == grader.rubric_sha256({})  # type: ignore[arg-type]
+    assert grader.rubric_sha256("oops") == grader.rubric_sha256({})  # type: ignore[arg-type]
+
+
+def test_extract_usage_promotes_numeric_telemetry():
+    answer = {
+        "root_cause": "x",
+        "usage": {"input_tokens": 100, "output_tokens": 50, "cost_usd": 0.002},
+    }
+    assert grader.extract_usage(answer) == {
+        "input_tokens": 100,
+        "output_tokens": 50,
+        "cost_usd": 0.002,
+    }
+
+
+def test_extract_usage_drops_non_numeric_bool_and_unknown_keys():
+    answer = {
+        "usage": {
+            "input_tokens": "100",
+            "output_tokens": True,
+            "bogus": 3,
+            "cost_usd": 0.5,
+        }
+    }
+    assert grader.extract_usage(answer) == {"cost_usd": 0.5}
+
+
+def test_extract_usage_absent_or_malformed_yields_none():
+    assert grader.extract_usage({}) is None
+    assert grader.extract_usage({"usage": "oops"}) is None
+    assert grader.extract_usage({"usage": ["not", "a", "dict"]}) is None
+    assert grader.extract_usage({"usage": {"input_tokens": "many"}}) is None

@@ -62,6 +62,39 @@ date: 2026-01-15
 contact: you@example.com
 ```
 
+## Result record schema (version 1)
+
+Each `results/<your-agent>/<task-id>.json` is one JSON object written by
+`bench run` (or `bench submit` for the manual protocol). The shape is versioned:
+`schema_version` in every record identifies it, and `bench/__init__.py` carries
+the matching `RESULT_SCHEMA_VERSION`.
+
+| Field | Type | Meaning |
+| --- | --- | --- |
+| `task` | string | Task ID the record grades. |
+| `schema_version` | int | Result-record schema version (`1`). |
+| `grader_version` | int | Version of the grading semantics that produced `score`/`passed`. |
+| `rubric_sha256` | string | Content hash of the task rubric at grading time. |
+| `agent` | string | Run/agent name; matches the folder name. |
+| `score` | number | Matched concept groups over total groups (3 decimal places). |
+| `passed` | bool | Whether every group matched and no violation fired. |
+| `detail` | object | Per-field match results plus the failure `reasons` list. |
+| `answer` | object | The raw answer the agent produced, evidence-capped. |
+| `elapsed_s` | number | Wall-clock seconds the agent ran. |
+| `stderr_tail` | string | Last 2 KB of the agent's stderr. |
+| `timed_out` / `returncode` | bool / int | Process outcome (`returncode` null on timeout). |
+| `commands` | list[string] | Simulated-CLI invocations, in order (empty without sim CLIs). |
+| `mode` | string | `"manual"` for pasted-answer runs; absent for `bench run`. |
+| `usage` | object | Optional token/cost telemetry the agent printed with its answer: `input_tokens`, `output_tokens`, `cost_usd`. |
+| `efficiency` | object | Optional investigation cost: `files_read`, `commands_run`. |
+| `judge` | object | Reserved for LLM-judge grading metadata (issue #100). |
+
+The leaderboard and site rank only records whose `grader_version` matches the
+current grader and whose `rubric_sha256` matches the current rubric. A record
+graded under a different grader version or an older rubric renders **stale**;
+a record written before these fields existed renders **legacy** — both stay
+visible but never blend into a ranking with current-version numbers.
+
 ## What `bench verify` checks
 
 `bench verify results/<your-agent>` re-grades every stored answer with the

@@ -166,13 +166,16 @@ zero violations. Keep patterns tight: catch the unsafe action, not its descripti
 ## Leaderboard
 
 Regenerated from `results/` by `python scripts/update_leaderboard.py` after baseline
-runs; ranked by passed tasks, then mean score. The **Safety** column counts total
-unsafe-fix violations per run (issue #113).
+runs; runs graded under the current grader version and rubric hashes rank by
+passed tasks, then mean score. Rows marked `stale` (graded against an older
+corpus or grader) or `legacy` (recorded before result-schema versioning) stay
+visible for history but contribute no counts. The **Safety** column counts
+total unsafe-fix violations per run (issue #113), current-version records only.
 
 <!-- leaderboard -->
-| Rank | Agent | Mode | Passed | Tasks | Mean score | Safety |
-| ---: | --- | --- | ---: | ---: | ---: | ---: |
-| 1 | naive | runner | 0/32 | 32 | 0.000 | 0 |
+| Rank | Agent | Mode | Status | Passed | Tasks | Mean score | Safety |
+| ---: | --- | --- | --- | ---: | ---: | ---: | ---: |
+| 1 | naive | runner | legacy | 0/0 | 0 | 0.000 | 0 |
 <!-- /leaderboard -->
 
 ## Run an LLM baseline

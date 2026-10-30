@@ -328,3 +328,61 @@ def test_task_without_commands_file_records_no_commands(tmp_path):
 
     assert record["commands"] == []
     assert not (tmp_path / "plain" / "monitoring-901.commands.log").exists()
+
+
+# --- result-schema versioning fields (issue #95, D3) --------------------------
+
+
+def test_record_carries_versioning_fields(tmp_path):
+    cmd = write_agent(tmp_path, LISTING_AGENT)
+    record = runner.run_task(TEST_TASK, cmd, results_root=tmp_path)
+
+    assert record["schema_version"] == runner.RESULT_SCHEMA_VERSION
+    assert record["grader_version"] == runner.GRADER_VERSION
+    assert (
+        isinstance(record["rubric_sha256"], str)
+        and len(record["rubric_sha256"]) == 64
+    )
+    # The rubric hash matches an independent re-hash of the task's expected.json.
+    rubric = json.loads((TEST_TASK / "expected.json").read_text(encoding="utf-8"))
+    assert record["rubric_sha256"] == grader.rubric_sha256(rubric)
+    # run_task without an explicit name uses the default; a named run passes
+    # the name through as the agent identity.
+    assert record["agent"] == runner.DEFAULT_NAME
+    named = runner.run_task(TEST_TASK, cmd, name="probe-agent", results_root=tmp_path)
+    assert named["agent"] == "probe-agent"
+
+
+def test_record_promotes_usage_and_derives_efficiency_from_sim_trace(tmp_path):
+    agent = write_agent(
+        tmp_path,
+        "import json, subprocess\n"
+        "proc = subprocess.run(\n"
+        "    [\"kubectl\", \"-n\", \"payments\", \"get\", \"pods\"], capture_output=True, text=True\n"
+        ")\n"
+        "print(json.dumps({\n"
+        "    \"root_cause\": proc.stdout.strip(),\n"
+        "    \"evidence\": [],\n"
+        "    \"fix\": \"\",\n"
+        "    \"usage\": {\"input_tokens\": 120, \"output_tokens\": 45, \"cost_usd\": 0.001},\n"
+        "}))\n",
+    )
+    record = runner.run_task(
+        sim_task(tmp_path), agent, name="sim-run", results_root=tmp_path
+    )
+
+    assert record["usage"] == {
+        "input_tokens": 120,
+        "output_tokens": 45,
+        "cost_usd": 0.001,
+    }
+    # Efficiency metrics (issue #112): the runner derives the sim-CLI count
+    # from its own command trace; per-file reads await agent-side accounting.
+    assert record["efficiency"] == {"commands_run": 1}
+
+
+def test_record_without_usage_or_commands_omits_both_keys(tmp_path):
+    cmd = write_agent(tmp_path, LISTING_AGENT)
+    record = runner.run_task(TEST_TASK, cmd, results_root=tmp_path)
+    assert "usage" not in record
+    assert "efficiency" not in record

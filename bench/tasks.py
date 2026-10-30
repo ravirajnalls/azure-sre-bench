@@ -21,7 +21,7 @@ from pathlib import Path
 
 import yaml
 
-from bench.grader import normalize
+from bench.grader import normalize, rubric_sha256
 from bench.heldout import (
     ENCRYPTED_SUFFIX,
     HIDDEN_FILES,
@@ -90,6 +90,26 @@ def difficulty_distribution(results: list[TaskResult]) -> dict[str, int]:
         if difficulty in counts:
             counts[difficulty] += 1
     return counts
+
+
+def current_rubric_hashes(tasks_root: Path) -> dict[str, str]:
+    """Map task id -> content hash of the rubric currently on disk (issue #95).
+
+    Renderers compare a recorded `rubric_sha256` against this to mark stale
+    results. A rubric that cannot be parsed — an age-encrypted held-out
+    `expected.json` (issue #115), a corrupt file — contributes no entry, so
+    hash-based staleness is only ever asserted on a positive mismatch, never
+    on an unreadable file.
+    """
+    hashes: dict[str, str] = {}
+    for path in sorted(Path(tasks_root).rglob("expected.json")):
+        try:
+            rubric = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            continue
+        if isinstance(rubric, dict):
+            hashes[path.parent.name] = rubric_sha256(rubric)
+    return hashes
 
 
 @dataclass

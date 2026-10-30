@@ -2,7 +2,10 @@
 
 The runner's result-record shape (`bench/run.py`) is the contract the site
 reads: `{"task": str, "score": float, "passed": bool, ...}`, one file per task
-under `results/<run-name>/<task-id>.json`.
+under `results/<run-name>/<task-id>.json`. Since the versioning extension
+(issue #95) records also carry `grader_version`/`rubric_sha256`; the `record`
+helper emits that current shape, with legacy/stale rendering covered in its
+own tests.
 """
 
 import json
@@ -10,12 +13,19 @@ import subprocess
 import sys
 from pathlib import Path
 
+from bench import GRADER_VERSION
 from bench.site import aggregate, load_results, render_html, task_category
 
 
 def record(task: str, score: float, passed: bool) -> dict:
     """A minimal result record in the shape `bench run` writes."""
-    return {"task": task, "score": score, "passed": passed}
+    return {
+        "task": task,
+        "score": score,
+        "passed": passed,
+        "grader_version": GRADER_VERSION,
+        "rubric_sha256": "a" * 64,
+    }
 
 
 def write_run(results_root: Path, run_name: str, records: list[dict]) -> None:
@@ -92,7 +102,7 @@ def test_aggregate_one_run(tmp_path: Path):
 
     assert agg["agents"] == ["naive"]
     assert agg["overall"] == [
-        {"agent": "naive", "passed": 0, "total": 2, "mean_score": 0.25}
+        {"agent": "naive", "passed": 0, "total": 2, "mean_score": 0.25, "status": "current"}
     ]
     assert [b["category"] for b in agg["by_category"]] == [
         "aks-networking",
@@ -126,6 +136,7 @@ def test_aggregate_many_runs_and_missing_cells(tmp_path: Path):
         "passed": 1,
         "total": 2,
         "mean_score": 0.75,
+        "status": "current",
     }
     assert by_agent["react"]["total"] == 1
     # react never ran cost-001: the heatmap cell must be "none", not a failure.
@@ -217,3 +228,58 @@ def test_cli_site_zero_one_and_many_folders(tmp_path: Path):
     assert proc.returncode == 0, proc.stderr
     text = out.read_text(encoding="utf-8")
     assert "naive" in text and "react" in text
+
+
+# --- stale/legacy rendering (issue #95) --------------------------------------
+
+
+def test_aggregate_marks_stale_and_legacy_cells_and_counts_current_only():
+    results = {
+        "mixed": [
+            record("monitoring-001", 1.0, True),  # current
+            {  # stale: older grader version
+                **record("cost-001", 1.0, True),
+                "grader_version": GRADER_VERSION + 1,
+            },
+            # legacy: the version fields are stripped
+            {"task": "aks-ops-022", "score": 1.0, "passed": True},
+        ]
+    }
+    agg = aggregate(results)
+
+    assert agg["overall"] == [
+        {"agent": "mixed", "passed": 1, "total": 1, "mean_score": 1.0, "status": "current"}
+    ]
+    heatmap = {row["task"]: row["cells"] for row in agg["heatmap"]}
+    assert heatmap["monitoring-001"] == ["pass"]
+    assert heatmap["cost-001"] == ["stale"]
+    assert heatmap["aks-ops-022"] == ["legacy"]
+
+
+def test_aggregate_stale_hash_mismatch_via_current_rubrics():
+    record_stale = {**record("monitoring-001", 1.0, True), "rubric_sha256": "old"}
+    agg = aggregate({"a": [record_stale]}, {"monitoring-001": "fresh"})
+    assert agg["overall"][0]["status"] == "stale"
+    assert agg["overall"][0]["passed"] == 0
+
+
+def test_render_mixed_version_runs_marks_cells_without_crashing():
+    # The legacy record's pass renders as LEGACY (not PASS) — a passing
+    # current-version record supplies the PASS cell, a failing one the FAIL.
+    results = {
+        "legacy-agent": [{"task": "monitoring-001", "score": 1.0, "passed": True}],
+        "current-agent": [
+            record("monitoring-001", 1.0, True),
+            record("cost-001", 0.0, False),
+        ],
+    }
+    html_text = render_html(aggregate(results))
+    assert "LEGACY" in html_text
+    assert "PASS" in html_text and "FAIL" in html_text
+    assert "Status" in html_text
+
+
+def test_render_stale_cells_show_stale_label():
+    stale = {**record("monitoring-001", 1.0, True), "grader_version": GRADER_VERSION + 9}
+    html_text = render_html(aggregate({"a": [stale]}))
+    assert "STALE" in html_text

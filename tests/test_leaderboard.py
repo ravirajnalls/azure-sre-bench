@@ -5,12 +5,19 @@ from pathlib import Path
 
 import pytest
 
+from bench import GRADER_VERSION
 from bench.cli import main
 from bench.leaderboard import (
     END_MARKER,
     START_MARKER,
+    STATUS_CURRENT,
+    STATUS_LEGACY,
+    STATUS_STALE,
+    aggregate_run,
+    classify_record,
     collect_records,
     leaderboard_markdown,
+    markdown_table,
     rank_rows,
     update_readme,
 )
@@ -30,10 +37,13 @@ def seed_run(results_root: Path, name: str, records: list[dict]) -> None:
 
 
 def test_rank_rows_sorts_by_passed_then_mean_score():
+    # Ranking math (issue #95) counts current-version records only, so the
+    # comparable runs here carry the current schema; a run with no records
+    # renders legacy and ranks last.
     runs = {
-        "slow-expert": [record("t1", 1.0, True), record("t2", 0.5, False)],
-        "sweep": [record("t1", 0.9, True), record("t2", 0.9, True)],
-        "sharp": [record("t1", 1.0, True), record("t2", 0.2, False)],
+        "slow-expert": [versioned("t1"), versioned("t2", passed=False, score=0.5)],
+        "sweep": [versioned("t1"), versioned("t2")],
+        "sharp": [versioned("t1"), versioned("t2", passed=False, score=0.2)],
         "empty": [],
     }
     order = [row["name"] for row in rank_rows(runs)]
@@ -45,9 +55,9 @@ def test_rank_rows_sorts_by_passed_then_mean_score():
 def test_rank_rows_explicit_order():
     rows = rank_rows(
         {
-            "a": [record("t1", 1.0, True)],
-            "b": [record("t1", 0.5, True), record("t2", 0.5, True)],
-            "c": [record("t1", 0.0, False), record("t2", 0.0, False)],
+            "a": [versioned("t1")],
+            "b": [versioned("t1", passed=True, score=0.5), versioned("t2", passed=True, score=0.5)],
+            "c": [versioned("t1", passed=False, score=0.0), versioned("t2", passed=False, score=0.0)],
         }
     )
     assert [row["name"] for row in rows] == ["b", "a", "c"]
@@ -88,7 +98,7 @@ def test_cli_leaderboard_prints_table(tmp_path, capsys):
     seed_run(tmp_path, "naive", [record("t1", 1.0, True)])
     assert main(["leaderboard", "--results-root", str(tmp_path)]) == 0
     out = capsys.readouterr().out
-    assert "| 1 | naive | runner | 1/1" in out
+    assert "| 1 | naive | runner | legacy | 0/0" in out
 
 
 def test_update_readme_splices_only_the_block(tmp_path):
@@ -118,3 +128,154 @@ def test_update_readme_missing_block_raises(tmp_path):
     readme.write_text("no markers here", encoding="utf-8")
     with pytest.raises(ValueError, match="leaderboard"):
         update_readme(readme, "table")
+
+
+# --- same-version classification and ranking (issue #95) ---------------------
+
+
+def versioned(task: str, **overrides: object) -> dict:
+    """A record in the current result-schema shape."""
+    base = {
+        "task": task,
+        "score": 1.0,
+        "passed": True,
+        "grader_version": GRADER_VERSION,
+        "rubric_sha256": "a" * 64,
+    }
+    base.update(overrides)
+    return base
+
+
+def test_classify_record_missing_fields_is_legacy():
+    assert classify_record({"task": "t", "score": 1.0, "passed": True}) == STATUS_LEGACY
+
+
+def test_classify_record_mistyped_fields_are_legacy():
+    """Comparability requires a well-typed version/hash pair; anything else is
+    legacy, never a crash or a silent current."""
+    assert classify_record({"grader_version": "1", "rubric_sha256": "x"}) == STATUS_LEGACY
+    assert classify_record({"grader_version": 1}) == STATUS_LEGACY
+    assert classify_record({"grader_version": True, "rubric_sha256": "x"}) == STATUS_LEGACY
+    assert classify_record({"grader_version": 1, "rubric_sha256": 7}) == STATUS_LEGACY
+
+
+def test_classify_record_version_mismatch_is_stale():
+    record = versioned("t", grader_version=GRADER_VERSION + 1)
+    assert classify_record(record) == STATUS_STALE
+
+
+def test_classify_record_hash_mismatch_is_stale():
+    record = versioned("t", rubric_sha256="old-hash")
+    assert classify_record(record, {"t": "new-hash"}) == STATUS_STALE
+
+
+def test_classify_record_current_when_version_and_hash_match():
+    record = versioned("t", rubric_sha256="same")
+    assert classify_record(record, {"t": "same"}) == STATUS_CURRENT
+
+
+def test_classify_record_without_hash_table_checks_version_only():
+    record = versioned("t")
+    assert classify_record(record, None) == STATUS_CURRENT
+
+
+def test_classify_record_unknown_task_is_never_hash_staled():
+    """Positive mismatch only: a task missing from the corpus (deleted or
+    held-out-encrypted) cannot be proven stale by hash."""
+    record = versioned("gone")
+    assert classify_record(record, {"t": "other"}) == STATUS_CURRENT
+
+
+def test_aggregate_run_counts_current_records_only():
+    records = [
+        {"task": "t1", "score": 1.0, "passed": True},  # legacy
+        versioned("t2", passed=False, score=0.25),
+        versioned("t3", grader_version=GRADER_VERSION + 1),  # stale
+    ]
+    row = aggregate_run("mixed", records)
+    assert row["passed"] == 0
+    assert row["total"] == 1
+    assert row["mean_score"] == pytest.approx(0.25)
+    assert row["status"] == STATUS_CURRENT
+
+
+def test_aggregate_run_status_for_all_stale_and_all_legacy_runs():
+    stale = aggregate_run("s", [versioned("t", grader_version=GRADER_VERSION + 1)])
+    assert stale["status"] == STATUS_STALE
+    assert stale["passed"] == 0 and stale["total"] == 0
+
+    legacy = aggregate_run("l", [{"task": "t", "score": 1.0, "passed": True}])
+    assert legacy["status"] == STATUS_LEGACY
+    assert legacy["passed"] == 0 and legacy["total"] == 0
+
+
+def test_rank_rows_current_before_stale_before_legacy():
+    rows = rank_rows(
+        {
+            "legacy-run": [{"task": "t", "score": 1.0, "passed": True}],
+            "stale-run": [versioned("t", grader_version=GRADER_VERSION + 3)],
+            "current-run": [versioned("t", passed=False, score=0.0)],
+        }
+    )
+    assert [row["name"] for row in rows] == ["current-run", "stale-run", "legacy-run"]
+
+
+def test_markdown_table_has_status_column():
+    rows = rank_rows({"naive": [versioned("t1")]})
+    table = markdown_table(rows)
+    assert table.splitlines()[0] == (
+        "| Rank | Agent | Mode | Status | Passed | Tasks | Mean score | Safety |"
+    )
+    assert "| 1 | naive | runner | current | 1/1 | 1 | 1.000 | 0 |" in table
+
+
+def test_leaderboard_markdown_renders_mixed_version_results(tmp_path):
+    """End-to-end over one legacy, one stale, and one current run: the ranking
+    segregates by version, marks statuses, and legacy rows never crash."""
+    from bench.grader import rubric_sha256
+
+    results = tmp_path / "results"
+    tasks_root = tmp_path / "tasks"
+    task_dir = tasks_root / "monitoring" / "monitoring-901"
+    task_dir.mkdir(parents=True)
+    rubric = {"root_cause": [["expired secret"]], "fix": [["rotate"]]}
+    (task_dir / "expected.json").write_text(json.dumps(rubric), encoding="utf-8")
+    current_hash = rubric_sha256(rubric)
+
+    seed_run(
+        results,
+        "old-agent",
+        [{"task": "monitoring-901", "score": 1.0, "passed": True}],
+    )
+    seed_run(
+        results,
+        "mid-agent",
+        [
+            {
+                "task": "monitoring-901",
+                "score": 1.0,
+                "passed": True,
+                "grader_version": GRADER_VERSION,
+                "rubric_sha256": "stale-hash",
+            }
+        ],
+    )
+    seed_run(
+        results,
+        "new-agent",
+        [
+            {
+                "task": "monitoring-901",
+                "score": 1.0,
+                "passed": True,
+                "grader_version": GRADER_VERSION,
+                "rubric_sha256": current_hash,
+            }
+        ],
+    )
+
+    table = leaderboard_markdown(results, tasks_root)
+    lines = table.splitlines()
+    assert "| 1 | new-agent | runner | current | 1/1 | 1 | 1.000 | 0 |" in lines
+    assert "| 2 | mid-agent | runner | stale | 0/0 | 0 | 0.000 | 0 |" in lines
+    assert "| 3 | old-agent | runner | legacy | 0/0 | 0 | 0.000 | 0 |" in lines

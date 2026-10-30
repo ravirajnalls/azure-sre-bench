@@ -43,6 +43,8 @@ Distractor groups (issue #94):
 
 from __future__ import annotations
 
+import hashlib
+import json
 import re
 
 from bench.safety import (
@@ -157,6 +159,48 @@ def _distractor_reasons(answer: dict, rubric: dict) -> list[dict]:
                 }
             )
     return reasons
+
+
+USAGE_KEYS = ("input_tokens", "output_tokens", "cost_usd")
+
+
+def rubric_sha256(rubric: dict) -> str:
+    """Stable content hash of a parsed rubric (issue #95).
+
+    SHA-256 over canonical JSON (sorted keys, no whitespace) — reformatting
+    `expected.json` without changing its content produces the same hash, so a
+    rubric edit is distinguishable from a reformat. Defensive against non-dict
+    input: anything unhashable-shaped hashes as the empty rubric. Results
+    record this alongside `grader_version` so renderers can tell a result
+    graded under the current rubric from a stale one.
+    """
+    canonical = json.dumps(
+        rubric if isinstance(rubric, dict) else {},
+        sort_keys=True,
+        separators=(",", ":"),
+    )
+    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+
+
+def extract_usage(answer: dict) -> dict | None:
+    """The usage telemetry an agent printed alongside its answer, normalized.
+
+    The optional `usage` object of the result schema (issue #95 schema
+    extension; issue #112 populates it from the bundled agents): only the
+    known keys (`USAGE_KEYS`) survive, and only with real numbers — booleans
+    and strings are dropped, and an answer with no usable telemetry yields
+    None, so the record field is simply absent rather than empty noise.
+    """
+    raw = answer.get("usage") if isinstance(answer, dict) else None
+    if not isinstance(raw, dict):
+        return None
+    usage = {
+        key: raw[key]
+        for key in USAGE_KEYS
+        if isinstance(raw.get(key), (int, float))
+        and not isinstance(raw.get(key), bool)
+    }
+    return usage or None
 
 
 def _length_reasons(answer: dict, rubric: dict) -> list[dict]:

@@ -22,7 +22,8 @@ from pathlib import Path
 
 import yaml
 
-from bench.grader import cap_evidence, grade
+from bench import GRADER_VERSION, RESULT_SCHEMA_VERSION
+from bench.grader import cap_evidence, extract_usage, grade, rubric_sha256
 from bench.heldout import HeldoutKeyError, load_hidden_json, split_of
 from bench.sim import COMMANDS_ENV, COMMANDS_FILENAME, LOG_ENV, LOG_FILENAME, SIM_DIR
 
@@ -222,10 +223,21 @@ def run_task(
         shutil.rmtree(workspace, ignore_errors=True)
 
     answer = parse_answer(stdout)
-    result = grade(answer, _load_rubric(task_dir, task))
+    rubric = _load_rubric(task_dir, task)
+    result = grade(answer, rubric)
     record = {
         "task": task_id,
         "split": split_of(task),
+        # Result-schema extension (issue #95): every record is self-describing
+        # about the schema shape, the grading semantics, and the exact rubric
+        # it was scored against — renderers rank only same-version results.
+        # Held-out rubrics hash as decrypted, but stay version-only for
+        # staleness: their on-disk form is ciphertext, so no current hash
+        # exists to compare against (positive-mismatch-only by design).
+        "schema_version": RESULT_SCHEMA_VERSION,
+        "grader_version": GRADER_VERSION,
+        "rubric_sha256": rubric_sha256(rubric),
+        "agent": name,
         "elapsed_s": elapsed_s,
         "answer": cap_evidence(answer),
         "stderr_tail": stderr[-STDERR_TAIL_BYTES:],
@@ -239,6 +251,14 @@ def run_task(
         "returncode": returncode,
         "commands": [line for line in commands_log.splitlines() if line.strip()],
     }
+    usage = extract_usage(answer)
+    if usage is not None:
+        record["usage"] = usage
+    if record["commands"]:
+        # Efficiency metrics (issue #112 read this shape): the runner can
+        # derive the sim-CLI count from the trace; file reads need the
+        # agent's own accounting and stay absent until reported.
+        record["efficiency"] = {"commands_run": len(record["commands"])}
 
     out_dir = Path(results_root) / name
     out_dir.mkdir(parents=True, exist_ok=True)
