@@ -1,8 +1,9 @@
 """Command-line interface for Azure SRE Bench.
 
 Issue #1 scaffolded the subcommand surface; `validate` and `list` are live as of
-issue #2, `grade` as of issue #3, and `run` as of issue #4. The remaining
-subcommands land with the reporting layer (issues #40-#42).
+issue #2, `grade` as of issue #3, `run` as of issue #4, and `leaderboard` as of
+issue #41. The remaining subcommands land with the reporting layer
+(issues #40 and #42).
 """
 
 from __future__ import annotations
@@ -18,7 +19,7 @@ from bench.tasks import load_tasks
 
 SUBCOMMANDS = ("validate", "list", "grade", "run", "site", "leaderboard", "catalog")
 
-IMPLEMENTED = ("validate", "list", "grade", "run")
+IMPLEMENTED = ("validate", "list", "grade", "run", "leaderboard")
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -68,6 +69,15 @@ def build_parser() -> argparse.ArgumentParser:
                 "--tasks-root",
                 default="tasks",
                 help="task discovery root (default: ./tasks)",
+            )
+        elif name == "leaderboard":
+            leaderboard_parser = sub.add_parser(
+                name, help="print the markdown leaderboard from results/"
+            )
+            leaderboard_parser.add_argument(
+                "--results-root",
+                default="results",
+                help="results root directory (default: ./results)",
             )
         else:
             subparser = sub.add_parser(name)
@@ -130,6 +140,14 @@ def cmd_list(root: Path) -> int:
     return 0
 
 
+def cmd_leaderboard(args: argparse.Namespace) -> int:
+    """Print the markdown leaderboard table from `--results-root` (issue #41)."""
+    from bench.leaderboard import leaderboard_markdown  # deferred: keeps --help cheap
+
+    print(leaderboard_markdown(Path(getattr(args, "results_root", "results"))))
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
@@ -146,10 +164,12 @@ def main(argv: list[str] | None = None) -> int:
         root = Path(getattr(args, "root", "tasks"))
         if args.command == "validate":
             return cmd_validate(root)
-        return cmd_list(root)
+        if args.command == "list":
+            return cmd_list(root)
+        return cmd_leaderboard(args)
     print(
         f"'bench {args.command}' is not implemented yet; "
-        "see issues #40-#42 for the planned subcommands.",
+        "see issues #40 and #42 for the planned subcommands.",
         file=sys.stderr,
     )
     return 2
