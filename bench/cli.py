@@ -17,9 +17,11 @@ from bench import __version__
 from bench.grader import grade
 from bench.tasks import load_tasks
 
-SUBCOMMANDS = ("validate", "list", "grade", "run", "site", "leaderboard", "catalog")
+SUBCOMMANDS = (
+    "validate", "list", "grade", "run", "submit", "prompt", "site", "leaderboard", "catalog"
+)
 
-IMPLEMENTED = ("validate", "list", "grade", "run", "site", "leaderboard", "catalog")
+IMPLEMENTED = SUBCOMMANDS
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -70,6 +72,42 @@ def build_parser() -> argparse.ArgumentParser:
                 default="tasks",
                 help="task discovery root (default: ./tasks)",
             )
+        elif name == "submit":
+            submit_parser = sub.add_parser(
+                name,
+                help="grade and record a closed agent's answer (manual protocol, issue #124)",
+            )
+            submit_parser.add_argument(
+                "--task", required=True, help="task ID, e.g. aks-networking-001"
+            )
+            submit_parser.add_argument(
+                "--answer",
+                required=True,
+                help="path to the agent's answer JSON file",
+            )
+            submit_parser.add_argument(
+                "--agent",
+                required=True,
+                help="agent/run name under results/ (the leaderboard entry)",
+            )
+            submit_parser.add_argument(
+                "--results-root",
+                default="results",
+                help="results root directory (default: ./results)",
+            )
+        elif name == "prompt":
+            prompt_parser = sub.add_parser(
+                name,
+                help="print the paste-ready manual-protocol prompt for a task (issue #124)",
+            )
+            prompt_parser.add_argument(
+                "--task", required=True, help="task ID, e.g. aks-networking-001"
+            )
+            prompt_parser.add_argument(
+                "--tasks-root",
+                default="tasks",
+                help="task discovery root (default: ./tasks)",
+            )
         elif name == "leaderboard":
             leaderboard_parser = sub.add_parser(
                 name, help="print the markdown leaderboard from results/"
@@ -111,10 +149,9 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def find_task_dir(task_id: str) -> Path:
-    """Locate a task directory by ID under ./tasks."""
-    tasks_root = Path("tasks")
-    for candidate in sorted(tasks_root.rglob(task_id)):
+def find_task_dir(task_id: str, tasks_root: Path | str = "tasks") -> Path:
+    """Locate a task directory by ID under the given tasks root."""
+    for candidate in sorted(Path(tasks_root).rglob(task_id)):
         if candidate.is_dir() and (candidate / "expected.json").is_file():
             return candidate
     raise FileNotFoundError(
@@ -132,6 +169,29 @@ def cmd_grade(args: argparse.Namespace) -> int:
         print(f"error: {exc}", file=sys.stderr)
         return 2
     print(json.dumps(grade(answer, rubric), indent=2))
+    return 0
+
+
+def cmd_submit(args: argparse.Namespace) -> int:
+    """Grade a closed agent's answer and record it marked `mode: manual` (#124)."""
+    from bench.manual import submit_answer  # deferred: keeps --help cheap
+
+    try:
+        answer = json.loads(Path(args.answer).read_text(encoding="utf-8"))
+    except (FileNotFoundError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 2
+    if not isinstance(answer, dict):
+        print(f"error: {args.answer} must contain a JSON object", file=sys.stderr)
+        return 2
+    try:
+        record = submit_answer(
+            args.task, answer, args.agent, results_root=Path(args.results_root)
+        )
+    except (FileNotFoundError, ValueError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 2
+    print(json.dumps(record, indent=2))
     return 0
 
 
@@ -181,6 +241,17 @@ def main(argv: list[str] | None = None) -> int:
             from bench.run import cmd_run  # deferred: keeps --help cheap
 
             return cmd_run(args)
+        if args.command == "submit":
+            return cmd_submit(args)
+        if args.command == "prompt":
+            from bench.manual import SYSTEM_PROMPT, load_task_prompt
+
+            task_dir = find_task_dir(args.task, Path(args.tasks_root))
+            print("# system\n")
+            print(SYSTEM_PROMPT)
+            print("\n# user\n")
+            print(load_task_prompt(task_dir))
+            return 0
         if args.command == "site":
             from bench.site import cmd_site  # deferred: keeps --help cheap
 

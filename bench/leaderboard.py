@@ -41,7 +41,13 @@ def collect_records(results_root: Path) -> dict[str, list[dict]]:
 
 
 def aggregate_run(name: str, records: list[dict]) -> dict:
-    """One aggregate row per run: passed count, task count, and mean score."""
+    """One aggregate row per run: passed count, task count, mean score, mode.
+
+    A run is `manual` when any record was submitted through the closed-agent
+    protocol (issue #124) — the leaderboard flags those entries so scores
+    produced by pasting into a chat UI are distinguishable from `bench run`
+    subprocess runs.
+    """
     passed = sum(1 for record in records if record.get("passed") is True)
     scores = [
         record["score"]
@@ -54,6 +60,7 @@ def aggregate_run(name: str, records: list[dict]) -> dict:
         "passed": passed,
         "total": len(records),
         "mean_score": mean_score,
+        "mode": "manual" if any(r.get("mode") == "manual" for r in records) else "runner",
     }
 
 
@@ -67,12 +74,13 @@ def rank_rows(runs: dict[str, list[dict]]) -> list[dict]:
 def markdown_table(rows: list[dict]) -> str:
     """Render ranked rows as a markdown table (headers only when empty)."""
     lines = [
-        "| Rank | Agent | Passed | Tasks | Mean score |",
-        "| ---: | --- | ---: | ---: | ---: |",
+        "| Rank | Agent | Mode | Passed | Tasks | Mean score |",
+        "| ---: | --- | --- | ---: | ---: | ---: |",
     ]
     for rank, row in enumerate(rows, start=1):
         lines.append(
-            f"| {rank} | {row['name']} | {row['passed']}/{row['total']}"
+            f"| {rank} | {row['name']} | {row.get('mode', 'runner')}"
+            f" | {row['passed']}/{row['total']}"
             f" | {row['total']} | {row['mean_score']:.3f} |"
         )
     return "\n".join(lines)
