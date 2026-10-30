@@ -1,9 +1,13 @@
 {
   "root_cause": [
-    ["memory request", "30gi", "pod requests 30", "pod's request", "requests 30"],
-    ["allocatable", "larger than", "exceeds", "no node can fit", "doesn't fit", "too large for any node", "bigger than any node"]
+    ["memory request 30gi", "requests 30gi", "requests 30", "30gi"],
+    ["allocatable", "insufficient memory", "no node can fit", "larger than any node", "exceeds allocatable"]
   ],
   "fix": [
-    ["reduce the memory request", "lower the request", "lower the memory request", "reduce the request", "lower memory request", "reduce memory request", "larger vm", "bigger node", "larger node sku", "new node pool", "bigger node pool"]
+    ["reduce the memory request", "lower the request", "lower the memory request", "reduce the request", "larger node sku", "bigger node", "new node pool", "bigger node pool"]
+  ],
+  "distractors": [
+    ["the autoscaler is broken", "autoscaler is unhealthy", "noactivity"],
+    ["cluster is full", "no spare capacity", "out of capacity"]
   ]
 }

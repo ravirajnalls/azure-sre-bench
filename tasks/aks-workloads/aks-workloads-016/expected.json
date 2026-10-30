@@ -1,9 +1,12 @@
 {
   "root_cause": [
-    ["readiness"],
-    ["3000", "port"]
+    ["readiness probe", "readinessprobe", "readiness check"],
+    ["port 3000", "listens on 8080", "port 8080", "probe targets 3000"]
   ],
   "fix": [
-    ["8080"]
+    ["port 8080", "8080"]
+  ],
+  "distractors": [
+    ["base image", "dockerfile change", "node version"]
   ]
 }

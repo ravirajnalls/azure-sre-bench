@@ -1,9 +1,12 @@
 {
   "root_cause": [
-    ["oom", "out of memory", "137"],
-    ["limit", "xmx", "heap"]
+    ["oomkilled", "exit code 137", "out of memory"],
+    ["memory limit 512mi", "512mi", "xmx768m", "xmx", "heap exceeds the limit"]
   ],
   "fix": [
-    ["memory limit", "xmx", "heap"]
+    ["memory limit", "xmx768m", "xmx", "heap"]
+  ],
+  "distractors": [
+    ["processor bottleneck", "processortime", "the nodes are overloaded"]
   ]
 }

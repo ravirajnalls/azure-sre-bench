@@ -1,9 +1,12 @@
 {
   "root_cause": [
-    ["request"],
-    ["cpu"]
+    ["no cpu resource request", "no cpu request", "missing request for cpu", "no resource request", "never sets resources.requests"],
+    ["<unknown>/70%", "utilization cannot be computed", "cannot compute utilization", "unknown utilization"]
   ],
   "fix": [
-    ["resources.requests", "cpu request", "requests.cpu", "set requests"]
+    ["set a cpu request", "cpu request", "resources.requests", "requests.cpu"]
+  ],
+  "distractors": [
+    ["maxreplicas", "hpa is misconfigured", "maxreplicas is too low"]
   ]
 }
