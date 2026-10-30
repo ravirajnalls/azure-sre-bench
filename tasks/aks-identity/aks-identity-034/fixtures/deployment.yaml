@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inventory-svc
+  namespace: inventory
+  labels:
+    app.kubernetes.io/name: inventory-svc
+    app.kubernetes.io/part-of: inventory
+    azure.workload.identity/use: "true"
+  annotations:
+    deployment.kubernetes.io/revision: "2"
+    kubernetes.io/change-cause: "helm upgrade inventory-svc --set podLabels={} (label restructure per platform policy)"
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: inventory-svc
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: inventory-svc
+    spec:
+      serviceAccountName: inventory-svc
+      containers:
+        - name: inventory-svc
+          image: inventoryacr.azurecr.io/inventory-svc:1.42.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+              name: http
+          env:
+            - name: KEY_VAULT_URI
+              value: https://kv-inventory-prod.vault.azure.net/
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Production
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              memory: 1Gi
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10

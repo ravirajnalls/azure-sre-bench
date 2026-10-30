@@ -1,0 +1,6 @@
+NAME                          READY   STATUS             RESTARTS       AGE    IP             NODE                                 NOMINATED NODE   READINESS GATES   LABELS
+inventory-svc-7d9f4b6c8c-m7rvc    1/1     Running            0              6d2h   10.244.2.151   aks-nodepool1-11829476-vmss000003    <none>           <none>            app=inventory-svc,pod-template-hash=7d9f4b6c8c,azure.workload.identity/use=true
+inventory-svc-7d9f4b6c8c-t4hjp    1/1     Running            0              6d2h   10.244.1.87    aks-nodepool1-11829476-vmss000001    <none>           <none>            app=inventory-svc,pod-template-hash=7d9f4b6c8c,azure.workload.identity/use=true
+inventory-svc-7d9f4b6c8c-wq2xn    1/1     Running            0              6d2h   10.244.0.44    aks-nodepool1-11829476-vmss000002    <none>           <none>            app=inventory-svc,pod-template-hash=7d9f4b6c8c,azure.workload.identity/use=true
+inventory-svc-c5f8d2b4e-9lzkd     0/1     CrashLoopBackOff   14 (4m ago)    47m    10.244.2.19    aks-nodepool1-11829476-vmss000003    <none>           <none>            app=inventory-svc,pod-template-hash=c5f8d2b4e
+inventory-svc-c5f8d2b4e-p46gs     0/1     CrashLoopBackOff   14 (4m ago)    47m    10.244.1.203   aks-nodepool1-11829476-vmss000001    <none>           <none>            app=inventory-svc,pod-template-hash=c5f8d2b4e

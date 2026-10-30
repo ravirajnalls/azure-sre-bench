@@ -1,0 +1,16 @@
+{
+  "root_cause": "The rollout is stuck halfway. This morning's deploy moved the azure.workload.identity/use label out of spec.template.metadata.labels into the Deployment's own metadata labels, so the pod template of the new ReplicaSet (inventory-svc-c5f8d2b4e) no longer carries it. The workload identity mutating webhook only injects the AZURE_FEDERATED_TOKEN_FILE env and projected token volume onto pods whose template carries that label, so the 2 new pods get no identity token and their Key Vault calls fail; the 3 old ReplicaSet pods still have the label and keep working.",
+  "evidence": [
+    "deployment.yaml (revision 2): azure.workload.identity/use: \"true\" sits under metadata.labels of the Deployment; spec.template.metadata.labels has only app=inventory-svc",
+    "kubectl-get-pods-show-labels.txt: old pods (pod-template-hash=7d9f4b6c8c) carry azure.workload.identity/use=true; the 2 crash-looping pods (pod-template-hash=c5f8d2b4e) do not",
+    "kubectl-describe-pod-new.txt: no AZURE_CLIENT_ID/AZURE_FEDERATED_TOKEN_FILE env and no azure-wi-token projected volume on a new pod; container exits 1 after Key Vault auth failures",
+    "kubectl-describe-pod-old.txt: an old pod shows the injected AZURE_CLIENT_ID, AZURE_FEDERATED_TOKEN_FILE env and azure-wi-token volume, proving the webhook works when the label is present",
+    "kubectl-get-rs.txt: rollout stuck halfway - new RS c5f8d2b4e has 2 of 5 pods with 0 ready while old RS 7d9f4b6c8c still serves 3"
+  ],
+  "fix": "Move the azure.workload.identity/use: \"true\" label back into spec.template.metadata.labels of the inventory-svc Deployment (leaving it on the Deployment metadata is harmless but insufficient) and roll the pods so the new ReplicaSet template carries the label and the webhook injects the token.",
+  "evidence_files": [
+    "deployment.yaml",
+    "kubectl-get-pods-show-labels.txt",
+    "kubectl-describe-pod-new.txt"
+  ]
+}
