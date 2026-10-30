@@ -1,0 +1,15 @@
+id: aks-identity-009
+title: Image pulls from acrcontosoprod fail with 401 after cluster recreation
+category: aks-identity
+difficulty: easy
+tags:
+  - aks-identity
+  - kubelet-identity
+  - acr
+  - imagepullbackoff
+  - role-assignment
+symptom: >-
+  Last night the aks-contoso-prod cluster was recreated as part of the network
+  migration. This morning every workload that pulls from acrcontosoprod.azurecr.io
+  is stuck in ImagePullBackOff with 401 Unauthorized. No image tags were changed
+  and the registry itself reports healthy.

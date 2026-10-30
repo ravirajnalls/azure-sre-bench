@@ -1,0 +1,11 @@
+{
+  "root_cause": "The recreated cluster's kubelet identity has no AcrPull role assignment on acrcontosoprod: the only AcrPull assignment on the registry points at principal 00000000-0000-0000-0000-000000000009, the kubelet identity of the deleted cluster. The new cluster's kubelet identity (objectId 00000000-0000-0000-0000-00000000000c) authenticates successfully but is not authorized, so every image pull from the registry returns 401 Unauthorized.",
+  "evidence": [
+    "kubectl-describe-pod.txt: kubelet fails to pull acrcontosoprod.azurecr.io/payments-api:2.7.1 with 'unexpected status 401 Unauthorized ... unauthorized: authentication required'",
+    "az-aks-show.json: cluster aks-contoso-prod was created 2026-10-29T23:41:18Z; identityProfile.kubeletidentity objectId is 00000000-0000-0000-0000-00000000000c",
+    "az-role-assignment-list-acr.json: the only AcrPull role assignment on the registry has principalId 00000000-0000-0000-0000-000000000009, created 2026-06-11 — a different (deleted) principal, not the current kubelet identity",
+    "az-acr-repository-show-tags.json: tag payments-api:2.7.1 exists in the registry, ruling out a missing image",
+    "az-acr-show.json: registry is Healthy with provisioningState Succeeded, ruling out a registry-side outage"
+  ],
+  "fix": "Grant the new cluster's kubelet identity the AcrPull role on acrcontosoprod, e.g. az aks update --attach-acr acrcontosoprod --resource-group rg-contoso-prod --name aks-contoso-prod, or create the role assignment manually for identityProfile.kubeletidentity.objectId 00000000-0000-0000-0000-00000000000c."
+}
