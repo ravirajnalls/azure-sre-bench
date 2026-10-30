@@ -1,0 +1,19 @@
+# Grafana panel: pricing-api — CFS throttling per pod (payments namespace)
+# promql: sum by (pod) (rate(container_cpu_cfs_throttled_periods_total{namespace="payments",pod=~"pricing-api.*"}[5m]))
+#       / sum by (pod) (rate(container_cpu_cfs_periods_total{namespace="payments",pod=~"pricing-api.*"}[5m]))
+# CFS scheduling period: 100ms, so each pod accrues 10 periods per second.
+Time,pod,periods_per_sec,throttled_periods_per_sec,throttled_pct
+2026-10-30T13:00:00Z,pricing-api-7d9f4b6c8c-x2k7q,10.0,2.1,21
+2026-10-30T13:00:00Z,pricing-api-7d9f4b6c8c-k9mvt,10.0,1.9,19
+2026-10-30T13:15:00Z,pricing-api-7d9f4b6c8c-x2k7q,10.0,4.4,44
+2026-10-30T13:15:00Z,pricing-api-7d9f4b6c8c-k9mvt,10.0,4.1,41
+2026-10-30T13:30:00Z,pricing-api-7d9f4b6c8c-x2k7q,10.0,6.8,68
+2026-10-30T13:30:00Z,pricing-api-7d9f4b6c8c-k9mvt,10.0,6.5,65
+2026-10-30T13:30:00Z,pricing-api-7d9f4b6c8c-p4rbs,10.0,6.6,66
+2026-10-30T13:45:00Z,pricing-api-7d9f4b6c8c-x2k7q,10.0,6.9,69
+2026-10-30T13:45:00Z,pricing-api-7d9f4b6c8c-p4rbs,10.0,7.1,71
+2026-10-30T14:00:00Z,pricing-api-7d9f4b6c8c-x2k7q,10.0,6.7,67
+2026-10-30T14:00:00Z,pricing-api-7d9f4b6c8c-w8nqd,10.0,6.4,64
+2026-10-30T14:00:00Z,pricing-api-7d9f4b6c8c-j3hfx,10.0,6.6,66
+2026-10-30T14:15:00Z,pricing-api-7d9f4b6c8c-w8nqd,10.0,6.5,65
+2026-10-30T14:15:00Z,pricing-api-7d9f4b6c8c-t6vls,10.0,6.3,63

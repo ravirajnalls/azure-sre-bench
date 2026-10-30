@@ -1,0 +1,19 @@
+id: aks-workloads-018
+canary: 00000000-0000-0000-0000-000000000114  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
+title: pricing-api p99 latency triples at peak while average CPU looks healthy
+category: aks-workloads
+difficulty: hard
+tags:
+  - aks-workloads
+  - aks
+  - kubernetes
+  - cpu
+  - throttling
+  - latency
+  - hpa
+symptom: |
+  During today's peak the pricing-api p99 response time tripled — checkout
+  quote calls are timing out upstream — even though the
+  HorizontalPodAutoscaler scaled the deployment from 4 to 12 pods. The
+  Grafana CPU panel shows average CPU per pod at only ~45%, and nobody has
+  touched the deployment or the node pool this week.

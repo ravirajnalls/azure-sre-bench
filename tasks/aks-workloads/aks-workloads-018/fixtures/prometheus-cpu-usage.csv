@@ -1,0 +1,17 @@
+# Grafana panel: pricing-api — average cpu usage per pod, as % of the container limit (payments namespace)
+# promql: avg by (pod) (rate(container_cpu_usage_seconds_total{namespace="payments",pod=~"pricing-api.*"}[5m])) * 1000
+Time,pod,avg_cpu_mcpu,pct_of_limit
+2026-10-30T13:00:00Z,pricing-api-7d9f4b6c8c-x2k7q,212,42
+2026-10-30T13:00:00Z,pricing-api-7d9f4b6c8c-k9mvt,208,42
+2026-10-30T13:15:00Z,pricing-api-7d9f4b6c8c-x2k7q,224,45
+2026-10-30T13:15:00Z,pricing-api-7d9f4b6c8c-k9mvt,219,44
+2026-10-30T13:30:00Z,pricing-api-7d9f4b6c8c-x2k7q,231,46
+2026-10-30T13:30:00Z,pricing-api-7d9f4b6c8c-k9mvt,228,46
+2026-10-30T13:30:00Z,pricing-api-7d9f4b6c8c-p4rbs,225,45
+2026-10-30T13:45:00Z,pricing-api-7d9f4b6c8c-x2k7q,229,46
+2026-10-30T13:45:00Z,pricing-api-7d9f4b6c8c-p4rbs,233,47
+2026-10-30T14:00:00Z,pricing-api-7d9f4b6c8c-x2k7q,227,45
+2026-10-30T14:00:00Z,pricing-api-7d9f4b6c8c-w8nqd,224,45
+2026-10-30T14:00:00Z,pricing-api-7d9f4b6c8c-j3hfx,230,46
+2026-10-30T14:15:00Z,pricing-api-7d9f4b6c8c-w8nqd,222,44
+2026-10-30T14:15:00Z,pricing-api-7d9f4b6c8c-t6vls,221,44

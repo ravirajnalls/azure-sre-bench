@@ -29,6 +29,12 @@
 #   blows the 600-char caps and names the nsg distractor, and minimal-dump's
 #   capped dump (app.log sorts first) contains no rubric alternative. Entry
 #   leaves with the audits (#96-#99) like the rest.
+# - aks-workloads-018 (issue #105) follows the same shape: keyword-soup passes
+#   (112-char soup), fixture-dump and minimal-dump score 0 against the hardened
+#   grader + distractor groups. As with the audited tasks below, no rubric edit
+#   can defeat a probe defined as "the rubric's own keywords", so this entry
+#   stays until the corpus moves behind the held-out split or the gate gains a
+#   grader that resists rubric-reading cheats.
 #
 # Rubric audit #99 (2026-10-30, the seven non-AKS tasks): audits landed —
 # grounded distractor groups, decisive specific values, no bare generic or
@@ -77,6 +83,7 @@ aks-workloads-014
 aks-workloads-015
 aks-workloads-016
 aks-workloads-017
+aks-workloads-018
 app-service-028
 cost-031
 identity-027

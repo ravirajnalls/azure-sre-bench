@@ -1,0 +1,16 @@
+{
+  "root_cause": "The pricing-api container has a cpu limit of 500m, far below what its multi-threaded JVM needs at peak. The kernel's CFS scheduler enforces that limit in 100ms periods, so each burst exhausts the quota and the cgroup is suspended for the rest of the period: container_cpu_cfs_throttled_periods_total / container_cpu_cfs_periods_total reaches 65-70% at peak. Latency spikes while per-pod CPU averages only ~45% because throttling hits the bursty periods, not the average — and adding replicas cannot relieve a per-container constraint.",
+  "evidence": [
+    "deployment.yaml: the pricing-api container sets limits.cpu to 500m (requests 250m) — a hard per-container ceiling for a multi-threaded JVM",
+    "prometheus-throttling.csv: container_cpu_cfs_throttled_periods_total shows 65-70% of CFS periods throttled per pod during the peak window, rising as traffic grows",
+    "prometheus-cpu-usage.csv: mean cpu per pod is only ~45% of the limit — the misleading signal — which fits burst throttling rather than saturation",
+    "kubectl-get-hpa.txt: the autoscaler scaled 4 to 12 replicas and utilization still reads 91%/70%, so scale-out did not fix latency",
+    "pricing-api.log: quote latency climbs to 3s while GC pauses stay under 11 ms, ruling out garbage-collection stalls",
+    "kubectl-top-pod.txt: memory usage is ~540Mi against a 1Gi limit and steady, ruling out memory pressure"
+  ],
+  "fix": "Raise the cpu limit on the pricing-api container in the pricing-api Deployment manifest — from 500m to a value sized for burst demand (e.g. 1500m, keeping the request at or below the new limit so the HorizontalPodAutoscaler still tracks utilization) — or remove the cpu limit entirely so the JVM is bounded only by node capacity. Confirm the throttled-periods ratio drops to near zero at the next peak.",
+  "evidence_files": [
+    "deployment.yaml",
+    "prometheus-throttling.csv"
+  ]
+}
