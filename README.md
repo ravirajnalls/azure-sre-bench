@@ -239,6 +239,26 @@ scoped tools:
 | `run_command` | canned read-only output from the task's `_commands.yaml`, when it defines one — never host execution; mutating commands are blocked |
 | `submit_answer` | records the contract JSON that `bench run` grades |
 
+## Baseline sweep
+
+One command runs every configured baseline — `naive`, the three adversarial
+probes, and the LLM/ReAct/Foundry agents across three models — and writes one
+run folder per agent under `results/`, each carrying an `agent.yaml`
+descriptor so it verifies like any submission (issue #125):
+
+```bash
+python -m bench sweep --config sweeps/baseline.yaml
+```
+
+Credential-gated entries declare `requires_env` and skip themselves with a
+recorded `missing-env` reason when `LLM_*`/`FOUNDRY_*` variables are absent, so
+the sweep completes anywhere and the report (`results/<sweep-name>.sweep.json`)
+names the gap explicitly instead of producing empty results. Existing run
+folders are never silently overwritten — remove one or set `overwrite: true`
+to refresh it. Any adversarial
+entry that passes a task is flagged `gameable` in the report. The protocol and
+the findings template live in [docs/RESULTS.md](docs/RESULTS.md).
+
 ## Contributing
 
 The benchmark grows one task at a time, and every task follows the same conventions:
