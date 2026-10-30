@@ -29,7 +29,10 @@ Categories: `aks-networking`, `aks-identity`, `aks-workloads`, `aks-ops`, `netwo
 
 - **Filenames name the command or source, never the answer** — e.g.
   `kubectl-describe-pod.txt`, `az-network-nsg-list.json`, `app-insights-query.kql`.
-  A file named `root-cause.txt` defeats the benchmark.
+  A file named `root-cause.txt` defeats the benchmark. CI enforces this with
+  `bench lint-fixtures` (issue #154): a filename or comment line that states a
+  rubric alternative, or an answer-hint word (`bug`, `root cause`,
+  `misconfigured`, `TODO`, `FIXME`), fails the build.
 - **Use real tool output formats** — actual `kubectl`, `az`, KQL, and log formats, with
   plausible apiVersions, field names, and schema shapes.
 - **Cross-file consistency** — names, namespaces, zones, and timestamps must agree
