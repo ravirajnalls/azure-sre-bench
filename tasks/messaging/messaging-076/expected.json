@@ -10,5 +10,11 @@
     "crm-4402",
     "gh-9918",
     "cd-234"
+  ],
+  "distractors": [
+    [
+      "the email sender started sending duplicate notifications",
+      "duplicate order-confirmation emails"
+    ]
   ]
 }

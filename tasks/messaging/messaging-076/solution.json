@@ -10,5 +10,8 @@
     "crm-4402",
     "gh-9918",
     "cd-234"
+  ],
+  "evidence_files": [
+    "events.json"
   ]
 }
