@@ -18,6 +18,10 @@ import yaml
 
 from bench import GRADER_VERSION
 from bench.site import (
+    cost_accuracy_points,
+    pareto_frontier,
+    pass_rate,
+    render_cost_chart,
     aggregate,
     is_open_source,
     load_agent_metadata_map,
@@ -661,3 +665,98 @@ def test_site_cli_writes_learn_page(tmp_path, capsys):
     assert "<details>" in learn
     assert "monitoring-001" in learn
     assert "explainer pages" in capsys.readouterr().out
+
+
+# --- cost vs accuracy chart (issue #164) ---------------------------------------
+
+
+def costly_record(task: str, score: float, passed: bool, cost: float) -> dict:
+    """A result record in the #112 shape: usage telemetry carries the cost."""
+    return {**record(task, score, passed), "usage": {"cost_usd": cost}}
+
+
+def test_cost_accuracy_points_splits_on_cost_telemetry():
+    agg = {
+        "overall": [
+            {"agent": "rich", "passed": 2, "total": 4, "total_cost_usd": 0.07},
+            {"agent": "frugal", "passed": 1, "total": 2, "total_cost_usd": 0.01},
+            {"agent": "quiet", "passed": 1, "total": 2, "total_cost_usd": None},
+        ]
+    }
+    points, no_cost = cost_accuracy_points(agg)
+    assert points == [
+        {"agent": "rich", "cost_usd": 0.07, "rate": 0.5},
+        {"agent": "frugal", "cost_usd": 0.01, "rate": 0.5},
+    ]
+    assert no_cost == ["quiet"]
+
+
+def test_cost_accuracy_points_skips_zero_total_runs():
+    # A run with no counted tasks has no pass rate — it cannot sit on either axis.
+    points, no_cost = cost_accuracy_points(
+        {"overall": [{"agent": "empty", "passed": 0, "total": 0, "total_cost_usd": 0.0}]}
+    )
+    assert points == []
+    assert no_cost == ["empty"]
+
+
+def test_pareto_frontier_dominates():
+    points = [
+        {"agent": "a", "cost_usd": 0.10, "rate": 0.5},
+        # b: same rate as a, cheaper — dominates a.
+        {"agent": "b", "cost_usd": 0.05, "rate": 0.5},
+        # c: pricier than a, better rate — nobody beats it on rate.
+        {"agent": "c", "cost_usd": 0.20, "rate": 1.0},
+        {"agent": "d", "cost_usd": 0.40, "rate": 0.5},
+    ]
+    assert pareto_frontier(points) == {"b", "c"}
+
+
+def test_pareto_frontier_tie_shows_both():
+    points = [
+        {"agent": "a", "cost_usd": 0.10, "rate": 0.5},
+        {"agent": "b", "cost_usd": 0.10, "rate": 0.5},
+    ]
+    assert pareto_frontier(points) == {"a", "b"}
+
+
+def test_render_cost_chart_plots_points_and_frontier():
+    agg = {
+        "overall": [
+            {"agent": "a", "passed": 1, "total": 2, "total_cost_usd": 0.10},
+            {"agent": "b", "passed": 1, "total": 2, "total_cost_usd": 0.05},
+            {"agent": "c", "passed": 2, "total": 2, "total_cost_usd": 0.20},
+        ]
+    }
+    svg, no_cost = render_cost_chart(agg)
+    assert no_cost == []
+    assert '<circle class="pt frontier"' in svg
+    assert '<polyline class="frontier-line"' in svg
+    # Agent names are labels; costs and rates land inside the viewBox.
+    assert ">a</text>" in svg and ">c</text>" in svg
+
+
+def test_render_cost_chart_no_cost_data_returns_none():
+    svg, no_cost = render_cost_chart(
+        {"overall": [{"agent": "naive", "passed": 0, "total": 2, "total_cost_usd": None}]}
+    )
+    assert svg is None
+    assert no_cost == ["naive"]
+
+
+def test_render_html_renders_cost_section(tmp_path: Path):
+    write_run(
+        tmp_path,
+        "rich",
+        [costly_record("monitoring-001", 1.0, True, 0.02)],
+    )
+    write_run(tmp_path, "naive", [record("monitoring-001", 0.0, False)])
+    page = render_html(aggregate(load_results(tmp_path)))
+    assert "Cost vs accuracy" in page
+    assert '<circle class="pt' in page
+    assert "No cost data: naive" in page
+
+
+def test_render_html_empty_results_has_no_chart():
+    page = render_html(aggregate(load_results(Path("/nonexistent"))))
+    assert "Cost vs accuracy" not in page
