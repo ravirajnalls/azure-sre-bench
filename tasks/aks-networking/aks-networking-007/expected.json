@@ -1,0 +1,15 @@
+{
+  "root_cause": [
+    ["private dns", "privatelink", "private dns zone"],
+    ["link", "not linked"]
+  ],
+  "fix": [
+    [
+      "virtual network link",
+      "vnet link",
+      "link the zone",
+      "create a virtual network link",
+      "add a vnet link"
+    ]
+  ]
+}

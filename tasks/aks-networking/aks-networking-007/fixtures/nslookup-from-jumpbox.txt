@@ -1,0 +1,20 @@
+Server:		dns-hub-00000001.internal.hub.contoso.example
+Address:	10.20.0.4#53
+
+** server can't find 00000000-0000-0000-0000-000000000006.hcp.eastus.azmk8s.io: NXDOMAIN
+
+adminuser@jumpbox-00000001:~$ nslookup 00000000-0000-0000-0000-000000000006.hcp.eastus.azmk8s.io 10.20.0.4
+Server:		dns-hub-00000001.internal.hub.contoso.example
+Address:	10.20.0.4#53
+
+** server can't find 00000000-0000-0000-0000-000000000006.hcp.eastus.azmk8s.io: NXDOMAIN
+
+adminuser@jumpbox-00000001:~$ nslookup management.azure.com 10.20.0.4
+Server:		dns-hub-00000001.internal.hub.contoso.example
+Address:	10.20.0.4#53
+
+Non-authoritative answer:
+Name:	management.azure.com
+Address: 20.190.151.7
+Name:	management.azure.com
+Address: 20.190.151.10
