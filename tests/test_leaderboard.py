@@ -75,6 +75,15 @@ def test_collect_records_skips_malformed_and_non_dirs(tmp_path):
     assert runs["broken"] == []
 
 
+def test_collect_records_skips_adversarial_runs(tmp_path):
+    """Adversarial probe runs (issue #92) are gate diagnostics, never entries."""
+    seed_run(tmp_path, "adversarial-keyword-soup", [record("t1", 1.0, True)])
+    seed_run(tmp_path, "naive", [record("t1", 0.0, False)])
+
+    runs = collect_records(tmp_path)
+    assert list(runs) == ["naive"]
+
+
 def test_cli_leaderboard_prints_table(tmp_path, capsys):
     seed_run(tmp_path, "naive", [record("t1", 1.0, True)])
     assert main(["leaderboard", "--results-root", str(tmp_path)]) == 0

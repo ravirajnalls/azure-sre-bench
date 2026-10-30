@@ -4,6 +4,9 @@
 module turns those folders into one aggregate row per run name and renders a
 markdown table sorted by passed tasks, then mean score — the ranking the README
 `<!-- leaderboard -->` block and the reporting layer share.
+
+Run folders named `adversarial-*` are excluded: they hold the adversarial
+probes' results (issue #92), which are gate diagnostics, never entries.
 """
 
 from __future__ import annotations
@@ -14,6 +17,10 @@ from pathlib import Path
 RESULTS_DIR = Path("results")
 START_MARKER = "<!-- leaderboard -->"
 END_MARKER = "<!-- /leaderboard -->"
+
+# Run-name prefix reserved for the adversarial probes (issue #92). Their
+# results measure grader gameability, not agent ability, so they never rank.
+ADVERSARIAL_PREFIX = "adversarial-"
 
 
 def collect_records(results_root: Path) -> dict[str, list[dict]]:
@@ -28,6 +35,8 @@ def collect_records(results_root: Path) -> dict[str, list[dict]]:
         return runs
     for run_dir in sorted(root.iterdir()):
         if not run_dir.is_dir():
+            continue
+        if run_dir.name.startswith(ADVERSARIAL_PREFIX):
             continue
         records = runs.setdefault(run_dir.name, [])
         for path in sorted(run_dir.glob("*.json")):

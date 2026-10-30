@@ -114,6 +114,12 @@ grader — this is enforced in CI (solvability check). Write it in the same
 2. **Solvability** — the reference `solution.json` passes its own task.
 3. **Non-triviality** — the `naive` agent, run through the real runner, must not pass.
 4. **No leaks** — grading the symptom text alone must not match every root-cause group.
+5. **Gameability** — the adversarial probes in `agents/adversarial/` (issue #92), run
+   through the real runner against every task, must not pass any task outside
+   `tests/known_gameable.txt`, and every entry in that list must still be gameable —
+   the list is enforced in both directions and must shrink to empty as grader
+   hardening (#93/#94) and rubric audits (#96-#99) land. Probe results land under
+   `results/adversarial-*/` and never rank on the leaderboard or site.
 
 ## Tooling
 

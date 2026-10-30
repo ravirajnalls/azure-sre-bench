@@ -15,6 +15,7 @@ import html
 import json
 from pathlib import Path
 
+from bench.leaderboard import ADVERSARIAL_PREFIX
 from bench.tasks import CATEGORIES
 
 DEFAULT_RESULTS_ROOT = "results"
@@ -62,13 +63,17 @@ def load_results(results_root: Path) -> dict[str, list[dict]]:
     Each subdirectory is one run — its name labels the agent in the site — and
     each `*.json` file inside is one graded task record written by `bench run`.
     Unreadable or non-object files are skipped so a single bad record cannot
-    take the whole site down. Returns run name -> records sorted by task id.
+    take the whole site down; `adversarial-*` folders (issue #92 gate probes)
+    are skipped so probe results never render as agents. Returns run name ->
+    records sorted by task id.
     """
     results_root = Path(results_root)
     if not results_root.is_dir():
         return {}
     runs: dict[str, list[dict]] = {}
     for run_dir in sorted(path for path in results_root.iterdir() if path.is_dir()):
+        if run_dir.name.startswith(ADVERSARIAL_PREFIX):
+            continue
         records: list[dict] = []
         for path in sorted(run_dir.glob("*.json")):
             try:
