@@ -1,0 +1,16 @@
+id: aks-ops-020
+title: Cluster autoscaler won't add nodes during Black Friday load
+category: aks-ops
+difficulty: easy
+tags:
+  - aks-ops
+  - aks
+  - autoscaler
+  - scaling
+  - kubernetes
+symptom: |
+  During the Black Friday sale, dozens of pods across the checkout, payments,
+  and catalogue namespaces have been Pending for more than twenty minutes and
+  checkout latency alarms are firing. The cluster autoscaler is enabled on the
+  prod cluster, yet no new nodes have joined in the past hour. There were no
+  recent changes to deployments or node pools.
