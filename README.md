@@ -367,6 +367,26 @@ dataset publishing (issue #117):
   the corpus (motivation, composition, collection process, intended use,
   limitations, license, canary).
 
+## Releases
+
+Versions are cut as git tags (`v<major>.<minor>`). A release freezes the corpus
+into `releases/<tag>.json` — the task list, each task's rubric content hash,
+and the grader version — so a leaderboard version refers to an exact, checkable
+corpus (issue #116):
+
+```bash
+python scripts/freeze_release.py                # writes releases/v0.1.json
+python -m bench run --release v0.1 --agent ...  # verifies the corpus matches
+                                                # the manifest, then stamps
+                                                # every result with the release
+```
+
+A `--release` run refuses to start on any drift: a rubric edited since the
+freeze, a task added or removed, or a grader bump. Pushing a `v*` tag runs
+`.github/workflows/release.yml`, which re-runs the CI gates, re-verifies the
+manifest against the tagged corpus, and publishes the tarball. Cut a release
+only after rubric-audit work merges — the manifest freezes rubric hashes.
+
 ## Contributing
 
 The benchmark grows one task at a time, and every task follows the same conventions:

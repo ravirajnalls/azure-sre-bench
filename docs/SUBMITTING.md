@@ -90,6 +90,7 @@ the matching `RESULT_SCHEMA_VERSION`.
 | `usage` | object | Optional token/cost telemetry the agent printed with its answer: `input_tokens`, `output_tokens`, `cost_usd`. |
 | `efficiency` | object | Optional investigation cost: `files_read`, `commands_run`. |
 | `judge` | object | Reserved for LLM-judge grading metadata (issue #100). |
+| `release` | string | Present only when the run was started with `bench run --release <v>` (issue #116); names the frozen release the run was verified against. |
 
 The leaderboard and site rank only records whose `grader_version` matches the
 current grader and whose `rubric_sha256` matches the current rubric. A record

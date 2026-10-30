@@ -6,7 +6,8 @@ issue #2, `grade` as of issue #3, `run` as of issue #4, `site` as of issue #40,
 #118, `submit` and `prompt` as of issue #124, `new` as of issue #120,
 `mcp-serve` as of issue #123, `sweep` as of issue #125, and `export` as of
 issue #117: the full
-subcommand surface is implemented.
+subcommand surface is implemented. `bench run --release` (issue #116) checks
+a run against a frozen release manifest in `releases/`.
 """
 
 from __future__ import annotations
@@ -83,6 +84,15 @@ def build_parser() -> argparse.ArgumentParser:
                 choices=("public", "heldout", "all"),
                 default="all",
                 help="restrict the run to one split (default: all)",
+            )
+            run_parser.add_argument(
+                "--release",
+                metavar="VERSION",
+                help=(
+                    "run against a frozen release (releases/VERSION.json, "
+                    "issue #116): verifies the corpus matches the manifest "
+                    "and stamps results with the release name"
+                ),
             )
         elif name == "submit":
             submit_parser = sub.add_parser(
