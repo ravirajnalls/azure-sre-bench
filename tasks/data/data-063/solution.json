@@ -1,0 +1,15 @@
+{
+  "root_cause": "Monday's migration (migration.sql, 2026-10-26 02:15Z) dropped the nonclustered index IX_Orders_CustomerId on dbo.Orders as part of a reporting-cleanup change. The reports-api top query (query-store q-9f21: SELECT ... WHERE CustomerId = @CustomerId) lost its seek path and now runs on a new plan (plan_9523) that does a full clustered index scan of the 1.2B-row table (execution-plan.xml: PhysicalOp='Clustered Index Scan' on PK_Orders, Full scan) — avg_logical_reads jumped from ~310 to ~9M and avg_duration from 44 ms to ~24 s, pegging DTU at ~100% since the migration window (dtu-usage.csv).",
+  "evidence": [
+    "migration.sql: line 14 is 'DROP INDEX IF EXISTS IX_Orders_CustomerId ON dbo.Orders' in the Monday 02:15Z change window",
+    "query-store-top-queries.csv: q-9f21's plan flips from plan_4471 to plan_9523 in the 02:15Z slot right after the migration; avg_logical_reads go from 309 to 8,873,001 and avg_duration from 47 ms to 18.4 s",
+    "execution-plan.xml: the current plan for q-9f21 shows PhysicalOp 'Clustered Index Scan' on PK_Orders with Scanning='Full scan' and a sort spill to tempdb — no index seek on CustomerId",
+    "dtu-usage.csv: DTU jumps from ~30% to 96.4% at 02:15Z on 2026-10-26 and stays pinned near 100% thereafter, even off-peak",
+    "connection-pool.log: pool saturation starts and ends with the slow-query window and no leak was found — saturation is a symptom of 24-second queries holding connections, not the cause"
+  ],
+  "fix": "The fix is to recreate the index: CREATE NONCLUSTERED INDEX IX_Orders_CustomerId ON dbo.Orders (CustomerId) INCLUDE (CreatedAtUtc, TotalAmount); (include the sort and selected columns so the plan is a seek on CustomerId with no key lookup). Use ONLINE=ON to avoid blocking the 840 GB table, verify via Query Store that q-9f21 gets a seek-based plan and logical reads drop by ~4 orders of magnitude, then revert the stopgap command-timeout raise. Longer term: add an index-review gate to the CHG-2214-style migration checklist so dropped indexes are checked against Query Store usage first.",
+  "evidence_files": [
+    "migration.sql",
+    "execution-plan.xml"
+  ]
+}

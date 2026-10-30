@@ -89,6 +89,7 @@
 | ID | Title | Difficulty | Tags |
 | --- | --- | --- | --- |
 | data-062 | Cosmos DB 429s on cart-api from one hot partition | medium | data, cosmos-db, partitioning, 429-throttling, ru-consumption |
+| data-063 | Azure SQL timeouts after Monday's schema migration | medium | data, azure-sql, index, query-store, execution-plan |
 
 ## identity
 

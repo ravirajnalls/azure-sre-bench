@@ -1,0 +1,12 @@
+{
+  "root_cause": [
+    ["index"],
+    ["customerid", "dropped", "clustered index scan", "scan"]
+  ],
+  "fix": [
+    ["create index", "recreate the index", "recreate index", "re-add", "add the index"]
+  ],
+  "distractors": [
+    ["connection pool", "pool exhaustion", "pool saturation"]
+  ]
+}
