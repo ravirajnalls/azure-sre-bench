@@ -1,0 +1,21 @@
+[
+  {
+    "allowForwardedTraffic": true,
+    "allowGatewayTransit": false,
+    "allowVirtualNetworkAccess": true,
+    "doNotVerifyRemoteGateways": true,
+    "etag": "\"00000000-0000-0000-0000-000000000004\"",
+    "id": "/subscriptions/00000000-0000-0000-0000-000000000002/resourceGroups/rg-aks-prod/providers/Microsoft.Network/virtualNetworks/vnet-aks-spoke/virtualNetworkPeerings/peer-aks-spoke-to-hub",
+    "name": "peer-aks-spoke-to-hub",
+    "peeringState": "Connected",
+    "peeringSyncLevel": "FullyInSync",
+    "provisioningState": "Succeeded",
+    "remoteVirtualNetwork": {
+      "id": "/subscriptions/00000000-0000-0000-0000-000000000002/resourceGroups/rg-hub/providers/Microsoft.Network/virtualNetworks/vnet-hub",
+      "resourceGroup": "rg-hub"
+    },
+    "resourceGroup": "rg-aks-prod",
+    "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
+    "useRemoteGateways": false
+  }
+]

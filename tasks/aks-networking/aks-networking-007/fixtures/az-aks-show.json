@@ -1,0 +1,50 @@
+{
+  "aadProfile": {
+    "enableAzureRbac": false,
+    "managed": true
+  },
+  "agentPoolProfiles": [
+    {
+      "count": 3,
+      "enableAutoScaling": true,
+      "maxCount": 6,
+      "minCount": 3,
+      "mode": "System",
+      "name": "nodepool1",
+      "nodeImageVersion": "AKSUbuntu-2204gen2containerd-202610.02.0",
+      "orchestratorVersion": "1.29.7",
+      "osDiskSizeGB": 128,
+      "osType": "Linux",
+      "vmSize": "Standard_D4s_v5",
+      "vnetSubnetId": "/subscriptions/00000000-0000-0000-0000-000000000002/resourceGroups/rg-aks-prod/providers/Microsoft.Network/virtualNetworks/vnet-aks-spoke/subnets/snp-nodepool1"
+    }
+  ],
+  "apiServerAccessProfile": {
+    "disableRunCommand": false,
+    "enablePrivateCluster": true,
+    "enablePrivateClusterPublicFqdn": false,
+    "privateDnsZone": "system"
+  },
+  "dnsPrefix": "aks-prod",
+  "id": "/subscriptions/00000000-0000-0000-0000-000000000002/resourceGroups/rg-aks-prod/providers/Microsoft.ContainerService/managedClusters/aks-prod",
+  "identity": {
+    "principalId": "00000000-0000-0000-0000-000000000005",
+    "tenantId": "00000000-0000-0000-0000-000000000001",
+    "type": "SystemAssigned"
+  },
+  "kubernetesVersion": "1.29.7",
+  "location": "eastus",
+  "maxAgentPools": 10,
+  "name": "aks-prod",
+  "networkProfile": {
+    "dnsServiceIp": "10.240.0.10",
+    "networkPlugin": "azure",
+    "networkPolicy": "calico",
+    "serviceCidr": "10.240.0.0/16"
+  },
+  "nodeResourceGroup": "rg-aks-prod",
+  "privateFqdn": "00000000-0000-0000-0000-000000000006.hcp.eastus.azmk8s.io",
+  "provisioningState": "Succeeded",
+  "resourceGroup": "rg-aks-prod",
+  "type": "Microsoft.ContainerService/managedClusters"
+}
