@@ -1,0 +1,20 @@
+{
+  "order": [
+    "pl-041",
+    "al-118",
+    "kc-001",
+    "pl-042",
+    "kc-002",
+    "chat-0902",
+    "pl-043",
+    "al-119",
+    "kc-003",
+    "chat-0911",
+    "chat-0918",
+    "pl-044"
+  ],
+  "evidence_files": [
+    "events.json",
+    "sources.md"
+  ]
+}

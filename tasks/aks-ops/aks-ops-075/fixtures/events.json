@@ -1,0 +1,76 @@
+{
+  "events": [
+    {
+      "id": "chat-0911",
+      "source": "chat",
+      "timestamp": "2026-10-30T05:36:40Z",
+      "summary": "on-call: paged the platform team; we will relax payments-api-pdb to maxUnavailable=1 for the upgrade window"
+    },
+    {
+      "id": "pl-042",
+      "source": "upgrade-pipeline",
+      "timestamp": "2026-10-30T05:09:47Z",
+      "summary": "step 'drain aks-npworkload-31864017-vmss0000Ta' started (kubectl drain --ignore-daemonsets --timeout=20m)"
+    },
+    {
+      "id": "al-118",
+      "source": "activity-log",
+      "timestamp": "2026-10-30T05:14:22Z",
+      "summary": "Microsoft.ContainerService/managedClusters/agentPools/write — upgrade of pool npworkload accepted (objectives: maxSurge=1, maxUnavailable=0)"
+    },
+    {
+      "id": "kc-002",
+      "source": "kubectl-events",
+      "timestamp": "2026-10-30T05:10:02Z",
+      "summary": "Eviction of pod payments-api-7d9f6b8c4-xr2qn blocked: cannot delete pods not in the PDB's allow-list — PodDisruptionBudget payments-api-pdb reports ALLOWED_DISRUPTIONS 0"
+    },
+    {
+      "id": "pl-041",
+      "source": "upgrade-pipeline",
+      "timestamp": "2026-10-30T05:07:12Z",
+      "summary": "pipeline run 20441 started: az aks nodepool upgrade --name npworkload --cluster payments-prod-aks --max-surge 1"
+    },
+    {
+      "id": "chat-0918",
+      "source": "chat",
+      "timestamp": "2026-10-30T05:39:12Z",
+      "summary": "on-call: payments-api-pdb is at maxUnavailable=1 now, go again"
+    },
+    {
+      "id": "al-119",
+      "source": "activity-log",
+      "timestamp": "2026-10-30T05:41:44Z",
+      "summary": "Microsoft.ContainerService/managedClusters/agentPools/write — drain retry for aks-npworkload-31864017-vmss0000Ta accepted"
+    },
+    {
+      "id": "kc-001",
+      "source": "kubectl-events",
+      "timestamp": "2026-10-30T05:08:05Z",
+      "summary": "Node aks-npworkload-31864017-vmss0000Tw (surge) registered: Ready=false, then Ready=true — cordoned for the upgrade"
+    },
+    {
+      "id": "pl-044",
+      "source": "upgrade-pipeline",
+      "timestamp": "2026-10-30T05:52:40Z",
+      "summary": "drain of aks-npworkload-31864017-vmss0000Ta succeeded; pool upgrade resumed and completed (exit 0)"
+    },
+    {
+      "id": "chat-0902",
+      "source": "chat",
+      "timestamp": "2026-10-30T05:11:03Z",
+      "summary": "on-call: drain has been stuck for a bit, checking the PDB on payments-api"
+    },
+    {
+      "id": "pl-043",
+      "source": "upgrade-pipeline",
+      "timestamp": "2026-10-30T05:29:59Z",
+      "summary": "step 'drain aks-npworkload-31864017-vmss0000Ta' timed out after 20m; retry queued with backoff"
+    },
+    {
+      "id": "kc-003",
+      "source": "kubectl-events",
+      "timestamp": "2026-10-30T05:34:58Z",
+      "summary": "Eviction of pod payments-api-7d9f6b8c4-xr2qn blocked again: PodDisruptionBudget payments-api-pdb reports ALLOWED_DISRUPTIONS 0"
+    }
+  ]
+}
