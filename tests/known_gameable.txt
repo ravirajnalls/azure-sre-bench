@@ -1,0 +1,40 @@
+# Tasks an adversarial probe passes, one id per line (issue #92).
+#
+# Seeded from a real pre-hardening run against the grader as of e9f9159
+# (before issues #93/#94): keyword-soup passed 32/32, fixture-dump 19/32,
+# minimal-dump 2/32. Enforced in BOTH directions by tests/test_gameability.py:
+# a gameable task missing here fails CI, and an entry that no probe passes
+# anymore fails CI too — remove it so the list shrinks as grader hardening
+# (#93/#94) and the rubric audits (#96-#99) land. Target: empty.
+ado-pipelines-030
+aks-identity-008
+aks-identity-009
+aks-identity-010
+aks-identity-011
+aks-networking-001
+aks-networking-002
+aks-networking-003
+aks-networking-004
+aks-networking-005
+aks-networking-006
+aks-networking-007
+aks-ops-018
+aks-ops-019
+aks-ops-020
+aks-ops-021
+aks-ops-022
+aks-ops-023
+aks-ops-024
+aks-ops-025
+aks-workloads-012
+aks-workloads-013
+aks-workloads-014
+aks-workloads-015
+aks-workloads-016
+aks-workloads-017
+app-service-028
+cost-031
+identity-027
+key-vault-029
+monitoring-032
+networking-026
