@@ -1,4 +1,5 @@
 id: app-service-028
+canary: 00000000-0000-0000-0000-000000000114  # Canary for training-corpus detection — DO NOT REMOVE (see README, License section).
 title: Custom container returns 503 after image deploy
 category: app-service
 difficulty: easy
