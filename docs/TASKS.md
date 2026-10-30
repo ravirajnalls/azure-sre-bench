@@ -132,7 +132,6 @@
 | ID | Title | Difficulty | Tags |
 | --- | --- | --- | --- |
 | networking-026 | App Service can't reach SQL after public access disabled | medium | networking, azure, app-service, private-endpoint, private-dns |
-| networking-074 | Egress-lockdown PR that will cut off the cluster | hard | networking, aks, route-table, azure-firewall, egress, terraform |
 
 ## serverless
 
