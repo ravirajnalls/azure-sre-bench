@@ -360,6 +360,30 @@ list in, a ready `ToolCallingAgent` out) —
 wiring against a scripted fake model (no API key needed). On any failure the
 adapter prints `{}` and exits 0, graded as a FAIL.
 
+## Run a Semantic Kernel agent
+
+`agents/semantic_kernel_adapter.py` wraps a Semantic Kernel
+[`ChatCompletionAgent`](https://learn.microsoft.com/semantic-kernel/agents/) in
+the same tool boundary as the ReAct baseline — `list_files`, `read_file`,
+`run_command`, and `submit_answer` as a kernel plugin. The service is
+Microsoft-native by default: with `AZURE_OPENAI_ENDPOINT` +
+`AZURE_OPENAI_API_KEY` set it uses `AzureChatCompletion` (deployment from
+`AZURE_OPENAI_CHAT_DEPLOYMENT_NAME` or `LLM_MODEL`); otherwise it routes any
+OpenAI-compatible endpoint through the shared `LLM_BASE_URL` / `LLM_API_KEY` /
+`LLM_MODEL` trio:
+
+```bash
+AZURE_OPENAI_ENDPOINT=... AZURE_OPENAI_API_KEY=... \
+AZURE_OPENAI_CHAT_DEPLOYMENT_NAME=... \
+python -m bench run --agent agents/semantic_kernel_adapter.py --task aks-networking-001
+```
+
+`SEMANTIC_KERNEL_AGENT_TARGET=module:attribute` swaps in your own chat service
+factory (a `ChatCompletionClientBase` built your way) —
+[`examples/semantic_kernel_agent.py`](examples/semantic_kernel_agent.py)
+demonstrates the wiring against a scripted fake service (no API key needed).
+On any failure the adapter prints `{}` and exits 0, graded as a FAIL.
+
 ## Run an MCP-capable agent
 
 Any agent that speaks the Model Context Protocol can be benchmarked through the
