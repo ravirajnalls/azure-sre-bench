@@ -17,8 +17,8 @@ them; CI validates the mechanical ones and reviewers hold the rest.
 tasks/<category>/<task-id>/
   task.yaml       # id, canary, title, category, difficulty, tags, symptom
   fixtures/       # evidence the agent may read (2–10 files)
-  expected.json   # HIDDEN rubric
-  solution.json   # HIDDEN reference answer
+  expected.json   # HIDDEN rubric (held-out tasks: encrypted expected.json.age)
+  solution.json   # HIDDEN reference answer (held-out tasks: solution.json.age)
 ```
 
 Categories: `aks-networking`, `aks-identity`, `aks-workloads`, `aks-ops`, `networking`,
@@ -108,6 +108,16 @@ The validator warns when the declared difficulty disagrees with
 justify it, which the validator cannot check; reviewers must). Warnings are
 reported by `bench validate` and must be resolved before merge.
 
+## Splits
+
+`task.yaml` may declare `split: public` (the default when absent) or
+`split: heldout` (issue #115). Held-out tasks keep `fixtures/` public but ship
+their rubric and reference answer age-encrypted (`expected.json.age`,
+`solution.json.age`); they decrypt only when `HELDOUT_KEY` holds the age
+identity key. Key-less contributors can still validate structure. No existing
+task ships held-out without a separate decision — see `docs/HELDOUT.md` for
+the maintainer flow.
+
 ## Rubric (`expected.json`)
 
 Format:
@@ -152,6 +162,7 @@ grader — this is enforced in CI (solvability check). Write it in the same
 
 ## Tooling
 
-- Python 3.12; dependencies are `pyyaml>=6.0` and `pytest>=8.0` only (plus `requests`
-  for the LLM agents). Keep it that way.
+- Python 3.12; dependencies are `pyyaml>=6.0` and `pytest>=8.0` (plus `requests`
+  for the LLM agents and `pyrage` for held-out encryption, issue #115). Keep
+  additions rare.
 - Run `python -m bench validate` and `pytest -q` before pushing.

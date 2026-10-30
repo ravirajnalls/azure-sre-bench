@@ -17,6 +17,7 @@ import json
 from pathlib import Path
 
 from bench.grader import cap_evidence, grade
+from bench.heldout import ENCRYPTED_SUFFIX, HeldoutKeyError, load_hidden_json
 
 ANSWER_CONTRACT = {
     "root_cause": "str (required) — the specific technical cause of the incident",
@@ -102,7 +103,11 @@ def submit_answer(
             f"answer for {task_id} is missing required contract keys: "
             f"{', '.join(missing)}"
         )
-    rubric = json.loads((task_dir / "expected.json").read_text(encoding="utf-8"))
+    from bench.run import load_task  # deferred: avoids a circular import
+
+    # Held-out rubrics decrypt only when HELDOUT_KEY is present (issue #115).
+    task = load_task(task_dir) if (task_dir / "task.yaml").is_file() else {}
+    rubric = load_hidden_json(task_dir, "expected.json", config=task)
     result = grade(answer, rubric)
     record = {
         "task": task_id,
@@ -127,7 +132,10 @@ def submit_answer(
 
 def _find_task_dir(task_id: str, tasks_root: Path) -> Path:
     for candidate in sorted(tasks_root.rglob(task_id)):
-        if candidate.is_dir() and (candidate / "expected.json").is_file():
+        if candidate.is_dir() and (
+            (candidate / "expected.json").is_file()
+            or (candidate / f"expected.json{ENCRYPTED_SUFFIX}").is_file()
+        ):
             return candidate
     raise FileNotFoundError(
         f"no task directory named '{task_id}' with expected.json under {tasks_root}/"

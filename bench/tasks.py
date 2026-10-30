@@ -20,6 +20,16 @@ from pathlib import Path
 
 import yaml
 
+from bench.heldout import (
+    ENCRYPTED_SUFFIX,
+    HIDDEN_FILES,
+    SPLIT_HELDOUT,
+    SPLITS,
+    HeldoutKeyError,
+    decrypt_bytes,
+    heldout_key,
+    split_of,
+)
 from bench.sim import COMMANDS_FILENAME
 from bench.sim.sim_cli import parse_entries
 
@@ -134,6 +144,9 @@ def _validate_config(config: dict, task_dir: Path) -> list[str]:
             "with the DO NOT REMOVE comment — training-corpus canary, issue #114, "
             "see README License section)"
         )
+    split = config.get("split")
+    if split is not None and split not in SPLITS:
+        errors.append(f"task.yaml: split must be one of {sorted(SPLITS)}, got '{split}'")
 
     tags = config.get("tags")
     if tags is not None:
@@ -218,16 +231,8 @@ def _validate_commands_file(path: Path | None) -> list[str]:
     ]
 
 
-def _validate_expected(task_dir: Path) -> list[str]:
-    path = task_dir / "expected.json"
-    if not path.is_file():
-        return ["missing expected.json"]
-    try:
-        data = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as exc:
-        return [f"expected.json does not parse: {exc}"]
-    if not isinstance(data, dict):
-        return ["expected.json must contain a JSON object"]
+def _validate_expected_data(data: dict) -> list[str]:
+    """Rubric shape rules, applied to plaintext and decrypted content alike."""
     errors = []
     for rubric_field in ("root_cause", "fix"):
         value = data.get(rubric_field)
@@ -245,6 +250,19 @@ def _validate_expected(task_dir: Path) -> list[str]:
     ):
         errors.append("expected.json: 'max_chars' must be a positive integer")
     return errors
+
+
+def _validate_expected(task_dir: Path) -> list[str]:
+    path = task_dir / "expected.json"
+    if not path.is_file():
+        return ["missing expected.json"]
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        return [f"expected.json does not parse: {exc}"]
+    if not isinstance(data, dict):
+        return ["expected.json must contain a JSON object"]
+    return _validate_expected_data(data)
 
 
 def _load_solution(task_dir: Path) -> tuple[dict | None, list[str]]:
@@ -312,6 +330,48 @@ def _solution_warnings(
     return warnings
 
 
+def _validate_heldout_hidden(
+    task_dir: Path, key: str | None, config: dict | None = None
+) -> tuple[list[str], list[str]]:
+    """Held-out tasks ship only `<name>.age` for the hidden files (issue #115).
+
+    Plaintext hidden files are a leak and fail validation. Rubric shape and
+    solution quality are checked on the decrypted content when `key` is
+    available; without it only structure is validated, so key-less
+    contributors still pass `bench validate`.
+    """
+    errors: list[str] = []
+    warnings: list[str] = []
+    for name in HIDDEN_FILES:
+        if (task_dir / name).is_file():
+            errors.append(
+                f"held-out task must not contain plaintext {name} — "
+                "encrypt it (see docs/HELDOUT.md)"
+            )
+        encrypted = task_dir / (name + ENCRYPTED_SUFFIX)
+        if not encrypted.is_file():
+            errors.append(f"missing {name}{ENCRYPTED_SUFFIX} (held-out task)")
+            continue
+        if not key:
+            continue
+        try:
+            data = json.loads(decrypt_bytes(encrypted.read_bytes(), key))
+        except HeldoutKeyError as exc:
+            errors.append(f"{name}{ENCRYPTED_SUFFIX}: {exc}")
+            continue
+        except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+            errors.append(f"{name}{ENCRYPTED_SUFFIX} does not decrypt to JSON: {exc}")
+            continue
+        if not isinstance(data, dict):
+            errors.append(f"{name}{ENCRYPTED_SUFFIX} must decrypt to a JSON object")
+            continue
+        if name == "expected.json":
+            errors.extend(_validate_expected_data(data))
+        else:
+            warnings.extend(_solution_warnings(data, config, task_dir))
+    return errors, warnings
+
+
 def inspect_task(task_dir: Path) -> TaskResult:
     """Validate one task directory, collecting every violation found."""
     result = TaskResult(path=task_dir)
@@ -332,11 +392,18 @@ def inspect_task(task_dir: Path) -> TaskResult:
                 result.errors.append("task.yaml must contain a mapping")
 
     result.errors.extend(_validate_fixtures(task_dir))
-    result.errors.extend(_validate_expected(task_dir))
-    solution, solution_errors = _load_solution(task_dir)
-    result.errors.extend(solution_errors)
-    if solution is not None:
-        result.warnings.extend(_solution_warnings(solution, result.config, task_dir))
+    if split_of(result.config) == SPLIT_HELDOUT:
+        hidden_errors, hidden_warnings = _validate_heldout_hidden(
+            task_dir, heldout_key(), result.config
+        )
+        result.errors.extend(hidden_errors)
+        result.warnings.extend(hidden_warnings)
+    else:
+        result.errors.extend(_validate_expected(task_dir))
+        solution, solution_errors = _load_solution(task_dir)
+        result.errors.extend(solution_errors)
+        if solution is not None:
+            result.warnings.extend(_solution_warnings(solution, result.config, task_dir))
     # Repeated violations (e.g. the same GUID twice in one fixture) report once.
     result.errors = list(dict.fromkeys(result.errors))
     result.warnings = list(dict.fromkeys(result.warnings))

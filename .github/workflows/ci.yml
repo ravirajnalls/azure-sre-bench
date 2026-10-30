@@ -19,6 +19,11 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Validate task corpus
+        env:
+          # Optional until a task ships held-out: when the secret exists, rubrics
+          # are decrypted and fully checked; when absent, held-out validation is
+          # structure-only (issue #115). Blank-from-missing-secret == unset.
+          HELDOUT_KEY: ${{ secrets.HELDOUT_KEY }}
         # `bench validate` exits non-zero on an empty corpus by design (issue #2),
         # so enforcement starts once the first task lands; from then on any PR
         # that breaks a task's structure, rubric, or fixtures fails here.
@@ -38,4 +43,8 @@ jobs:
           git diff --exit-code docs/TASKS.md
 
       - name: Test suite (includes per-task integrity checks, issue #5)
+        # See the validate step: HELDOUT_KEY is optional; integrity tests
+        # decrypt-or-skip held-out rubrics (issue #115).
+        env:
+          HELDOUT_KEY: ${{ secrets.HELDOUT_KEY }}
         run: pytest -q
