@@ -1,0 +1,9 @@
+{
+  "root_cause": [
+    ["rbac"],
+    ["access polic"]
+  ],
+  "fix": [
+    ["key vault secrets user", "role assignment"]
+  ]
+}

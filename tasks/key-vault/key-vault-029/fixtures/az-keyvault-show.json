@@ -1,0 +1,36 @@
+{
+  "id": "/subscriptions/00000000-0000-0000-0000-000000000002/resourceGroups/rg-reports-prod/providers/Microsoft.KeyVault/vaults/kv-reports",
+  "location": "westeurope",
+  "name": "kv-reports",
+  "properties": {
+    "accessPolicyEntries": [
+      {
+        "application": null,
+        "objectId": "00000000-0000-0000-0000-000000000003",
+        "permissions": {
+          "certificates": [],
+          "keys": [],
+          "secrets": ["Get", "List"]
+        },
+        "tenantId": "00000000-0000-0000-0000-000000000001"
+      }
+    ],
+    "createMode": "default",
+    "enableRbacAuthorization": true,
+    "enableSoftDelete": true,
+    "networkAcls": {
+      "bypass": "AzureServices",
+      "defaultAction": "Allow",
+      "ipRules": [],
+      "virtualNetworkRules": []
+    },
+    "provisioningState": "Succeeded",
+    "publicNetworkAccess": "Enabled",
+    "sku": { "family": "A", "name": "standard" },
+    "softDeleteRetentionInDays": 90,
+    "tenantId": "00000000-0000-0000-0000-000000000001",
+    "vaultUri": "https://kv-reports.vault.azure.net/"
+  },
+  "resourceGroup": "rg-reports-prod",
+  "type": "Microsoft.KeyVault/vaults"
+}
