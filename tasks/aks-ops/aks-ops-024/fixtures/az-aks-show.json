@@ -1,0 +1,63 @@
+{
+  "aadProfile": {
+    "enableAzureRBAC": true,
+    "managed": true,
+    "tenantId": "00000000-0000-0000-0000-000000000002"
+  },
+  "addonProfiles": {
+    "omsagent": {
+      "config": {
+        "logAnalyticsWorkspaceResourceID": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-prod-01/providers/microsoft.operationalinsights/workspaces/law-prod-01",
+        "syslogAdminPort": "28300"
+      },
+      "enabled": true
+    }
+  },
+  "agentPoolProfiles": [
+    {
+      "name": "systempool",
+      "count": 1,
+      "vmSize": "Standard_D4ads_v5",
+      "mode": "System",
+      "osType": "Linux",
+      "osSKU": "AzureLinux",
+      "availabilityZones": ["1", "2"],
+      "maxPods": 110,
+      "type": "VirtualMachineScaleSets"
+    },
+    {
+      "name": "npuser",
+      "count": 3,
+      "vmSize": "Standard_D8ads_v5",
+      "mode": "User",
+      "osType": "Linux",
+      "osSKU": "Ubuntu",
+      "availabilityZones": ["1", "2"],
+      "maxPods": 110,
+      "type": "VirtualMachineScaleSets"
+    }
+  ],
+  "dnsPrefix": "aks-prod-eus-02",
+  "enableRBAC": true,
+  "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-prod-01/providers/Microsoft.ContainerService/managedClusters/aks-prod-eus-02",
+  "identity": {
+    "principalId": "00000000-0000-0000-0000-000000000006",
+    "tenantId": "00000000-0000-0000-0000-000000000002",
+    "type": "SystemAssigned"
+  },
+  "kubernetesVersion": "1.30.6",
+  "location": "eastus",
+  "name": "aks-prod-eus-02",
+  "networkProfile": {
+    "networkPlugin": "azure",
+    "networkPolicy": "calico",
+    "podCidr": "10.244.0.0/16",
+    "serviceCidr": "10.0.0.0/16"
+  },
+  "provisioningState": "Succeeded",
+  "resourceGroup": "rg-prod-01",
+  "tags": {
+    "env": "prod"
+  },
+  "type": "Microsoft.ContainerService/managedClusters"
+}

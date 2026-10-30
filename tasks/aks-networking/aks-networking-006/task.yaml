@@ -1,0 +1,16 @@
+id: aks-networking-006
+title: "Internal service exposed with a public IP"
+category: aks-networking
+difficulty: easy
+tags:
+  - aks
+  - load-balancer
+  - service-annotation
+  - kubernetes
+symptom: >
+  The weekly security scan flagged finance's ledger-internal service: its load
+  balancer fronts a public IP, but ledger-internal is supposed to be reachable
+  only from the VNet. The ledger-posting batch jobs are still completing, so
+  nothing looks broken from inside the cluster, and the network team confirms
+  no inbound rules have changed this month. Finding SEC-2026-1042 carries a
+  48-hour remediation SLA and the security team paged on-call at 07:05 UTC.

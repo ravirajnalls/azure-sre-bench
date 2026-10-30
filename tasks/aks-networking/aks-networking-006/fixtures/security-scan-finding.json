@@ -1,0 +1,25 @@
+{
+  "findingId": "SEC-2026-1042",
+  "title": "Public IP address associated with internal-only workload",
+  "severity": "high",
+  "status": "open",
+  "detected": "2026-10-28T06:12:44Z",
+  "remediationSla": "2026-10-30T06:12:44Z",
+  "policy": "AKS-services-must-use-internal-load-balancers",
+  "resource": {
+    "resourceType": "Microsoft.Network/publicIPAddresses",
+    "resourceName": "a3f7c1d9-public-lb-pip",
+    "resourceGroup": "rg-finops-prod",
+    "location": "uksouth",
+    "ipAddress": "20.162.44.128",
+    "allocationMethod": "Static",
+    "publicIpSku": "Standard"
+  },
+  "relatedWorkload": {
+    "cluster": "aks-finops-prod",
+    "namespace": "finance",
+    "service": "ledger-internal",
+    "serviceType": "LoadBalancer"
+  },
+  "description": "Load balancer frontend 20.162.44.128 is reachable from the public internet, but the related workload is classified as VNet-only. No NSG rule change was detected in the last 30 days."
+}

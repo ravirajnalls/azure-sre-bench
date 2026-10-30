@@ -1,0 +1,13 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: ledger-writer
+  namespace: finance
+  labels:
+    app.kubernetes.io/name: ledger-writer
+    app.kubernetes.io/part-of: ledger
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: ledger-writer

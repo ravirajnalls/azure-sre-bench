@@ -1,0 +1,17 @@
+# app-portal application log (App Service, container stdout) — 2026-10-30
+2026-10-30T04:10:58.102Z INFO  [http] Request starting GET /orders/active
+2026-10-30T04:10:58.144Z INFO  [http] GET /orders/active 200 41ms
+2026-10-30T04:11:01.337Z INFO  [http] Request starting POST /checkout
+2026-10-30T04:11:01.402Z ERROR [db] Microsoft.Data.SqlClient.SqlException (0x80131904): An instance-specific error occurred while establishing a connection to SQL Server. Server 'sql-contoso-prod' has public network access set to 'Disabled'. Connections over the public endpoint are not permitted. Use a private endpoint to connect. Error: 47073.
+2026-10-30T04:11:01.403Z ERROR [db]    at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+2026-10-30T04:11:01.403Z ERROR [db]    at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean async)
+2026-10-30T04:11:01.404Z ERROR [db] Connection string: Server=tcp:sql-contoso-prod.database.windows.net,1433;Database=db-portal-prod;User ID=portal_app;Connection Timeout=30
+2026-10-30T04:11:01.404Z ERROR [http] POST /checkout 500 66ms
+2026-10-30T04:11:02.891Z INFO  [http] Request starting GET /products/88412
+2026-10-30T04:11:02.918Z INFO  [http] GET /products/88412 200 27ms
+2026-10-30T04:11:06.012Z INFO  [http] Request starting POST /checkout
+2026-10-30T04:11:06.078Z ERROR [db] Microsoft.Data.SqlClient.SqlException (0x80131904): An instance-specific error occurred while establishing a connection to SQL Server. Server 'sql-contoso-prod' has public network access set to 'Disabled'. Connections over the public endpoint are not permitted. Use a private endpoint to connect. Error: 47073.
+2026-10-30T04:11:06.079Z ERROR [http] POST /checkout 500 66ms
+2026-10-30T04:11:07.330Z INFO  [health] Health probe GET /healthz 200 3ms
+2026-10-30T04:12:44.551Z WARN  [db] Connection attempt 41 failed; SQL error rate 100% for the last 3 minutes
+2026-10-30T04:14:10.874Z ERROR [db] Microsoft.Data.SqlClient.SqlException (0x80131904): An instance-specific error occurred while establishing a connection to SQL Server. Server 'sql-contoso-prod' has public network access set to 'Disabled'. Connections over the public endpoint are not permitted. Use a private endpoint to connect. Error: 47073.

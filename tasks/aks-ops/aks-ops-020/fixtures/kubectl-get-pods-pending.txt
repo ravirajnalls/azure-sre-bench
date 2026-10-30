@@ -1,0 +1,16 @@
+NAMESPACE   NAME                                          READY   STATUS    RESTARTS   AGE
+checkout    checkout-api-7d9f8b6c4-xk2vz                  0/1     Pending   0          25m
+checkout    checkout-api-7d9f8b6c4-m4rpt                  0/1     Pending   0          25m
+checkout    checkout-api-7d9f8b6c4-q8hln                  0/1     Pending   0          25m
+checkout    checkout-worker-5c6d8b7f9-j2wsk               0/1     Pending   0          24m
+checkout    checkout-worker-5c6d8b7f9-p9txr               0/1     Pending   0          24m
+payments    payments-api-6b8d9c7f5-vt3zw                  0/1     Pending   0          23m
+payments    payments-api-6b8d9c7f5-xn7kb                  0/1     Pending   0          23m
+payments    payments-worker-84f76d9c8b-cq2lm              0/1     Pending   0          23m
+payments    webhook-relay-66f8b7d5c9-hs4tw                0/1     Pending   0          22m
+catalogue   catalogue-api-78b9dc6f5d-kw5rd                0/1     Pending   0          22m
+catalogue   catalogue-api-78b9dc6f5d-ml2vh                0/1     Pending   0          22m
+catalogue   catalogue-search-5fd8c9b7d6-tq3xf             0/1     Pending   0          21m
+checkout    cart-service-6c7d8e9f5-bn4kd                  0/1     Pending   0          21m
+shop-web    storefront-6d9f8b6c4-wz8qn                    0/1     Pending   0          20m
+shop-web    storefront-6d9f8b6c4-yj5rm                    0/1     Pending   0          20m

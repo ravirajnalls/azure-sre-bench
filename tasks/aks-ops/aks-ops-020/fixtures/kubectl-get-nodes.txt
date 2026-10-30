@@ -1,0 +1,13 @@
+NAME                                STATUS   ROLES   AGE   VERSION   OS-IMAGE                        KERNEL-VERSION
+aks-systempool-39871245-vmss000000  Ready    agent   47d   v1.30.6   Azure Linux 3.0                 6.6.52.2-1.azl3
+aks-systempool-39871245-vmss000001  Ready    agent   47d   v1.30.6   Azure Linux 3.0                 6.6.52.2-1.azl3
+aks-userpool1-39871245-vmss000000   Ready    agent   29d   v1.30.6   Ubuntu 22.04.5 LTS              6.5.0-1025-azure
+aks-userpool1-39871245-vmss000001   Ready    agent   29d   v1.30.6   Ubuntu 22.04.5 LTS              6.5.0-1025-azure
+aks-userpool1-39871245-vmss000002   Ready    agent   29d   v1.30.6   Ubuntu 22.04.5 LTS              6.5.0-1025-azure
+aks-userpool1-39871245-vmss000003   Ready    agent   26d   v1.30.6   Ubuntu 22.04.5 LTS              6.5.0-1025-azure
+aks-userpool1-39871245-vmss000004   Ready    agent   24d   v1.30.6   Ubuntu 22.04.5 LTS              6.5.0-1025-azure
+aks-userpool1-39871245-vmss000005   Ready    agent   21d   v1.30.6   Ubuntu 22.04.5 LTS              6.5.0-1025-azure
+aks-userpool1-39871245-vmss000006   Ready    agent   21d   v1.30.6   Ubuntu 22.04.5 LTS              6.5.0-1025-azure
+aks-userpool1-39871245-vmss000007   Ready    agent   19d   v1.30.6   Ubuntu 22.04.5 LTS              6.5.0-1025-azure
+aks-userpool1-39871245-vmss000008   Ready    agent   12d   v1.30.6   Ubuntu 22.04.5 LTS              6.5.0-1025-azure
+aks-userpool1-39871245-vmss000009   Ready    agent   6d    v1.30.6   Ubuntu 22.04.5 LTS              6.5.0-1025-azure

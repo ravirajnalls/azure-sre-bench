@@ -1,0 +1,39 @@
+Cluster-autoscaler status at 2026-10-30 09:18:04.337491102 +0000 UTC:
+=====================================================
+Cluster-wide:
+  Health:      Healthy (ready=4 unregistered=0 registerable=4 cloudProviderNodes=4 cloudNodesNotRegistered=0)
+  ScaleUp:     NoActivity (ready=4 registered=4 irreplaceablePods=0 cloudProviderNodes=4)
+  ScaleDown:   NoCandidates (candidates=0 registered=0 empty=0)
+  Last 10 transition times (UTC):
+    2026-10-30 08:44:11.022 +0000 UTC  ScaleUp     NoActivity -> NoActivity
+    2026-10-30 08:29:11.017 +0000 UTC  ScaleUp     NoActivity -> NoActivity
+    2026-10-30 08:14:10.998 +0000 UTC  ScaleUp     NoActivity -> NoActivity
+    2026-10-30 07:59:10.951 +0000 UTC  ScaleUp     NoActivity -> NoActivity
+    2026-10-30 07:44:10.923 +0000 UTC  ScaleUp     NoActivity -> NoActivity
+    2026-10-30 07:29:10.899 +0000 UTC  ScaleUp     NoActivity -> NoActivity
+    2026-10-30 07:14:10.844 +0000 UTC  ScaleUp     NoActivity -> NoActivity
+    2026-10-30 06:59:10.801 +0000 UTC  ScaleUp     NoActivity -> NoActivity
+    2026-10-30 06:44:10.777 +0000 UTC  ScaleUp     NoActivity -> NoActivity
+    2026-10-30 06:29:10.742 +0000 UTC  ScaleUp     NoActivity -> NoActivity
+NodePools:
+  aks-npuser-41873229-vmss:
+    MaxSize:      6
+    MinSize:      3
+    LastScaleUpTime: 2026-10-21 14:22:31.551 +0000 UTC
+  aks-systempool-41873229-vmss:
+    MaxSize:      3
+    MinSize:      1
+    LastScaleUpTime: 2026-10-06 09:03:47.229 +0000 UTC
+
+--- recent autoscaler log lines (kubectl logs -n kube-system deploy/aks-managed-cluster-autoscaler --tail=200) ---
+I1030 08:43:57.018441       1 static_autoscaler.go:412] Starting main loop
+I1030 08:43:57.019220       1 filter_out_schedulable.go:92] Filtering out schedulable pods
+I1030 08:43:57.021670       1 scale_up.go:589] pod didn't trigger scale-up: 1 insufficient memory
+I1030 08:43:57.021712       1 scale_up.go:589] pod didn't trigger scale-up: 1 insufficient memory
+I1030 08:43:57.021734       1 scale_up.go:589] pod didn't trigger scale-up: 1 insufficient memory
+I1030 08:43:57.022001       1 static_autoscaler.go:525] No candidates for scale down
+I1030 09:03:57.441208       1 static_autoscaler.go:412] Starting main loop
+I1030 09:03:57.442335       1 scale_up.go:589] pod didn't trigger scale-up: 1 insufficient memory
+I1030 09:03:57.442361       1 scale_up.go:589] pod didn't trigger scale-up: 1 insufficient memory
+I1030 09:03:57.442383       1 scale_up.go:589] pod didn't trigger scale-up: 1 insufficient memory
+I1030 09:03:57.442620       1 static_autoscaler.go:525] No candidates for scale down

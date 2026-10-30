@@ -1,0 +1,4 @@
+NAME              TYPE           CLUSTER-IP      EXTERNAL-IP     PORT(S)          AGE
+ledger-internal   LoadBalancer   10.240.11.37    20.162.44.128   443:31567/TCP    58d
+payments-api      ClusterIP      10.240.5.82     <none>          8443/TCP         58d
+reporting-ui      ClusterIP      10.240.9.104    <none>          80:30988/TCP     90d

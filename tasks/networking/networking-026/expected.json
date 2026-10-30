@@ -1,0 +1,9 @@
+{
+  "root_cause": [
+    ["private dns", "privatelink"],
+    ["link", "resolv", "public ip"]
+  ],
+  "fix": [
+    ["link", "virtual network link"]
+  ]
+}

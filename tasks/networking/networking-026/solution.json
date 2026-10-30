@@ -1,0 +1,11 @@
+{
+  "root_cause": "The privatelink.database.windows.net private DNS zone is not linked to vnet-app-prod, the App Service's integration VNet, so sql-contoso-prod.database.windows.net resolves to its public IP 20.42.65.92 and connections are rejected now that public network access is disabled.",
+  "evidence": [
+    "nslookup-from-kudu.txt: sql-contoso-prod.database.windows.net resolves to public IP 20.42.65.92 via the public DNS resolver 168.63.129.16 instead of the private endpoint IP 10.60.1.5",
+    "az-network-private-dns-link-list.json: the privatelink.database.windows.net zone has a virtual network link only for vnet-sql-prod; there is no link for vnet-app-prod",
+    "az-network-private-endpoint-show.json: private endpoint pe-sql-contoso-prod is healthy and approved, with private IP 10.60.1.5",
+    "app-portal.log: SqlException 47073 — server rejects the connection because public network access on sql-contoso-prod is disabled",
+    "az-webapp-vnet-integration.json: app-portal VNet integration to snet-app-integration is healthy (red herring)"
+  ],
+  "fix": "Add a virtual network link for vnet-app-prod to the privatelink.database.windows.net private DNS zone so app-portal resolves the SQL server to its private endpoint IP."
+}

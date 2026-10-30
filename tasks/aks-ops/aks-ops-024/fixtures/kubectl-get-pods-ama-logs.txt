@@ -1,0 +1,6 @@
+NAME                        READY   STATUS    RESTARTS   AGE
+ama-logs-2xk7n              3/3     Running   0          6d2h
+ama-logs-5wvqq              3/3     Running   0          6d2h
+ama-logs-9drzs              3/3     Running   0          6d2h
+ama-logs-ntb4m              3/3     Running   0          6d2h
+ama-metrics-6f8b7c9d5-xpqwj 2/2     Running   0          6d2h

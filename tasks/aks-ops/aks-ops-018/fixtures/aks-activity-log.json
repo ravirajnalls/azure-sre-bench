@@ -1,0 +1,97 @@
+{
+  "value": [
+    {
+      "eventDataId": "00000000-0000-0000-0000-000000000002",
+      "category": {
+        "value": "Administrative",
+        "localizedValue": "Administrative"
+      },
+      "operationName": {
+        "value": "Microsoft.ContainerService/managedClusters/upgradeNodes/action",
+        "localizedValue": "Upgrade Managed Cluster Nodes"
+      },
+      "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-prod-01/providers/Microsoft.ContainerService/managedClusters/aks-prod-eus-01",
+      "resourceGroupName": "rg-prod-01",
+      "resourceProviderName": {
+        "value": "Microsoft.ContainerService"
+      },
+      "caller": "MS-AKSRA",
+      "level": "Error",
+      "status": {
+        "value": "Failed",
+        "localizedValue": "Failed"
+      },
+      "eventTimestamp": "2026-10-30T09:41:18.4127390Z",
+      "submissionTimestamp": "2026-10-30T09:41:55.9981020Z",
+      "subscriptionId": "00000000-0000-0000-0000-000000000001",
+      "tenantId": "00000000-0000-0000-0000-000000000003",
+      "properties": {
+        "statusCode": "Conflict",
+        "message": "Drain of node aks-npuser-31214664-vmss000000 (attempt 14) failed: cannot evict pods finance/ledger-writer-7d9c8b6f5-hq2xl and finance/ledger-writer-7d9c8b6f5-mv4kn — 'Cannot evict pod as it would violate the pod's disruption budget.' Node drain will be retried."
+      },
+      "correlationId": "00000000-0000-0000-0000-000000000004"
+    },
+    {
+      "eventDataId": "00000000-0000-0000-0000-000000000005",
+      "category": {
+        "value": "Administrative",
+        "localizedValue": "Administrative"
+      },
+      "operationName": {
+        "value": "Microsoft.ContainerService/managedClusters/upgradeNodes/action",
+        "localizedValue": "Upgrade Managed Cluster Nodes"
+      },
+      "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-prod-01/providers/Microsoft.ContainerService/managedClusters/aks-prod-eus-01",
+      "resourceGroupName": "rg-prod-01",
+      "resourceProviderName": {
+        "value": "Microsoft.ContainerService"
+      },
+      "caller": "MS-AKSRA",
+      "level": "Informational",
+      "status": {
+        "value": "Started",
+        "localizedValue": "Started"
+      },
+      "eventTimestamp": "2026-10-30T06:12:02.8804510Z",
+      "submissionTimestamp": "2026-10-30T06:12:41.1102830Z",
+      "subscriptionId": "00000000-0000-0000-0000-000000000001",
+      "tenantId": "00000000-0000-0000-0000-000000000003",
+      "properties": {
+        "statusCode": "Accepted",
+        "message": "Initiated upgrade of cluster aks-prod-eus-01 from 1.30.6 to 1.31.1. Upgrade sequence: control plane, then agent pools (systempool, npuser)."
+      },
+      "correlationId": "00000000-0000-0000-0000-000000000004"
+    },
+    {
+      "eventDataId": "00000000-0000-0000-0000-000000000006",
+      "category": {
+        "value": "Administrative",
+        "localizedValue": "Administrative"
+      },
+      "operationName": {
+        "value": "Microsoft.ContainerService/managedClusters/write",
+        "localizedValue": "Create or Update Managed Cluster"
+      },
+      "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-prod-01/providers/Microsoft.ContainerService/managedClusters/aks-prod-eus-01",
+      "resourceGroupName": "rg-prod-01",
+      "resourceProviderName": {
+        "value": "Microsoft.ContainerService"
+      },
+      "caller": "raviraj@pebench.example",
+      "level": "Informational",
+      "status": {
+        "value": "Succeeded",
+        "localizedValue": "Succeeded"
+      },
+      "eventTimestamp": "2026-10-30T06:09:47.5562130Z",
+      "submissionTimestamp": "2026-10-30T06:10:12.7145990Z",
+      "subscriptionId": "00000000-0000-0000-0000-000000000001",
+      "tenantId": "00000000-0000-0000-0000-000000000003",
+      "properties": {
+        "statusCode": "Created",
+        "message": "Cluster upgrade request submitted: kubernetesVersion 1.30.6 -> 1.31.1"
+      },
+      "correlationId": "00000000-0000-0000-0000-000000000004"
+    }
+  ]
+}

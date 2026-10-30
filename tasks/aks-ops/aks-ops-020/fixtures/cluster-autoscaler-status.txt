@@ -1,0 +1,77 @@
+# kubectl get configmap cluster-autoscaler-status -n kube-system -o jsonpath='{.data.status}' | jq .
+{
+  "clusterWide": {
+    "conditions": [
+      {
+        "type": "Healthy",
+        "status": "True",
+        "lastTransitionTime": "2026-10-30T07:41:02Z",
+        "reason": "AllNodeGroupsHealthy",
+        "message": "All node groups are healthy"
+      },
+      {
+        "type": "AllNodesRegistered",
+        "status": "True",
+        "lastTransitionTime": "2026-10-30T07:41:02Z",
+        "reason": "AllNodesRegistered",
+        "message": "All registered nodes are ready"
+      }
+    ],
+    "nodesCount": 12,
+    "registeredNodesCount": 12,
+    "longestRunningPod": "checkout-api-7d9f8b6c4-xk2vz.checkout",
+    "scaledUpFromZero": false
+  },
+  "nodeGroups": [
+    {
+      "name": "systempool",
+      "conditions": [
+        {
+          "type": "Healthy",
+          "status": "True",
+          "lastTransitionTime": "2026-10-30T07:41:02Z",
+          "reason": "NodeGroupHealthy",
+          "message": "Node group is healthy"
+        }
+      ],
+      "cloudProviderInfo": {
+        "minSize": 2,
+        "maxSize": 2
+      },
+      "nodes": [
+        { "node": "aks-systempool-39871245-vmss000000", "status": "Ready" },
+        { "node": "aks-systempool-39871245-vmss000001", "status": "Ready" }
+      ],
+      "autoProvisioned": false
+    },
+    {
+      "name": "userpool1",
+      "conditions": [
+        {
+          "type": "Healthy",
+          "status": "True",
+          "lastTransitionTime": "2026-10-30T07:41:02Z",
+          "reason": "NodeGroupHealthy",
+          "message": "Node group is healthy"
+        }
+      ],
+      "cloudProviderInfo": {
+        "minSize": 3,
+        "maxSize": 10
+      },
+      "nodes": [
+        { "node": "aks-userpool1-39871245-vmss000000", "status": "Ready" },
+        { "node": "aks-userpool1-39871245-vmss000001", "status": "Ready" },
+        { "node": "aks-userpool1-39871245-vmss000002", "status": "Ready" },
+        { "node": "aks-userpool1-39871245-vmss000003", "status": "Ready" },
+        { "node": "aks-userpool1-39871245-vmss000004", "status": "Ready" },
+        { "node": "aks-userpool1-39871245-vmss000005", "status": "Ready" },
+        { "node": "aks-userpool1-39871245-vmss000006", "status": "Ready" },
+        { "node": "aks-userpool1-39871245-vmss000007", "status": "Ready" },
+        { "node": "aks-userpool1-39871245-vmss000008", "status": "Ready" },
+        { "node": "aks-userpool1-39871245-vmss000009", "status": "Ready" }
+      ],
+      "autoProvisioned": false
+    }
+  ]
+}

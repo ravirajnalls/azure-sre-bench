@@ -1,0 +1,11 @@
+{
+  "root_cause": "The Azure CNI subnet snet-aks-nodes (10.224.0.0/24) is out of IP addresses — exhausted because the cluster runs networkPlugin azure without overlay and maxPods 110, so each of the three nodes allocates maxPods+1 = 111 addresses (333 total) against the 251 usable addresses of a /24; new pod sandboxes and the new LoadBalancer frontend can no longer get an IP.",
+  "evidence": [
+    "kubectl-describe-pod.txt: FailedCreatePodSandBox — azure-cni cannot allocate an IP from subnet snet-aks-nodes for the checkout-api sandbox while the image pull succeeds",
+    "az-network-vnet-subnet-show.json: snet-aks-nodes has addressPrefix 10.224.0.0/24 and ipConfigurationsCount 251, i.e. every usable address is allocated",
+    "az-aks-show.json: networkProfile networkPlugin azure with no overlay mode and agentPoolProfiles maxPods 110",
+    "kubectl-get-nodes.txt: three Ready nodes (10.224.0.4-.6) all drawing pod addresses from the same /24 subnet",
+    "kubectl-get-svc.txt: the checkout LoadBalancer shows EXTERNAL-IP <pending> while the existing partner-api LoadBalancer keeps its address (red herring — no LB or controller problem)"
+  ],
+  "fix": "Relieve the address space: recreate the node pool on a larger subnet (e.g. a /22) or a new node pool subnet, switch the cluster to Azure CNI overlay, or reduce maxPods so per-node pod-IP allocation fits the existing subnet."
+}

@@ -1,0 +1,94 @@
+[
+  {
+    "id": 7851,
+    "buildNumber": "20261030.3",
+    "status": "completed",
+    "result": "failed",
+    "queueTime": "2026-10-30T06:02:10.1173411Z",
+    "startTime": "2026-10-30T06:02:11.4820102Z",
+    "finishTime": "2026-10-30T06:12:36.0017821Z",
+    "sourceBranch": "refs/heads/main",
+    "requestedFor": {
+      "displayName": "Platform CI",
+      "id": "00000000-0000-0000-0000-000000000004",
+      "uniqueName": "platform-ci@contoso-engineering.onmicrosoft.com"
+    },
+    "definition": {
+      "id": 91,
+      "name": "infra-prod"
+    },
+    "project": {
+      "id": "00000000-0000-0000-0000-000000000005",
+      "name": "cloud-platform"
+    }
+  },
+  {
+    "id": 7850,
+    "buildNumber": "20261030.2",
+    "status": "completed",
+    "result": "failed",
+    "queueTime": "2026-10-30T04:47:22.3105541Z",
+    "startTime": "2026-10-30T04:47:23.7710023Z",
+    "finishTime": "2026-10-30T04:57:47.8843901Z",
+    "sourceBranch": "refs/heads/main",
+    "requestedFor": {
+      "displayName": "Platform CI",
+      "id": "00000000-0000-0000-0000-000000000004",
+      "uniqueName": "platform-ci@contoso-engineering.onmicrosoft.com"
+    },
+    "definition": {
+      "id": 91,
+      "name": "infra-prod"
+    },
+    "project": {
+      "id": "00000000-0000-0000-0000-000000000005",
+      "name": "cloud-platform"
+    }
+  },
+  {
+    "id": 7842,
+    "buildNumber": "20261029.2",
+    "status": "completed",
+    "result": "canceled",
+    "queueTime": "2026-10-29T08:36:55.8841209Z",
+    "startTime": "2026-10-29T08:37:00.4420110Z",
+    "finishTime": "2026-10-29T08:41:27.3100385Z",
+    "sourceBranch": "refs/heads/feature/vnet-dns-servers",
+    "requestedFor": {
+      "displayName": "Marta Okafor",
+      "id": "00000000-0000-0000-0000-000000000006",
+      "uniqueName": "marta.okafor@contoso-engineering.onmicrosoft.com"
+    },
+    "definition": {
+      "id": 91,
+      "name": "infra-prod"
+    },
+    "project": {
+      "id": "00000000-0000-0000-0000-000000000005",
+      "name": "cloud-platform"
+    }
+  },
+  {
+    "id": 7838,
+    "buildNumber": "20261029.1",
+    "status": "completed",
+    "result": "succeeded",
+    "queueTime": "2026-10-29T07:12:03.9900217Z",
+    "startTime": "2026-10-29T07:12:05.1178440Z",
+    "finishTime": "2026-10-29T07:19:41.2209917Z",
+    "sourceBranch": "refs/heads/main",
+    "requestedFor": {
+      "displayName": "Platform CI",
+      "id": "00000000-0000-0000-0000-000000000004",
+      "uniqueName": "platform-ci@contoso-engineering.onmicrosoft.com"
+    },
+    "definition": {
+      "id": 91,
+      "name": "infra-prod"
+    },
+    "project": {
+      "id": "00000000-0000-0000-0000-000000000005",
+      "name": "cloud-platform"
+    }
+  }
+]

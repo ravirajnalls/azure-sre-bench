@@ -1,0 +1,31 @@
+2026-10-30T06:02:10.1173411Z ##[section]Starting: Initialize environment
+2026-10-30T06:02:10.4420981Z ##[group]Agent environment
+2026-10-30T06:02:10.4421129Z Agent name: ubuntu-latest-agent-03
+2026-10-30T06:02:10.4421244Z Pool: Azure Pipelines (ubuntu-latest)
+2026-10-30T06:02:10.4421366Z ##[endgroup]
+2026-10-30T06:02:11.4820102Z ##[section]Starting: Terraform plan
+2026-10-30T06:02:11.6093333Z ##[command]/usr/bin/az login --service-principal -u *** -p *** --tenant 00000000-0000-0000-0000-000000000002
+2026-10-30T06:02:14.8821074Z ##[command]terraform init -input=false -backend=true
+2026-10-30T06:02:14.8822033Z Initializing the backend...
+2026-10-30T06:02:17.3340182Z Backend configuration taken from "backend.tf"
+2026-10-30T06:02:18.9011145Z Terraform has been successfully initialized!
+2026-10-30T06:02:18.9012894Z
+2026-10-30T06:02:33.0175501Z ##[command]terraform plan -input=false -lock-timeout=300s -out=tfplan -var-file=envs/prod.tfvars
+2026-10-30T06:02:33.9201101Z Acquiring state lock. This may take a few moments...
+2026-10-30T06:07:34.1022771Z Acquiring state lock. This may take a few moments...
+2026-10-30T06:12:35.2991012Z ╷
+2026-10-30T06:12:35.2992814Z │ Error: Error acquiring the state lock
+2026-10-30T06:12:35.2994102Z │
+2026-10-30T06:12:35.2995201Z │ Error message: a blob lease is held on the state blob. Lease ID:
+2026-10-30T06:12:35.2996308Z │ 00000000-0000-0000-0000-000000000003. Terraform acquires the lease
+2026-10-30T06:12:35.2997410Z │ automatically when operations that might modify state begin; the lease
+2026-10-30T06:12:35.2998509Z │ is released when the operation completes. If the lease was left by a
+2026-10-30T06:12:35.2999610Z │ previous run that no longer exists, break the lease manually before
+2026-10-30T06:12:35.3000711Z │ retrying.
+2026-10-30T06:12:35.3001812Z │
+2026-10-30T06:12:35.3002913Z │
+2026-10-30T06:12:35.3004011Z │ Terraform failed to acquire the state lock after 300s lock-timeout.
+2026-10-30T06:12:35.3005110Z ╵
+2026-10-30T06:12:35.5320482Z ##[error]Terraform plan failed with exit code 1
+2026-10-30T06:12:35.5481171Z ##[section]Finishing: Terraform plan
+2026-10-30T06:12:36.0017821Z ##[error]Job Terraform-Plan failed, no retries remain

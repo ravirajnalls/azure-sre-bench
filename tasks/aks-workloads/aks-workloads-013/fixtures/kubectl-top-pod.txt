@@ -1,0 +1,6 @@
+NAMESPACE    POD                                       CPU(cores)   MEMORY(bytes)
+search       search-indexer-7c9d8b6f5-qk2lv            412m         511Mi
+search       search-indexer-7c9d8b6f5-x9wdr            388m         510Mi
+search       catalog-events-6f8b4d9c7-n2pqs            96m          174Mi
+search       search-api-5d4c8a7b2-v6tzm                234m         296Mi
+default      products-db-0                             401m         1Gi

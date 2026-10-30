@@ -1,0 +1,9 @@
+{
+  "root_cause": [
+    ["annotation"],
+    ["azure-load-balancer-internal", "internal-only", "misspelled", "typo"]
+  ],
+  "fix": [
+    ["azure-load-balancer-internal: \"true\"", "azure-load-balancer-internal: true", "correct the annotation"]
+  ]
+}

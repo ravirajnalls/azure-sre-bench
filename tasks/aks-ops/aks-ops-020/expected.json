@@ -1,0 +1,8 @@
+{
+  "root_cause": [
+    ["maxcount", "max count", "max size", "maximum"]
+  ],
+  "fix": [
+    ["maxcount", "max count", "max-count"]
+  ]
+}

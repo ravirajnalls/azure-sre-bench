@@ -1,0 +1,11 @@
+{
+  "root_cause": "The coredns-custom ConfigMap in kube-system overrides DNS resolution with a server block that forwards every query for '.' to the on-prem DNS server 10.20.1.53, which no longer responds. All external lookups hit that dead upstream and time out, while in-cluster names still resolve because they are served by the managed Kubernetes zone rather than the custom block.",
+  "evidence": [
+    "kubectl-get-cm-coredns-custom.yaml: data.Corefile contains a server block for '.' with 'forward . 10.20.1.53'",
+    "kubectl-logs-coredns.txt: repeated \"read udp ... 10.20.1.53:53: i/o timeout\" for api.stripe.com and graph.microsoft.com",
+    "nslookup-from-pod.txt: api.stripe.com times out while orders-api.shop.svc.cluster.local resolves to a cluster IP",
+    "az-network-vnet-show.json: dhcpOptions.dnsServers is empty, so the VNet uses Azure-provided DNS (red herring)",
+    "kubectl-get-pods-kube-system.txt: both CoreDNS pods Running with no restarts (red herring)"
+  ],
+  "fix": "Remove the '.' server block from the coredns-custom ConfigMap so CoreDNS falls back to the Azure-provided resolver 168.63.129.16, or point the forward at a working upstream, then let CoreDNS reload."
+}

@@ -1,0 +1,68 @@
+[
+  {
+    "etag": "W/\"00000000-0000-0000-0000-000000000005\"",
+    "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-finops-prod/providers/Microsoft.Network/loadBalancers/kubernetes",
+    "location": "uksouth",
+    "name": "kubernetes",
+    "properties": {
+      "backendAddressPools": [
+        {
+          "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-finops-prod/providers/Microsoft.Network/loadBalancers/kubernetes/backendAddressPools/a3f7c1d9",
+          "name": "a3f7c1d9"
+        }
+      ],
+      "frontendIPConfigurations": [
+        {
+          "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-finops-prod/providers/Microsoft.Network/loadBalancers/kubernetes/frontendIPConfigurations/a3f7c1d9-public-lb-frontend",
+          "name": "a3f7c1d9-public-lb-frontend",
+          "properties": {
+            "publicIPAddress": {
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-finops-prod/providers/Microsoft.Network/publicIPAddresses/a3f7c1d9-public-lb-pip"
+            }
+          }
+        }
+      ],
+      "provisioningState": "Succeeded",
+      "resourceGuid": "00000000-0000-0000-0000-000000000006"
+    },
+    "sku": {
+      "name": "Standard",
+      "tier": "Regional"
+    },
+    "type": "Microsoft.Network/loadBalancers"
+  },
+  {
+    "etag": "W/\"00000000-0000-0000-0000-000000000007\"",
+    "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-finops-prod/providers/Microsoft.Network/loadBalancers/kubernetes-internal",
+    "location": "uksouth",
+    "name": "kubernetes-internal",
+    "properties": {
+      "backendAddressPools": [
+        {
+          "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-finops-prod/providers/Microsoft.Network/loadBalancers/kubernetes-internal/backendAddressPools/b5e2a8c4",
+          "name": "b5e2a8c4"
+        }
+      ],
+      "frontendIPConfigurations": [
+        {
+          "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-finops-prod/providers/Microsoft.Network/loadBalancers/kubernetes-internal/frontendIPConfigurations/b5e2a8c4-internal-lb-frontend",
+          "name": "b5e2a8c4-internal-lb-frontend",
+          "properties": {
+            "privateIPAddress": "10.240.0.100",
+            "privateIPAllocationMethod": "Static",
+            "subnet": {
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-finops-prod/providers/Microsoft.Network/virtualNetworks/aks-finops-prod-vnet/subnets/aks-subnet"
+            }
+          }
+        }
+      ],
+      "provisioningState": "Succeeded",
+      "resourceGuid": "00000000-0000-0000-0000-000000000008"
+    },
+    "sku": {
+      "name": "Standard",
+      "tier": "Regional"
+    },
+    "type": "Microsoft.Network/loadBalancers"
+  }
+]

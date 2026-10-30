@@ -1,0 +1,10 @@
+# kubectl get pods -n kube-system -o wide
+NAME                               READY   STATUS    RESTARTS      AGE   IP             NODE                                NOMINATED NODE   READINESS GATES
+cloud-node-manager-9s2v4           1/1     Running   0             5d    10.244.0.7     aks-nodepool1-00000001-vmss000000   <none>           <none>
+coredns-6f8b7c9d5-q7l2x            1/1     Running   0             5d    10.244.0.121   aks-nodepool1-00000001-vmss000000   <none>           <none>
+coredns-6f8b7c9d5-w9k4m            1/1     Running   0             5d    10.244.1.66    aks-nodepool1-00000002-vmss000000   <none>           <none>
+coredns-autoscaler-5b7c8f9d4-pp2   1/1     Running   0             5d    10.244.0.14    aks-nodepool1-00000001-vmss000000   <none>           <none>
+csi-azuredisk-node-zxkqm           3/3     Running   0             5d    10.244.0.5     aks-nodepool1-00000001-vmss000000   <none>           <none>
+konnectivity-agent-6c4d8f7b5-qt9   1/1     Running   0             5d    10.244.1.9     aks-nodepool1-00000002-vmss000000   <none>           <none>
+kube-proxy-4nvh2                   1/1     Running   0             5d    10.0.0.5       aks-nodepool1-00000001-vmss000000   <none>           <none>
+metrics-server-84b7d4c6f9-tj6wr    2/2     Running   0             5d    10.244.1.12    aks-nodepool1-00000002-vmss000000   <none>           <none>

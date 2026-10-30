@@ -1,0 +1,63 @@
+{
+  "addressSpace": {
+    "addressPrefixes": [
+      "10.0.0.0/16"
+    ]
+  },
+  "dhcpOptions": {
+    "dnsServers": []
+  },
+  "etag": "W/\"00000000-0000-0000-0000-00000000000a\"",
+  "flowConfigurationProtectionProperties": {
+    "networkLevel": "NotProtected"
+  },
+  "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-srebench-prod/providers/Microsoft.Network/virtualNetworks/vnet-aks-prod",
+  "ipAllocations": [],
+  "location": "eastus",
+  "name": "vnet-aks-prod",
+  "provisioningState": "Succeeded",
+  "resourceGroupName": "rg-srebench-prod",
+  "resourceGuid": "00000000-0000-0000-0000-00000000000b",
+  "subnets": [
+    {
+      "addressPrefix": "10.0.0.0/22",
+      "delegations": [],
+      "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-srebench-prod/providers/Microsoft.Network/virtualNetworks/vnet-aks-prod/subnets/sn-aks-nodepool",
+      "name": "sn-aks-nodepool",
+      "natGateway": null,
+      "privateEndpointNetworkPolicies": "Disabled",
+      "privateLinkServiceNetworkPolicies": "Enabled",
+      "provisioningState": "Succeeded",
+      "purpose": null,
+      "routeTable": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-srebench-prod/providers/Microsoft.Network/routeTables/rt-aks-prod"
+      },
+      "serviceAssociationLinks": [],
+      "serviceEndpoints": [],
+      "type": "Microsoft.Network/virtualNetworks/subnets"
+    },
+    {
+      "addressPrefix": "10.0.4.0/22",
+      "delegations": [],
+      "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-srebench-prod/providers/Microsoft.Network/virtualNetworks/vnet-aks-prod/subnets/sn-aks-system",
+      "name": "sn-aks-system",
+      "natGateway": null,
+      "privateEndpointNetworkPolicies": "Disabled",
+      "privateLinkServiceNetworkPolicies": "Enabled",
+      "provisioningState": "Succeeded",
+      "purpose": null,
+      "routeTable": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-srebench-prod/providers/Microsoft.Network/routeTables/rt-aks-prod"
+      },
+      "serviceAssociationLinks": [],
+      "serviceEndpoints": [],
+      "type": "Microsoft.Network/virtualNetworks/subnets"
+    }
+  ],
+  "type": "Microsoft.Network/virtualNetworks",
+  "virtualNetworkPeerings": [],
+  "virtualNetworkEncryption": {
+    "enabled": false,
+    "enforcement": "AllowUnencrypted"
+  }
+}

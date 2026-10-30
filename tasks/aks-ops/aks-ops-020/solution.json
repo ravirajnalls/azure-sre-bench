@@ -1,0 +1,11 @@
+{
+  "root_cause": "The userpool1 node pool is managed by the cluster autoscaler with maxCount: 10 and already runs 10 nodes, so the pool has reached its maximum configured size and the autoscaler can no longer scale out. The Pending pods are unschedulable because no new node can be added — not because of Azure vCPU quota, which has ample headroom.",
+  "evidence": [
+    "az-aks-nodepool-list.json: userpool1 has enableAutoScaling true with maxCount: 10 and nodeCount: 10",
+    "cluster-autoscaler-status.txt: userpool1 cloudProviderInfo maxSize 10 with all 10 nodes Ready",
+    "kubectl-get-nodes.txt: 10 aks-userpool1-* nodes exist and all report Ready",
+    "kubectl-get-pods-pending.txt: 15 pods Pending 20-25 minutes across checkout, payments, catalogue, and shop-web",
+    "az-vm-quota.json: Standard DADv5 Family vCPUs at 88 of 640 and Total Regional vCPUs at 88 of 625, so quota is not the blocker"
+  ],
+  "fix": "Raise the autoscaler ceiling for the pool — e.g. az aks nodepool update --resource-group rg-prod-01 --cluster-name aks-prod-eus-01 --name userpool1 --max-count 15 — so the autoscaler can scale out again; the subscription's vCPU quota already covers the larger size. Alternatively reduce load or spread work onto a new pool."
+}

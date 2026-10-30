@@ -1,0 +1,74 @@
+{
+  "availabilityState": "Normal",
+  "clientAffinityEnabled": true,
+  "clientCertEnabled": false,
+  "containerSize": 0,
+  "customDomainVerificationId": "000000000000000000000000000000000000000000000000000000c3",
+  "dailyMemoryTimeQuota": 0,
+  "defaultHostName": "app-quotes.azurewebsites.net",
+  "enabled": true,
+  "enabledHostNames": [
+    "app-quotes.azurewebsites.net",
+    "app-quotes.scm.azurewebsites.net"
+  ],
+  "hostNames": [
+    "app-quotes.azurewebsites.net"
+  ],
+  "hostNameSslStates": [
+    {
+      "hostType": "Standard",
+      "name": "app-quotes.azurewebsites.net",
+      "sslState": "SniEnabled",
+      "thumbprint": null,
+      "virtualIp": null
+    },
+    {
+      "hostType": "Scm",
+      "name": "app-quotes.scm.azurewebsites.net",
+      "sslState": "SniEnabled",
+      "thumbprint": null,
+      "virtualIp": null
+    }
+  ],
+  "httpsOnly": true,
+  "id": "/subscriptions/00000000-0000-0000-0000-000000000003/resourcegroups/rg-quotes-prod/providers/Microsoft.Web/sites/app-quotes",
+  "identity": {
+    "principalId": "00000000-0000-0000-0000-000000000006",
+    "tenantId": "00000000-0000-0000-0000-000000000001",
+    "type": "SystemAssigned"
+  },
+  "inProgressOperation": null,
+  "isXenon": false,
+  "keyVaultReferenceIdentity": null,
+  "kind": "app,linux,container",
+  "lastModifiedTimeUtc": "2026-10-30T09:14:52Z",
+  "location": "UK South",
+  "name": "app-quotes",
+  "outboundIpAddresses": "203.0.113.10,203.0.113.11,203.0.113.12,203.0.113.13",
+  "possibleOutboundIpAddresses": "203.0.113.10,203.0.113.11,203.0.113.12,203.0.113.13,203.0.113.14,203.0.113.15",
+  "provisioningState": "Succeeded",
+  "redundancyMode": "None",
+  "repositorySiteName": "app-quotes",
+  "reserved": false,
+  "resourceGroup": "rg-quotes-prod",
+  "scmSiteAlsoStopped": false,
+  "serverFarmId": "/subscriptions/00000000-0000-0000-0000-000000000003/resourcegroups/rg-quotes-prod/providers/Microsoft.Web/serverfarms/asp-quotes-prod",
+  "siteConfig": {
+    "acrUseManagedIdentityCreds": true,
+    "alwaysOn": true,
+    "appCommandLine": null,
+    "ftpsState": "Disabled",
+    "healthCheckPath": "/healthz",
+    "http20Enabled": true,
+    "linuxFxVersion": "DOCKER|quotesreg.azurecr.io/quotes-api:2026.10.30",
+    "minTlsVersion": "1.2",
+    "numberOfWorkers": 2,
+    "remoteDebuggingEnabled": false,
+    "scmType": "None"
+  },
+  "sku": "P2v3",
+  "state": "Running",
+  "targetSwapSlot": null,
+  "trafficManagerHostNames": null,
+  "usageState": "Normal"
+}

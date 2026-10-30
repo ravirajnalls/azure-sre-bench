@@ -1,0 +1,41 @@
+{
+  "accessTier": "Hot",
+  "allowBlobPublicAccess": false,
+  "allowSharedKeyAccess": true,
+  "creationTime": "2025-01-15T10:20:41.3371190Z",
+  "encryption": {
+    "keySource": "Microsoft.Storage",
+    "requireInfrastructureEncryption": false,
+    "services": {
+      "blob": {
+        "enabled": true,
+        "keyType": "Account",
+        "lastEnabledTime": "2025-01-15T10:20:41.3527420Z"
+      }
+    }
+  },
+  "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-prod-tfstate/providers/Microsoft.Storage/storageAccounts/stprodtfstate001",
+  "kind": "StorageV2",
+  "location": "westeurope",
+  "name": "stprodtfstate001",
+  "networkRuleSet": {
+    "bypass": "AzureServices",
+    "defaultAction": "Allow",
+    "ipRules": [],
+    "resourceAccessRules": [],
+    "virtualNetworkRules": []
+  },
+  "primaryEndpoints": {
+    "blob": "https://stprodtfstate001.blob.core.windows.net/"
+  },
+  "primaryLocation": "westeurope",
+  "provisioningState": "Succeeded",
+  "publicNetworkAccess": "Enabled",
+  "sku": {
+    "name": "Standard_LRS",
+    "tier": "Standard"
+  },
+  "statusOfPrimary": "available",
+  "statusOfSecondary": null,
+  "type": "Microsoft.Storage/storageAccounts"
+}

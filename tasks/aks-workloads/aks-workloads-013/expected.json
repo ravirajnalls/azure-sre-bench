@@ -1,0 +1,9 @@
+{
+  "root_cause": [
+    ["oom", "out of memory", "137"],
+    ["limit", "xmx", "heap"]
+  ],
+  "fix": [
+    ["memory limit", "xmx", "heap"]
+  ]
+}
