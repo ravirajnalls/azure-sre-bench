@@ -30,6 +30,7 @@ from bench.grader import cap_evidence, extract_files_read, extract_usage, grade,
 from bench.heldout import HeldoutKeyError, load_hidden_json, split_of
 from bench.preincident import is_pre_incident_review
 from bench.postmortem import is_postmortem
+from bench.timeline import is_timeline
 from bench.releases import load_release, verify_release
 from bench.remediation import grade_for_task, is_remediation
 from bench.sim import COMMANDS_ENV, COMMANDS_FILENAME, LOG_ENV, LOG_FILENAME, SIM_DIR
@@ -108,6 +109,17 @@ def prepare_workspace(task_dir: Path, workspace: Path) -> None:
             "and action items sections, stay between 300 and 1500 words, cover "
             "every load-bearing fact the evidence supports, and assign no blame "
             "to people or healthy components.\n"
+        )
+    elif is_timeline(task):
+        # Issue #146: a timeline task's answer contract is the reconstructed
+        # causal order — the runner's only agent-facing surface must carry
+        # the shape.
+        symptom_md += (
+            "\nThis is a timeline task: include an `order` list in your answer "
+            "— the event ids from `fixtures/events.json`, in the order the "
+            "events actually happened, each id exactly once. Use the event "
+            "contents to correct for partial timestamps, clock offsets and "
+            "ties: timestamps alone will not always order them correctly.\n"
         )
     elif is_remediation(task):
         # The runner's only agent-facing surface: a remediation task (issue
