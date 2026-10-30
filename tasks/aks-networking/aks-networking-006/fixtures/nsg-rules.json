@@ -1,0 +1,45 @@
+[
+  {
+    "etag": "W/\"00000000-0000-0000-0000-000000000009\"",
+    "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-finops-prod/providers/Microsoft.Network/networkSecurityGroups/aks-nsg",
+    "location": "uksouth",
+    "name": "aks-nsg",
+    "properties": {
+      "securityRules": [
+        {
+          "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-finops-prod/providers/Microsoft.Network/networkSecurityGroups/aks-nsg/securityRules/AllowVNetInBound",
+          "name": "AllowVNetInBound",
+          "properties": {
+            "access": "Allow",
+            "description": "Intra-VNet traffic only for finops workloads",
+            "destinationAddressPrefix": "10.240.0.0/16",
+            "destinationPortRange": "443",
+            "direction": "Inbound",
+            "priority": 4096,
+            "protocol": "Tcp",
+            "provisioningState": "Succeeded",
+            "sourceAddressPrefix": "10.240.0.0/16",
+            "sourcePortRange": "*"
+          }
+        },
+        {
+          "id": "/subscriptions/00000000-0000-0000-0000-000000000001/resourcegroups/rg-finops-prod/providers/Microsoft.Network/networkSecurityGroups/aks-nsg/securityRules/DenyInternetInBound",
+          "name": "DenyInternetInBound",
+          "properties": {
+            "access": "Deny",
+            "description": "Block all inbound internet traffic",
+            "destinationAddressPrefix": "*",
+            "destinationPortRange": "*",
+            "direction": "Inbound",
+            "priority": 4097,
+            "protocol": "*",
+            "provisioningState": "Succeeded",
+            "sourceAddressPrefix": "Internet",
+            "sourcePortRange": "*"
+          }
+        }
+      ]
+    },
+    "type": "Microsoft.Network/networkSecurityGroups"
+  }
+]
