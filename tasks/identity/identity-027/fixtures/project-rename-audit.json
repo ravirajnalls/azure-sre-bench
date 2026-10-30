@@ -1,0 +1,47 @@
+{
+  "count": 2,
+  "value": [
+    {
+      "id": 84,
+      "actorType": "User",
+      "actorId": "00000000-0000-0000-0000-00000000000E",
+      "actorDisplayName": "Ravi Kumar",
+      "scopeType": "Organization",
+      "scopeId": "00000000-0000-0000-0000-00000000000B",
+      "userType": "Aad",
+      "authenticationType": "AAD",
+      "area": "Project",
+      "action": "Project.RenamedProject",
+      "category": "Modify",
+      "correlationId": "00000000-0000-0000-0000-000000000008",
+      "activityId": "00000000-0000-0000-0000-000000000003",
+      "startTime": "2026-10-29T21:44:12.1172711Z",
+      "endTime": "2026-10-29T21:44:12.3812919Z",
+      "level": "Information",
+      "ipAddress": "203.0.113.10",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+      "details": "{\"oldProjectName\":\"Platform\",\"newProjectName\":\"PlatformEng\",\"projectId\":\"00000000-0000-0000-0000-00000000000B\"}"
+    },
+    {
+      "id": 85,
+      "actorType": "System",
+      "actorId": "00000000-0000-0000-0000-000000000004",
+      "actorDisplayName": "Microsoft Azure DevOps",
+      "scopeType": "Organization",
+      "scopeId": "00000000-0000-0000-0000-00000000000B",
+      "userType": "System",
+      "authenticationType": "None",
+      "area": "Project",
+      "action": "Project.UpdateProperties",
+      "category": "Modify",
+      "correlationId": "00000000-0000-0000-0000-000000000008",
+      "activityId": "00000000-0000-0000-0000-000000000005",
+      "startTime": "2026-10-29T21:44:12.5120084Z",
+      "endTime": "2026-10-29T21:44:12.6993311Z",
+      "level": "Information",
+      "ipAddress": "",
+      "userAgent": "",
+      "details": "{\"changedProperties\":[{\"name\":\"name\",\"oldValue\":\"Platform\",\"newValue\":\"PlatformEng\"}]}"
+    }
+  ]
+}

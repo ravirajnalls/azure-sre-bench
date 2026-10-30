@@ -1,0 +1,13 @@
+{
+  "root_cause": [
+    ["federated credential", "federated identity", "fic"],
+    ["subject", "sc://"],
+    ["rename", "platformeng"]
+  ],
+  "fix": [
+    [
+      "sc://contoso/platformeng/sc-prod-deploy",
+      "update the subject"
+    ]
+  ]
+}

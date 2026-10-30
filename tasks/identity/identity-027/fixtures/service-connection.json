@@ -1,0 +1,36 @@
+{
+  "count": 1,
+  "value": [
+    {
+      "data": {
+        "appObjectId": "00000000-0000-0000-0000-000000000009",
+        "azureSpnPermissions": "{\"spnPermissions\":[{\"scope\":\"/subscriptions/00000000-0000-0000-0000-000000000002/resourceGroups/rg-platform-prod\",\"roleDefinitionId\":\" Contributor\"}]}",
+        "creationMode": "Manual",
+        "environment": "AzureCloud",
+        "graphBaseUrl": "https://graph.microsoft.com",
+        "scopeLevel": "Subscription",
+        "spnObjectId": "00000000-0000-0000-0000-00000000000C",
+        "subscriptionId": "00000000-0000-0000-0000-000000000002"
+      },
+      "id": "00000000-0000-0000-0000-00000000000D",
+      "name": "sc-prod-deploy",
+      "type": "azure",
+      "url": "https://management.azure.com/",
+      "createdBy": {
+        "displayName": "Ravi Kumar",
+        "id": "00000000-0000-0000-0000-00000000000E"
+      },
+      "authorization": {
+        "parameters": {
+          "serviceprincipalid": "00000000-0000-0000-0000-00000000000A",
+          "tenantid": "00000000-0000-0000-0000-000000000006"
+        },
+        "scheme": "WorkloadIdentityFederation"
+      },
+      "createdOn": "2026-07-02T13:05:19.442993Z",
+      "operationStatus": {
+        "state": "Ready"
+      }
+    }
+  ]
+}

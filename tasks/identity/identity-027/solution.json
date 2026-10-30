@@ -1,0 +1,11 @@
+{
+  "root_cause": "The federated credential on the app registration still pins the subject to the pre-rename project: sc://contoso/Platform/sc-prod-deploy. After the Azure DevOps project was renamed to PlatformEng, the service connection's token presents sc://contoso/PlatformEng/sc-prod-deploy, which matches no federated credential subject, so the token exchange is rejected with AADSTS700213.",
+  "evidence": [
+    "pipeline-log.txt: az login fails with AADSTS700213 and shows the presented subject sc://contoso/PlatformEng/sc-prod-deploy",
+    "az-ad-app-federated-credential-list.json: the only federated credential subject is sc://contoso/Platform/sc-prod-deploy (old project name), issuer and audience are correct",
+    "project-rename-audit.json: project Platform was renamed to PlatformEng before the failures started",
+    "az-role-assignment-list.json: the service principal has Contributor on rg-platform-prod, ruling out RBAC",
+    "service-connection.json: sc-prod-deploy uses WorkloadIdentityFederation with the matching service principal id"
+  ],
+  "fix": "Update the federated credential subject to sc://contoso/PlatformEng/sc-prod-deploy (az ad app federated-credential update) so it matches the renamed project's token subject."
+}

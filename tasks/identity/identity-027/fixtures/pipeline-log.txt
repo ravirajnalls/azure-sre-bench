@@ -1,0 +1,27 @@
+2026-10-30T06:11:58.1042537Z ##[section]Starting: AzureCLI: Deploy api release to rg-platform-prod
+2026-10-30T06:11:58.2718842Z ==============================================================================
+2026-10-30T06:11:58.2719433Z Task         : Azure CLI
+2026-10-30T06:11:58.2719891Z Description  : Run a shell command using Azure CLI
+2026-10-30T06:11:58.2720311Z Version      : 2.245.0
+2026-10-30T06:11:58.2720619Z Author       : Microsoft Corporation
+2026-10-30T06:11:58.2721012Z Help         : https://docs.microsoft.com/azure/devops/pipelines/tasks/deploy/azure-cli
+2026-10-30T06:11:58.2721425Z ==============================================================================
+2026-10-30T06:11:58.9187304Z ##[command]Checking azure cli version...
+2026-10-30T06:11:59.2041188Z azure-cli                         2.71.0
+2026-10-30T06:11:59.3105521Z ##[command]Successfully added the environment variable AZURE_HTTP_USER_AGENT
+2026-10-30T06:11:59.3106602Z ##[command]Service connection sc-prod-deploy uses workload identity federation.
+2026-10-30T06:11:59.3110244Z ##[command]Requesting Azure AD federated token for service connection sc-prod-deploy...
+2026-10-30T06:11:59.8843321Z ##[command]Acquired federated token from Azure DevOps OIDC endpoint.
+2026-10-30T06:11:59.9182104Z ##[command]##[command]az login --service-principal --tenant 00000000-0000-0000-0000-000000000006 --user 00000000-0000-0000-0000-00000000000A --use-pid
+2026-10-30T06:12:00.9234076Z ##[error]ERROR: AADSTS700213: No matching federated identity record found for presented assertion.
+2026-10-30T06:12:00.9234482Z ##[error]Issuer: 'https://vstoken.dev.azure.com/00000000-0000-0000-0000-00000000000B/'.
+2026-10-30T06:12:00.9234881Z ##[error]Subject: 'sc://contoso/PlatformEng/sc-prod-deploy'.
+2026-10-30T06:12:00.9235261Z ##[error]Exception Details: The client could not authenticate against Azure using the federated credential of the service connection.
+2026-10-30T06:12:01.0104437Z ##[error]Script failed with exit code: 1
+2026-10-30T06:12:01.1047719Z ##[section]Finishing: AzureCLI: Deploy api release to rg-platform-prod
+2026-10-30T06:12:02.7441033Z ##[section]Starting: AzureCLI: Deploy api release to rg-platform-prod (retry job)
+2026-10-30T06:12:04.2215581Z ##[command]Requesting Azure AD federated token for service connection sc-prod-deploy...
+2026-10-30T06:12:04.8812902Z ##[error]ERROR: AADSTS700213: No matching federated identity record found for presented assertion.
+2026-10-30T06:12:04.8813404Z ##[error]Subject: 'sc://contoso/PlatformEng/sc-prod-deploy'.
+2026-10-30T06:12:04.9211088Z ##[error]Script failed with exit code: 1
+2026-10-30T06:12:05.0042211Z ##[section]Finishing: AzureCLI: Deploy api release to rg-platform-prod (retry job)
